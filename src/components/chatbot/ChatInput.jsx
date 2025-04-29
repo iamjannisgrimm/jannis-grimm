@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function ChatInput({ onSendMessage, isAnchored }) {
+function ChatInput({ onSendMessage, onFocus, onBlur }) {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
@@ -11,27 +11,33 @@ function ChatInput({ onSendMessage, isAnchored }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={`chat-input-form ${isAnchored ? "anchored" : ""}`}
-    >
+    <form onSubmit={handleSubmit} className="chat-input-form">
       <input
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Ask me anything..."
-        className={`chat-input-field ${isAnchored ? "anchored" : ""}`}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        className="chat-input-field"
+        autoComplete="off"
       />
       <button
         type="submit"
         disabled={!message.trim()}
         className={`chat-input-submit ${message.trim() ? "active" : ""}`}
+        onMouseDown={(e) => {
+          // Prevent the button click from blurring the input
+          e.preventDefault();
+        }}
+        onClick={handleSubmit}
       >
         <svg
           width="24"
           height="24"
           viewBox="0 0 24 24"
           fill="none"
+          stroke={message.trim() ? "#2563eb" : "#9ca3af"}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
