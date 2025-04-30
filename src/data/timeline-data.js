@@ -2,7 +2,7 @@ const timelineData = [
   {
     date: "2025",
     title: "SeeMe",
-    subtitle: "Lead Engineer",
+    subtitle: "Lead Software Engineer",
     location: "Tech Company Inc., San Francisco",
     description: "Your digital, fully-private life coach who truly understands you.",
     secondDescription: "Scaled venture to $2.5M valuation, attracting interest from Silicon Valley investors.",
