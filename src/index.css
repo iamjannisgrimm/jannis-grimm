@@ -609,7 +609,15 @@ h1 {
 
 /* Single Item Layout */
 .timeline-item {
+  /* make the background span the viewport */
   position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+
+  /* your existing layout */
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -618,7 +626,6 @@ h1 {
   box-sizing: border-box;
   overflow: hidden;
 }
-
 /* Vertical timeline line */
 .timeline-item::before {
   content: "";
@@ -753,3 +760,21 @@ h1 {
   }
 }
 
+/* ─── Left‐align title, subtitle, and description ───────────────────────── */
+.timeline-content h3,
+.timeline-content p.subtitle,
+.timeline-content p.description {
+  text-align: left;
+}
+
+/* ─── Shrink the “Learn more” link ───────────────────────────────────────── */
+.timeline-learnmore {
+  font-size: 0.875rem;     /* smaller text size */
+  padding: 0.25rem 0.5rem; /* tighten up the click area */
+}
+
+/* ─── Shrink the “Learn More” expand button ───────────────────────────────── */
+.timeline-expand-button {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
