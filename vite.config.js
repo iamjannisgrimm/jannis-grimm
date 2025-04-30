@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/', // <-- REMOVE the dynamic base nonsense
+  base: '/jannis-grimm/', // <-- REMOVE the dynamic base nonsense
 });
