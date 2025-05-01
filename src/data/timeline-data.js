@@ -18,7 +18,7 @@ const timelineData = [
     link: "https://seemeapp.ai",
     linkColor: "#19CCFF",
     //-------------------------------------------
-    topSpacing: 20,
+    topSpacing: 40,
     bottomSpacing: 0,
   },
   {

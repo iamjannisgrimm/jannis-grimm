@@ -727,3 +727,18 @@ footer hr {
   display: none !important;
 }
 
+.timeline-item {
+  /* remove any overflow hiding */
+  overflow: visible !important;
+}
+
+.timeline-sort-button {
+  all: unset;
+  cursor: pointer;
+  background: none;
+}
+
+.timeline-sort-icon {
+  background: none;
+}
+
