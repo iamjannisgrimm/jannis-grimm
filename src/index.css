@@ -700,3 +700,30 @@ h1 {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+/* Make footer span the full viewport width */
+footer {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+}
+
+/* Inside-padding (so content doesn’t butt the edge) */
+footer > div {
+  padding: 0 0rem;  /* adjust side-padding as desired */
+}
+
+footer {
+  border: none !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* Hide any <hr> inside the footer (just in case) */
+footer hr {
+  display: none !important;
+}
+
