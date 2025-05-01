@@ -195,27 +195,24 @@ export default function TimelineItem({
             ))}
           </div>
         )}
-
-       
-<a
-  href={link}
-  target="_blank"
-  rel="noopener noreferrer"
-  style={{
-    fontSize: '0.875rem',
-    padding: '0.25rem 0.5rem',
-    fontWeight: 500,
-    color: linkColor,
-    textDecoration: 'none',
-    opacity: 0.8,
-    transition: 'opacity 0.2s ease'
-  }}
-  onMouseOver={e => (e.currentTarget.style.opacity = '1')}
-  onMouseOut={e => (e.currentTarget.style.opacity = '0.8')}
->
-  Learn more
-</a>
-
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontSize: '0.875rem',
+            padding: '0rem 0rem',
+            fontWeight: 500,
+            color: linkColor,
+            textDecoration: 'none',
+            opacity: 0.8,
+            transition: 'opacity 0.2s ease'
+          }}
+          onMouseOver={e => (e.currentTarget.style.opacity = '1')}
+          onMouseOut={e => (e.currentTarget.style.opacity = '0.8')}
+        >
+          Learn more
+        </a>
       </div>
     </div>
   );
