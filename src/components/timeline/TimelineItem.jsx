@@ -66,7 +66,7 @@ export default function TimelineItem({
           'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
       }}
     >
-      {/* timeline line */}
+      {/* vertical timeline line */}
       <div
         style={{
           position: 'absolute',
@@ -79,51 +79,59 @@ export default function TimelineItem({
         }}
       />
 
-      {/* header row */}
+      {/* DATE ABOVE EVERYTHING */}
+      <div
+        style={{
+          paddingLeft: `${lineOffset}px`,
+          paddingRight: '30px',
+          marginBottom: '1.5rem',
+          textAlign: 'left',
+          marginLeft: '30px'
+        }}
+      >
+        <p style={{ fontSize: '18px', color: 'gray', margin: 0 }}>
+          {date}
+        </p>
+      </div>
+
+      {/* ICON + (VSTACK) TITLE & SUBTITLE */}
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           gap: `${sideGap}px`,
-          marginBottom: '1rem',
           paddingLeft: `${lineOffset}px`,
           paddingRight: '30px',
-          textAlign: 'left'
+          marginBottom: '1rem',
+          marginLeft: '30px',
         }}
       >
-        {/* date + icon */}
-        <div
-          style={{
-            width: '100px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.5rem',
-            flexShrink: 0,
-            textAlign: 'center'
-          }}
-        >
-          <p style={{ fontSize: '18px', color: 'gray', margin: 0 }}>
-            {date}
-          </p>
-          {icon && (
+        {/* Icon on the left */}
+        {icon && (
+          <div style={{ flexShrink: 0 }}>
             <img
               src={icon}
               alt=""
-              style={{ width: '60px', height: '60px', objectFit: 'contain' }}
+              style={{
+                width: '60px',
+                height: '60px',
+                objectFit: 'contain'
+              }}
             />
-          )}
-        </div>
+          </div>
+        )}
 
-        {/* title + subtitle */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        {/* VStack of title + subtitle */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.0rem', flex: 1 }}>
           <h3
             style={{
               margin: 0,
-              fontSize: '28px',
-              fontWeight: 600,
+              fontSize: '36px',
+              fontWeight: 800,
               color: background === '#fff' ? '#000' : '#fff',
-              textAlign: 'left'
+              textAlign: 'left',
+              marginTop: '-15px'
+
             }}
           >
             {title}
@@ -142,7 +150,7 @@ export default function TimelineItem({
         </div>
       </div>
 
-      {/* content */}
+      {/* REST OF CONTENT UNCHANGED */}
       <div
         style={{
           display: 'flex',
@@ -150,7 +158,8 @@ export default function TimelineItem({
           gap: '1rem',
           paddingLeft: `${lineOffset}px`,
           paddingRight: '30px',
-          textAlign: 'left'
+          textAlign: 'left',
+          marginLeft: '30px'
         }}
       >
         {image && (
@@ -158,10 +167,11 @@ export default function TimelineItem({
             src={image}
             alt=""
             style={{
-              width: screenWidth < 900 ? '100%' : 'min(950px, 70vw)',
+              width: screenWidth < 900 ? '95%' : 'min(850px, 70vw)',
               height: 'auto',
               borderRadius: '8px',
-              margin: screenWidth >= 900 ? '0 30px' : '0'
+              margin: '0px',
+              marginRight: '30px'
             }}
           />
         )}
@@ -186,56 +196,26 @@ export default function TimelineItem({
           </div>
         )}
 
-        {title !== 'SeeMe' && link && (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontSize: '0.875rem',
-              padding: '0.25rem 0.5rem',
-              fontWeight: 500,
-              color: linkColor,
-              textDecoration: 'none',
-              opacity: 0.8,
-              transition: 'opacity 0.2s ease'
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.opacity = '1')}
-            onMouseOut={(e) => (e.currentTarget.style.opacity = '0.8')}
-          >
-            Learn more
-          </a>
-        )}
+       
+<a
+  href={link}
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{
+    fontSize: '0.875rem',
+    padding: '0.25rem 0.5rem',
+    fontWeight: 500,
+    color: linkColor,
+    textDecoration: 'none',
+    opacity: 0.8,
+    transition: 'opacity 0.2s ease'
+  }}
+  onMouseOver={e => (e.currentTarget.style.opacity = '1')}
+  onMouseOut={e => (e.currentTarget.style.opacity = '0.8')}
+>
+  Learn more
+</a>
 
-        {title === 'SeeMe' && (
-          <>
-            <button
-              onClick={() => setExpanded((e) => !e)}
-              style={{
-                fontSize: '0.875rem',
-                padding: '0.25rem 0.5rem',
-                backgroundColor: linkColor,
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                alignSelf: 'flex-start'
-              }}
-            >
-              {expanded ? 'Collapse' : 'Learn More'}
-            </button>
-            <div
-              style={{
-                overflow: 'hidden',
-                transition: 'max-height 0.5s ease, opacity 0.5s ease',
-                maxHeight: expanded ? '1000px' : '0',
-                opacity: expanded ? 1 : 0
-              }}
-            >
-              <TimelineDetail data={timelineDetailData} />
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
