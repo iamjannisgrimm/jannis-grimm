@@ -128,7 +128,7 @@ export default function TimelineItem({
               margin: 0,
               fontSize: '36px',
               fontWeight: 800,
-              color: background === '#fff' ? '#000' : '#fff',
+              color: background === '#FFFFFF' ? '#000000' : '#FFFFFF',
               textAlign: 'left',
               marginTop: '-15px'
 
@@ -141,7 +141,7 @@ export default function TimelineItem({
               margin: 0,
               fontSize: '20px',
               fontWeight: 400,
-              color: background === '#fff' ? '#000' : '#fff',
+              color: background === '#FFFFFF' ? '#000000' : '#FFFFFF',
               textAlign: 'left'
             }}
           >
@@ -170,15 +170,17 @@ export default function TimelineItem({
               width: screenWidth < 900 ? '95%' : 'min(850px, 70vw)',
               height: 'auto',
               borderRadius: '8px',
-              margin: '0px',
+              marginTop: '10px',
+              marginBottom: '10px',
               marginRight: '30px'
             }}
           />
         )}
 
-        <p style={{ margin: 0, lineHeight: 1.5 }}>{description}</p>
+        <p style={{ marginTop: 10, lineHeight: 1, color: background === '#FFFFFF' ? '#000000' : '#FFFFFF'}}>{description}</p>
         {secondDescription && (
-          <p style={{ margin: 0, lineHeight: 1.5, opacity: 0.9 }}>
+          <p style={{ margin: 0, lineHeight: 1.5, opacity: 0.9,color: background === '#FFFFFF' ? '#000000' : '#FFFFFF'
+          }}>
             {secondDescription}
           </p>
         )}
@@ -190,7 +192,7 @@ export default function TimelineItem({
                 key={i}
                 src={tech}
                 alt=""
-                style={{ width: '24px', height: '24px' }}
+                style={{ marginTop: 10, width: '24px', height: '24px' }}
               />
             ))}
           </div>
@@ -206,7 +208,8 @@ export default function TimelineItem({
             color: linkColor,
             textDecoration: 'none',
             opacity: 0.8,
-            transition: 'opacity 0.2s ease'
+            transition: 'opacity 0.2s ease',
+            marginTop: 10
           }}
           onMouseOver={e => (e.currentTarget.style.opacity = '1')}
           onMouseOut={e => (e.currentTarget.style.opacity = '0.8')}
