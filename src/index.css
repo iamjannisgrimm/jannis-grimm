@@ -672,3 +672,31 @@ h1 {
   width: 100vw;
   box-sizing: border-box; /* ensure padding still works */
 }
+
+/* Make the header edge-to-edge */
+.timeline-header {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+  box-sizing: border-box;
+  /* preserve your existing padding */
+  padding: 1rem 0;
+}
+
+/* And have the inner content stretch too (remove max-width) */
+.timeline-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* or space-between if you want them apart */
+  width: 100%;
+  padding: 0 1rem;          /* your horizontal gutter */
+}
+
+/* Example: if you still want to cap the text line-length, you can add */
+.timeline-title {
+  max-width: 1200px;
+  margin: 0 auto;
+}
