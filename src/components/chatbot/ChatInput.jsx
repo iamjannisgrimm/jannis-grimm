@@ -22,20 +22,20 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
         className="chat-input-field"
         autoComplete="off"
       />
-      <button
-        type="submit"
-        disabled={!message.trim()}
-        className={`chat-input-submit ${message.trim() ? "active" : ""}`}
-        onMouseDown={(e) => {
-          // Prevent the button click from blurring the input
-          e.preventDefault();
-        }}
-        onClick={handleSubmit}
-      >
+        <button
+          type="submit"
+          disabled={!message.trim()}
+          className={`chat-input-submit ${message.trim() ? "active" : ""}`}
+          onMouseDown={(e) => {
+            // Prevent the button click from blurring the input
+            e.preventDefault();
+          }}
+          onClick={handleSubmit}
+        >
         <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
+          width="22"
+          height="22"
+          viewBox="0 0 22 22"
           fill="none"
           stroke={message.trim() ? "#2563eb" : "#9ca3af"}
           strokeWidth="2"

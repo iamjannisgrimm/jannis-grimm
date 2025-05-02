@@ -67,7 +67,6 @@ export default function Timeline({ items }) {
                 margin: '10px',
                 color: txtColor,
                 transform: 'translateY(5px)',
-
               }}
             />
           </button>
