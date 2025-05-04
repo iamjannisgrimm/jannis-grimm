@@ -162,27 +162,27 @@ export default function TimelineItem({
           marginLeft: '30px'
         }}
       >
-{image && (
-  <img
-    src={image}
-    alt=""
-    style={{
-      width:
-        title === "SeeMe" && date.includes("2025")
-          ? screenWidth < 900
-            ? "100%"
-            : "min(1000px, 80vw)"
-          : screenWidth < 900
-          ? "95%"
-          : "min(850px, 70vw)",
-      height: "auto",
-      borderRadius: "8px",
-      marginTop: "10px",
-      marginBottom: "10px",
-      marginRight: "30px",
-    }}
-  />
-)}
+      {image && (
+        <img
+          src={image}
+          alt=""
+          style={{
+            width:
+              title === "SeeMe" && date.includes("2025")
+                ? screenWidth < 900
+                  ? "100%"
+                  : "min(1000px, 80vw)"
+                : screenWidth < 900
+                ? "95%"
+                : "min(850px, 70vw)",
+            height: "auto",
+            borderRadius: "8px",
+            marginTop: "10px",
+            marginBottom: "10px",
+            marginRight: "30px",
+          }}
+        />
+      )}
         <p style={{ marginTop: 10, lineHeight: 1, color: background === '#FFFFFF' ? '#000000' : '#FFFFFF'}}>{description}</p>
         {secondDescription && (
           <p style={{ margin: 0, lineHeight: 1.5, opacity: 0.9,color: background === '#FFFFFF' ? '#000000' : '#FFFFFF'

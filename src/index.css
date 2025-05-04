@@ -509,7 +509,6 @@ h1 {
   outline: none;
   font-family: 'SF Pro Display', system-ui, sans-serif;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0 5px 10px rgba(187, 247, 255, 0.3);
 }
 
 .chat-input-submit {
