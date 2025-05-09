@@ -7,3 +7,5 @@ Telling my unique story.
 - component based timeline
 - personal GPT
 - blog capabilities
+
+
