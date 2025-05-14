@@ -46,10 +46,14 @@ function Chatbot({ onFocus, onBlur }) {
 
   return (
     <div className="chatbot-container">
-      {/* Landing: show starters only when focused and no messages */}
       {isFocused && messages.length === 0 ? (
-        <div className="starters-container enter">
-          <ConversationStarters onSelectPrompt={handlePromptSelect} />
+        <div className="starters-wrapper">
+          <h2 className="chatbot-landing-title">
+            How can I help you today?
+          </h2>
+          <div className="starters-container enter">
+            <ConversationStarters onSelectPrompt={handlePromptSelect} />
+          </div>
         </div>
       ) : (
         <ChatMessages messages={messages} isLoading={isLoading} />
