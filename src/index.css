@@ -742,3 +742,6 @@ footer hr {
   background: none;
 }
 
+.profile-header .profile-title {
+  word-spacing: 1rem; /* tweak this value to taste */
+}

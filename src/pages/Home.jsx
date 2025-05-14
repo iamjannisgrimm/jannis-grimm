@@ -28,7 +28,7 @@ export function Home() {
             <div className="content-container">
               <ProfileHeader
                 image="me/me.png"
-                title="Engineer. Innovator. Leader."
+                title="Engineer.   Innovator.   Leader."
               />
             </div>
           </div>
