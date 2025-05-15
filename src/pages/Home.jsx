@@ -37,7 +37,10 @@ export function Home() {
               <GitHubContributions username="iamjannisgrimm" />
             </div>
           </div>
+          <div className="gh-spacer" />
+
         </div>
+
 
         {/* Timeline */}
         <div className="center-container">
