@@ -20,7 +20,7 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
         onFocus={onFocus}
         onBlur={onBlur}
         className="chat-input-field"
-        autoComplete="off"
+        autoComplete="on"
       />
         <button
           type="submit"
@@ -44,15 +44,15 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
             cx="12"
             cy="12"
             r="10"
-            stroke={message.trim() ? "#14A6FF" : "##BFBFBF"}
-            fill={message.trim() ? "#14A6FF" : "#EFEFEF"}
+            stroke={message.trim() ? "#14A6FF" : "#BFBFBF"}
+            fill={message.trim() ? "#14A6FF" : "#FFFFFF"}
           />
           {/* Up‑pointing arrow */}
           <path
             d="M12 16 L12 8 M8 12 L12 8 L16 12"
             fill="none"
             stroke={message.trim() ? "#fff" : "##BFBFBF"}
-            strokeWidth={message.trim() ? "2" : "1"}
+            strokeWidth={message.trim() ? "2" : "0.8"}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
