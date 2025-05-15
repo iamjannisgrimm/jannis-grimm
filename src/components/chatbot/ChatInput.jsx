@@ -32,21 +32,33 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
           }}
           onClick={handleSubmit}
         >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 22 22"
-          fill="none"
-          stroke={message.trim() ? "#2563eb" : "#9ca3af"}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16V8" />
-          <path d="M8 11L12 8L16 11" />
-        </svg>
-      </button>
+  <svg
+    width="29"
+    height="29"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    {/* Filled circle background */}
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      stroke={message.trim() ? "#14A6FF" : "##BFBFBF"}
+      fill={message.trim() ? "#14A6FF" : "#EFEFEF"}
+    />
+    {/* Up‑pointing arrow */}
+    <path
+      d="M12 16 L12 8 M8 12 L12 8 L16 12"
+      fill="none"
+      stroke={message.trim() ? "#fff" : "##BFBFBF"}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+
+        </button>
     </form>
   );
 }

@@ -844,14 +844,14 @@ footer hr {
   .chat-input-form {
     height: 44px;           /* keep it a nice slim strip */
     margin: 0 auto;         /* center horizontally */
-    max-width: 100% !important;
+    max-width: 110% !important;
     display: flex;
     align-items: center;    /* vertically center the field & button */
   }
 
   /* The <input> itself */
   .chat-input-field {
-    height: 110%;
+    height: 120%;
     padding: 10px 16px; 
     border-radius: 11px;    /* pill shape */
     border-color: rgba(69, 70, 69, 0.9) !important;
@@ -864,7 +864,7 @@ footer hr {
   /* Reposition the send‐button inside that pill */
   .chat-input-submit {
     position: absolute;
-    right: 12px;
+    right: 3px;
     top: 50%;
     transform: translateY(-50%);
   }
