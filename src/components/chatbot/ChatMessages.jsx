@@ -5,31 +5,31 @@ function ChatMessages({ messages, isLoading }) {
   return (
     <div
       style={{
-        height: "calc(100vh - 200px)", // Use remaining viewport height
+        height: "calc(100vh - 200px)",
         overflowY: "auto",
         padding: "20px 0",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-end", // Align messages to the bottom
+        justifyContent: "flex-end",
       }}
     >
-      {/* Define keyframe animations */}
       <style>
         {`
           @keyframes slideUpFade {
             from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            to   { opacity: 1; transform: translateY(0); }
           }
           .message-animate {
             animation: slideUpFade 0.5s ease forwards;
           }
+
           @keyframes blinkDots {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
+            0%,100% { opacity: 0.2; }
+            50%     { opacity: 1; }
           }
           .typing-dots span {
             display: inline-block;
+            font-size: 24px;
             animation: blinkDots 1s infinite;
           }
           .typing-dots span:nth-child(1) { animation-delay: 0s; }
@@ -38,37 +38,36 @@ function ChatMessages({ messages, isLoading }) {
         `}
       </style>
 
-      {messages.map((msg, index) => (
-        <div
-          key={index}
-          className="message-animate"
-          style={{
-            display: "flex",
-            justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
-            marginBottom: "12px",
-          }}
-        >
-          <span
+      {messages.map((msg, i) => {
+        const isUser = msg.sender === "user";
+        return (
+          <div
+            key={i}
+            className="message-animate"
             style={{
-              display: "inline-block",
-              padding: "10px 16px",
-              marginRight: msg.sender === "user" ? "40px" : "0",
-              borderRadius: "12px",
-              background: msg.sender === "user" ? "#85A7D5" : "#F5F5F5",
-              color: msg.sender === "user" ? "#ffffff" : "#111827",
-              maxWidth: "80%",
-              wordWrap: "break-word",
-              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+              display: "flex",
+              justifyContent: isUser ? "flex-end" : "flex-start",
+              marginBottom: "12px",
             }}
           >
-            {msg.sender === "bot" ? (
-              <ReactMarkdown>{msg.text}</ReactMarkdown> // Render markdown for bot responses
-            ) : (
-              msg.text
-            )}
-          </span>
-        </div>
-      ))}
+            <span
+              style={{
+                display: "inline-block",
+                maxWidth: isUser ? "80%" : "100%",
+                padding: "10px 16px",
+                borderRadius: "12px",
+                background: isUser ? "#85A7D5" : "#F5F5F5",
+                color: isUser ? "#fff" : "#111827",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                textAlign: isUser ? "right" : "left",
+                wordWrap: "break-word",
+              }}
+            >
+              {isUser ? msg.text : <ReactMarkdown>{msg.text}</ReactMarkdown>}
+            </span>
+          </div>
+        );
+      })}
 
       {isLoading && (
         <div
@@ -81,21 +80,22 @@ function ChatMessages({ messages, isLoading }) {
         >
           <span
             style={{
-              display: "inline-block",
-              padding: "10px 16px",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "8px 16px",   // equal top/bottom padding
               borderRadius: "12px",
-              background: "#f3f4f6",
+              background: "#F5F5F5",
               color: "#111827",
-              maxWidth: "80%",
-              wordWrap: "break-word",
-              boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+              width: "auto",
+              height: "auto",
             }}
           >
-            Thinking
             <span className="typing-dots">
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
+              <span>•</span>
+              <span>•</span>
+              <span>•</span>
             </span>
           </span>
         </div>
