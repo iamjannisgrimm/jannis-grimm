@@ -851,7 +851,7 @@ footer hr {
 
   /* The <input> itself */
   .chat-input-field {
-    height: 120%;
+    height: 110%;
     padding: 10px 16px; 
     border-radius: 11px;    /* pill shape */
     border-color: rgba(69, 70, 69, 0.9) !important;
