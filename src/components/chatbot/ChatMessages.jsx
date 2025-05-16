@@ -1,16 +1,17 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
-function ChatMessages({ messages, isLoading }) {
+export default function ChatMessages({ messages, isLoading }) {
   return (
     <div
       style={{
-        height: "calc(100vh - 200px)",
+        width: "100%",
+        height: "calc(100vh - 200px)",    // use remaining viewport
         overflowY: "auto",
         padding: "20px 0",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-end",
+        justifyContent: "flex-end",      // anchor to bottom
       }}
     >
       <style>
@@ -38,13 +39,14 @@ function ChatMessages({ messages, isLoading }) {
         `}
       </style>
 
-      {messages.map((msg, i) => {
+      {messages.map((msg, idx) => {
         const isUser = msg.sender === "user";
         return (
           <div
-            key={i}
+            key={idx}
             className="message-animate"
             style={{
+              width: "100%",
               display: "flex",
               justifyContent: isUser ? "flex-end" : "flex-start",
               marginBottom: "12px",
@@ -57,13 +59,16 @@ function ChatMessages({ messages, isLoading }) {
                 padding: "10px 16px",
                 borderRadius: "12px",
                 background: isUser ? "#85A7D5" : "#F5F5F5",
-                color: isUser ? "#fff" : "#111827",
+                color: isUser ? "#ffffff" : "#111827",
                 boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
                 textAlign: isUser ? "right" : "left",
                 wordWrap: "break-word",
               }}
             >
-              {isUser ? msg.text : <ReactMarkdown>{msg.text}</ReactMarkdown>}
+              {isUser
+                ? msg.text
+                : <ReactMarkdown>{msg.text}</ReactMarkdown>
+              }
             </span>
           </div>
         );
@@ -73,6 +78,7 @@ function ChatMessages({ messages, isLoading }) {
         <div
           className="message-animate"
           style={{
+            width: "100%",
             display: "flex",
             justifyContent: "flex-start",
             marginBottom: "12px",
@@ -83,13 +89,11 @@ function ChatMessages({ messages, isLoading }) {
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              padding: "8px 16px",   // equal top/bottom padding
+              padding: "8px 16px",
               borderRadius: "12px",
               background: "#F5F5F5",
               color: "#111827",
               boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-              width: "auto",
-              height: "auto",
             }}
           >
             <span className="typing-dots">
@@ -103,5 +107,3 @@ function ChatMessages({ messages, isLoading }) {
     </div>
   );
 }
-
-export default ChatMessages;

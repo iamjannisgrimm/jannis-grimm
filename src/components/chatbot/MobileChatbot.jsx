@@ -107,18 +107,7 @@ export default function MobileChatbot({ onFocus, onBlur }) {
           }}
         >
           {messages.length === 0 ? (
-            <div
-              className="starters-container"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "1rem",
-                paddingBottom: "0",
-                height: "100%",
-                overflow: "auto",
-              }}
-            >
+            <div className="starters-container enter">
               <ConversationStarters onSelectPrompt={handlePromptSelect} />
             </div>
           ) : (

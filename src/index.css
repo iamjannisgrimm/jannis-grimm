@@ -868,3 +868,166 @@ footer hr {
     transform: translateY(-50%);
   }
 }
+
+.messages-container,
+.messages-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.chatbot-container .starters-container button {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Conversation starters styling */
+.chatbot-container .starters-container {
+  /* Changed from display: none to flex */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.chatbot-container .starters-container.enter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chatbot-container .starters-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  width: 100%;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* In focused mode show the starters if they exist */
+.chatbot-container.focused .starters-container {
+  display: flex;
+  z-index: 500;
+}
+
+/* Fix for mobile views */
+@media (max-width: 600px) {
+  .chatbot-container .starters-wrapper {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+}
+
+/* Mobile chatbot specific styles */
+.chatbot-container.focused .starters-container {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background-color: #f9fafb;
+}
+
+/* Mobile conversation starters */
+@media (max-width: 600px) {
+  .starters-container.enter {
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  .chatbot-container .starters-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+    padding: 10px;
+  }
+  
+  .chat-view-fixed .starters-container {
+    padding-bottom: 60px !important; /* Ensure space at bottom for scrolling */
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fix for any inline styles */
+.chat-view-fixed .starters-container {
+  display: flex !important;
+  overflow-y: auto !important;
+}
+
+/* Ensure the whole panel is shown and given a light grey backdrop */
+@media (min-width: 601px) {
+  .chatbot-container .starters-container {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem !important;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 640px;
+    margin: 1rem auto 2rem;
+    box-sizing: border-box;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    background-color: #ffffff !important;
+
+  }
+
+  /* Ensure your "Find out more ..." title is visible in dark text */
+  .chatbot-container .starters-container h2 {
+    color: #111827 !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Make each white tile button stand out */
+  .chatbot-container .starters-container .starters-wrapper button {
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    color: #333 !important;
+  }
+}
+
+.desktop-starters-title {
+  font-size: 104px !important;   /* or whatever pixel value you like */
+  margin-bottom: 3rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.chatbot-container .starters-container h2 {
+  font-size: 35px !important;
+}
+
+.chatbot-container .starters-container h2 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* in case it still overflows the container */
+}
