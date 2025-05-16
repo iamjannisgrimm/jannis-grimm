@@ -18,7 +18,7 @@ export default function MobileChatbot({ onFocus, onBlur }) {
   const BAR_HEIGHT = 64;   // height of the chat input bar
   const GAP_OFFSET = -60;  // overlap tweak
 
-  // Track on‐screen keyboard via visualViewport (resize only)
+  // Track on‑screen keyboard via visualViewport (resize only)
   useEffect(() => {
     if (!window.visualViewport) return;
     const vv = window.visualViewport;
@@ -26,7 +26,6 @@ export default function MobileChatbot({ onFocus, onBlur }) {
     const update = () => {
       const kh = window.innerHeight - vv.height;
       setKeyboardHeight(kh > 0 ? kh : 0);
-      // ↳ no window.scrollTo here any more
     };
 
     const handleResize = () => {
@@ -46,7 +45,7 @@ export default function MobileChatbot({ onFocus, onBlur }) {
     };
   }, []);
 
-  // Auto‐scroll to bottom when messages change
+  // Auto‑scroll to bottom when messages change
   useEffect(() => {
     if (messages.length > 0 && messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop =
@@ -98,6 +97,9 @@ export default function MobileChatbot({ onFocus, onBlur }) {
             top: 0,
             left: 0,
             right: 0,
+            /* ensure we clear the notch area on iOS */
+            paddingTop: "env(safe-area-inset-top)",
+            /* original bottom offset */
             bottom: `${keyboardHeight + BAR_HEIGHT + GAP_OFFSET}px`,
             backgroundColor: "#ffffff",
             zIndex: 999,
@@ -107,8 +109,23 @@ export default function MobileChatbot({ onFocus, onBlur }) {
           }}
         >
           {messages.length === 0 ? (
-            <div className="starters-container enter">
-              <ConversationStarters onSelectPrompt={handlePromptSelect} />
+            <div
+              className="starters-container enter"
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                /* pad a bit all around so title & tile are fully visible */
+                padding: "1rem",
+                paddingBottom: "2rem", // extra room above the input
+                paddingLeft: "1.25rem", // ensure first tile isn’t flush to edge
+                paddingRight: "1.25rem",
+                boxSizing: "border-box",
+              }}
+            >
+              <ConversationStarters mobile onSelectPrompt={handlePromptSelect} />
             </div>
           ) : (
             <div

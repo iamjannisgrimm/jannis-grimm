@@ -802,7 +802,7 @@ footer hr {
   
   .chat-view-fixed {
     /* Add a bottom margin to ensure the input doesn't overlap content */
-    padding-bottom: 70px; 
+    padding-bottom: 60px; 
   }
   
   .starters-container {
@@ -834,10 +834,12 @@ footer hr {
 @media (max-width: 620px) {
   /* The fixed container that holds your ChatInput */
   .chat-input-fixed {
-    padding-top: 10px !important;   
+    margin-top: -10px !important;
+    padding-top: -10px !important;   
     padding-right: 10px;
     padding-left: 10px;
     padding-bottom: 20px !important;
+    background-color: #2563eb;
   }
 
   /* Your <form> inside it */
@@ -848,11 +850,11 @@ footer hr {
     display: flex;
     align-items: center;    /* vertically center the field & button */
   }
+  
 
   /* The <input> itself */
   .chat-input-field {
     height: 110%;
-    padding: 10px 16px; 
     border-radius: 11px;    /* pill shape */
     border-color: "#BFBFBF" !important;
     border-width: 0.8px;
@@ -959,7 +961,8 @@ footer hr {
   }
   
   .chat-view-fixed .starters-container {
-    padding-bottom: 60px !important; /* Ensure space at bottom for scrolling */
+    padding-bottom: 65px !important; /* Ensure space at bottom for scrolling */
+    background-color: #ffffff !important;
   }
 }
 
@@ -1030,4 +1033,148 @@ footer hr {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; /* in case it still overflows the container */
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(200px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideOutDown {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(200px); }
+}
+
+/* Animation keyframes for sliding in from bottom */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation keyframes for sliding out to bottom */
+@keyframes slideOutToBottom {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+/* Apply animations to the starters container */
+.chatbot-container .starters-container {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); /* easeOutCubic for smooth deceleration */
+  animation-fill-mode: forwards;
+}
+
+.chatbot-container .starters-container.entering {
+  animation-name: slideInFromBottom;
+}
+
+.chatbot-container .starters-container.exiting {
+  animation-name: slideOutToBottom;
+}
+
+/* Title animation */
+.desktop-starters-title {
+  animation-duration: 0.6s; /* slightly longer than container */
+  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  animation-fill-mode: forwards;
+  transform-origin: center bottom; /* anchor point for the animation */
+}
+
+.entering .desktop-starters-title {
+  animation-name: slideInFromBottom;
+  animation-delay: 0.1s; /* small delay after container starts animating */
+}
+
+.exiting .desktop-starters-title {
+  animation-name: slideOutToBottom;
+  animation-delay: 0s; /* no delay, should start before container */
+}
+
+/* Individual conversation starter buttons */
+.chatbot-container .starters-wrapper button {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  animation-fill-mode: forwards;
+}
+
+.entering .starters-wrapper button {
+  animation-name: slideInFromBottom;
+  /* Staggered delay based on button index - applied in JavaScript */
+}
+
+.exiting .starters-wrapper button {
+  animation-name: slideOutToBottom;
+  /* Staggered delay based on button index - applied in JavaScript */
+}
+
+.chat-view-fixed .starters-container {
+  justify-content: flex-end !important;
+}
+.chat-view-fixed .starters-container {
+  justify-content: flex-end;
+  padding-bottom: 0rem !important; /* increase as needed */
+}
+
+@media (max-width: 600px) {
+  /* Container just above the input bar */
+  .mobile-starters-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--keyboard-height, 0px) + var(--bar-height, 64px));
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  /* Horizontal scroll row */
+  .mobile-starters-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* Each prompt tile */
+  .mobile-starter-button {
+    flex: 0 0 auto;
+    width: 120px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .mobile-starter-button:active {
+    background-color: #f0f0f0;
+  }
+
+  /* Two‐line clamp */
+  .mobile-starter-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #333;
+  }
+
+  /* Hide desktop‐only wrappers */
+  .starters-wrapper {
+    display: none !important;
+  }
 }

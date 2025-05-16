@@ -4,24 +4,69 @@ import conversationPrompts from "../../data/prompts";
 
 const iconMap = [FaRobot, FaLightbulb, FaQuestionCircle, FaComments];
 
-const ConversationStarters = ({ onSelectPrompt }) => {
+export default function ConversationStarters({
+  onSelectPrompt,
+  mobile = false
+}) {
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     setTimeout(() => setVisible(true), 100);
   }, []);
 
+  // ─── MOBILE LAYOUT ───────────────────────────────────────────────
+  if (mobile) {
+    return (
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          gap: "12px",
+          padding: "0 1rem",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {conversationPrompts.map((prompt, idx) => (
+          <button
+            key={idx}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelectPrompt(prompt);
+            }}
+            style={{
+              flex: "0 0 auto",
+              width: "230px",
+              padding: "12px",
+              borderRadius: "10px",
+              border: "1px solid #e5e7eb",
+              background: "#fff",
+              textAlign: "left",
+              fontSize: "14px",
+              lineHeight: "1.2",
+              display: visible ? "-webkit-box" : "none",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              opacity: visible ? 1 : 0,
+              transition: `opacity 0.4s ease ${idx * 0.05}s`,
+            }}
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
+    );
+  }
+  // ─── DESKTOP LAYOUT (unchanged) ──────────────────────────────────
   return (
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className="starters-wrapper"
-    >
+    <div onClick={(e) => e.stopPropagation()} className="starters-wrapper">
       {conversationPrompts.slice(0, 4).map((prompt, index) => {
         const Icon = iconMap[index % iconMap.length];
         return (
           <button
             key={index}
-            onMouseDown={(e) => e.preventDefault()} // <- prevents input blur
+            onMouseDown={(e) => e.preventDefault()}  
             onClick={(e) => {
               e.stopPropagation();
               onSelectPrompt(prompt);
@@ -42,7 +87,7 @@ const ConversationStarters = ({ onSelectPrompt }) => {
               fontSize: "14px",
               fontWeight: "500",
               fontFamily:
-                "SF Pro, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+                "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
               transition: "all 0.3s ease-in-out",
               minWidth: "310px",
               height: "140px",
@@ -70,6 +115,4 @@ const ConversationStarters = ({ onSelectPrompt }) => {
       })}
     </div>
   );
-};
-
-export default ConversationStarters;
+}

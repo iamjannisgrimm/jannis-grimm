@@ -65,11 +65,11 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
               fontSize: "4px",
               color: "#111827",
               fontWeight: 700,
-              padding: "50px"
+              padding: "35px"
             }}
           >
             <h2 className="desktop-starters-title">
-            Find out more about me...
+            Find out more about Jannis...
             </h2>
           </h2>
           <ConversationStarters onSelectPrompt={handleSendMessage} />
