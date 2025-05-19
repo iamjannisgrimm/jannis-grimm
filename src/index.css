@@ -341,7 +341,7 @@ h1 {
   }
   .github-contributions {
     /* was margin-top: var(--spacing) */
-    margin-top: 30px;
+    margin-top: -30px;
   }
   .profile-title {
     /* shrink gap between title & image */

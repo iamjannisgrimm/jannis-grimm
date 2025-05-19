@@ -7,6 +7,7 @@ import Chatbot from "../components/chatbot/Chatbot";
 import Footer from "../components/Footer";
 import Achievements from '../components/Achievements';
 import Quotes from '../components/Quotes';
+import Chevron from "../components/Chevron"; // adjust the path if needed
 
 export function Home() {
   const [chatFocus, setChatFocus] = useState(false);
@@ -64,9 +65,23 @@ export function Home() {
             </div>
           </div>
           
+          <div
+            style={{
+              paddingTop: "32px",
+              display: isMobile ? "flex" : "none",
+              justifyContent: "center",
+              transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+              opacity: showContributions ? 0 : 1,
+              pointerEvents: showContributions ? "none" : "auto", // (optional) disables interaction when hidden
+            }}
+          >
+            <Chevron />
+          </div>
+
           {isMobile ? (
             <div className={`center-container contributions-container ${showContributions ? "visible" : "hidden"}`}>
               <div className="content-container">
+
                 <GitHubContributions username="iamjannisgrimm" />
               </div>
             </div>
@@ -78,11 +93,17 @@ export function Home() {
             </div>
           )}
 
+
         <section>
           <h2>My Achievements</h2>
           <Achievements />
         </section>
 
+        {!isMobile && showChat && (
+          <div style={{ display: "flex", justifyContent: "center", paddingTop: "10px" }}>
+            <Chevron />
+          </div>
+        )}
         </div>
 
         <section>
