@@ -8,7 +8,6 @@ export default function Achievements() {
   )
   const wrapperRef = useRef(null)
 
-  // 1) track mobile vs desktop
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 600)
     window.addEventListener('resize', onResize, { passive: true })
@@ -16,7 +15,6 @@ export default function Achievements() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // 2) on mobile, measure half‑width and inject keyframes for a smooth loop
   useEffect(() => {
     if (!isMobile) return
     const wrapper = wrapperRef.current
@@ -25,7 +23,6 @@ export default function Achievements() {
     const total = wrapper.scrollWidth
     const half = total / 2
 
-    // inject or update our achScroll keyframes
     let tag = document.getElementById('ach-scroll-keyframes')
     if (!tag) {
       tag = document.createElement('style')
@@ -39,13 +36,11 @@ export default function Achievements() {
       }
     `
 
-    // apply the animation
     wrapper.style.display = 'flex'
     wrapper.style.gap = isMobile ? '0px' : '1rem'
     wrapper.style.animation = 'achScroll 15s linear infinite'
     wrapper.style.willChange = 'transform'
 
-    // pause on hover/touch
     const pause = () => wrapper.style.setProperty('animation-play-state', 'paused')
     const resume = () => wrapper.style.setProperty('animation-play-state', 'running')
     wrapper.addEventListener('mouseenter', pause)
@@ -62,7 +57,6 @@ export default function Achievements() {
     }
   }, [isMobile])
 
-  // prepare one set of item nodes
   const itemNodes = achievements.map(({ title, subtitle }, idx) => (
     <div
       key={idx}
@@ -71,7 +65,11 @@ export default function Achievements() {
         minWidth: '200px',
         padding: isMobile ? '0.1rem' : '0.5rem',
         textAlign: 'center',
-      }}
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginLeft: !isMobile && idx !== 0 ? '-20px' : '0', // negative gap!
+    }}
     >
       <h3
         style={{
@@ -80,9 +78,8 @@ export default function Achievements() {
           fontWeight: 800,
           color: '#111827',
           width: "100px",
-          display: "block",       // ensures centering with margin auto
-          textAlign: "center",    // extra guarantee
-  
+          display: "block",
+          textAlign: "center",
         }}
       >
         {title}
@@ -95,6 +92,7 @@ export default function Achievements() {
           opacity: 0.8,
           lineHeight: 1.3,
           width: "100px",
+          textAlign: 'center',
         }}
       >
         {subtitle}
@@ -105,16 +103,16 @@ export default function Achievements() {
   if (isMobile) {
     return (
       <div
-      style={{
-        margin: "0 auto",
-        fontSize: "0.875rem",
-        color: "#555",
-        opacity: 0.8,
-        lineHeight: 1.3,
-        width: "100px",
-        display: "block",       // ensures centering with margin auto
-        textAlign: "center",    // extra guarantee
-      }}
+        style={{
+          margin: "0 auto",
+          fontSize: "0.875rem",
+          color: "#555",
+          opacity: 0.8,
+          lineHeight: 1.3,
+          width: "100px",
+          display: "block",
+          textAlign: "center",
+        }}
       >
         <div ref={wrapperRef} style={{ width: '100%' }}>
           {itemNodes}
@@ -124,23 +122,28 @@ export default function Achievements() {
     )
   }
 
-  // desktop: unchanged centered grid
+  // DESKTOP: For absolute centering, wrap inner container in a flexbox that aligns center, and remove any fixed widths on parent containers.
   return (
     <div
       style={{
-        display: 'flex',
-        justifyContent: 'center',
         width: '100%',
         padding: '1rem 0',
+        marginTop: '-45px',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',   // Center the whole grid horizontally
+        alignItems: 'center',       // Center vertically (if parent allows)
       }}
     >
       <div
         style={{
           display: 'flex',
-          gap: '1rem',
+          gap: '0px',
           flexWrap: 'wrap',
           justifyContent: 'center',
-          padding: '0.5rem',
+          alignItems: 'center',
+          maxWidth: '1200px',       // Cap so grid doesn’t overgrow
+          margin: '0 auto',         // Center within parent
         }}
       >
         {itemNodes}

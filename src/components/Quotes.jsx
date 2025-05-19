@@ -22,6 +22,8 @@ export default function Quotes() {
         flexDirection: "column",
         gap: "2rem",
         alignItems: "center",
+        paddingBottom: "100px",
+        paddingTop: "40px"
       }}
     >
       {quotes.map(({ quote, author }, idx) => (

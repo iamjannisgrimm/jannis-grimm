@@ -83,13 +83,14 @@ export function Home() {
         <Achievements />
       </section>
           
-      <section>
+
+        </div>
+
+        <section>
         <h2>My Achievements</h2>
         <Quotes />
       </section>
 
-          <div className="gh-spacer" />
-        </div>
         
         <div className="center-container">
           <div className="content-container">
