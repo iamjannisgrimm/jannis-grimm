@@ -3,6 +3,9 @@ import { quotes } from "../data/quotes";
 
 export default function Quotes() {
   const [visibleIndexes, setVisibleIndexes] = useState([]);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 600 : false
+  );
 
   useEffect(() => {
     quotes.forEach((_, idx) => {
@@ -10,6 +13,14 @@ export default function Quotes() {
         setVisibleIndexes((prev) => [...prev, idx]);
       }, idx * 250); // 250ms stagger
     });
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -22,7 +33,7 @@ export default function Quotes() {
         flexDirection: "column",
         gap: "2rem",
         alignItems: "center",
-        paddingBottom: "100px",
+        paddingBottom: isMobile ? "110px" : "280px",
         paddingTop: "40px"
       }}
     >

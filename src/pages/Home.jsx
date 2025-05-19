@@ -71,18 +71,17 @@ export function Home() {
               </div>
             </div>
           ) : (
-            <div className="center-container">
+            <div className="center-container github-desktop-contributions">
               <div className="content-container">
                 <GitHubContributions username="iamjannisgrimm" />
               </div>
             </div>
           )}
 
-<section>
-        <h2>My Achievements</h2>
-        <Achievements />
-      </section>
-          
+        <section>
+          <h2>My Achievements</h2>
+          <Achievements />
+        </section>
 
         </div>
 
@@ -90,7 +89,6 @@ export function Home() {
         <h2>My Achievements</h2>
         <Quotes />
       </section>
-
         
         <div className="center-container">
           <div className="content-container">

@@ -1195,3 +1195,15 @@ footer hr {
     pointer-events: none;
   }
 }
+
+@media (min-width: 601px) {
+  .github-desktop-contributions {
+    margin-top: -45px;     /* Or whatever negative value feels right */
+    padding-top: 0;        /* Remove any extra padding */
+  }
+  .github-desktop-contributions .content-container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+}
+

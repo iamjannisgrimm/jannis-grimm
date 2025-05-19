@@ -48,7 +48,14 @@ const ProfileHeader = ({ image, title }) => {
   // Desktop: single line
   return (
     <div className="profile-header">
-      <h1 className="profile-title" style={{ wordSpacing: "1rem" }}>
+      <h1
+        className="profile-title"
+        style={{
+          wordSpacing: "1rem",
+          marginTop: "-30px",     // Subtract 20px from the original
+          paddingTop: 0
+        }}
+      >
         {title}
       </h1>
       <img
