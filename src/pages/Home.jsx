@@ -1,63 +1,109 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Timeline from "../components/timeline/Timeline";
 import timelineData from "../data/timeline-data";
 import GitHubContributions from "../components/GitHubContributions";
 import ProfileHeader from "../components/ProfileHeader";
 import Chatbot from "../components/chatbot/Chatbot";
 import Footer from "../components/Footer";
+import Achievements from '../components/Achievements';
+import Quotes from '../components/Quotes';
 
 export function Home() {
   const [chatFocus, setChatFocus] = useState(false);
   const [showChat, setShowChat] = useState(true);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 600 : false
+  );
+  const [showContributions, setShowContributions] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Show chat bar only when scrolled all the way to the top
-      setShowChat(window.scrollY === 0);
-    };
+    function handleScroll() {
+      // Simple condition: show when scrolled, hide when at top
+      const isScrolled = window.scrollY > 0;
+      setShowChat(!isScrolled);
+      
+      if (isMobile) {
+        setShowContributions(isScrolled);
+      } else {
+        // On desktop, always show
+        setShowContributions(true);
+      }
+    }
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll(); // initialize state based on current scroll position
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobile]);
+
+  useEffect(() => {
+    function handleResize() {
+      const m = window.innerWidth <= 600;
+      setIsMobile(m);
+      // On desktop always show, on mobile depend on scroll position
+      setShowContributions(!m || window.scrollY > 0);
+    }
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <div className="home-container">
       <div className="blurrable-content">
-        {/* Top section will fade/slide up on chat focus */}
         <div className={`top-section ${chatFocus ? "fade" : ""}`}>
           <div className="center-container">
             <div className="content-container">
               <ProfileHeader
                 image="me/me.png"
-                title="Engineer.   Innovator.   Leader."
+                title="Engineer. Innovator. Leader."
               />
             </div>
           </div>
-          <div className="center-container">
-            <div className="content-container">
-              <GitHubContributions username="iamjannisgrimm" />
+          
+          {isMobile ? (
+            <div className={`center-container contributions-container ${showContributions ? "visible" : "hidden"}`}>
+              <div className="content-container">
+                <GitHubContributions username="iamjannisgrimm" />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="center-container">
+              <div className="content-container">
+                <GitHubContributions username="iamjannisgrimm" />
+              </div>
+            </div>
+          )}
+
+<section>
+        <h2>My Achievements</h2>
+        <Achievements />
+      </section>
+          
+      <section>
+        <h2>My Achievements</h2>
+        <Quotes />
+      </section>
+
           <div className="gh-spacer" />
-
         </div>
-
-
-        {/* Timeline */}
+        
         <div className="center-container">
           <div className="content-container">
             <Timeline items={timelineData} />
           </div>
         </div>
-
-        {/* Footer */}
+        
         <div className="center-container">
           <div className="content-container">
             <Footer />
           </div>
         </div>
       </div>
-
-      {/* Floating chat panel, toggles hidden class on scroll */}
+      
       <div
         className={`chatbot-fixed-wrapper ${showChat ? "visible" : "hidden"}`}
       >

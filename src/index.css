@@ -161,7 +161,7 @@ h1 {
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 80px;
   padding: 0;
 }
 /* Calendar overrides */
@@ -341,7 +341,7 @@ h1 {
   }
   .github-contributions {
     /* was margin-top: var(--spacing) */
-    margin-top: 0.5rem;
+    margin-top: 30px;
   }
   .profile-title {
     /* shrink gap between title & image */
@@ -1176,5 +1176,27 @@ footer hr {
   /* Hide desktop‐only wrappers */
   .starters-wrapper {
     display: none !important;
+  }
+}
+
+
+.contributions-container {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.contributions-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contributions-container.hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Make sure the container takes space even when hidden to prevent layout shifts */
+@media (max-width: 600px) {
+  .contributions-container.hidden {
+    pointer-events: none;
   }
 }
