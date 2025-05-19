@@ -7,15 +7,19 @@ import Chatbot from "../components/chatbot/Chatbot";
 import Footer from "../components/Footer";
 import Achievements from '../components/Achievements';
 import Quotes from '../components/Quotes';
-import Chevron from "../components/Chevron"; // adjust the path if needed
+import Chevron from "../components/Chevron";
+import { useInView } from "../components/hooks/useInView";
+
+
 
 export function Home() {
   const [chatFocus, setChatFocus] = useState(false);
   const [showChat, setShowChat] = useState(true);
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
-  );
+  ); 
   const [showContributions, setShowContributions] = useState(false);
+  const [contribRef, contribInView] = useInView({}, 1200);
 
   useEffect(() => {
     function handleScroll() {
@@ -79,12 +83,19 @@ export function Home() {
           </div>
 
           {isMobile ? (
-            <div className={`center-container contributions-container ${showContributions ? "visible" : "hidden"}`}>
-              <div className="content-container">
-
-                <GitHubContributions username="iamjannisgrimm" />
-              </div>
+            <div
+  ref={contribRef}
+  className="center-container contributions-container"
+  style={{
+    opacity: contribInView && showContributions ? 1 : 0,
+    transition: "opacity 0.7s cubic-bezier(0.33,1,0.68,1)",
+    pointerEvents: contribInView && showContributions ? "auto" : "none"
+  }}
+>
+            <div className="content-container">
+              <GitHubContributions username="iamjannisgrimm" />
             </div>
+          </div>
           ) : (
             <div className="center-container github-desktop-contributions">
               <div className="content-container">
@@ -93,9 +104,8 @@ export function Home() {
             </div>
           )}
 
-
         <section>
-          <h2>My Achievements</h2>
+          <h2></h2>
           <Achievements />
         </section>
 
@@ -117,7 +127,7 @@ export function Home() {
         </div>
 
         <section>
-        <h2>My Achievements</h2>
+        <h2></h2>
         <Quotes />
       </section>
         

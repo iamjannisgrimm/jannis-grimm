@@ -109,6 +109,7 @@ export default function Achievements() {
           color: "#555",
           opacity: 0.8,
           lineHeight: 1.3,
+          marginTop: '30px',
           width: "100px",
           display: "block",
           textAlign: "center",
