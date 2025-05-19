@@ -38,7 +38,7 @@ export default function Achievements() {
 
     wrapper.style.display = 'flex'
     wrapper.style.gap = isMobile ? '0px' : '1rem'
-    wrapper.style.animation = 'achScroll 15s linear infinite'
+    wrapper.style.animation = 'achScroll 5s linear infinite'
     wrapper.style.willChange = 'transform'
 
     const pause = () => wrapper.style.setProperty('animation-play-state', 'paused')
