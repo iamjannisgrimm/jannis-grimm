@@ -1207,3 +1207,37 @@ footer hr {
   }
 }
 
+.fade-fade {
+  opacity: 1;
+  transition: opacity 0.4s cubic-bezier(0.33,1,0.68,1);
+  pointer-events: auto;
+}
+
+.fade-fade.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.chatbot-fixed-wrapper {
+  opacity: 1;
+  transition: opacity 0.4s cubic-bezier(0.33,1,0.68,1), visibility 0.4s cubic-bezier(0.33,1,0.68,1);
+  visibility: visible;
+}
+
+.chatbot-fixed-wrapper.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.chatbot-fixed-wrapper {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s cubic-bezier(0.33,1,0.68,1), visibility 0.4s cubic-bezier(0.33,1,0.68,1);
+  pointer-events: auto;
+}
+
+.chatbot-fixed-wrapper.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}

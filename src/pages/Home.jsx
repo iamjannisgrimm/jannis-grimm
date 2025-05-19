@@ -99,11 +99,21 @@ export function Home() {
           <Achievements />
         </section>
 
-        {!isMobile && showChat && (
-          <div style={{ display: "flex", justifyContent: "center", paddingTop: "10px" }}>
-            <Chevron />
-          </div>
-        )}
+        {!isMobile && (
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      paddingTop: "10px",
+      opacity: showChat ? 1 : 0,
+      transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+      pointerEvents: showChat ? "auto" : "none"
+    }}
+  >
+    <Chevron />
+  </div>
+)}
+
         </div>
 
         <section>
@@ -124,16 +134,14 @@ export function Home() {
         </div>
       </div>
       
-      <div
-        className={`chatbot-fixed-wrapper ${showChat ? "visible" : "hidden"}`}
-      >
-        <div className="chatbot-fixed-container">
-          <Chatbot
-            onFocus={() => setChatFocus(true)}
-            onBlur={() => setChatFocus(false)}
-          />
-        </div>
-      </div>
+      <div className={`chatbot-fixed-wrapper ${showChat ? "" : "hidden"}`}>
+  <div className="chatbot-fixed-container">
+    <Chatbot
+      onFocus={() => setChatFocus(true)}
+      onBlur={() => setChatFocus(false)}
+    />
+  </div>
+</div>
     </div>
   );
 }
