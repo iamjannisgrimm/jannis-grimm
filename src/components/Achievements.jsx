@@ -1,4 +1,3 @@
-// src/components/Achievements.jsx
 import React, { useEffect, useRef, useState } from 'react'
 import { achievements } from '../data/achievements'
 
@@ -7,7 +6,9 @@ export default function Achievements() {
     typeof window !== 'undefined' ? window.innerWidth <= 600 : false
   )
   const wrapperRef = useRef(null)
+  const [scrollWidth, setScrollWidth] = useState(0)
 
+  // Track mobile/desktop
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 600)
     window.addEventListener('resize', onResize, { passive: true })
@@ -15,14 +16,34 @@ export default function Achievements() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Always re-measure scrollWidth for accurate animation
   useEffect(() => {
     if (!isMobile) return
+
+    function measureWidth() {
+      // Use double requestAnimationFrame for layout to settle (fixes prod jank)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (wrapperRef.current) {
+            // Only half the scrollWidth, because we double the items for looping
+            setScrollWidth(wrapperRef.current.scrollWidth / 2)
+          }
+        })
+      })
+    }
+
+    measureWidth()
+    window.addEventListener('resize', measureWidth)
+    return () => window.removeEventListener('resize', measureWidth)
+  }, [isMobile, achievements.length])
+
+  // Set up the keyframes animation using measured scrollWidth
+  useEffect(() => {
+    if (!isMobile || !scrollWidth) return
     const wrapper = wrapperRef.current
     if (!wrapper) return
 
-    const total = wrapper.scrollWidth
-    const half = total / 2
-
+    // Inject or update keyframes for exact seamless loop
     let tag = document.getElementById('ach-scroll-keyframes')
     if (!tag) {
       tag = document.createElement('style')
@@ -32,31 +53,21 @@ export default function Achievements() {
     tag.textContent = `
       @keyframes achScroll {
         from { transform: translateX(0); }
-        to   { transform: translateX(-${half}px); }
+        to   { transform: translateX(-${scrollWidth}px); }
       }
     `
 
     wrapper.style.display = 'flex'
-    wrapper.style.gap = isMobile ? '0px' : '1rem'
-    wrapper.style.animation = 'achScroll 5s linear infinite'
+    wrapper.style.gap = '0px'
+    wrapper.style.animation = `achScroll 6s linear infinite`
     wrapper.style.willChange = 'transform'
-
-    const pause = () => wrapper.style.setProperty('animation-play-state', 'paused')
-    const resume = () => wrapper.style.setProperty('animation-play-state', 'running')
-    wrapper.addEventListener('mouseenter', pause)
-    wrapper.addEventListener('mouseleave', resume)
-    wrapper.addEventListener('touchstart', pause)
-    wrapper.addEventListener('touchend', resume)
 
     return () => {
       wrapper.style.animation = ''
-      wrapper.removeEventListener('mouseenter', pause)
-      wrapper.removeEventListener('mouseleave', resume)
-      wrapper.removeEventListener('touchstart', pause)
-      wrapper.removeEventListener('touchend', resume)
     }
-  }, [isMobile])
+  }, [isMobile, scrollWidth])
 
+  // Each tile
   const itemNodes = achievements.map(({ title, subtitle }, idx) => (
     <div
       key={idx}
@@ -68,38 +79,35 @@ export default function Achievements() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        marginLeft: !isMobile && idx !== 0 ? '-20px' : '0', // negative gap!
-    }}
+        marginLeft: !isMobile && idx !== 0 ? '-20px' : '0'
+      }}
     >
-      <h3
-        style={{
-          margin: '0 0 0.25rem',
-          fontSize: '1.2rem',
-          fontWeight: 800,
-          color: '#111827',
-          width: "100px",
-          display: "block",
-          textAlign: "center",
-        }}
-      >
+      <h3 style={{
+        margin: '0 0 0.25rem',
+        fontSize: '1.2rem',
+        fontWeight: 800,
+        color: '#111827',
+        width: "100px",
+        display: "block",
+        textAlign: "center",
+      }}>
         {title}
       </h3>
-      <p
-        style={{
-          margin: 0,
-          fontSize: '0.875rem',
-          color: '#555',
-          opacity: 0.8,
-          lineHeight: 1.3,
-          width: "100px",
-          textAlign: 'center',
-        }}
-      >
+      <p style={{
+        margin: 0,
+        fontSize: '0.875rem',
+        color: '#555',
+        opacity: 0.8,
+        lineHeight: 1.3,
+        width: "100px",
+        textAlign: 'center',
+      }}>
         {subtitle}
       </p>
     </div>
   ))
 
+  // MOBILE: Double the items for a seamless infinite scroll
   if (isMobile) {
     return (
       <div
@@ -123,17 +131,17 @@ export default function Achievements() {
     )
   }
 
-  // DESKTOP: For absolute centering, wrap inner container in a flexbox that aligns center, and remove any fixed widths on parent containers.
+  // DESKTOP: Centered grid as usual
   return (
     <div
       style={{
         width: '100%',
         padding: '1rem 0',
-        marginTop: '-45px',
+        marginTop: '-15px',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',   // Center the whole grid horizontally
-        alignItems: 'center',       // Center vertically (if parent allows)
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <div
@@ -143,8 +151,8 @@ export default function Achievements() {
           flexWrap: 'wrap',
           justifyContent: 'center',
           alignItems: 'center',
-          maxWidth: '1200px',       // Cap so grid doesn’t overgrow
-          margin: '0 auto',         // Center within parent
+          maxWidth: '1200px',
+          margin: '0 auto',
         }}
       >
         {itemNodes}
