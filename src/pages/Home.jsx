@@ -84,13 +84,13 @@ export function Home() {
 
           {isMobile ? (
             <div
-  ref={contribRef}
-  className="center-container contributions-container"
-  style={{
-    opacity: contribInView && showContributions ? 1 : 0,
-    transition: "opacity 0.7s cubic-bezier(0.33,1,0.68,1)",
-    pointerEvents: contribInView && showContributions ? "auto" : "none"
-  }}
+            ref={contribRef}
+            className="center-container contributions-container"
+            style={{
+              opacity: contribInView && showContributions ? 1 : 0,
+              transition: "opacity 0.7s cubic-bezier(0.33,1,0.68,1)",
+              pointerEvents: contribInView && showContributions ? "auto" : "none"
+            }}
 >
             <div className="content-container">
               <GitHubContributions username="iamjannisgrimm" />

@@ -53,7 +53,7 @@ export default function Quotes() {
           gap: "2rem",
           alignItems: "center",
           paddingBottom: isMobile ? "110px" : "200px",
-          marginTop: isMobile ? "70px" : "-20px"
+          marginTop: isMobile ? "80px" : "-20px"
         }}
       >
         {quotes.map(({ quote, author }, idx) => {

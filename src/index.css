@@ -184,6 +184,25 @@ h1 {
     overflow-x: auto;
   }
 }
+
+.react-activity-calendar {
+  max-width: 100%; /* Don't restrict width on mobile! */
+}
+
+@media (max-width: 600px) {
+  .github-calendar-container {
+    overflow-x: auto !important;
+    width: 100vw !important;
+    min-width: 0 !important;
+    /* Remove max-width restriction on .react-activity-calendar in mobile */
+  }
+  .react-activity-calendar {
+    min-width: 600px !important; /* or whatever is needed so it's scrollable */
+    display: block !important;
+  }
+}
+
+
 /* Wrapper for the calendar */
 .github-calendar-container {
   width: 100%;
@@ -199,6 +218,11 @@ h1 {
 .timeline-container {
   width: 100%;
   margin-top: 2rem;
+}
+
+.github-contributions > div:first-child {
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #fff;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -279,7 +303,6 @@ h1 {
     transition: width 0.3s ease-in-out, max-width 0.3s ease-in-out;
   }
 
-  
   /* the text field */
   .chat-input-field {
     width: 100%;
@@ -293,6 +316,7 @@ h1 {
     font-family: 'SF Pro Display', system-ui, sans-serif;
     transition: all 0.3s ease-in-out, border 0.3s ease-in-out, padding 0.3s ease-in-out;
   }
+  .github-calendar-container::-webkit-scrollbar { display: none; }
   /* the send-button icon */
   .chat-input-submit {
     position: absolute;
@@ -1185,8 +1209,9 @@ footer hr {
 
 @media (min-width: 601px) {
   .github-desktop-contributions {
-    margin-top: -45px;     /* Or whatever negative value feels right */
+    margin-top: 5px;     /* Or whatever negative value feels right */
     padding-top: 0;        /* Remove any extra padding */
+    margin-bottom: 15px;
   }
   .github-desktop-contributions .content-container {
     padding-top: 0 !important;

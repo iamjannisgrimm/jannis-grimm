@@ -79,7 +79,7 @@ export default function Achievements() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        marginLeft: !isMobile && idx !== 0 ? '-20px' : '0'
+        marginLeft: !isMobile && idx !== 0 ? '-20px' : '0',
       }}
     >
       <h3 style={{
@@ -117,7 +117,7 @@ export default function Achievements() {
           color: "#555",
           opacity: 0.8,
           lineHeight: 1.3,
-          marginTop: '30px',
+          marginTop: '20px',
           width: "100px",
           display: "block",
           textAlign: "center",
