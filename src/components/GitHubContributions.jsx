@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import GitHubCalendar from "react-github-calendar";
 
 const GitHubContributions = ({ username }) => {
+
+  
   const [containerWidth, setContainerWidth] = useState(0);
   const [total, setTotal] = useState(null);
   const containerRef = useRef(null);
@@ -67,7 +69,7 @@ const GitHubContributions = ({ username }) => {
         className="github-calendar-container"
         style={{
           maxWidth: `${containerWidth}px`,
-          margin: "0 auto",
+          marginTop: "-5px",
           display: "inline-block",
           width: isMobile ? "100vw" : "auto",
           minWidth: 0,

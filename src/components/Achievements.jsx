@@ -74,7 +74,7 @@ export default function Achievements() {
       style={{
         flex: '0 0 auto',
         minWidth: '180px',
-        padding: isMobile ? '0.1rem' : '0.5rem',
+        padding: isMobile ? '0.1rem' : '0rem',
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',

@@ -52,8 +52,6 @@ const ProfileHeader = ({ image, title }) => {
         className="profile-title"
         style={{
           wordSpacing: "1rem",
-          marginTop: "-30px",     // Subtract 20px from the original
-          paddingTop: 0
         }}
       >
         {title}

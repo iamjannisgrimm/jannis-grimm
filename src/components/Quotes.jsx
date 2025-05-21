@@ -43,65 +43,64 @@ export default function Quotes() {
     }, []);
   
     return (
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 600,
-          margin: "2rem auto 0 auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: "2rem",
-          alignItems: "center",
-          paddingBottom: isMobile ? "110px" : "200px",
-          marginTop: isMobile ? "80px" : "-20px"
-        }}
-      >
-        {quotes.map(({ quote, author }, idx) => {
-          // Use intersection observer for each quote
-          const [ref, inView] = useInView({ threshold: 0.25 });
-          return (
-            <div
-              key={idx}
-              ref={ref}
-              style={{
-                opacity: inView ? 1 : 0,
-                transform: inView
-                  ? "translateY(0) scale(1)"
-                  : "translateY(40px) scale(0.97)",
-                filter: inView
-                  ? "blur(0px)"
-                  : "blur(3px)",
-                transition:
-                  "opacity 0.7s cubic-bezier(0.33,1,0.68,1), transform 0.7s cubic-bezier(0.33,1,0.68,1), filter 0.7s cubic-bezier(0.33,1,0.68,1)",
-                width: "100%",
-                textAlign: "center",
-              }}
-            >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 600,
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: isMobile ? "80px" : "60px",      // always some positive space
+            marginBottom: isMobile ? "110px" : "200px", // always enough room below
+            display: "flex",
+            flexDirection: "column",
+            gap: "2rem",
+            alignItems: "center",
+            // paddingBottom removed! Only use marginBottom.
+          }}
+        >
+          {quotes.map(({ quote, author }, idx) => {
+            const [ref, inView] = useInView({ threshold: 0.25 });
+            return (
               <div
+                key={idx}
+                ref={ref}
                 style={{
-                  fontSize: "1.2rem",
-                  fontWeight: 600,
-                  color: "#22223b",
-                  lineHeight: 1.6,
-                  marginBottom: "0.65rem",
-                  fontStyle: "italic",
-                }}
-              >
-                {quote}
-              </div>
-              <div
-                style={{
-                  fontSize: "1rem",
-                  color: "#7a7a89",
-                  fontWeight: 500,
+                  opacity: inView ? 1 : 0,
+                  transform: inView
+                    ? "translateY(0) scale(1)"
+                    : "translateY(40px) scale(0.97)",
+                  filter: inView ? "blur(0px)" : "blur(3px)",
+                  transition:
+                    "opacity 0.7s cubic-bezier(0.33,1,0.68,1), transform 0.7s cubic-bezier(0.33,1,0.68,1), filter 0.7s cubic-bezier(0.33,1,0.68,1)",
+                  width: "100%",
                   textAlign: "center",
                 }}
               >
-                — {author}
+                <div
+                  style={{
+                    fontSize: "1.2rem",
+                    fontWeight: 600,
+                    color: "#22223b",
+                    lineHeight: 1.6,
+                    marginBottom: "0.65rem",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {quote}
+                </div>
+                <div
+                  style={{
+                    fontSize: "1rem",
+                    color: "#7a7a89",
+                    fontWeight: 500,
+                    textAlign: "center",
+                  }}
+                >
+                  — {author}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-    );
+            );
+          })}
+        </div>
+      );
   }

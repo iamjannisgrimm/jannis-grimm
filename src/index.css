@@ -1260,3 +1260,8 @@ footer hr {
 html {
   font-size: 90%;    /* 90% of browser default */
 }
+
+.contributions-container,
+.github-desktop-contributions {
+  margin-bottom: 60px !important;
+}
