@@ -82,6 +82,11 @@ export function Home() {
             <Chevron />
           </div>
 
+          <section>
+          <h2></h2>
+          <Achievements />
+        </section>
+
           {isMobile ? (
             <div
             ref={contribRef}
@@ -104,10 +109,7 @@ export function Home() {
             </div>
           )}
 
-        <section>
-          <h2></h2>
-          <Achievements />
-        </section>
+       
 
         {!isMobile && (
   <div

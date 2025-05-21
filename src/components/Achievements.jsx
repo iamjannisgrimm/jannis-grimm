@@ -137,7 +137,7 @@ export default function Achievements() {
       style={{
         width: '100%',
         padding: '1rem 0',
-        marginTop: '-15px',
+        marginTop: '0px',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
