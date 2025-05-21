@@ -53,12 +53,23 @@ export function Home() {
       <div className="blurrable-content">
         <div className={`top-section ${chatFocus ? "fade" : ""}`}>
           <div className="center-container">
-            <div className="content-container">
-              <ProfileHeader
-                image="me/me.png"
-                title="Engineer. Innovator. Leader."
-              />
-            </div>
+          <div
+            className="content-container"
+            style={
+              !isMobile
+                ? {
+                    transform: "scale(0.9)",
+                    transformOrigin: "top center",
+                    width: "100%",
+                  }
+                : {}
+            }
+          >
+            <ProfileHeader
+              image="me/me.png"
+              title="Engineer. Innovator. Leader."
+            />
+          </div>
           </div>
 
           <div
