@@ -59,7 +59,7 @@ const GitHubContributions = ({ username }) => {
       margin: "0 auto",
       display: "flex",
       flexDirection: "column",
-      alignItems: "center"
+      alignItems: "center",
     }}>
       {/* Calendar is scrollable on mobile */}
       <div

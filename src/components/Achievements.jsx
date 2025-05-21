@@ -73,7 +73,7 @@ export default function Achievements() {
       key={idx}
       style={{
         flex: '0 0 auto',
-        minWidth: '200px',
+        minWidth: '180px',
         padding: isMobile ? '0.1rem' : '0.5rem',
         textAlign: 'center',
         display: 'flex',

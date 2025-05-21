@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function ChatInput({ onSendMessage, onFocus, onBlur }) {
+function ChatInputMobile({ onSendMessage, onFocus, onBlur }) {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
@@ -11,10 +11,7 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="chat-input-form" style={{
-      transform: "scale(0.9)",
-      transformOrigin: "center",
-    }}>
+    <form onSubmit={handleSubmit} className="chat-input-form">
       <input
         type="text"
         value={message}
@@ -66,4 +63,4 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
   );
 }
 
-export default ChatInput;
+export default ChatInputMobile;

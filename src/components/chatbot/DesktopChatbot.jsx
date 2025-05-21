@@ -90,7 +90,6 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
           <ChatMessages messages={messages} isLoading={isLoading} />
         </div>
       )}
-
       <ChatInput
         onSendMessage={handleSendMessage}
         onFocus={handleInputFocus}

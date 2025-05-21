@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import ChatMessages from "./ChatMessages";
-import ChatInput from "./ChatInput";
+import ChatInputMobile from "./ChatInputMobile";
 import ConversationStarters from "./ConversationStarters";
 import { getChatbotResponse } from "../../services/openaiservice";
 import { userContext } from "../../data/prompts";
@@ -163,7 +163,7 @@ export default function MobileChatbot({ onFocus, onBlur }) {
         }}
       >
         <div style={{ maxWidth: "500px", margin: "0 auto" }}>
-          <ChatInput
+          <ChatInputMobile
             onSendMessage={handleSendMessage}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}

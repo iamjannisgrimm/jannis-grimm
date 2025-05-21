@@ -5,7 +5,7 @@ export const achievements = [
     },
     {
       title: "$2.5M",
-      subtitle: "Startup Valuation",
+      subtitle: "Startup Valuation Achieved",
     },
     {
       title: "NYC",
