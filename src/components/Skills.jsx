@@ -2,14 +2,13 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFadeEffect } from './hooks/useFadeEffect';
 
 /**
- * Skills component that displays skills in a horizontal scrolling view
+ * SkillCategory component that displays a single category of skills
  * with animated bars and true infinite automatic scrolling
  */
-const Skills = ({ skills }) => {
+const SkillCategory = ({ category, index }) => {
   const containerRef = useRef(null);
   const scrollContentRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [skillsRef, skillsOpacity] = useFadeEffect({ edgeDistance: 100 });
   const [isHovering, setIsHovering] = useState(false);
   const animationRef = useRef(null);
 
@@ -52,7 +51,7 @@ const Skills = ({ skills }) => {
       
       // Set the animation to run
       let startTime;
-      const scrollSpeed = 0.08; // Increased scrolling speed (was 0.04
+      const scrollSpeed = 0.08; // Increased scrolling speed (was 0.04)
       
       const step = (timestamp) => {
         if (isHovering) {
@@ -93,53 +92,69 @@ const Skills = ({ skills }) => {
   }, [isVisible, isHovering]);
 
   // Create two identical sets of skills for the seamless loop
+  const skills = category.items;
   const doubledSkills = [...skills, ...skills];
 
   return (
+    <div className="skill-category">
+      <h3 className="skill-category-title">{category.title}</h3>
+      <div 
+        ref={containerRef}
+        className="skills-container"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        <div className="skills-scroll-container">
+          <div 
+            ref={scrollContentRef}
+            className="skills-row"
+          >
+            {doubledSkills.map((skill, idx) => (
+              <div key={`${skill.name}-${idx}`} className="skill-item">
+                <div className="skill-info">
+                  <span className="skill-name">{skill.name}</span>
+                  <span className="skill-level">{skill.level}%</span>
+                </div>
+                <div className="skill-bar-container">
+                  <div 
+                    className="skill-bar" 
+                    style={{ 
+                      width: isVisible ? `${skill.level}%` : '0%',
+                      transition: `width 1s cubic-bezier(0.33, 1, 0.68, 1) ${idx % skills.length * 0.1}s`
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Skills component that displays multiple categories of skills
+ */
+const Skills = ({ skills }) => {
+  const [skillsRef, skillsOpacity] = useFadeEffect({ edgeDistance: 100 });
+
+  return (
     <div 
-      ref={(el) => {
-        containerRef.current = el;
-        if (typeof skillsRef === 'function') {
-          skillsRef(el);
-        }
-      }}
-      className="skills-container"
+      ref={skillsRef}
+      className="skills-wrapper"
       style={{
         opacity: skillsOpacity,
         transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
       }}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
     >
-      <div className="skills-scroll-container">
-        <div 
-          ref={scrollContentRef}
-          className="skills-row"
-        >
-          {doubledSkills.map((skill, index) => (
-            <div key={`${skill.name}-${index}`} className="skill-item">
-              <div className="skill-info">
-                <span className="skill-name">{skill.name}</span>
-                <span className="skill-level">{skill.level}%</span>
-              </div>
-              <div className="skill-bar-container">
-                <div 
-                  className="skill-bar" 
-                  style={{ 
-                    width: isVisible ? `${skill.level}%` : '0%',
-                    transition: `width 1s cubic-bezier(0.33, 1, 0.68, 1) ${index % skills.length * 0.1}s`
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="skills-scroll-indicator">
-        <div className="scroll-dot active"></div>
-        <div className="scroll-dot"></div>
-        <div className="scroll-dot"></div>
-      </div>
+      {skills.map((category, index) => (
+        <SkillCategory 
+          key={category.title} 
+          category={category} 
+          index={index}
+        />
+      ))}
     </div>
   );
 };

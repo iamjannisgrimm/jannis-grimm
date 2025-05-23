@@ -1311,11 +1311,36 @@ html {
   }
 }
 
-/* Skills Component Styles - True smooth infinite scrolling with edge fade */
+/* Skills Component Styles - Categorized layout */
+.skills-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 40px auto;
+  padding: 0;
+}
+
+.skill-category {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-category-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 5px 15px;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+}
+
+/* Individual skill category containers - keep existing properties */
 .skills-container {
   width: 100%;
   max-width: 700px; /* Increased width (was 600px) */
-  margin: 40px auto;
+  margin: 0 auto;
   padding: 20px 0;
   background-color: #ffffff;
   position: relative;
