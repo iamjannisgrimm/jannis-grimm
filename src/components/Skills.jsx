@@ -48,11 +48,11 @@ const Skills = ({ skills }) => {
       // Get all direct children (skill items)
       const items = Array.from(scrollContent.children);
       const itemWidth = items[0]?.offsetWidth || 0;
-      const gap = 30; // Gap between items from CSS
+      const gap = 20; // Gap between items from CSS
       
       // Set the animation to run
       let startTime;
-      const scrollSpeed = 0.015; // Very slow scroll speed
+      const scrollSpeed = 0.08; // Increased scrolling speed (was 0.04
       
       const step = (timestamp) => {
         if (isHovering) {

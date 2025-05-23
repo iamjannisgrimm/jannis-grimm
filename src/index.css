@@ -1311,15 +1311,37 @@ html {
   }
 }
 
-/* Skills Component Styles - True smooth infinite scrolling */
+/* Skills Component Styles - True smooth infinite scrolling with edge fade */
 .skills-container {
   width: 100%;
-  max-width: 600px; /* Narrow width */
+  max-width: 700px; /* Increased width (was 600px) */
   margin: 40px auto;
   padding: 20px 0;
   background-color: #ffffff;
   position: relative;
   overflow: hidden; /* Hide overflow for scroll animation */
+}
+
+/* Add edge fade effect */
+.skills-container::before,
+.skills-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  z-index: 2;
+  pointer-events: none; /* Allow clicking through the fade */
+}
+
+.skills-container::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+.skills-container::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
 .skills-scroll-container {
@@ -1329,6 +1351,8 @@ html {
   -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
   margin: 0;
   padding: 10px 0;
+  position: relative; /* For z-index */
+  z-index: 1;
 }
 
 /* Hide scrollbar for Chrome/Safari */
@@ -1338,19 +1362,19 @@ html {
 
 .skills-row {
   display: flex;
-  gap: 30px;
-  padding: 0 20px;
+  gap: 20px; /* Reduced gap to fit more items */
+  padding: 0 30px; /* Increased padding for edge fade */
   white-space: nowrap;
   will-change: transform; /* Optimize for animation performance */
 }
 
 .skill-item {
-  flex: 0 0 180px; /* Fixed width for consistent scrolling */
-  min-width: 180px; /* Ensure consistency */
-  max-width: 180px; /* Fixed width is important for smooth infinite scroll */
+  flex: 0 0 130px; /* Slightly wider items for the wider container */
+  min-width: 130px; /* Ensure consistency */
+  max-width: 130px; /* Fixed width is important for smooth infinite scroll */
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px; /* Slightly reduced gap */
 }
 
 .skill-info {
@@ -1361,24 +1385,24 @@ html {
 }
 
 .skill-name {
-  font-size: 1rem;
+  font-size: 0.9rem; /* Smaller font to fit in narrower items */
   font-weight: 600;
   color: #000;
   font-family: 'SF Pro Display', system-ui, sans-serif;
 }
 
 .skill-level {
-  font-size: 0.8rem;
+  font-size: 0.75rem; /* Smaller font to fit in narrower items */
   font-weight: 500;
   color: #666;
   font-family: 'SF Pro Display', system-ui, sans-serif;
-  margin-left: 10px;
+  margin-left: 8px;
 }
 
 .skill-bar-container {
-  height: 8px;
+  height: 6px; /* Slightly smaller bar */
   background-color: #f0f0f0;
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
   width: 100%;
 }
@@ -1386,7 +1410,7 @@ html {
 .skill-bar {
   height: 100%;
   background: linear-gradient(90deg, #646cff 0%, #535bf2 100%);
-  border-radius: 4px;
+  border-radius: 3px;
   width: 0%; /* Initial width before animation */
   transition: width 1s cubic-bezier(0.33, 1, 0.68, 1);
 }
@@ -1394,28 +1418,34 @@ html {
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .skills-container {
-    max-width: 450px; /* Even narrower on tablet */
+    max-width: 550px; /* Increased from 450px */
   }
   
   .skill-item {
-    flex: 0 0 160px;
-    min-width: 160px;
-    max-width: 160px;
+    flex: 0 0 130px; /* Keep same width for consistency */
+    min-width: 130px;
+    max-width: 130px;
   }
 }
 
 @media (max-width: 480px) {
   .skills-container {
-    max-width: 300px; /* Very narrow on mobile */
+    max-width: 350px; /* Increased from 300px */
   }
   
   .skill-item {
-    flex: 0 0 140px;
-    min-width: 140px;
-    max-width: 140px;
+    flex: 0 0 130px; /* Keep same width for consistency */
+    min-width: 130px;
+    max-width: 130px;
   }
   
   .skills-row {
-    gap: 20px;
+    gap: 15px; /* Even smaller gap on mobile */
+  }
+  
+  /* Narrower edge fade on mobile */
+  .skills-container::before,
+  .skills-container::after {
+    width: 40px;
   }
 }
