@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-const ProfileHeader = ({ image, title }) => {
+const ProfileHeader = ({ 
+  image, 
+  title, 
+  titleRef, 
+  titleOpacity, 
+  imageRef, 
+  imageOpacity 
+}) => {
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
   );
@@ -21,8 +28,14 @@ const ProfileHeader = ({ image, title }) => {
     return (
       <div className="profile-header">
         <h1
+          ref={titleRef}
           className="profile-title"
-          style={{ wordSpacing: "1rem", textAlign: "center" }}
+          style={{ 
+            wordSpacing: "1rem", 
+            textAlign: "center",
+            opacity: titleOpacity,
+            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+          }}
         >
           {lines.map((line, i) => (
             <span
@@ -37,9 +50,14 @@ const ProfileHeader = ({ image, title }) => {
           ))}
         </h1>
         <img
+          ref={imageRef}
           src={`${import.meta.env.BASE_URL}${image}`}
           alt="Profile"
           className="profile-image"
+          style={{
+            opacity: imageOpacity,
+            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+          }}
         />
       </div>
     );
@@ -48,18 +66,26 @@ const ProfileHeader = ({ image, title }) => {
   // Desktop: single line
   return (
     <div className="profile-header">
-      <h1
+      <h1 
+        ref={titleRef} 
         className="profile-title"
         style={{
           wordSpacing: "1rem",
+          opacity: titleOpacity,
+          transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
         }}
       >
         {title}
       </h1>
-      <img
+      <img 
+        ref={imageRef}
         src={`${import.meta.env.BASE_URL}${image}`}
-        alt="Profile"
+        alt="Profile" 
         className="profile-image"
+        style={{
+          opacity: imageOpacity,
+          transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+        }}
       />
     </div>
   );

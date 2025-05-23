@@ -17,7 +17,6 @@ body,
   overflow: visible !important;
 }
 
-
 /* 2) Let the body scroll naturally */
 body {
   overflow-y: auto !important;
@@ -396,7 +395,7 @@ h1 {
 
 
 
-/* Hero “top-section” covering full viewport */
+/* Hero "top-section" covering full viewport */
 .top-section {
   background-color: #ffffff; /* white backdrop */
   width: 100%;
@@ -737,7 +736,7 @@ footer {
   width: 100vw;
 }
 
-/* Inside-padding (so content doesn’t butt the edge) */
+/* Inside-padding (so content doesn't butt the edge) */
 footer > div {
   padding: 0 0rem;  /* adjust side-padding as desired */
 }
@@ -785,7 +784,7 @@ footer hr {
   font-weight: 700;
   margin-bottom: 1rem;
   text-align: center;
-  color: #000;           /* ensure it’s black */
+  color: #000;           /* ensure it's black */
 }
 
 .chatbot-container {
@@ -1264,4 +1263,159 @@ html {
 .contributions-container,
 .github-desktop-contributions {
   margin-bottom: 60px !important;
+}
+
+/* GitHub Contributions Section */
+.github-desktop-contributions {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  margin: 20px 0;
+  position: relative;
+  z-index: 5;
+}
+
+.github-desktop-contributions:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.github-desktop-contributions .content-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Ensure the GitHub calendar is visible and properly sized */
+.react-activity-calendar {
+  width: 100% !important;
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  overflow: visible !important;
+}
+
+/* Mobile adjustments for GitHub contributions */
+@media (max-width: 600px) {
+  .github-desktop-contributions {
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  .react-activity-calendar {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+  }
+}
+
+/* Skills Component Styles - True smooth infinite scrolling */
+.skills-container {
+  width: 100%;
+  max-width: 600px; /* Narrow width */
+  margin: 40px auto;
+  padding: 20px 0;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden; /* Hide overflow for scroll animation */
+}
+
+.skills-scroll-container {
+  width: 100%;
+  overflow-x: hidden; /* Hidden overflow is essential for smooth infinite scrolling */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+  margin: 0;
+  padding: 10px 0;
+}
+
+/* Hide scrollbar for Chrome/Safari */
+.skills-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.skills-row {
+  display: flex;
+  gap: 30px;
+  padding: 0 20px;
+  white-space: nowrap;
+  will-change: transform; /* Optimize for animation performance */
+}
+
+.skill-item {
+  flex: 0 0 180px; /* Fixed width for consistent scrolling */
+  min-width: 180px; /* Ensure consistency */
+  max-width: 180px; /* Fixed width is important for smooth infinite scroll */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skill-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.skill-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+}
+
+.skill-level {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+  margin-left: 10px;
+}
+
+.skill-bar-container {
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.skill-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #646cff 0%, #535bf2 100%);
+  border-radius: 4px;
+  width: 0%; /* Initial width before animation */
+  transition: width 1s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .skills-container {
+    max-width: 450px; /* Even narrower on tablet */
+  }
+  
+  .skill-item {
+    flex: 0 0 160px;
+    min-width: 160px;
+    max-width: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-container {
+    max-width: 300px; /* Very narrow on mobile */
+  }
+  
+  .skill-item {
+    flex: 0 0 140px;
+    min-width: 140px;
+    max-width: 140px;
+  }
+  
+  .skills-row {
+    gap: 20px;
+  }
 }
