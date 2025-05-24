@@ -223,7 +223,8 @@ export function Home() {
           ref={skillsRef}
           style={{
             opacity: skillsOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+            marginBottom: "60px" // Extra space after the skills section
           }}
         >
           <div className="center-container">

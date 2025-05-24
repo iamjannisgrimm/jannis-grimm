@@ -94,6 +94,27 @@ const SkillCategory = ({ category, index }) => {
   // Create two identical sets of skills for the seamless loop
   const skills = category.items;
   const doubledSkills = [...skills, ...skills];
+  
+  // Generate gradient for skill bars using the category color
+  const gradientStyle = {
+    background: `linear-gradient(90deg, ${category.color} 0%, ${adjustColorBrightness(category.color, 30)} 100%)`
+  };
+  
+  // Helper function to adjust color brightness for gradient
+  function adjustColorBrightness(hex, percent) {
+    // Convert hex to RGB
+    let r = parseInt(hex.slice(1, 3), 16);
+    let g = parseInt(hex.slice(3, 5), 16);
+    let b = parseInt(hex.slice(5, 7), 16);
+    
+    // Increase brightness
+    r = Math.min(255, r + (percent / 100) * 255);
+    g = Math.min(255, g + (percent / 100) * 255);
+    b = Math.min(255, b + (percent / 100) * 255);
+    
+    // Convert back to hex
+    return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
+  }
 
   return (
     <div className="skill-category">
@@ -120,7 +141,8 @@ const SkillCategory = ({ category, index }) => {
                     className="skill-bar" 
                     style={{ 
                       width: isVisible ? `${skill.level}%` : '0%',
-                      transition: `width 1s cubic-bezier(0.33, 1, 0.68, 1) ${idx % skills.length * 0.1}s`
+                      transition: `width 1s cubic-bezier(0.33, 1, 0.68, 1) ${idx % skills.length * 0.1}s`,
+                      ...gradientStyle
                     }}
                   />
                 </div>

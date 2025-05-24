@@ -1319,6 +1319,7 @@ html {
   gap: 40px;
   margin: 40px auto;
   padding: 0;
+  margin-bottom: 80px; /* Add more whitespace below the entire skills section */
 }
 
 .skill-category {
@@ -1329,8 +1330,8 @@ html {
 }
 
 .skill-category-title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.2rem; /* Smaller title size to match other sections */
+  font-weight: 600; /* Slightly lighter weight */
   color: #000;
   margin: 0 0 5px 15px;
   font-family: 'SF Pro Display', system-ui, sans-serif;
@@ -1434,7 +1435,7 @@ html {
 
 .skill-bar {
   height: 100%;
-  background: linear-gradient(90deg, #646cff 0%, #535bf2 100%);
+  /* background gradient removed - now dynamically set per category */
   border-radius: 3px;
   width: 0%; /* Initial width before animation */
   transition: width 1s cubic-bezier(0.33, 1, 0.68, 1);
