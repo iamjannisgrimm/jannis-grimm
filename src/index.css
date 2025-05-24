@@ -1262,7 +1262,7 @@ html {
 
 .contributions-container,
 .github-desktop-contributions {
-  margin-bottom: 60px !important;
+  margin-bottom: 30px !important; /* Reduced from 60px to 30px */
 }
 
 /* GitHub Contributions Section */
@@ -1319,7 +1319,7 @@ html {
   gap: 40px;
   margin: 40px auto;
   padding: 0;
-  margin-bottom: 80px; /* Add more whitespace below the entire skills section */
+  margin-bottom: 80px; /* Keep existing whitespace below the entire skills section */
 }
 
 .skill-category {
@@ -1327,6 +1327,12 @@ html {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 20px; /* Add space between each category */
+}
+
+/* Last skill category needs more bottom margin */
+.skill-category:last-child {
+  margin-bottom: 60px; /* Increased from 40px to 60px for more whitespace */
 }
 
 .skill-category-title {

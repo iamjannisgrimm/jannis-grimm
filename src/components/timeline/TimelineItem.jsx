@@ -1,6 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { TimelineDetail } from './TimelineDetail';
-import { timelineDetailData } from '../../data/timeline-detail-data';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function TimelineItem({
   date,

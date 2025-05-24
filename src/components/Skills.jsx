@@ -8,6 +8,13 @@ import { useFadeEffect } from './hooks/useFadeEffect';
 const SkillCategory = ({ category, index }) => {
   const containerRef = useRef(null);
   const scrollContentRef = useRef(null);
+  const [categoryRef, categoryOpacity] = useFadeEffect({
+    topEdgeDistance: 100,
+    bottomEdgeDistance: 200,
+    fadeTop: true,
+    fadeBottom: true
+  });
+  
   const [isVisible, setIsVisible] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const animationRef = useRef(null);
@@ -43,11 +50,6 @@ const SkillCategory = ({ category, index }) => {
     const setupInfiniteScroll = () => {
       const scrollContent = scrollContentRef.current;
       if (!scrollContent) return;
-      
-      // Get all direct children (skill items)
-      const items = Array.from(scrollContent.children);
-      const itemWidth = items[0]?.offsetWidth || 0;
-      const gap = 20; // Gap between items from CSS
       
       // Set the animation to run
       let startTime;
@@ -117,7 +119,14 @@ const SkillCategory = ({ category, index }) => {
   }
 
   return (
-    <div className="skill-category">
+    <div 
+      ref={categoryRef} 
+      className="skill-category"
+      style={{
+        opacity: categoryOpacity,
+        transition: "opacity 0.3s cubic-bezier(0.33,1,0.68,1)"
+      }}
+    >
       <h3 className="skill-category-title">{category.title}</h3>
       <div 
         ref={containerRef}
@@ -159,17 +168,9 @@ const SkillCategory = ({ category, index }) => {
  * Skills component that displays multiple categories of skills
  */
 const Skills = ({ skills }) => {
-  const [skillsRef, skillsOpacity] = useFadeEffect({ edgeDistance: 100 });
-
+  // Remove the overall skills fade effect and just let each category handle its own fade
   return (
-    <div 
-      ref={skillsRef}
-      className="skills-wrapper"
-      style={{
-        opacity: skillsOpacity,
-        transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
-      }}
-    >
+    <div className="skills-wrapper">
       {skills.map((category, index) => (
         <SkillCategory 
           key={category.title} 

@@ -49,8 +49,8 @@ export default function Quotes() {
             maxWidth: 600,
             marginLeft: "auto",
             marginRight: "auto",
-            marginTop: isMobile ? "80px" : "60px",      // always some positive space
-            marginBottom: isMobile ? "110px" : "200px", // always enough room below
+            marginTop: isMobile ? "30px" : "30px",
+            marginBottom: isMobile ? "60px" : "120px",
             display: "flex",
             flexDirection: "column",
             gap: "2rem",

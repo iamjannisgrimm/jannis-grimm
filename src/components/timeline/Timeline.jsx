@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { ArrowsUpDownIcon } from "@heroicons/react/24/outline";
 import TimelineItem from "./TimelineItem";
 
-
 export default function Timeline({ items }) {
   const [isReversed, setIsReversed] = useState(false);
   const [animatedData, setAnimatedData] = useState(items);

@@ -21,12 +21,16 @@ export function Home() {
   ); 
   const [showContributions, setShowContributions] = useState(false);
 
-  // Add this for Achievements fade-in
+  // For Achievements fade-in (keep using original useInView for this specific transition)
   const [achievementsRef, achievementsInView] = useInView({}, 1200);
   const [contribRef, contribInView] = useInView({}, 1200);
   
-  // Individual fade effects for each component with 100px edge distance
-  const [profileTitleRef, profileTitleOpacity] = useFadeEffect({ edgeDistance: 100 });
+  // Individual fade effects for each component with both top and bottom edge detection
+  const [profileTitleRef, profileTitleOpacity] = useFadeEffect({ 
+    topEdgeDistance: 100, 
+    bottomEdgeDistance: 150, 
+    fadeBottom: false // Only fade when scrolling up past the top
+  });
   
   // Custom implementation for profile image that fades gradually as it scrolls off screen
   const profileImageRef = useRef(null);
@@ -70,11 +74,34 @@ export function Home() {
     return () => window.removeEventListener('scroll', calculateImageOpacity);
   }, []);
   
-  const [achievementsSectionRef, achievementsSectionOpacity] = useFadeEffect({ edgeDistance: 100 });
-  const [githubRef, githubOpacity] = useFadeEffect({ edgeDistance: 100 });
-  const [quotesRef, quotesOpacity] = useFadeEffect({ edgeDistance: 100 });
-  const [skillsRef, skillsOpacity] = useFadeEffect({ edgeDistance: 100 });
-  const [footerRef, footerOpacity] = useFadeEffect({ edgeDistance: 100 });
+  // Enhanced fade effects with both top and bottom edge detection
+  const [achievementsSectionRef, achievementsSectionOpacity] = useFadeEffect({
+    topEdgeDistance: 100,
+    bottomEdgeDistance: 200,
+    fadeTop: true,
+    fadeBottom: true
+  });
+
+  const [githubRef, githubOpacity] = useFadeEffect({
+    topEdgeDistance: 100,
+    bottomEdgeDistance: 200,
+    fadeTop: true,
+    fadeBottom: true
+  });
+
+  const [quotesRef, quotesOpacity] = useFadeEffect({
+    topEdgeDistance: 100,
+    bottomEdgeDistance: 200,
+    fadeTop: true,
+    fadeBottom: true
+  });
+
+  const [footerRef, footerOpacity] = useFadeEffect({
+    topEdgeDistance: 100,
+    bottomEdgeDistance: 0, // No bottom fade for footer
+    fadeTop: true,
+    fadeBottom: false
+  });
 
   useEffect(() => {
     function handleScroll() {
@@ -211,7 +238,8 @@ export function Home() {
           ref={quotesRef}
           style={{
             opacity: quotesOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+            paddingBottom: "10px"
           }}
         >
           <h2></h2>
@@ -220,11 +248,8 @@ export function Home() {
 
         {/* Skills Section */}
         <section 
-          ref={skillsRef}
           style={{
-            opacity: skillsOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-            marginBottom: "60px" // Extra space after the skills section
+            marginBottom: "60px" // Keep extra space after the skills section
           }}
         >
           <div className="center-container">

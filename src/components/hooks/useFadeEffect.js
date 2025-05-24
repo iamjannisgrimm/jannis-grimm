@@ -1,54 +1,64 @@
 import { useState, useEffect, useRef } from 'react';
 
 /**
- * Custom hook for creating edge-fade effects on elements
+ * Custom hook that handles fade effects for elements as they approach screen edges
  * @param {Object} options - Configuration options
- * @param {number} options.edgeDistance - Distance from edge in pixels to start fading (default: 100px)
- * @returns {[React.RefObject, number]} - [ref to attach to element, current opacity]
+ * @param {number} options.topEdgeDistance - Distance from top edge to start fading (in px)
+ * @param {number} options.bottomEdgeDistance - Distance from bottom edge to start fading (in px)
+ * @param {boolean} options.fadeTop - Whether to fade when element approaches top edge
+ * @param {boolean} options.fadeBottom - Whether to fade when element approaches bottom edge
+ * @returns {[React.RefObject, number]} - Ref to attach to element and current opacity value
  */
-export function useFadeEffect(options = {}) {
-  const {
-    edgeDistance = 100  // Default 100px from edge
-  } = options;
-  
-  const elementRef = useRef(null);
+export function useFadeEffect({
+  topEdgeDistance = 100,
+  bottomEdgeDistance = 200,
+  fadeTop = true,
+  fadeBottom = true
+} = {}) {
+  const ref = useRef(null);
   const [opacity, setOpacity] = useState(1);
-  
+
   useEffect(() => {
-    // Function to calculate opacity based on element position
+    const element = ref.current;
+    if (!element) return;
+
     const calculateOpacity = () => {
-      const element = elementRef.current;
-      if (!element) return;
-      
       const rect = element.getBoundingClientRect();
-      const elementTop = rect.top;
-      const elementHeight = rect.height;
+      const windowHeight = window.innerHeight;
       
-      // Top edge fade logic - start fading when within edgeDistance px of top edge
-      if (elementTop < edgeDistance) {
-        // Calculate fade progress - we want to be fully faded BEFORE bottom reaches edge
-        // So we use 75% of the element height as our fade distance
-        const fadeDistance = Math.min(elementHeight * 0.75, edgeDistance);
-        const scrollProgress = (edgeDistance - elementTop) / fadeDistance;
-        setOpacity(Math.max(0, 1 - Math.min(1, scrollProgress)));
+      // Check if element is near top edge
+      let topOpacity = 1;
+      if (fadeTop && rect.top < topEdgeDistance) {
+        const topFadeProgress = (topEdgeDistance - rect.top) / topEdgeDistance;
+        // Apply a smoother fade curve using power function
+        topOpacity = Math.max(0, 1 - Math.pow(topFadeProgress, 1.5));
       }
-      else {
-        // Element is fully visible or below the fade threshold
-        setOpacity(1);
+      
+      // Check if element is near bottom edge
+      let bottomOpacity = 1;
+      if (fadeBottom && rect.bottom > windowHeight - bottomEdgeDistance) {
+        const bottomFadeProgress = (rect.bottom - (windowHeight - bottomEdgeDistance)) / bottomEdgeDistance;
+        // Apply a more pronounced fade curve for bottom edge
+        bottomOpacity = Math.max(0, 1 - Math.pow(bottomFadeProgress, 1.2));
       }
+      
+      // Use the lower of the two opacities (more faded)
+      setOpacity(Math.min(topOpacity, bottomOpacity));
     };
-    
-    // Add scroll event listener
+
     window.addEventListener('scroll', calculateOpacity, { passive: true });
-    
-    // Initial calculation
+    window.addEventListener('resize', calculateOpacity, { passive: true });
+
+    // Calculate initial opacity
     calculateOpacity();
-    
-    // Cleanup
-    return () => window.removeEventListener('scroll', calculateOpacity);
-  }, [edgeDistance]);
-  
-  return [elementRef, opacity];
+
+    return () => {
+      window.removeEventListener('scroll', calculateOpacity);
+      window.removeEventListener('resize', calculateOpacity);
+    };
+  }, [topEdgeDistance, bottomEdgeDistance, fadeTop, fadeBottom]);
+
+  return [ref, opacity];
 }
 
 export default useFadeEffect; 
