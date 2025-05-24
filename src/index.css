@@ -1280,10 +1280,6 @@ html {
   z-index: 5;
 }
 
-.github-desktop-contributions:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
 .github-desktop-contributions .content-container {
   width: 100%;
   max-width: 900px;
@@ -1316,7 +1312,7 @@ html {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 25px; /* Reduced from 40px to 25px for closer spacing */
   margin: 40px auto;
   padding: 0;
   margin-bottom: 80px; /* Keep existing whitespace below the entire skills section */
@@ -1327,12 +1323,12 @@ html {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px; /* Add space between each category */
+  margin-bottom: 10px; /* Reduced from 20px to 10px */
 }
 
 /* Last skill category needs more bottom margin */
 .skill-category:last-child {
-  margin-bottom: 60px; /* Increased from 40px to 60px for more whitespace */
+  margin-bottom: 60px; /* Keep the extra space for the last category */
 }
 
 .skill-category-title {

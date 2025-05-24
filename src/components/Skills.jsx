@@ -16,7 +16,6 @@ const SkillCategory = ({ category, index }) => {
   });
   
   const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
   const animationRef = useRef(null);
 
   // Animation trigger based on when component enters viewport
@@ -56,12 +55,6 @@ const SkillCategory = ({ category, index }) => {
       const scrollSpeed = 0.08; // Increased scrolling speed (was 0.04)
       
       const step = (timestamp) => {
-        if (isHovering) {
-          startTime = timestamp;
-          animationRef.current = requestAnimationFrame(step);
-          return;
-        }
-        
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
         
@@ -91,7 +84,7 @@ const SkillCategory = ({ category, index }) => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isVisible, isHovering]);
+  }, [isVisible]);
 
   // Create two identical sets of skills for the seamless loop
   const skills = category.items;
@@ -131,8 +124,6 @@ const SkillCategory = ({ category, index }) => {
       <div 
         ref={containerRef}
         className="skills-container"
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
       >
         <div className="skills-scroll-container">
           <div 
