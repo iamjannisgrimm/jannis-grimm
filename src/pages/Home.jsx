@@ -9,21 +9,39 @@ import Achievements from '../components/Achievements';
 import Quotes from '../components/Quotes';
 import Skills from '../components/Skills';
 import Chevron from "../components/Chevron";
+import ScrollToTop from "../components/ScrollToTop";
 import { useInView } from "../components/hooks/useInView";
 import { useFadeEffect } from "../components/hooks/useFadeEffect";
+import { useMobileInView } from "../components/hooks/useMobileInView";
+import { useMobileFadeEffect } from "../components/hooks/useMobileFadeEffect";
 import skills from "../data/skills";
 
 export function Home() {
   const [chatFocus, setChatFocus] = useState(false);
   const [showChat, setShowChat] = useState(true);
+  const [chatDirection, setChatDirection] = useState('active'); // 'active' or 'inactive'
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 600 : false
   ); 
   const [showContributions, setShowContributions] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  // For Achievements fade-in (keep using original useInView for this specific transition)
-  const [achievementsRef, achievementsInView] = useInView({}, 1200);
-  const [contribRef, contribInView] = useInView({}, 1200);
+  // Use the mobile-specific fade effects for the mobile view
+  const [mobileAchievementsRef, mobileAchievementsOpacity] = useMobileFadeEffect({
+    topFadeDistance: 180,
+    bottomFadeDistance: 220,
+    startVisibleThreshold: 0.1
+  });
+  
+  const [mobileContribRef, mobileContribOpacity] = useMobileFadeEffect({
+    topFadeDistance: 180,
+    bottomFadeDistance: 220,
+    startVisibleThreshold: 0.1
+  });
+  
+  // For achieving the "show once" behavior in desktop view
+  const [achievementsRef, achievementsInView] = useMobileInView(0.15, true);
+  const [contribRef, contribInView] = useMobileInView(0.15, true);
   
   // Individual fade effects for each component with both top and bottom edge detection
   const [profileTitleRef, profileTitleOpacity] = useFadeEffect({ 
@@ -105,10 +123,17 @@ export function Home() {
 
   useEffect(() => {
     function handleScroll() {
-      const isScrolled = window.scrollY > 0;
-      setShowChat(!isScrolled);
+      const scrolled = window.scrollY > 20; // Lower threshold for scroll detection
+      setIsScrolled(scrolled);
+      
+      if (showChat !== !scrolled) {
+        setChatDirection(scrolled ? 'inactive' : 'active');
+        setShowChat(!scrolled);
+      }
+      
+      // For mobile, set the flag but don't tie component visibility directly to it
       if (isMobile) {
-        setShowContributions(isScrolled);
+        setShowContributions(scrolled);
       } else {
         setShowContributions(true);
       }
@@ -117,7 +142,7 @@ export function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobile]);
+  }, [isMobile, showChat]);
 
   useEffect(() => {
     function handleResize() {
@@ -130,9 +155,17 @@ export function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Handle chat visibility and animations
+  const handleChatVisibility = (isVisible) => {
+    setChatDirection(isVisible ? 'active' : 'inactive');
+    setShowChat(isVisible);
+  };
+
   return (
     <div className="home-container">
-      <div className="blurrable-content">
+      <div 
+        className={`blurrable-content ${showChat ? 'chat-active' : 'chat-inactive'}`}
+      >
         <div className={`top-section${chatFocus ? " fade" : ""}`}>
           <div className="center-container">
             <div
@@ -163,9 +196,9 @@ export function Home() {
               paddingTop: "32px",
               display: isMobile ? "flex" : "none",
               justifyContent: "center",
-              transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-              opacity: showContributions ? 0 : 1,
-              pointerEvents: showContributions ? "none" : "auto",
+              transition: "opacity 0.5s cubic-bezier(0.33,1,0.68,1)",
+              opacity: isScrolled ? 0 : 1,
+              pointerEvents: isScrolled ? "none" : "auto",
             }}
           >
             <Chevron />
@@ -174,11 +207,13 @@ export function Home() {
           {/* Achievements: Mobile = fade, Desktop = always visible */}
           {isMobile ? (
             <section
-              ref={achievementsRef}
+              ref={mobileAchievementsRef}
               style={{
-                opacity: achievementsInView && showContributions ? 1 : 0,
-                transition: "opacity 0.7s cubic-bezier(0.33,1,0.68,1)",
-                pointerEvents: achievementsInView && showContributions ? "auto" : "none"
+                opacity: showChat ? 0 : mobileAchievementsOpacity,
+                transition: "opacity 0.3s ease-out",
+                pointerEvents: (showChat || mobileAchievementsOpacity <= 0.1) ? "none" : "auto",
+                marginTop: "30px",
+                visibility: showChat ? "hidden" : "visible"
               }}
             >
               <h2></h2>
@@ -193,12 +228,14 @@ export function Home() {
 
           {isMobile ? (
             <div
-              ref={contribRef}
+              ref={mobileContribRef}
               className="center-container contributions-container"
               style={{
-                opacity: contribInView && showContributions ? 1 : 0,
-                transition: "opacity 0.7s cubic-bezier(0.33,1,0.68,1)",
-                pointerEvents: contribInView && showContributions ? "auto" : "none"
+                opacity: showChat ? 0 : mobileContribOpacity,
+                transition: "opacity 0.3s ease-out",
+                pointerEvents: (showChat || mobileContribOpacity <= 0.1) ? "none" : "auto",
+                marginTop: "20px",
+                visibility: showChat ? "hidden" : "visible"
               }}
             >
               <div className="content-container">
@@ -286,6 +323,7 @@ export function Home() {
           />
         </div>
       </div>
+      <ScrollToTop />
     </div>
   );
 }

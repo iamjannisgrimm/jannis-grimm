@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { FaRobot, FaLightbulb, FaQuestionCircle, FaComments } from "react-icons/fa";
 import conversationPrompts from "../../data/prompts";
 
@@ -8,11 +8,6 @@ export default function ConversationStarters({
   onSelectPrompt,
   mobile = false
 }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    setTimeout(() => setVisible(true), 100);
-  }, []);
-
   // ─── MOBILE LAYOUT ───────────────────────────────────────────────
   if (mobile) {
     return (
@@ -44,12 +39,9 @@ export default function ConversationStarters({
               textAlign: "left",
               fontSize: "14px",
               lineHeight: "1.2",
-              display: visible ? "-webkit-box" : "none",
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              opacity: visible ? 1 : 0,
-              transition: `opacity 0.4s ease ${idx * 0.05}s`,
+              overflow: "hidden"
             }}
           >
             {prompt}
@@ -58,9 +50,10 @@ export default function ConversationStarters({
       </div>
     );
   }
-  // ─── DESKTOP LAYOUT (unchanged) ──────────────────────────────────
+  
+  // ─── DESKTOP LAYOUT ──────────────────────────────────
   return (
-    <div onClick={(e) => e.stopPropagation()} className="starters-wrapper">
+    <>
       {conversationPrompts.slice(0, 4).map((prompt, index) => {
         const Icon = iconMap[index % iconMap.length];
         return (
@@ -88,24 +81,21 @@ export default function ConversationStarters({
               fontWeight: "500",
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-              transition: "all 0.3s ease-in-out",
+              transition: "all 0.2s ease",
               minWidth: "310px",
-              height: "140px",
-              opacity: visible ? 1 : 0,
-              transform: visible ? "scale(1)" : "scale(0.85)",
-              transition: `opacity 0.5s ease-in-out ${index * 100}ms, transform 0.5s ease-in-out ${
-                index * 100
-              }ms`,
+              height: "140px"
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = "#f5f5f5";
               e.currentTarget.style.boxShadow =
                 "0 8px 16px rgba(0,0,0,0.15)";
+              e.currentTarget.style.transform = "translateY(-2px)";
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = "#ffffff";
               e.currentTarget.style.boxShadow =
                 "0 6px 12px rgba(0,0,0,0.1)";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
             <Icon size={36} style={{ marginBottom: "12px", color: "#2563eb" }} />
@@ -113,6 +103,6 @@ export default function ConversationStarters({
           </button>
         );
       })}
-    </div>
+    </>
   );
 }

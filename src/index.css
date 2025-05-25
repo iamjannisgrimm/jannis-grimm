@@ -430,6 +430,74 @@ h1 {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Coordinated animations for chatbot and background content */
+@keyframes backgroundMoveUp {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes backgroundMoveDown {
+  0% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes chatbotSlideIn {
+  0% { 
+    opacity: 0; 
+    transform: translateX(-50%) translateY(60px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+  }
+  85% {
+    transform: translateX(-50%) translateY(2px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes chatbotSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(60px);
+  }
+}
+
+/* Applies to the main content when chatbot is visible */
+.blurrable-content {
+  will-change: transform;
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  animation-fill-mode: forwards;
+}
+
+.blurrable-content.chat-active {
+  animation-name: backgroundMoveUp;
+}
+
+.blurrable-content.chat-inactive {
+  animation-name: backgroundMoveDown;
+}
+
 /* Top‐section (header + GitHub) slides up & fades out when .fade is added */
 /* ─── Smooth Fade/Slide Animations ─────────────────────────────────────── */
 
@@ -460,17 +528,28 @@ h1 {
   position: fixed;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%) translateY(0);
   width: 100%;
   max-width: 1200px;
   pointer-events: all;
   z-index: 1000;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  will-change: transform, opacity, visibility;
+  visibility: visible;
+  transition: visibility 0s linear;
 }
+
+.chatbot-fixed-wrapper:not(.hidden) {
+  animation: chatbotSlideIn 0.65s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
 .chatbot-fixed-wrapper.hidden {
-  transform: translateX(-50%) translateY(100%);
+  animation: chatbotSlideOut 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  transform: translateX(-50%) translateY(60px);
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 0.6s; /* Delay hiding until animation completes */
 }
 
 .chatbot-fixed-container {
@@ -516,6 +595,9 @@ h1 {
   margin: 0 auto;           /* center it */
   position: relative;
   transition: width 0.3s ease-in-out;
+  animation: chatInputAppear 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.2s; /* Start after chatbot wrapper appears */
+  animation-fill-mode: backwards; /* Hide before animation starts */
 }
 
 /* If you want extra breathing room around the form, adjust the container: */
@@ -534,6 +616,10 @@ h1 {
   outline: none;
   font-family: 'SF Pro Display', system-ui, sans-serif;
   transition: all 0.3s ease-in-out;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  animation: fieldShadowAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  animation-delay: 0.3s; /* Start after input form appears */
+  animation-fill-mode: backwards; /* Hide before animation starts */
 }
 
 .chat-input-submit {
@@ -1090,52 +1176,111 @@ footer hr {
 
 /* Apply animations to the starters container */
 .chatbot-container .starters-container {
-  animation-duration: 0.5s;
-  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); /* easeOutCubic for smooth deceleration */
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* Same timing as chatbot */
   animation-fill-mode: forwards;
+  transform-origin: center bottom;
 }
 
 .chatbot-container .starters-container.entering {
-  animation-name: slideInFromBottom;
+  animation-name: startersAppear;
 }
 
-.chatbot-container .starters-container.exiting {
-  animation-name: slideOutToBottom;
+@keyframes startersAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Title animation */
 .desktop-starters-title {
-  animation-duration: 0.6s; /* slightly longer than container */
-  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-  animation-fill-mode: forwards;
-  transform-origin: center bottom; /* anchor point for the animation */
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: backwards; /* Hide before animation starts */
+  transform-origin: center bottom;
+  opacity: 0;
 }
 
 .entering .desktop-starters-title {
-  animation-name: slideInFromBottom;
-  animation-delay: 0.1s; /* small delay after container starts animating */
+  animation-name: titleAppear;
+  animation-delay: 0.15s; /* Slight delay after container */
+  opacity: 1;
 }
 
-.exiting .desktop-starters-title {
-  animation-name: slideOutToBottom;
-  animation-delay: 0s; /* no delay, should start before container */
+@keyframes titleAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-7px) scale(1.02);
+  }
+  80% {
+    transform: translateY(3px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Individual conversation starter buttons */
-.chatbot-container .starters-wrapper button {
-  animation-duration: 0.5s;
-  animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-  animation-fill-mode: forwards;
+.starters-wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.starters-wrapper button {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
+  animation-fill-mode: backwards; /* Hide before animation starts */
+  opacity: 0;
+  transform: translateY(20px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .entering .starters-wrapper button {
-  animation-name: slideInFromBottom;
-  /* Staggered delay based on button index - applied in JavaScript */
+  animation-name: buttonAppear;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.exiting .starters-wrapper button {
-  animation-name: slideOutToBottom;
-  /* Staggered delay based on button index - applied in JavaScript */
+/* Create staggered animation for buttons */
+.entering .starters-wrapper button:nth-child(1) { animation-delay: 0.3s; }
+.entering .starters-wrapper button:nth-child(2) { animation-delay: 0.35s; }
+.entering .starters-wrapper button:nth-child(3) { animation-delay: 0.4s; }
+.entering .starters-wrapper button:nth-child(4) { animation-delay: 0.45s; }
+.entering .starters-wrapper button:nth-child(5) { animation-delay: 0.5s; }
+.entering .starters-wrapper button:nth-child(6) { animation-delay: 0.55s; }
+.entering .starters-wrapper button:nth-child(7) { animation-delay: 0.6s; }
+.entering .starters-wrapper button:nth-child(8) { animation-delay: 0.65s; }
+
+@keyframes buttonAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .chat-view-fixed .starters-container {
@@ -1475,5 +1620,30 @@ html {
   .skills-container::before,
   .skills-container::after {
     width: 40px;
+  }
+}
+
+/* ─── Animation for chat input appearing with bounce ─────────────────────── */
+@keyframes chatInputAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fieldShadowAppear {
+  0% {
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   }
 }

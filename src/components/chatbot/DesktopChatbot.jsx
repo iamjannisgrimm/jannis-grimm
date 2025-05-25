@@ -9,7 +9,20 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [startersVisible, setStartersVisible] = useState(false);
   const messagesRef = useRef(null);
+
+  // Animate starters in after chatbot appears
+  useEffect(() => {
+    // Delay showing starters to sync with chatbot appearance animation
+    const timer = setTimeout(() => {
+      if (isFocused && messages.length === 0) {
+        setStartersVisible(true);
+      }
+    }, 300); // Delay to sync with chatbot slide-in
+    
+    return () => clearTimeout(timer);
+  }, [isFocused, messages.length]);
 
   // scroll to bottom on new messages
   useEffect(() => {
@@ -22,14 +35,17 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
     setIsFocused(true);
     onFocus?.();
   };
+  
   const handleInputBlur = () => {
     setIsFocused(false);
+    setStartersVisible(false);
     onBlur?.();
   };
 
   const handleSendMessage = async (text) => {
     setIsLoading(true);
     setIsFocused(false);
+    setStartersVisible(false);
     setMessages((prev) => [...prev, { sender: "user", text }]);
     try {
       const reply = await getChatbotResponse(`${userContext}\nUser: ${text}`);
@@ -47,21 +63,23 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
     <div className="chatbot-container" style={{ position: "relative" }}>
       {isFocused && messages.length === 0 ? (
         <div
-          className="starters-container"
+          className={`starters-container ${startersVisible ? "entering" : ""}`}
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundColor: "#f3f4f6",      // light gray so white buttons pop
+            backgroundColor: "#f3f4f6",
             width: "100%",
             padding: "2rem",
             boxSizing: "border-box",
             zIndex: 1,
+            opacity: startersVisible ? 1 : 0,
+            transition: "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
           <h2
             style={{
-              margin: "0 0 3rem",     // ↑ increased bottom margin to 3rem
+              margin: "0 0 3rem",
               fontSize: "4px",
               color: "#111827",
               fontWeight: 700,
@@ -72,7 +90,9 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
             Find out more about Jannis...
             </h2>
           </h2>
-          <ConversationStarters onSelectPrompt={handleSendMessage} />
+          <div className="starters-wrapper">
+            <ConversationStarters onSelectPrompt={handleSendMessage} />
+          </div>
         </div>
       ) : (
         <div

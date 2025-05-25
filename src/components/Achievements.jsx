@@ -6,7 +6,11 @@ export default function Achievements() {
     typeof window !== 'undefined' ? window.innerWidth <= 600 : false
   )
   const wrapperRef = useRef(null)
+  const containerRef = useRef(null)
   const [scrollWidth, setScrollWidth] = useState(0)
+  const animationStartTimeRef = useRef(null)
+  const currentTransformRef = useRef(0)
+  const rafRef = useRef(null)
 
   // Track mobile/desktop
   useEffect(() => {
@@ -37,35 +41,55 @@ export default function Achievements() {
     return () => window.removeEventListener('resize', measureWidth)
   }, [isMobile, achievements.length])
 
-  // Set up the keyframes animation using measured scrollWidth
+  // Custom animation implementation that won't reset when component visibility changes
   useEffect(() => {
     if (!isMobile || !scrollWidth) return
     const wrapper = wrapperRef.current
     if (!wrapper) return
 
-    // Inject or update keyframes for exact seamless loop
-    let tag = document.getElementById('ach-scroll-keyframes')
-    if (!tag) {
-      tag = document.createElement('style')
-      tag.id = 'ach-scroll-keyframes'
-      document.head.appendChild(tag)
-    }
-    tag.textContent = `
-      @keyframes achScroll {
-        from { transform: translateX(0); }
-        to   { transform: translateX(-${scrollWidth}px); }
-      }
-    `
-
-    wrapper.style.display = 'flex'
-    wrapper.style.gap = '0px'
-    wrapper.style.animation = `achScroll 6s linear infinite`
-    wrapper.style.willChange = 'transform'
-
+    // Manual animation to avoid CSS animation resets
+    const totalDuration = 12000; // Increased from 12s to 20s for smoother animation with narrower items
+    const startTime = performance.now();
+    animationStartTimeRef.current = startTime;
+    
+    const animate = (timestamp) => {
+      if (!wrapper) return;
+      
+      // Calculate elapsed time accounting for animation resumption
+      const elapsed = timestamp - animationStartTimeRef.current;
+      
+      // Calculate the position within the animation cycle
+      const position = elapsed % totalDuration;
+      
+      // Convert position to scroll percentage
+      const scrollPercentage = position / totalDuration;
+      
+      // Calculate the transform value for smooth scrolling
+      const transformX = -scrollWidth * scrollPercentage;
+      currentTransformRef.current = transformX;
+      
+      // Apply the transform
+      wrapper.style.transform = `translateX(${transformX}px)`;
+      
+      // Continue animation
+      rafRef.current = requestAnimationFrame(animate);
+    };
+    
+    // Start the animation
+    rafRef.current = requestAnimationFrame(animate);
+    
+    // Clean up animation on unmount
     return () => {
-      wrapper.style.animation = ''
-    }
-  }, [isMobile, scrollWidth])
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [isMobile, scrollWidth]);
+
+  // Fixed width for all achievement items
+  const itemWidth = 100; // Narrower width as requested
+  const mobileItemGap = 40; // Gap for mobile view
+  const desktopItemGap = 80; // Increased gap for desktop view
 
   // Each tile
   const itemNodes = achievements.map(({ title, subtitle }, idx) => (
@@ -73,7 +97,8 @@ export default function Achievements() {
       key={idx}
       style={{
         flex: '0 0 auto',
-        minWidth: '180px',
+        width: `${itemWidth}px`,
+        minWidth: `${itemWidth}px`,
         padding: isMobile ? '0.1rem' : '0rem',
         textAlign: 'center',
         display: 'flex',
@@ -87,7 +112,7 @@ export default function Achievements() {
         fontSize: '1.2rem',
         fontWeight: 800,
         color: '#111827',
-        width: "100px",
+        width: "100%", // Use full width of parent
         display: "block",
         textAlign: "center",
       }}>
@@ -99,8 +124,12 @@ export default function Achievements() {
         color: '#555',
         opacity: 0.8,
         lineHeight: 1.3,
-        width: "100px",
+        width: "100%", // Use full width of parent
         textAlign: 'center',
+        whiteSpace: 'normal', // Allow text wrapping
+        wordWrap: 'break-word', // Break long words if needed
+        overflow: 'hidden', // Hide overflow
+        height: 'auto', // Allow height to adjust to content
       }}>
         {subtitle}
       </p>
@@ -111,6 +140,7 @@ export default function Achievements() {
   if (isMobile) {
     return (
       <div
+        ref={containerRef}
         style={{
           margin: "0 auto",
           fontSize: "0.875rem",
@@ -119,15 +149,56 @@ export default function Achievements() {
           lineHeight: 1.3,
           marginTop: '0px',
           marginBottom: '30px',
-          width: "100px",
+          width: "100%",
+          maxWidth: "100%",
+          padding: "0 10px",
           display: "block",
           textAlign: "center",
+          overflow: "hidden",
+          position: "relative", // For absolute positioning of fade effects
         }}
       >
-        <div ref={wrapperRef} style={{ width: '100%' }}>
+        {/* Left fade effect */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: "60px",
+            background: "linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))",
+            zIndex: 2,
+            pointerEvents: "none", // Allow clicking through the fade
+          }}
+        />
+        
+        <div 
+          ref={wrapperRef} 
+          style={{ 
+            width: '100%', 
+            display: 'flex',
+            gap: `${mobileItemGap}px`, // Use the mobile gap variable
+            willChange: 'transform',
+            padding: '0 40px', // Increased padding for edge fade with narrower items
+          }}
+        >
           {itemNodes}
           {itemNodes}
         </div>
+        
+        {/* Right fade effect */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: "60px",
+            background: "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))",
+            zIndex: 2,
+            pointerEvents: "none", // Allow clicking through the fade
+          }}
+        />
       </div>
     )
   }
@@ -148,7 +219,7 @@ export default function Achievements() {
       <div
         style={{
           display: 'flex',
-          gap: '0px',
+          gap: `${desktopItemGap}px`, // Use the increased desktop gap variable
           flexWrap: 'wrap',
           justifyContent: 'center',
           alignItems: 'center',

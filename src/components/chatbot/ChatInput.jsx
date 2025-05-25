@@ -11,10 +11,7 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="chat-input-form" style={{
-      transform: "scale(0.9)",
-      transformOrigin: "center",
-    }}>
+    <form onSubmit={handleSubmit} className="chat-input-form">
       <input
         type="text"
         value={message}
@@ -60,7 +57,6 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
             strokeLinejoin="round"
           />
         </svg>
-
         </button>
     </form>
   );
