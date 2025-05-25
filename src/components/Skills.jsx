@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useFadeEffect } from './hooks/useFadeEffect';
+import { useIsVisible } from './hooks/useIsVisible';
 
 /**
  * SkillCategory component that displays a single category of skills
  * with animated bars and true infinite automatic scrolling
  */
-const SkillCategory = ({ category, index }) => {
+const SkillCategory = ({ category, index, isVisible, stageMode }) => {
   const containerRef = useRef(null);
   const scrollContentRef = useRef(null);
   const [categoryRef, categoryOpacity] = useFadeEffect({
@@ -15,31 +16,15 @@ const SkillCategory = ({ category, index }) => {
     fadeBottom: true
   });
   
-  const [isVisible, setIsVisible] = useState(false);
   const animationRef = useRef(null);
 
   // Animation trigger based on when component enters viewport
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect(); // Only trigger animation once
-        }
-      },
-      { threshold: 0.2 } // Trigger when 20% of the component is visible
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.disconnect();
-      }
-    };
-  }, []);
+    if (!containerRef.current) return;
+    
+    // Trigger animations when the isVisible prop is true
+    // No need for additional IntersectionObserver here
+  }, [isVisible]);
 
   // True infinite scroll implementation
   useEffect(() => {
@@ -117,7 +102,9 @@ const SkillCategory = ({ category, index }) => {
       className="skill-category"
       style={{
         opacity: categoryOpacity,
-        transition: "opacity 0.3s cubic-bezier(0.33,1,0.68,1)"
+        transition: "opacity 0.3s cubic-bezier(0.33,1,0.68,1)",
+        margin: stageMode ? "10px auto" : "inherit",
+        marginBottom: stageMode ? "20px" : "inherit"
       }}
     >
       <h3 className="skill-category-title">{category.title}</h3>
@@ -158,19 +145,30 @@ const SkillCategory = ({ category, index }) => {
 /**
  * Skills component that displays multiple categories of skills
  */
-const Skills = ({ skills }) => {
-  // Remove the overall skills fade effect and just let each category handle its own fade
+export default function Skills({ skills, stageMode = false }) {
+  // Look for the isVisible ref to control whether animation runs
+  const containerRef = useRef(null);
+  const isVisible = useIsVisible(containerRef);
+
   return (
-    <div className="skills-wrapper">
+    <div 
+      className="skills-wrapper" 
+      ref={containerRef}
+      style={{
+        margin: stageMode ? "0 auto" : "40px auto",
+        marginBottom: stageMode ? 0 : "80px",
+        gap: stageMode ? "15px" : "15px"
+      }}
+    >
       {skills.map((category, index) => (
         <SkillCategory 
-          key={category.title} 
+          key={category.name || index} 
           category={category} 
           index={index}
+          isVisible={isVisible}
+          stageMode={stageMode}
         />
       ))}
     </div>
   );
-};
-
-export default Skills; 
+} 

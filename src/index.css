@@ -219,6 +219,7 @@ h1 {
 .timeline-container {
   width: 100%;
   margin-top: 2rem;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 .github-contributions > div:first-child {
@@ -1541,4 +1542,206 @@ footer hr {
   .skills-container::after {
     width: 40px;
   }
+}
+
+/* Staged Scroll Styles */
+.stage-section {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.stage-content {
+  width: 100%;
+  max-width: 700px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+/* Scroll indicators */
+.scroll-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.scroll-indicator.up {
+  top: 20px;
+}
+
+.scroll-indicator.down {
+  bottom: 20px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.7;
+  }
+}
+
+/* Stage transitions */
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles for special sections within stages */
+.stage-profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.stage-profile-header .profile-image {
+  max-width: 280px;
+  width: 60%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+}
+
+.stage-profile-header .profile-title {
+  margin: 30px 0 0 0;
+  color: #000000;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+  letter-spacing: -1px;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Mobile optimizations */
+@media (max-width: 600px) {
+  .stage-content {
+    padding: 0 15px;
+  }
+  
+  .stage-profile-header .profile-image {
+    max-width: 220px;
+  }
+  
+  .stage-profile-header .profile-title {
+    font-size: 1.8rem;
+    margin-top: 20px;
+  }
+  
+  .scroll-indicator {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .scroll-indicator.up {
+    top: 15px;
+  }
+  
+  .scroll-indicator.down {
+    bottom: 15px;
+  }
+}
+
+/* Timeline transition animations */
+.timeline-container {
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+@keyframes slideUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-container.animate-in {
+  animation: slideUpIn 0.8s ease-out forwards;
+}
+
+/* Stage transition animations */
+@keyframes slideUpOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-30%);
+    opacity: 0;
+  }
+}
+
+.stage-exit {
+  animation: slideUpOut 0.6s ease-in-out forwards;
+}
+
+/* Natural scroll transition effect */
+.smooth-scroll-transition {
+  transition: all 0.5s ease-out;
 }

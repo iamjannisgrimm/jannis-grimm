@@ -91,7 +91,7 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
             </h2>
           </h2>
           <div className="starters-wrapper">
-            <ConversationStarters onSelectPrompt={handleSendMessage} />
+          <ConversationStarters onSelectPrompt={handleSendMessage} />
           </div>
         </div>
       ) : (
