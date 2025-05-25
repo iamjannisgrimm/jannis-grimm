@@ -10,6 +10,7 @@ export default function MobileChatbot({ onFocus, onBlur }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [chatViewVisible, setChatViewVisible] = useState(false);
   const chatViewRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const isMobile = useRef(window.innerWidth <= 600);
@@ -53,6 +54,25 @@ export default function MobileChatbot({ onFocus, onBlur }) {
     }
   }, [messages]);
 
+  // Show chat view when focused or has messages
+  useEffect(() => {
+    // This ensures consistent behavior between first tap and subsequent taps
+    setChatViewVisible(isFocused || messages.length > 0);
+    
+    // When chat view becomes visible and there are no messages,
+    // ensure we focus the input to bring up the keyboard
+    if ((isFocused || messages.length > 0) && !chatViewVisible) {
+      // Use a slight delay to ensure DOM is ready
+      setTimeout(() => {
+        // Find the input field and focus it
+        const inputField = document.querySelector('.chatbot-container .chat-input-field');
+        if (inputField) {
+          inputField.focus();
+        }
+      }, 50);
+    }
+  }, [isFocused, messages.length, chatViewVisible]);
+
   const handleInputFocus = () => {
     setIsFocused(true);
     onFocus?.();
@@ -64,6 +84,13 @@ export default function MobileChatbot({ onFocus, onBlur }) {
   const handleInputBlur = () => {
     setIsFocused(false);
     onBlur?.();
+    // Don't hide the chat view on blur if there are messages
+    if (messages.length === 0) {
+      // Add a small delay to hide the chat view to avoid flickering
+      setTimeout(() => {
+        setChatViewVisible(false);
+      }, 100);
+    }
   };
 
   const handleSendMessage = async (text) => {
@@ -83,12 +110,9 @@ export default function MobileChatbot({ onFocus, onBlur }) {
 
   const handlePromptSelect = (prompt) => handleSendMessage(prompt);
 
-  // Show the fixed chat view whenever focused or we already have messages
-  const showChatView = isFocused || messages.length > 0;
-
   return (
     <div className={`chatbot-container ${isFocused ? "focused" : ""}`}>
-      {showChatView && (
+      {chatViewVisible && (
         <div
           ref={chatViewRef}
           className="chat-view-fixed"
@@ -120,7 +144,7 @@ export default function MobileChatbot({ onFocus, onBlur }) {
                 /* pad a bit all around so title & tile are fully visible */
                 padding: "1rem",
                 paddingBottom: "2rem", // extra room above the input
-                paddingLeft: "1.25rem", // ensure first tile isn’t flush to edge
+                paddingLeft: "1.25rem", // ensure first tile isn't flush to edge
                 paddingRight: "1.25rem",
                 boxSizing: "border-box",
               }}

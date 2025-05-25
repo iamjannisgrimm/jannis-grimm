@@ -126,7 +126,8 @@ export function Home() {
       const scrolled = window.scrollY > 20; // Lower threshold for scroll detection
       setIsScrolled(scrolled);
       
-      if (showChat !== !scrolled) {
+      // Don't change chat visibility while it's focused
+      if (!chatFocus && showChat !== !scrolled) {
         setChatDirection(scrolled ? 'inactive' : 'active');
         setShowChat(!scrolled);
       }
@@ -142,7 +143,7 @@ export function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobile, showChat]);
+  }, [isMobile, showChat, chatFocus]);
 
   useEffect(() => {
     function handleResize() {
@@ -155,10 +156,25 @@ export function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Handle chat visibility and animations
+  // Handle chat visibility and animations with improved mobile support
   const handleChatVisibility = (isVisible) => {
     setChatDirection(isVisible ? 'active' : 'inactive');
     setShowChat(isVisible);
+  };
+  
+  // Enhanced focus/blur handlers for chatbot
+  const handleChatFocus = () => {
+    setChatFocus(true);
+    // On mobile, ensure the chat stays visible when focused
+    if (isMobile) {
+      setShowChat(true);
+    }
+  };
+  
+  const handleChatBlur = () => {
+    setChatFocus(false);
+    // On mobile, don't immediately hide the chat on blur
+    // The visibility will be managed by the scroll handler
   };
 
   return (
@@ -318,8 +334,8 @@ export function Home() {
       <div className={`chatbot-fixed-wrapper${showChat ? "" : " hidden"}`}>
         <div className="chatbot-fixed-container">
           <Chatbot
-            onFocus={() => setChatFocus(true)}
-            onBlur={() => setChatFocus(false)}
+            onFocus={handleChatFocus}
+            onBlur={handleChatBlur}
           />
         </div>
       </div>

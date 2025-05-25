@@ -449,6 +449,7 @@ h1 {
   }
 }
 
+/* Improved chatbot animations for smooth movement */
 @keyframes chatbotSlideIn {
   0% { 
     opacity: 0; 
@@ -471,10 +472,6 @@ h1 {
   0% {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
-  }
-  30% {
-    opacity: 0.8;
-    transform: translateX(-50%) translateY(10px);
   }
   100% {
     opacity: 0;
@@ -532,24 +529,22 @@ h1 {
   max-width: 1200px;
   pointer-events: all;
   z-index: 1000;
-  will-change: transform, opacity, visibility;
-  visibility: visible;
-  transition: visibility 0s linear;
-}
-
-.chatbot-fixed-wrapper:not(.hidden) {
-  animation: chatbotSlideIn 0.65s cubic-bezier(0.33, 1, 0.68, 1) forwards;
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+  visibility: visible;
+  transition: transform 0.3s ease-out, 
+              opacity 0.3s ease-out,
+              visibility 0s linear;
 }
 
 .chatbot-fixed-wrapper.hidden {
-  animation: chatbotSlideOut 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
   transform: translateX(-50%) translateY(60px);
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
-  transition: visibility 0s linear 0.6s; /* Delay hiding until animation completes */
+  transition: transform 0.3s ease-in, 
+              opacity 0.3s ease-in,
+              visibility 0s linear 0.3s;
 }
 
 .chatbot-fixed-container {
@@ -1376,81 +1371,6 @@ footer hr {
   opacity: 0;
   pointer-events: none;
 }
-.chatbot-fixed-wrapper {
-  opacity: 1;
-  transition: opacity 0.4s cubic-bezier(0.33,1,0.68,1), visibility 0.4s cubic-bezier(0.33,1,0.68,1);
-  visibility: visible;
-}
-
-.chatbot-fixed-wrapper.hidden {
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-.chatbot-fixed-wrapper {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.4s cubic-bezier(0.33,1,0.68,1), visibility 0.4s cubic-bezier(0.33,1,0.68,1);
-  pointer-events: auto;
-}
-
-.chatbot-fixed-wrapper.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-html {
-  font-size: 90%;    /* 90% of browser default */
-}
-
-.contributions-container,
-.github-desktop-contributions {
-  margin-bottom: 30px !important; /* Reduced from 60px to 30px */
-}
-
-/* GitHub Contributions Section */
-.github-desktop-contributions {
-  display: block;
-  width: 100%;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  padding: 20px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  margin: 20px 0;
-  position: relative;
-  z-index: 5;
-}
-
-.github-desktop-contributions .content-container {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-/* Ensure the GitHub calendar is visible and properly sized */
-.react-activity-calendar {
-  width: 100% !important;
-  max-width: 900px !important;
-  margin: 0 auto !important;
-  overflow: visible !important;
-}
-
-/* Mobile adjustments for GitHub contributions */
-@media (max-width: 600px) {
-  .github-desktop-contributions {
-    padding: 10px;
-    margin: 10px 0;
-  }
-  
-  .react-activity-calendar {
-    max-width: 100% !important;
-    overflow-x: auto !important;
-  }
-}
 
 /* Skills Component Styles - Categorized layout */
 .skills-wrapper {
@@ -1620,30 +1540,5 @@ html {
   .skills-container::before,
   .skills-container::after {
     width: 40px;
-  }
-}
-
-/* ─── Animation for chat input appearing with bounce ─────────────────────── */
-@keyframes chatInputAppear {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes fieldShadowAppear {
-  0% {
-    box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
-  }
-  100% {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   }
 }
