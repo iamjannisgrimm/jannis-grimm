@@ -28,14 +28,14 @@ export function Home() {
 
   // Use the mobile-specific fade effects for the mobile view
   const [mobileAchievementsRef, mobileAchievementsOpacity] = useMobileFadeEffect({
-    topFadeDistance: 180,
-    bottomFadeDistance: 220,
+    topFadeDistance: 20,
+    bottomFadeDistance: 60,
     startVisibleThreshold: 0.1
   });
   
   const [mobileContribRef, mobileContribOpacity] = useMobileFadeEffect({
-    topFadeDistance: 180,
-    bottomFadeDistance: 220,
+    topFadeDistance: 100,
+    bottomFadeDistance: 120,
     startVisibleThreshold: 0.1
   });
   
@@ -94,28 +94,28 @@ export function Home() {
   
   // Enhanced fade effects with both top and bottom edge detection
   const [achievementsSectionRef, achievementsSectionOpacity] = useFadeEffect({
-    topEdgeDistance: 100,
-    bottomEdgeDistance: 200,
+    topEdgeDistance: isMobile ? 80 : 100,
+    bottomEdgeDistance: isMobile ? 100 : 200,
     fadeTop: true,
     fadeBottom: true
   });
 
   const [githubRef, githubOpacity] = useFadeEffect({
-    topEdgeDistance: 100,
-    bottomEdgeDistance: 200,
+    topEdgeDistance: isMobile ? 80 : 100,
+    bottomEdgeDistance: isMobile ? 100 : 200,
     fadeTop: true,
     fadeBottom: true
   });
 
   const [quotesRef, quotesOpacity] = useFadeEffect({
-    topEdgeDistance: 100,
-    bottomEdgeDistance: 200,
+    topEdgeDistance: isMobile ? 80 : 100,
+    bottomEdgeDistance: isMobile ? 100 : 200,
     fadeTop: true,
     fadeBottom: true
   });
 
   const [footerRef, footerOpacity] = useFadeEffect({
-    topEdgeDistance: 100,
+    topEdgeDistance: isMobile ? 80 : 100,
     bottomEdgeDistance: 0, // No bottom fade for footer
     fadeTop: true,
     fadeBottom: false

@@ -9,8 +9,8 @@ import { useState, useEffect, useRef } from 'react';
  * @returns {[React.RefObject, number]} - Ref to attach to element and current opacity value
  */
 export function useMobileFadeEffect({
-  topFadeDistance = 180,
-  bottomFadeDistance = 220,
+  topFadeDistance = 100,
+  bottomFadeDistance = 120,
   startVisibleThreshold = 0.1
 } = {}) {
   const ref = useRef(null);
@@ -41,23 +41,23 @@ export function useMobileFadeEffect({
         return;
       }
       
-      // Calculate top fade
+      // Calculate top fade - only start fading when very close to the top edge
       let topOpacity = 1;
       if (rect.top < topFadeDistance) {
         // More aggressive fade curve for top
         topOpacity = Math.max(0, rect.top / topFadeDistance);
-        // Apply power curve for more pronounced fading at edges
-        topOpacity = Math.pow(topOpacity, 1.2);
+        // Apply steeper power curve for more concentrated fading near the edges
+        topOpacity = Math.pow(topOpacity, 1.5);
       }
       
-      // Calculate bottom fade
+      // Calculate bottom fade - only start fading when very close to the bottom edge
       let bottomOpacity = 1;
       if (rect.bottom > windowHeight - bottomFadeDistance) {
         const distanceFromBottom = windowHeight - rect.bottom;
         // More aggressive fade curve for bottom
         bottomOpacity = Math.max(0, (distanceFromBottom + bottomFadeDistance) / bottomFadeDistance);
-        // Apply power curve for more pronounced fading at edges
-        bottomOpacity = Math.pow(bottomOpacity, 1.2);
+        // Apply steeper power curve for more concentrated fading near the edges
+        bottomOpacity = Math.pow(bottomOpacity, 1.5);
       }
       
       // Use the lower of the two opacities (more faded)
