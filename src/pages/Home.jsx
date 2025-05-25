@@ -177,7 +177,7 @@ export function Home() {
                       transformOrigin: "top center",
                       width: "100%",
                     }
-                  : {}
+                  : { paddingTop: isMobile ? "80px" : "0" } // Add padding only for mobile
               }
             >
               <ProfileHeader
@@ -193,7 +193,7 @@ export function Home() {
 
           <div
             style={{
-              paddingTop: "32px",
+              paddingTop: "5px",
               display: isMobile ? "flex" : "none",
               justifyContent: "center",
               transition: "opacity 0.5s cubic-bezier(0.33,1,0.68,1)",

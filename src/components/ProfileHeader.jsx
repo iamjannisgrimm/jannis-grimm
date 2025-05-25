@@ -26,7 +26,7 @@ const ProfileHeader = ({
       .map((s) => `${s}.`);
 
     return (
-      <div className="profile-header">
+      <div className="profile-header" style={{ paddingTop: "20px" }}>
         <h1
           ref={titleRef}
           className="profile-title"
@@ -34,7 +34,9 @@ const ProfileHeader = ({
             wordSpacing: "1rem", 
             textAlign: "center",
             opacity: titleOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+            fontSize: "2.5rem",
+            fontWeight: 800
           }}
         >
           {lines.map((line, i) => (
