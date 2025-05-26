@@ -24,6 +24,14 @@ export function Home() {
   ); 
   const [showContributions, setShowContributions] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 0
+  );
+
+  // Create refs for both desktop and mobile chatbots to access their handleClose methods
+  const desktopChatbotRef = useRef(null);
+  const mobileChatbotRef = useRef(null);
+  const chatbotRef = useRef(null);
 
   // Use the mobile-specific fade effects for the mobile view
   const [mobileAchievementsRef, mobileAchievementsOpacity] = useMobileFadeEffect({
@@ -155,6 +163,15 @@ export function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    function handleWindowResize() {
+      setWindowWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleWindowResize, { passive: true });
+    handleWindowResize();
+    return () => window.removeEventListener("resize", handleWindowResize);
+  }, []);
+
   // Handle chat visibility and animations with improved mobile support
   const handleChatVisibility = (isVisible) => {
     setChatDirection(isVisible ? 'active' : 'inactive');
@@ -176,6 +193,39 @@ export function Home() {
     // The visibility will be managed by the scroll handler
   };
 
+  // Function to properly clear messages and hide chat
+  const handleChatClose = () => {
+    // First close the chatbot (clear messages)
+    if (chatbotRef.current && chatbotRef.current.handleClose) {
+      chatbotRef.current.handleClose();
+    }
+    
+    // Then hide the chat interface
+    setChatDirection('inactive');
+    setShowChat(false);
+    setChatFocus(false);
+  };
+
+  // Function to force close and clear the chatbot
+  const forceClearChat = () => {
+    // Find the close button and click it
+    const closeButton = document.querySelector('.chat-close-button, .chat-close-button-mobile');
+    if (closeButton) {
+      closeButton.click();
+    }
+    
+    // Make sure the chat is hidden
+    setShowChat(false);
+    setChatFocus(false);
+    setChatDirection('inactive');
+    
+    // Force clear any remaining chat UI
+    const chatWrapper = document.querySelector('.chatbot-fixed-wrapper');
+    if (chatWrapper) {
+      chatWrapper.classList.add('hidden');
+    }
+  };
+
   return (
     <div className="home-container">
       <div 
@@ -184,15 +234,15 @@ export function Home() {
         <div className={`top-section${chatFocus ? " fade" : ""}`}>
           <div className="center-container">
             <div
-              className="content-container"
+              className="content-container responsive-container"
               style={
                 !isMobile
                   ? {
-                      transform: "scale(0.9)",
+                      transform: windowWidth > 1200 ? "scale(0.9)" : windowWidth > 768 ? "scale(0.95)" : "none",
                       transformOrigin: "top center",
                       width: "100%",
                     }
-                  : { paddingTop: isMobile ? "80px" : "0" } // Add padding only for mobile
+                  : { paddingTop: isMobile ? "40px" : "0" } // Reduced padding for mobile
               }
             >
               <ProfileHeader
@@ -336,9 +386,18 @@ export function Home() {
           </div>
         </div>
       </div>
-      <div className={`chatbot-fixed-wrapper${showChat ? "" : " hidden"}`}>
+      <div 
+        className={`chatbot-fixed-wrapper ${showChat ? "" : "hidden"}`}
+        onClick={(e) => {
+          // Only respond to clicks directly on the wrapper (background), not its children
+          if (e.target === e.currentTarget) {
+            forceClearChat();
+          }
+        }}
+      >
         <div className="chatbot-fixed-container">
           <Chatbot
+            ref={chatbotRef}
             onFocus={handleChatFocus}
             onBlur={handleChatBlur}
           />

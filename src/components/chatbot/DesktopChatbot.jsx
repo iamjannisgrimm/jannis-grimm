@@ -1,16 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
 import ConversationStarters from "./ConversationStarters";
 import { getChatbotResponse } from "../../services/openaiservice";
 import { userContext } from "../../data/prompts";
 
-export default function DesktopChatbot({ onFocus, onBlur }) {
+const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [startersVisible, setStartersVisible] = useState(false);
   const messagesRef = useRef(null);
+
+  // Expose the handleClose method to parent components
+  useImperativeHandle(ref, () => ({
+    handleClose: () => handleClose()
+  }));
 
   // Animate starters in after chatbot appears
   useEffect(() => {
@@ -162,4 +167,6 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
       />
     </div>
   );
-}
+});
+
+export default DesktopChatbot;

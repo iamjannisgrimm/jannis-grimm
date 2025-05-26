@@ -11,42 +11,101 @@ export default function ConversationStarters({
   // ─── MOBILE LAYOUT ───────────────────────────────────────────────
   if (mobile) {
     return (
-      <div
+      <div className="mobile-starters-wrapper"
         onClick={(e) => e.stopPropagation()}
         style={{
           display: "flex",
-          overflowX: "auto",
-          gap: "12px",
-          padding: "0 1rem",
+          flexDirection: "column",
+          width: "100%",
+          height: "auto",
+          overflow: "hidden",
           WebkitOverflowScrolling: "touch",
+          paddingBottom: "6px",
+          position: "absolute",
+          bottom: "54px", // Positioned closer to the input bar
+          left: 0,
+          right: 0,
+          zIndex: 100,
+          backgroundColor: "#ffffff"
         }}
       >
-        {conversationPrompts.map((prompt, idx) => (
-          <button
-            key={idx}
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelectPrompt(prompt);
-            }}
-            style={{
-              flex: "0 0 auto",
-              width: "230px",
-              padding: "12px",
-              borderRadius: "10px",
-              border: "1px solid #e5e7eb",
-              background: "#fff",
-              textAlign: "left",
-              fontSize: "14px",
-              lineHeight: "1.2",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden"
-            }}
-          >
-            {prompt}
-          </button>
-        ))}
+        <h3 style={{
+          textAlign: "center",
+          fontSize: "18px",
+          fontWeight: "600",
+          marginBottom: "8px", // Reduced margin
+          marginTop: "8px", // Reduced margin
+          color: "#111827",
+          fontFamily: "SF Pro Display, system-ui, sans-serif"
+        }}>
+          Ask me something...
+        </h3>
+        <div style={{
+          width: "100%",
+          overflowX: "auto",
+          overflowY: "hidden",
+          WebkitOverflowScrolling: "touch",
+          paddingBottom: "2px", // Reduced padding
+          paddingLeft: "10px",
+          paddingRight: "10px"
+        }}>
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "10px",
+            paddingRight: "20px"
+          }}>
+            {conversationPrompts.map((prompt, idx) => (
+              <button
+                key={idx}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelectPrompt(prompt);
+                }}
+                style={{
+                  flex: "0 0 auto",
+                  width: "230px",
+                  minWidth: "230px",
+                  maxWidth: "230px",
+                  padding: "10px 12px",
+                  borderRadius: "10px",
+                  border: "1px solid #e5e7eb",
+                  background: "#ffffff",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  lineHeight: "1.3",
+                  fontWeight: "400",
+                  color: "#333",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+                onTouchStart={(e) => {
+                  e.currentTarget.style.transform = "scale(0.98)";
+                  e.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.03)";
+                }}
+                onTouchEnd={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)";
+                }}
+              >
+                <div style={{ 
+                  marginRight: "10px",
+                  color: "#2563eb", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  justifyContent: "center" 
+                }}>
+                  {React.createElement(iconMap[idx % iconMap.length], { size: 16 })} {/* Further reduced icon size */}
+                </div>
+                <span>{prompt}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -72,7 +131,7 @@ export default function ConversationStarters({
               padding: "20px",
               borderRadius: "14px",
               border: "1px solid #e5e7eb",
-              backgroundColor: "#ffffff",
+              backgroundColor: "#ffffff", // Explicitly white background
               color: "#333",
               cursor: "pointer",
               boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)",

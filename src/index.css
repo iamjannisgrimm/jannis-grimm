@@ -137,24 +137,52 @@ h1 {
   text-align: center;
 }
 
-/* Desktop-specific ProfileHeader adjustments */
+/* Enhanced responsiveness for ProfileHeader with more breakpoints */
 @media (min-width: 601px) {
   .profile-header {
     padding-top: 0; /* Remove top padding on desktop */
-    padding-bottom: 20px; /* Reduce bottom padding on desktop */
+    padding-bottom: 10px; /* Further reduced bottom padding on desktop */
   }
 }
 
-.profile-header .profile-title {
-  margin: 0 0 20px 0;
-  color: #000000;
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 800;
-  font-family: 'SF Pro Display', system-ui, sans-serif;
-  letter-spacing: -1px;
-  max-width: 800px;
-  width: 100%;
+/* Additional spacing adjustments for desktop */
+@media (min-width: 601px) {
+  /* Add more space between image and achievements section */
+  .profile-header + section {
+    margin-top: 25px;
+  }
+  
+  /* Adjust spacing for achievements section */
+  section:has(.achievements-container) {
+    margin-bottom: 20px;
+  }
 }
+
+@media (min-width: 601px) and (max-width: 768px) {
+  .profile-header {
+    padding-bottom: 15px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .profile-header {
+    padding-bottom: 18px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .profile-header {
+    padding-bottom: 20px;
+  }
+}
+
+@media (min-width: 1441px) {
+  .profile-header {
+    padding-bottom: 25px;
+  }
+}
+
+/* Responsive image scaling */
 .profile-header .profile-image {
   max-width: 300px;
   width: 60%;
@@ -162,6 +190,37 @@ h1 {
   border-radius: 12px;
   object-fit: cover;
   display: block;
+}
+
+@media (max-width: 480px) {
+  .profile-header .profile-image {
+    max-width: 250px;
+  }
+}
+
+/* Responsive typography for title */
+.profile-header .profile-title {
+  margin: 0 0 20px 0;
+  color: #000000;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 800;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+  letter-spacing: -1px;
+  max-width: 800px;
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .profile-header .profile-title {
+    margin: 0 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .profile-header .profile-title {
+    margin: 0 0 18px 0;
+  }
 }
 
 /* GitHubContributions component */
@@ -413,8 +472,49 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: center;   /* center its children vertically */
+  transition: opacity 0.3s ease-in-out;
 }
 
+@media (max-width: 480px) {
+  .top-section {
+    min-height: auto;
+    padding-top: 10px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .top-section {
+    min-height: auto;
+    padding-top: 15px;
+  }
+}
+
+/* Enhanced responsiveness for the content container */
+.content-container {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    padding: 0 10px;
+  }
+}
+
+@media (min-width: 769px) {
+  .content-container {
+    padding: 0 20px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .content-container {
+    padding: 0 30px;
+  }
+}
 
 /* (Existing chatbot-fixed-wrapper + chatbot-fixed-container rules remain unchanged) */
 
@@ -548,13 +648,18 @@ h1 {
 }
 
 .chatbot-fixed-wrapper.hidden {
-  transform: translateX(-50%) translateY(60px);
-  opacity: 0;
   pointer-events: none;
+  opacity: 0;
   visibility: hidden;
-  transition: transform 0.3s ease-in, 
-              opacity 0.3s ease-in,
-              visibility 0s linear 0.3s;
+  transition: opacity 0.25s ease, visibility 0.25s;
+}
+
+.chatbot-fixed-wrapper.hidden .chatbot-fixed-container,
+.chatbot-fixed-wrapper.hidden .messages-container,
+.chatbot-fixed-wrapper.hidden .chat-view-fixed {
+  opacity: 0;
+  visibility: hidden;
+  display: none;
 }
 
 .chatbot-fixed-container {
@@ -1041,42 +1146,79 @@ footer hr {
   }
 }
 
-/* Mobile chatbot specific styles */
-.chatbot-container.focused .starters-container {
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 1.5rem;
-  box-sizing: border-box;
-  overflow-y: auto;
-  background-color: #f9fafb;
-}
-
-/* Mobile conversation starters */
+/* Mobile conversation starters styling */
 @media (max-width: 600px) {
-  .starters-container.enter {
-    opacity: 1;
-    transform: translateY(0);
-    animation: fadeIn 0.3s ease-out;
+  /* Main wrapper for mobile starters */
+  .mobile-starters-wrapper {
+    position: absolute;
+    bottom: 54px; /* Positioned closer to the input bar */
+    left: 0;
+    right: 0;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.03);
+    border-top: 1px solid #f0f0f0;
+    background-color: #ffffff;
+    z-index: 100;
   }
   
-  .chatbot-container .starters-wrapper {
-    display: flex;
-    flex-direction: column;
+  /* Title styling */
+  .mobile-starters-wrapper h3 {
+    margin-top: 4px;
+    margin-bottom: 8px !important;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  /* Horizontal scrollable area */
+  .mobile-starters-wrapper > div {
     width: 100%;
-    gap: 16px;
-    padding: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
+    padding-bottom: 2px;
   }
   
+  /* Hide scrollbar in Chrome/Safari */
+  .mobile-starters-wrapper > div::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Row of buttons */
+  .mobile-starters-wrapper > div > div {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding-right: 20px; /* Ensure last item is fully visible */
+    padding-bottom: 2px;
+  }
+  
+  /* Ensure the container is properly positioned */
   .chat-view-fixed .starters-container {
-    padding-bottom: 65px !important; /* Ensure space at bottom for scrolling */
+    padding: 0 !important;
+    position: relative;
+    justify-content: flex-end !important;
+  }
+  
+  /* Remove extra padding that might push content out of view */
+  .chat-view-fixed {
+    padding-bottom: 0 !important;
+  }
+  
+  /* Style for the chat input fixed position */
+  .chat-input-fixed {
     background-color: #ffffff !important;
+    border-top: 1px solid #f5f5f5;
+    z-index: 101; /* Ensure it's above the starters */
   }
 }
 
+/* Fade in animation for starters */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1087,269 +1229,6 @@ footer hr {
     transform: translateY(0);
   }
 }
-
-/* Fix for any inline styles */
-.chat-view-fixed .starters-container {
-  display: flex !important;
-  overflow-y: auto !important;
-}
-
-/* Ensure the whole panel is shown and given a light grey backdrop */
-@media (min-width: 601px) {
-  .chatbot-container .starters-container {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 2rem !important;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 640px;
-    margin: 1rem auto 2rem;
-    box-sizing: border-box;
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-    background-color: #ffffff !important;
-
-  }
-
-  /* Ensure your "Find out more ..." title is visible in dark text */
-  .chatbot-container .starters-container h2 {
-    color: #111827 !important;
-    font-size: 1.5rem !important;
-    margin-bottom: 1rem !important;
-  }
-
-  /* Make each white tile button stand out */
-  .chatbot-container .starters-container .starters-wrapper button {
-    background-color: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-    color: #333 !important;
-  }
-}
-
-.desktop-starters-title {
-  font-size: 104px !important;   /* or whatever pixel value you like */
-  margin-bottom: 3rem;
-  font-weight: 700;
-  color: #111827;
-}
-
-.chatbot-container .starters-container h2 {
-  font-size: 35px !important;
-}
-
-.chatbot-container .starters-container h2 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* in case it still overflows the container */
-}
-
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(200px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideOutDown {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(200px); }
-}
-
-/* Animation keyframes for sliding in from bottom */
-@keyframes slideInFromBottom {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Animation keyframes for sliding out to bottom */
-@keyframes slideOutToBottom {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-}
-
-/* Apply animations to the starters container */
-.chatbot-container .starters-container {
-  animation-duration: 0.7s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); /* Same timing as chatbot */
-  animation-fill-mode: forwards;
-  transform-origin: center bottom;
-}
-
-.chatbot-container .starters-container.entering {
-  animation-name: startersAppear;
-}
-
-@keyframes startersAppear {
-  0% {
-    opacity: 0;
-    transform: translateY(15px) scale(0.98);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(-5px) scale(1.01);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Title animation */
-.desktop-starters-title {
-  animation-duration: 0.8s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-  animation-fill-mode: backwards; /* Hide before animation starts */
-  transform-origin: center bottom;
-  opacity: 0;
-}
-
-.entering .desktop-starters-title {
-  animation-name: titleAppear;
-  animation-delay: 0.15s; /* Slight delay after container */
-  opacity: 1;
-}
-
-@keyframes titleAppear {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(-7px) scale(1.02);
-  }
-  80% {
-    transform: translateY(3px) scale(0.99);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Individual conversation starter buttons */
-.starters-wrapper {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-}
-
-.starters-wrapper button {
-  animation-duration: 0.6s;
-  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy effect */
-  animation-fill-mode: backwards; /* Hide before animation starts */
-  opacity: 0;
-  transform: translateY(20px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.entering .starters-wrapper button {
-  animation-name: buttonAppear;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Create staggered animation for buttons */
-.entering .starters-wrapper button:nth-child(1) { animation-delay: 0.3s; }
-.entering .starters-wrapper button:nth-child(2) { animation-delay: 0.35s; }
-.entering .starters-wrapper button:nth-child(3) { animation-delay: 0.4s; }
-.entering .starters-wrapper button:nth-child(4) { animation-delay: 0.45s; }
-.entering .starters-wrapper button:nth-child(5) { animation-delay: 0.5s; }
-.entering .starters-wrapper button:nth-child(6) { animation-delay: 0.55s; }
-.entering .starters-wrapper button:nth-child(7) { animation-delay: 0.6s; }
-.entering .starters-wrapper button:nth-child(8) { animation-delay: 0.65s; }
-
-@keyframes buttonAppear {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.9);
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(-5px) scale(1.03);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.chat-view-fixed .starters-container {
-  justify-content: flex-end !important;
-}
-.chat-view-fixed .starters-container {
-  justify-content: flex-end;
-  padding-bottom: 0rem !important; /* increase as needed */
-}
-
-@media (max-width: 600px) {
-  /* Container just above the input bar */
-  .mobile-starters-container {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--keyboard-height, 0px) + var(--bar-height, 64px));
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-
-  /* Horizontal scroll row */
-  .mobile-starters-scroll {
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    padding-bottom: 8px;
-  }
-
-  /* Each prompt tile */
-  .mobile-starter-button {
-    flex: 0 0 auto;
-    width: 120px;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 8px;
-    text-align: center;
-    cursor: pointer;
-  }
-
-  .mobile-starter-button:active {
-    background-color: #f0f0f0;
-  }
-
-  /* Two‐line clamp */
-  .mobile-starter-text {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 14px;
-    line-height: 1.2;
-    color: #333;
-  }
-
-  /* Hide desktop‐only wrappers */
-  .starters-wrapper {
-    display: none !important;
-  }
-}
-
-
 
 /* Make sure the container takes space even when hidden to prevent layout shifts */
 @media (max-width: 600px) {
@@ -1858,5 +1737,50 @@ footer hr {
   /* Make sure the GitHub contributions element doesn't get cut off */
   .home-container .github-desktop-contributions .content-container {
     padding-bottom: 80px !important; /* Add padding to prevent cutting off contributions */
+  }
+}
+
+/* Mobile chat container scrolling */
+.messages-container {
+  -webkit-overflow-scrolling: touch !important; /* Enable momentum scrolling on iOS */
+  scrollbar-width: thin; /* Thin scrollbar on Firefox */
+  scroll-behavior: smooth; /* Enable smooth scrolling */
+}
+
+/* Hide scrollbar on webkit browsers but maintain functionality */
+.messages-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+/* Ensure proper spacing for messages */
+.messages-container > div {
+  padding-bottom: 16px; /* Add space at the bottom to ensure last message is visible */
+}
+
+/* Prevent content from being hidden under the input bar */
+@media (max-width: 600px) {
+  .chat-view-fixed {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .messages-container {
+    flex: 1;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 20px !important; /* Ensure enough padding at the bottom */
+  }
+  
+  /* Ensure chat input stays at the bottom */
+  .chat-input-fixed {
+    background-color: #ffffff !important;
+    border-top: 1px solid #f5f5f5;
+    z-index: 101; /* Ensure it's above the starters */
+    padding: 8px 10px !important;
   }
 }

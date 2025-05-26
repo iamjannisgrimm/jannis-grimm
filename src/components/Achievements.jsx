@@ -89,7 +89,7 @@ export default function Achievements() {
   // Fixed width for all achievement items
   const itemWidth = 100; // Narrower width as requested
   const mobileItemGap = 40; // Gap for mobile view
-  const desktopItemGap = 80; // Increased gap for desktop view
+  const desktopItemGap = 60; // Reduced gap for desktop view (was 80)
 
   // Each tile
   const itemNodes = achievements.map(({ title, subtitle }, idx) => (
@@ -206,10 +206,11 @@ export default function Achievements() {
   // DESKTOP: Centered grid as usual
   return (
     <div
+      className="achievements-container"
       style={{
         width: '100%',
         padding: '1rem 0',
-        marginTop: '0px',
+        marginTop: '50px', // Increased margin from top (added space after image)
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
@@ -219,11 +220,11 @@ export default function Achievements() {
       <div
         style={{
           display: 'flex',
-          gap: `${desktopItemGap}px`, // Use the increased desktop gap variable
+          gap: `${desktopItemGap}px`, // Use the reduced desktop gap variable
           flexWrap: 'wrap',
           justifyContent: 'center',
           alignItems: 'center',
-          maxWidth: '1200px',
+          maxWidth: '1100px', // Slightly narrower container for tighter layout
           margin: '0 auto',
         }}
       >
