@@ -18,14 +18,13 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   const latestMessageRef = useRef(null); // Reference to the latest message
   const inputRef = useRef(null); // Reference to the input component
   const initialLoadDone = useRef(false); // Flag to prevent auto-focus on initial load
+  const hasMessages = useRef(false); // Track if we have messages to keep chat open
+  const barHeight = 58; // height of input bar with padding
 
   // Expose the handleClose method to parent components
   useImperativeHandle(ref, () => ({
     handleClose: () => handleClose()
   }));
-
-  // Constants
-  const BAR_HEIGHT = 58;   // height of input bar with padding
 
   // Track on‑screen keyboard via visualViewport (resize only)
   useEffect(() => {
@@ -58,6 +57,11 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   useEffect(() => {
     initialLoadDone.current = true;
   }, []);
+
+  // Update hasMessages ref when messages change
+  useEffect(() => {
+    hasMessages.current = messages.length > 0;
+  }, [messages]);
 
   // Auto‑scroll to bottom when messages change
   useEffect(() => {
@@ -114,8 +118,9 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   };
 
   const handleInputBlur = () => {
-    // Don't hide the chat view on blur if there are messages
-    if (messages.length === 0) {
+    // IMPORTANT: Don't hide the chat view on blur if there are messages
+    // This ensures the chat interface stays visible even when keyboard is dismissed
+    if (messages.length === 0 && !hasMessages.current) {
       setIsFocused(false);
       // Only hide interface if we're not in the middle of sending a message
       if (!isLoading) {
@@ -139,29 +144,49 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   };
 
   const handleSendMessage = async (text) => {
+    // Blur the input field to dismiss keyboard, but DON'T exit chat mode
+    if (inputRef.current && inputRef.current.blur) {
+      inputRef.current.blur();
+    }
+    
     setIsLoading(true);
+    
+    // We have messages now, so make sure to keep chat open
+    hasMessages.current = true;
+    
     setMessages((prev) => [...prev, { sender: "user", text }]);
+    
     try {
       const reply = await getChatbotResponse(`${userContext}\nUser: ${text}`);
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
-    } catch {
+    } catch (error) {
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Sorry, something went wrong." },
       ]);
+    } finally {
+      setIsLoading(false);
+      
+      // Just reset keyboard height, but KEEP chat view visible
+      setTimeout(() => {
+        // Make sure to scroll to the bottom of the messages
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
+      }, 100);
     }
-    setIsLoading(false);
   };
 
   const handlePromptSelect = (prompt) => {
+    // Dismiss keyboard immediately on prompt selection, but keep chat open
+    if (inputRef.current && inputRef.current.blur) {
+      inputRef.current.blur();
+    }
+    
+    // We have messages now, so make sure to keep chat open
+    hasMessages.current = true;
+    
     handleSendMessage(prompt);
-    // Keep the input field focused after selecting a prompt
-    setTimeout(() => {
-      const inputField = document.querySelector('.chatbot-container .chat-input-field');
-      if (inputField) {
-        inputField.focus();
-      }
-    }, 100);
   };
 
   // Function to clear messages and close the chat interface
@@ -180,6 +205,7 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
     // After a short delay, clear messages and close the interface
     setTimeout(() => {
       setMessages([]);
+      hasMessages.current = false; // Reset messages tracking
       setIsFocused(false);
       setInputClicked(false);
       setChatViewVisible(false);
@@ -193,7 +219,7 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   };
 
   return (
-    <div className={`chatbot-container ${isFocused ? "focused" : ""}`}>
+    <div className={`chatbot-container ${isFocused || messages.length > 0 ? "focused" : ""}`}>
       {/* Messages View - only shown when there are messages */}
       {chatViewVisible && messages.length > 0 && (
         <div
@@ -204,42 +230,39 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             top: 0,
             left: 0,
             right: 0,
-            /* ensure we clear the notch area on iOS */
-            paddingTop: "env(safe-area-inset-top)",
-            /* bottom positioned right above the input bar, which is above the keyboard */
-            bottom: `${keyboardHeight + BAR_HEIGHT}px`,
+            /* position all the way to the bottom of the screen to eliminate the gap */
+            bottom: 0,
             backgroundColor: "#ffffff",
             zIndex: 999,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
-            transition: "opacity 0.25s ease",
-            borderTop: "none"
           }}
         >
+          {/* Close button positioned absolutely in the top-right corner */}
           <button
             onClick={handleClose}
-            className="chat-close-button-mobile"
+            aria-label="Close chat"
             style={{
               position: "absolute",
-              top: "env(safe-area-inset-top, 10px)",
-              right: "10px",
-              zIndex: 1001,
-              background: "none",
+              top: "10px",
+              right: "15px",
+              zIndex: 2000,
+              width: "44px",
+              height: "44px",
+              borderRadius: "50%",
+              backgroundColor: "#f0f0f0",
               border: "none",
-              padding: "5px",
-              cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: "50%",
-              width: "30px",
-              height: "30px",
-              backgroundColor: "#f1f1f1",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+              cursor: "pointer",
+              padding: 0
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6L18 18" stroke="#333" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
           
@@ -251,13 +274,19 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
               overflowY: "auto",
               overflowX: "hidden",
               WebkitOverflowScrolling: "touch",
-              padding: "1rem",
-              paddingBottom: "24px", // Add extra padding at bottom for better scrolling
-              paddingTop: "calc(env(safe-area-inset-top) + 10px)", // Account for notch
-              display: "flex",
-              flexDirection: "column",
+              /* Clear space at the top for safe area insets and the close button */
+              paddingTop: "70px",
+              /* Make sure there's adequate padding on the sides */
+              paddingLeft: "16px",
+              paddingRight: "16px",
+              /* Extra padding at bottom to prevent messages from being hidden under input */
+              paddingBottom: `${barHeight + 20}px`,
+              width: "100%",
+              boxSizing: "border-box",
+              scrollBehavior: "smooth",
               position: "relative",
-              scrollBehavior: "smooth", // Add smooth scrolling
+              display: "flex",
+              flexDirection: "column"
             }}
           >
             <ChatMessages 
@@ -276,7 +305,7 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             position: "fixed",
             left: 0,
             right: 0,
-            bottom: `${keyboardHeight + BAR_HEIGHT}px`, // Position exactly above the input bar
+            bottom: `${keyboardHeight + barHeight}px`, // Position exactly above the input bar
             zIndex: 1000,
             backgroundColor: "#ffffff",
             width: "100%",
@@ -299,7 +328,7 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
           zIndex: 1001,
           backgroundColor: "#ffffff",
           marginTop: 0,
-          paddingTop: 0,
+          paddingTop: 0, 
           paddingBottom: 6,
           borderTop: "none",
           transition: "opacity 0.25s ease, bottom 0.3s ease", // Smooth transition when keyboard appears

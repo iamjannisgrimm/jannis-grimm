@@ -1682,14 +1682,34 @@ footer hr {
 /* Chat close button styles */
 .chat-close-button,
 .chat-close-button-mobile {
-  opacity: 0.7;
-  transition: opacity 0.2s ease, background-color 0.2s ease;
+  opacity: 0.9;
+  transition: all 0.2s ease;
+  z-index: 1010 !important;
 }
 
 .chat-close-button:hover,
 .chat-close-button-mobile:hover {
   opacity: 1;
-  background-color: #e5e5e5;
+  background-color: #e0e0e0 !important;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+}
+
+/* Chat header with close button */
+.chat-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: #ffffff;
+  z-index: 1500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 15px;
+  padding-top: env(safe-area-inset-top, 10px);
 }
 
 /* Smooth exit animation for chat interface */
@@ -1868,4 +1888,96 @@ footer hr {
 
 .desktop-starters-grid button:hover::after {
   opacity: 1;
+}
+
+/* Chat close button styles */
+.chat-close-button-mobile {
+  opacity: 1 !important;
+  transition: all 0.2s ease;
+  z-index: 1500 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+}
+
+.chat-close-button-mobile:hover,
+.chat-close-button-mobile:active {
+  opacity: 1;
+  background-color: #e0e0e0 !important;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
+}
+
+/* Mobile specific scrolling improvements */
+.messages-container {
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 60px) !important;
+}
+
+/* Ensure chat view fills the screen properly */
+.chat-view-fixed {
+  padding-top: env(safe-area-inset-top, 10px) !important;
+  overflow: hidden !important;
+}
+
+/* Ensure messages stay visible and don't flow off screen */
+.chat-messages {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Message container exit animation */
+.messages-container {
+  transition: opacity 0.25s ease;
+}
+
+.messages-container.exiting {
+  opacity: 0;
+}
+
+/* Ensure the chat container takes up the full height */
+.chat-view-fixed {
+  height: 100% !important;
+  overflow: hidden !important;
+  padding-top: env(safe-area-inset-top, 0) !important;
+}
+
+/* Make close button more visible */
+button[aria-label="Close chat"] {
+  z-index: 2000 !important;
+  opacity: 1 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+  transition: transform 0.2s ease, background-color 0.2s ease !important;
+}
+
+button[aria-label="Close chat"]:hover,
+button[aria-label="Close chat"]:active {
+  transform: scale(1.1) !important;
+  background-color: #e0e0e0 !important;
+}
+
+/* Fix message container padding and overflow */
+.messages-container {
+  padding-top: 70px !important;
+  -webkit-overflow-scrolling: touch !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important; /* Firefox */
+  scroll-behavior: smooth !important;
+}
+
+.messages-container::-webkit-scrollbar {
+  display: none !important; /* Hide scrollbar in Chrome/Safari */
+}
+
+/* Remove any margins from message container to eliminate gaps */
+.chat-messages {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Fix message bubble spacing */
+.message {
+  margin-bottom: 12px !important;
 }

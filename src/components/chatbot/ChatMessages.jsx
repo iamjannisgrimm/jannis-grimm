@@ -1,19 +1,9 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
-export default function ChatMessages({ messages, isLoading, setLatestMessageRef }) {
+const ChatMessages = ({ messages, isLoading, setLatestMessageRef }) => {
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "calc(100vh - 200px)",    // use remaining viewport
-        overflowY: "auto",
-        padding: "20px 0",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-end",      // anchor to bottom
-      }}
-    >
+    <div className="chat-messages" style={{ width: "100%", margin: 0, padding: 0 }}>
       <style>
         {`
           @keyframes slideUpFade {
@@ -87,43 +77,41 @@ export default function ChatMessages({ messages, isLoading, setLatestMessageRef 
         `}
       </style>
 
-      {messages.map((msg, idx) => {
-        const isUser = msg.sender === "user";
-        const isLastMessage = idx === messages.length - 1;
+      {messages.map((message, index) => {
+        const isLastMessage = index === messages.length - 1;
+        const isUser = message.sender === "user";
         
         return (
           <div
-            key={idx}
-            className="message-animate"
-            ref={isLastMessage && !isLoading ? setLatestMessageRef : null}
+            key={index}
+            className={`message ${message.sender}`}
+            ref={isLastMessage ? setLatestMessageRef : null}
             style={{
-              width: "100%",
               display: "flex",
               justifyContent: isUser ? "flex-end" : "flex-start",
-              marginBottom: "16px",
-              position: "relative",
+              marginBottom: isLastMessage ? "0" : "10px",
+              width: "100%",
             }}
           >
             <div
               style={{
-                maxWidth: isUser ? "80%" : "90%",
-                padding: isUser ? "10px 16px" : "12px 16px",
-                borderRadius: isUser ? "18px 4px 18px 18px" : "4px 18px 18px 18px",
-                background: isUser ? "#0ea5e9" : "#f8fafc",
-                color: isUser ? "#ffffff" : "#334155",
-                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                border: isUser ? "none" : "1px solid #e2e8f0",
+                backgroundColor: isUser ? "#14A6FF" : "#f1f1f1",
+                color: isUser ? "white" : "black",
+                borderRadius: "18px",
+                padding: "10px 16px",
+                maxWidth: "85%",
                 wordWrap: "break-word",
-                fontSize: "15px",
-                fontWeight: isUser ? "400" : "400",
-                textAlign: "left",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                fontSize: "0.95rem",
+                lineHeight: "1.4",
+                whiteSpace: "pre-wrap",
               }}
               className={`message-content ${!isUser ? "ai-message" : ""}`}
             >
-              {isUser ? (
-                msg.text
+              {!isUser ? (
+                <ReactMarkdown>{message.text}</ReactMarkdown>
               ) : (
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                message.text
               )}
             </div>
           </div>
@@ -132,23 +120,22 @@ export default function ChatMessages({ messages, isLoading, setLatestMessageRef 
 
       {isLoading && (
         <div
-          className="message-animate"
-          ref={setLatestMessageRef}
+          className="message loading"
           style={{
-            width: "100%",
             display: "flex",
             justifyContent: "flex-start",
-            marginBottom: "16px",
+            marginBottom: "0",
+            width: "100%",
+            marginTop: messages.length > 0 ? "10px" : "0",
           }}
         >
           <div
             style={{
+              backgroundColor: "#f1f1f1",
+              borderRadius: "18px",
               padding: "12px 16px",
-              borderRadius: "4px 18px 18px 18px",
-              background: "#f8fafc",
-              border: "1px solid #e2e8f0",
-              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-              textAlign: "left",
+              maxWidth: "85%",
+              boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
             }}
           >
             <div className="typing-indicator">
@@ -161,4 +148,6 @@ export default function ChatMessages({ messages, isLoading, setLatestMessageRef 
       )}
     </div>
   );
-}
+};
+
+export default ChatMessages;

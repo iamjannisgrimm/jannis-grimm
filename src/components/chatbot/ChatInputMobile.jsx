@@ -4,6 +4,7 @@ const ChatInputMobile = forwardRef(({ onSendMessage, onFocus, onBlur, onClick, p
   const [message, setMessage] = useState("");
   const inputRef = useRef(null);
   const hasFocused = useRef(false);
+  const messageWasSent = useRef(false);
 
   // Focus input automatically when mounted, but only if not prevented
   useEffect(() => {
@@ -34,6 +35,12 @@ const ChatInputMobile = forwardRef(({ onSendMessage, onFocus, onBlur, onClick, p
 
   // Handle blur with improved behavior for mobile
   const handleBlur = (e) => {
+    // Don't trigger onBlur if we just sent a message (to keep chat open)
+    if (messageWasSent.current) {
+      messageWasSent.current = false;
+      return;
+    }
+    
     // Prevent immediate blur if another element in the form is clicked
     if (e.relatedTarget && e.relatedTarget.closest('.chat-input-form')) {
       return;
@@ -57,16 +64,16 @@ const ChatInputMobile = forwardRef(({ onSendMessage, onFocus, onBlur, onClick, p
     e.preventDefault();
     if (!message.trim()) return;
     
+    // Mark that we just sent a message (to prevent chat closing on blur)
+    messageWasSent.current = true;
+    
     // Send message and clear input
     onSendMessage(message);
     setMessage("");
     
-    // Keep the input focused after sending
+    // Immediately blur the input to dismiss keyboard
     if (inputRef.current) {
-      // Short delay to allow the UI to update
-      setTimeout(() => {
-        inputRef.current.focus();
-      }, 10);
+      inputRef.current.blur();
     }
   };
   
@@ -107,7 +114,10 @@ const ChatInputMobile = forwardRef(({ onSendMessage, onFocus, onBlur, onClick, p
           // Prevent the button click from blurring the input
           e.preventDefault();
         }}
-        onClick={handleSubmit}
+        onClick={(e) => {
+          e.preventDefault();
+          handleSubmit(e);
+        }}
       >
         <svg
           width="29"

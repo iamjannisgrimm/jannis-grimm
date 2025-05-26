@@ -24,9 +24,9 @@ export default function ConversationStarters({
       >
         <h3 style={{
           textAlign: "center",
-          fontSize: "18px",
+          fontSize: "16px",
           fontWeight: "600",
-          marginBottom: "10px",
+          marginBottom: "8px",
           marginTop: "0",
           color: "#111827",
           fontFamily: "SF Pro Display, system-ui, sans-serif"
@@ -40,13 +40,23 @@ export default function ConversationStarters({
           WebkitOverflowScrolling: "touch",
           paddingBottom: "5px",
           paddingLeft: "10px",
-          paddingRight: "10px"
+          paddingRight: "10px",
+          scrollbarWidth: "none", /* Firefox */
+          msOverflowStyle: "none" /* IE and Edge */
         }}>
+          {/* Hide scrollbar for Chrome, Safari and Opera */}
+          <style>
+            {`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
           <div style={{
             display: "flex",
             flexDirection: "row",
             gap: "10px",
-            paddingRight: "10px"
+            paddingRight: "20px" // Extra padding at the end for better scrolling
           }}>
             {conversationPrompts.map((prompt, idx) => (
               <button
@@ -63,26 +73,24 @@ export default function ConversationStarters({
                   maxWidth: "230px",
                   padding: "10px 12px",
                   borderRadius: "10px",
-                  border: "1px solid #e5e7eb",
-                  background: "#ffffff",
+                  border: "none",
+                  background: "#f7f7f7",
                   textAlign: "left",
                   fontSize: "14px",
                   lineHeight: "1.3",
                   fontWeight: "400",
                   color: "#333",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow: "none",
+                  transition: "transform 0.2s ease",
                   position: "relative",
                   display: "flex",
                   alignItems: "center"
                 }}
                 onTouchStart={(e) => {
                   e.currentTarget.style.transform = "scale(0.98)";
-                  e.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.03)";
                 }}
                 onTouchEnd={(e) => {
                   e.currentTarget.style.transform = "scale(1)";
-                  e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)";
                 }}
               >
                 <div style={{ 
