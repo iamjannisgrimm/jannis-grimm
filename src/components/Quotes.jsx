@@ -15,13 +15,14 @@ export default function Quotes() {
   
     return (
         <div
+          className="quotes-container"
           style={{
             width: "100%",
             maxWidth: 600,
             marginLeft: "auto",
             marginRight: "auto",
-            marginTop: isMobile ? "30px" : "30px",
-            marginBottom: isMobile ? "60px" : "120px",
+            marginTop: isMobile ? "30px" : "10px",
+            marginBottom: isMobile ? "60px" : "100px",
             display: "flex",
             flexDirection: "column",
             gap: "2rem",

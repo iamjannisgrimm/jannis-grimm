@@ -271,7 +271,8 @@ export function Home() {
                 color: "inherit", 
                 cursor: "pointer",
                 opacity: githubOpacity,
-                transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+                transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+                marginBottom: "-50px" // Add negative bottom margin to reduce space
               }}
               title="View GitHub Profile"
               onClick={(e) => {
@@ -292,7 +293,10 @@ export function Home() {
           style={{
             opacity: quotesOpacity,
             transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-            paddingBottom: "10px"
+            paddingBottom: "10px",
+            marginTop: isMobile ? "100px" : "-20px", // Negative margin for desktop
+            position: "relative",
+            zIndex: 1 // Ensure quotes appear above any overlapping elements
           }}
         >
           <h2></h2>

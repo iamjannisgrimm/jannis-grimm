@@ -1824,3 +1824,15 @@ footer hr {
   opacity: 0;
   transform: translateY(10px);
 }
+
+/* Adjust quotes spacing for desktop */
+@media (min-width: 601px) {
+  .github-desktop-contributions {
+    margin-bottom: -40px !important;
+  }
+  
+  section:has(.quotes-container) {
+    padding-top: 0 !important;
+    margin-top: -30px !important;
+  }
+}
