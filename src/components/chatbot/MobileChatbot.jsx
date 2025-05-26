@@ -230,13 +230,15 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             top: 0,
             left: 0,
             right: 0,
-            /* position all the way to the bottom of the screen to eliminate the gap */
             bottom: 0,
             backgroundColor: "#ffffff",
             zIndex: 999,
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
+            height: "100%", /* Ensure 100% height */
+            width: "100%", /* Ensure 100% width */
+            paddingTop: "env(safe-area-inset-top, 0)", /* Handle safe area insets */
           }}
         >
           {/* Close button positioned absolutely in the top-right corner */}
@@ -245,7 +247,7 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             aria-label="Close chat"
             style={{
               position: "absolute",
-              top: "10px",
+              top: "calc(env(safe-area-inset-top, 10px) + 10px)", /* Account for safe area */
               right: "15px",
               zIndex: 2000,
               width: "44px",
@@ -274,8 +276,8 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
               overflowY: "auto",
               overflowX: "hidden",
               WebkitOverflowScrolling: "touch",
-              /* Clear space at the top for safe area insets and the close button */
-              paddingTop: "70px",
+              /* Increase top padding to prevent messages from flowing off the top */
+              paddingTop: "170px", /* Increased from 120px to 170px for better positioning */
               /* Make sure there's adequate padding on the sides */
               paddingLeft: "16px",
               paddingRight: "16px",

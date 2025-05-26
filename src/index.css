@@ -1910,7 +1910,17 @@ footer hr {
 .messages-container {
   -webkit-overflow-scrolling: touch !important;
   scroll-behavior: smooth;
-  padding-top: calc(env(safe-area-inset-top, 20px) + 60px) !important;
+  padding-top: calc(env(safe-area-inset-top, 20px) + 120px) !important;
+}
+
+/* Fix message container padding and overflow */
+.messages-container {
+  padding-top: 170px !important;
+  -webkit-overflow-scrolling: touch !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important; /* Firefox */
+  scroll-behavior: smooth !important;
 }
 
 /* Ensure chat view fills the screen properly */
@@ -1980,4 +1990,45 @@ button[aria-label="Close chat"]:active {
 /* Fix message bubble spacing */
 .message {
   margin-bottom: 12px !important;
+}
+
+/* Ensure messages stay visible and don't flow off screen */
+.chat-messages {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Fix fullscreen mobile chat display */
+@media (max-width: 600px) {
+  /* Ensure proper mobile chat view positioning */
+  .chat-view-fixed {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    padding-top: env(safe-area-inset-top, 0) !important;
+    z-index: 999 !important;
+  }
+  
+  /* Ensure messages container has sufficient spacing */
+  .messages-container {
+    padding-top: 170px !important; /* Updated from 120px to 170px to match inline style */
+    height: 100% !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+/* Message container exit animation */
+.messages-container {
+  transition: opacity 0.25s ease;
+}
+
+.messages-container.exiting {
+  opacity: 0;
 }
