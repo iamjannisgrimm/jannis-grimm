@@ -219,6 +219,7 @@ h1 {
 .timeline-container {
   width: 100%;
   margin-top: 2rem;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
 .github-contributions > div:first-child {
@@ -1541,4 +1542,285 @@ footer hr {
   .skills-container::after {
     width: 40px;
   }
+}
+
+/* Staged Scroll Styles */
+.stage-section {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.stage-content {
+  width: 100%;
+  max-width: 700px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+/* Scroll indicators */
+.scroll-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.scroll-indicator.up {
+  top: 20px;
+}
+
+.scroll-indicator.down {
+  bottom: 20px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.7;
+  }
+}
+
+/* Stage transitions */
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Styles for special sections within stages */
+.stage-profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.stage-profile-header .profile-image {
+  max-width: 280px;
+  width: 60%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+}
+
+.stage-profile-header .profile-title {
+  margin: 30px 0 0 0;
+  color: #000000;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+  letter-spacing: -1px;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Mobile optimizations */
+@media (max-width: 600px) {
+  .stage-content {
+    padding: 0 15px;
+  }
+  
+  .stage-profile-header .profile-image {
+    max-width: 220px;
+  }
+  
+  .stage-profile-header .profile-title {
+    font-size: 1.8rem;
+    margin-top: 20px;
+  }
+  
+  .scroll-indicator {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .scroll-indicator.up {
+    top: 15px;
+  }
+  
+  .scroll-indicator.down {
+    bottom: 15px;
+  }
+}
+
+/* Timeline transition animations */
+.timeline-container {
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+@keyframes slideUpIn {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-container.animate-in {
+  animation: slideUpIn 0.8s ease-out forwards;
+}
+
+/* Stage transition animations */
+@keyframes slideUpOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-30%);
+    opacity: 0;
+  }
+}
+
+.stage-exit {
+  animation: slideUpOut 0.6s ease-in-out forwards;
+}
+
+/* Natural scroll transition effect */
+.smooth-scroll-transition {
+  transition: all 0.5s ease-out;
+}
+
+/* Desktop/Mobile conditional content */
+.desktop-only-content,
+.mobile-only-content {
+  width: 100%;
+}
+
+/* Default: hide mobile content on desktop */
+.mobile-only-content {
+  display: none;
+}
+
+/* On mobile: hide desktop content and show mobile content */
+@media (max-width: 600px) {
+  .desktop-only-content {
+    display: none;
+  }
+  
+  .mobile-only-content {
+    display: block;
+  }
+}
+
+/* Ensure both mobile and desktop GitHub contribution areas are styled properly */
+.github-desktop-contributions,
+.github-mobile-contributions {
+  margin-top: 5px;
+  padding-top: 0;
+  margin-bottom: 15px;
+  transform: scale(0.90);
+}
+
+.github-desktop-contributions .content-container,
+.github-mobile-contributions .content-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Chat close button styles */
+.chat-close-button,
+.chat-close-button-mobile {
+  opacity: 0.7;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.chat-close-button:hover,
+.chat-close-button-mobile:hover {
+  opacity: 1;
+  background-color: #e5e5e5;
+}
+
+/* Smooth exit animation for chat interface */
+.chatbot-container {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.chatbot-container.exiting {
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+/* Message container exit animation */
+.messages-container {
+  transition: opacity 0.25s ease;
+}
+
+.messages-container.exiting {
+  opacity: 0;
+}
+
+/* Chat view transition for mobile */
+.chat-view-fixed {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.chat-view-fixed.exiting {
+  opacity: 0;
+  transform: translateY(10px);
 }

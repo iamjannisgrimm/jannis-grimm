@@ -110,6 +110,28 @@ export default function MobileChatbot({ onFocus, onBlur }) {
 
   const handlePromptSelect = (prompt) => handleSendMessage(prompt);
 
+  // Function to clear messages and close the chat interface
+  const handleClose = () => {
+    // First add the exiting class to messages for fade-out animation
+    const messagesContainer = messagesContainerRef.current;
+    if (messagesContainer) {
+      messagesContainer.classList.add('exiting');
+    }
+    
+    // Add exiting class to the chat view container as well
+    if (chatViewRef.current) {
+      chatViewRef.current.classList.add('exiting');
+    }
+    
+    // After a short delay, clear messages and close the interface
+    setTimeout(() => {
+      setMessages([]);
+      setIsFocused(false);
+      setChatViewVisible(false);
+      onBlur?.();
+    }, 250); // Match the CSS transition duration
+  };
+
   return (
     <div className={`chatbot-container ${isFocused ? "focused" : ""}`}>
       {chatViewVisible && (
@@ -130,8 +152,37 @@ export default function MobileChatbot({ onFocus, onBlur }) {
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
+            transition: "opacity 0.25s ease"
           }}
         >
+          {messages.length > 0 && (
+            <button
+              onClick={handleClose}
+              className="chat-close-button-mobile"
+              style={{
+                position: "absolute",
+                top: "env(safe-area-inset-top, 10px)",
+                right: "10px",
+                zIndex: 1001,
+                background: "none",
+                border: "none",
+                padding: "5px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                width: "30px",
+                height: "30px",
+                backgroundColor: "#f1f1f1",
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18M6 6L18 18" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
+          
           {messages.length === 0 ? (
             <div
               className="starters-container enter"
@@ -184,6 +235,8 @@ export default function MobileChatbot({ onFocus, onBlur }) {
           backgroundColor: "#fff",
           marginTop: 0,
           paddingTop: 0,
+          opacity: messages.length > 0 ? 1 : 1, // Always visible, but we can animate this later if needed
+          transition: "opacity 0.25s ease"
         }}
       >
         <div style={{ maxWidth: "500px", margin: "0 auto" }}>

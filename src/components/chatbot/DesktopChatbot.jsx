@@ -59,8 +59,53 @@ export default function DesktopChatbot({ onFocus, onBlur }) {
     setIsLoading(false);
   };
 
+  // Function to clear messages and retract the chat interface
+  const handleClose = () => {
+    // First add the exiting class to messages for fade-out animation
+    const messagesContainer = messagesRef.current;
+    if (messagesContainer) {
+      messagesContainer.classList.add('exiting');
+    }
+    
+    // After a short delay, clear messages and retract
+    setTimeout(() => {
+      setMessages([]);
+      setIsFocused(false);
+      setStartersVisible(false);
+      onBlur?.();
+    }, 250); // Match the CSS transition duration
+  };
+
   return (
     <div className="chatbot-container" style={{ position: "relative" }}>
+      {messages.length > 0 && (
+        <button 
+          onClick={handleClose}
+          className="chat-close-button"
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            zIndex: 10,
+            background: "none",
+            border: "none",
+            padding: "5px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "50%",
+            width: "30px",
+            height: "30px",
+            backgroundColor: "#f1f1f1",
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+
       {isFocused && messages.length === 0 ? (
         <div
           className={`starters-container ${startersVisible ? "entering" : ""}`}
