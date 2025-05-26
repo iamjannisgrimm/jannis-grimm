@@ -10,7 +10,9 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [startersVisible, setStartersVisible] = useState(false);
+  const [isInputClicked, setIsInputClicked] = useState(false);
   const messagesRef = useRef(null);
+  const inputRef = useRef(null);
 
   // Expose the handleClose method to parent components
   useImperativeHandle(ref, () => ({
@@ -21,13 +23,13 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   useEffect(() => {
     // Delay showing starters to sync with chatbot appearance animation
     const timer = setTimeout(() => {
-      if (isFocused && messages.length === 0) {
+      if (isFocused && messages.length === 0 && isInputClicked) {
         setStartersVisible(true);
       }
     }, 300); // Delay to sync with chatbot slide-in
     
     return () => clearTimeout(timer);
-  }, [isFocused, messages.length]);
+  }, [isFocused, messages.length, isInputClicked]);
 
   // scroll to bottom on new messages
   useEffect(() => {
@@ -42,14 +44,23 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
   };
   
   const handleInputBlur = () => {
-    setIsFocused(false);
-    setStartersVisible(false);
-    onBlur?.();
+    // Only blur and hide starters if there are no messages
+    if (messages.length === 0) {
+      setIsFocused(false);
+      setStartersVisible(false);
+      onBlur?.();
+    }
+  };
+
+  const handleInputClick = () => {
+    setIsInputClicked(true);
+    setIsFocused(true);
+    onFocus?.();
   };
 
   const handleSendMessage = async (text) => {
     setIsLoading(true);
-    setIsFocused(false);
+    setIsInputClicked(true);
     setStartersVisible(false);
     setMessages((prev) => [...prev, { sender: "user", text }]);
     try {
@@ -77,32 +88,51 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
       setMessages([]);
       setIsFocused(false);
       setStartersVisible(false);
+      setIsInputClicked(false);
       onBlur?.();
     }, 250); // Match the CSS transition duration
   };
 
+  const shouldShowChat = (isFocused && isInputClicked) || messages.length > 0;
+
   return (
-    <div className="chatbot-container" style={{ position: "relative" }}>
-      {messages.length > 0 && (
+    <div className="chatbot-container" style={{ 
+      position: "relative",
+      width: "100%",
+      maxWidth: "750px",
+      margin: "0 auto",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    }}>
+      {shouldShowChat && (
         <button 
           onClick={handleClose}
           className="chat-close-button"
           style={{
             position: "absolute",
-            top: "10px",
-            right: "10px",
-            zIndex: 10,
+            top: "12px",
+            right: "12px",
+            zIndex: 100,
             background: "none",
             border: "none",
-            padding: "5px",
+            padding: "8px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             borderRadius: "50%",
-            width: "30px",
-            height: "30px",
+            width: "32px",
+            height: "32px",
             backgroundColor: "#f1f1f1",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            transition: "background-color 0.2s ease"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.backgroundColor = "#e5e5e5";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.backgroundColor = "#f1f1f1";
           }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -111,60 +141,67 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
         </button>
       )}
 
-      {isFocused && messages.length === 0 ? (
+      {isFocused && isInputClicked && messages.length === 0 ? (
         <div
           className={`starters-container ${startersVisible ? "entering" : ""}`}
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundColor: "#f3f4f6",
+            backgroundColor: "#ffffff",
             width: "100%",
-            padding: "2rem",
+            padding: "1.5rem",
             boxSizing: "border-box",
             zIndex: 1,
             opacity: startersVisible ? 1 : 0,
             transition: "opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+            borderRadius: "16px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+            position: "relative",
+            marginBottom: "16px"
           }}
         >
-          <h2
-            style={{
-              margin: "0 0 3rem",
-              fontSize: "4px",
-              color: "#111827",
-              fontWeight: 700,
-              padding: "35px"
-            }}
-          >
-            <h2 className="desktop-starters-title">
-            Find out more about Jannis...
-            </h2>
-          </h2>
-          <div className="starters-wrapper">
+          <div className="starters-wrapper" style={{ 
+            width: "100%", 
+            position: "relative",
+            paddingTop: "10px",
+            display: "flex",
+            justifyContent: "center" 
+          }}>
             <ConversationStarters onSelectPrompt={handleSendMessage} />
           </div>
         </div>
-      ) : (
+      ) : shouldShowChat ? (
         <div
           ref={messagesRef}
           className="messages-container"
           style={{
-            flex: 1,
+            width: "100%",
             overflowY: "auto",
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
-            height: "400px",
+            height: "420px",
+            borderRadius: "16px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+            backgroundColor: "#ffffff",
+            padding: "16px",
+            marginBottom: "16px",
+            position: "relative"
           }}
         >
           <ChatMessages messages={messages} isLoading={isLoading} />
         </div>
-      )}
-      <ChatInput
-        onSendMessage={handleSendMessage}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-      />
+      ) : null}
+      <div style={{ width: "100%", maxWidth: "650px" }}>
+        <ChatInput
+          ref={inputRef}
+          onSendMessage={handleSendMessage}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onClick={handleInputClick}
+        />
+      </div>
     </div>
   );
 });

@@ -4,7 +4,7 @@
 const skills = [
   {
     title: "Development Expertise",
-    color: "#4F46E5", // Indigo
+    color: "#1e6091", // Indigo
     items: [
       { name: 'Swift', level: 100 },
       { name: 'SwiftUI', level: 100 },
@@ -21,7 +21,7 @@ const skills = [
   },
   {
     title: "Tools & Infrastructure",
-    color: "#10B981", // Emerald
+    color: "#52b69a", // Emerald
     items: [
       { name: 'Git', level: 95 },
       { name: 'Docker', level: 65 },
@@ -41,7 +41,7 @@ const skills = [
   },
   {
     title: "Design & Management",
-    color: "#8B5CF6", // Violet
+    color: "#b5e48c", // Violet
     items: [
       { name: 'UI/UX Design', level: 95 },
       { name: 'Figma', level: 95 },

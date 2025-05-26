@@ -1050,38 +1050,49 @@ footer hr {
 @media (max-width: 620px) {
   /* The fixed container that holds your ChatInput */
   .chat-input-fixed {
-    margin-top: -10px !important;
-    padding-top: -10px !important;   
-    padding-right: 10px;
-    padding-left: 10px;
-    padding-bottom: 20px !important;
-    background-color: #2563eb;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    z-index: 1001;
+    margin-top: 0;
+    padding-top: 5px;   
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-bottom: 15px !important;
+    background-color: #ffffff;
+    border-top: none;
+    box-shadow: none;
   }
 
   /* Your <form> inside it */
   .chat-input-form {
-    height: 44px;           /* keep it a nice slim strip */
+    height: 48px;           /* slightly taller input */
     margin: 0 auto;         /* center horizontally */
-    max-width: 120% !important;
+    max-width: 100% !important; /* full width */
+    width: 100%;
     display: flex;
     align-items: center;    /* vertically center the field & button */
   }
   
-
   /* The <input> itself */
   .chat-input-field {
-    height: 110%;
-    border-radius: 11px;    /* pill shape */
-    border-color: "#BFBFBF" !important;
-    border-width: 0.8px;
+    height: 100%;
+    border-radius: 12px;    /* pill shape */
+    border: 1px solid #d1d5db;
+    border-width: 1px;
     flex: 1;
     font-size: 16px;
+    padding: 12px 50px 12px 20px;
+    background-color: #ffffff;
   }
 
   /* Reposition the send‐button inside that pill */
   .chat-input-submit {
     position: absolute;
-    right: 3px;
+    right: 6px;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -1151,17 +1162,17 @@ footer hr {
   /* Main wrapper for mobile starters */
   .mobile-starters-wrapper {
     position: absolute;
-    bottom: 54px; /* Positioned closer to the input bar */
+    bottom: 0; /* Position exactly at the bottom */
     left: 0;
     right: 0;
     overflow-y: visible !important;
     -webkit-overflow-scrolling: touch !important;
     padding-top: 6px;
-    padding-bottom: 6px;
-    box-shadow: 0 -1px 3px rgba(0,0,0,0.03);
-    border-top: 1px solid #f0f0f0;
+    padding-bottom: 58px; /* Add padding to accommodate the input bar height */
+    box-shadow: none;
+    border-top: none;
     background-color: #ffffff;
-    z-index: 100;
+    z-index: 99; /* Just below the input bar */
   }
   
   /* Title styling */
@@ -1182,6 +1193,7 @@ footer hr {
     scrollbar-width: none; /* Hide scrollbar in Firefox */
     -ms-overflow-style: none; /* Hide scrollbar in IE/Edge */
     padding-bottom: 2px;
+    background-color: #ffffff;
   }
   
   /* Hide scrollbar in Chrome/Safari */
@@ -1196,25 +1208,21 @@ footer hr {
     gap: 10px;
     padding-right: 20px; /* Ensure last item is fully visible */
     padding-bottom: 2px;
+    background-color: #ffffff;
   }
   
-  /* Ensure the container is properly positioned */
-  .chat-view-fixed .starters-container {
-    padding: 0 !important;
-    position: relative;
-    justify-content: flex-end !important;
-  }
-  
-  /* Remove extra padding that might push content out of view */
-  .chat-view-fixed {
-    padding-bottom: 0 !important;
-  }
-  
-  /* Style for the chat input fixed position */
+  /* Ensure chat input stays at the bottom */
   .chat-input-fixed {
     background-color: #ffffff !important;
-    border-top: 1px solid #f5f5f5;
+    border-top: none !important;
     z-index: 101; /* Ensure it's above the starters */
+    padding: 8px 10px !important;
+    box-shadow: none !important;
+  }
+  
+  /* Chat view fixed background */
+  .chat-view-fixed {
+    background-color: #ffffff !important;
   }
 }
 
@@ -1783,4 +1791,81 @@ footer hr {
     z-index: 101; /* Ensure it's above the starters */
     padding: 8px 10px !important;
   }
+}
+
+/* Desktop conversation starters styling */
+.desktop-starters-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.desktop-starters-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 36px;
+  text-align: center;
+  font-family: "SF Pro Display", system-ui, sans-serif;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.desktop-starters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 1000px) {
+  .desktop-starters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .desktop-starters-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Icon wrapper animation */
+.icon-wrapper {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.icon-wrapper:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Desktop conversation starter buttons */
+.desktop-starters-grid button {
+  position: relative;
+  overflow: hidden;
+}
+
+.desktop-starters-grid button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(219, 234, 254, 0.1), rgba(224, 242, 254, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.desktop-starters-grid button:hover::after {
+  opacity: 1;
 }

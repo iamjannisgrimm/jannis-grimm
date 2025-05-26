@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 
-function ChatInput({ onSendMessage, onFocus, onBlur }) {
+const ChatInput = forwardRef(({ onSendMessage, onFocus, onBlur, onClick }, ref) => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
@@ -10,15 +10,23 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
     setMessage("");
   };
 
+  const handleInputClick = (e) => {
+    if (onClick) {
+      onClick(e);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="chat-input-form">
       <input
+        ref={ref}
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder="Ask me anything..."
         onFocus={onFocus}
         onBlur={onBlur}
+        onClick={handleInputClick}
         className="chat-input-field"
         autoComplete="on"
       />
@@ -60,6 +68,6 @@ function ChatInput({ onSendMessage, onFocus, onBlur }) {
         </button>
     </form>
   );
-}
+});
 
 export default ChatInput;

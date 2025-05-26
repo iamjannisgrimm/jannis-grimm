@@ -1,9 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 
-function ChatInputMobile({ onSendMessage, onFocus, onBlur }) {
+const ChatInputMobile = forwardRef(({ onSendMessage, onFocus, onBlur, onClick, preventAutoFocus = false }, ref) => {
   const [message, setMessage] = useState("");
   const inputRef = useRef(null);
   const hasFocused = useRef(false);
+
+  // Focus input automatically when mounted, but only if not prevented
+  useEffect(() => {
+    if (inputRef.current && !hasFocused.current && !preventAutoFocus) {
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          hasFocused.current = true;
+        }
+      }, 300);
+    }
+  }, [preventAutoFocus]);
 
   // Make sure focus triggers properly
   const handleFocus = (e) => {
@@ -13,6 +25,11 @@ function ChatInputMobile({ onSendMessage, onFocus, onBlur }) {
     
     // Focus event should be handled synchronously
     if (onFocus) onFocus(e);
+    
+    // Force scroll to visible area to ensure input is visible above keyboard
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 50);
   };
 
   // Handle blur with improved behavior for mobile
@@ -26,21 +43,46 @@ function ChatInputMobile({ onSendMessage, onFocus, onBlur }) {
     if (onBlur) onBlur(e);
   };
 
+  const handleClick = (e) => {
+    // Handle click event to open chat interface
+    if (onClick) onClick(e);
+    
+    // Make sure to focus the input when clicked
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!message.trim()) return;
     
-    // Focus the input after sending to maintain the keyboard
+    // Send message and clear input
     onSendMessage(message);
     setMessage("");
     
-    // Re-focus the input after a short delay
-    setTimeout(() => {
+    // Keep the input focused after sending
+    if (inputRef.current) {
+      // Short delay to allow the UI to update
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 10);
+    }
+  };
+  
+  // Expose input methods to parent component
+  React.useImperativeHandle(ref, () => ({
+    focus: () => {
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    }, 100);
-  };
+    },
+    blur: () => {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+    }
+  }));
 
   return (
     <form onSubmit={handleSubmit} className="chat-input-form">
@@ -52,19 +94,21 @@ function ChatInputMobile({ onSendMessage, onFocus, onBlur }) {
         placeholder="Ask me anything..."
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onClick={handleClick}
         className="chat-input-field"
-        autoComplete="on"
+        autoComplete="off" /* Prevent autocomplete from disrupting layout */
+        autoFocus={false} /* Explicitly disable autoFocus attribute */
       />
-        <button
-          type="submit"
-          disabled={!message.trim()}
-          className={`chat-input-submit ${message.trim() ? "active" : ""}`}
-          onMouseDown={(e) => {
-            // Prevent the button click from blurring the input
-            e.preventDefault();
-          }}
-          onClick={handleSubmit}
-        >
+      <button
+        type="submit"
+        disabled={!message.trim()}
+        className={`chat-input-submit ${message.trim() ? "active" : ""}`}
+        onMouseDown={(e) => {
+          // Prevent the button click from blurring the input
+          e.preventDefault();
+        }}
+        onClick={handleSubmit}
+      >
         <svg
           width="29"
           height="29"
@@ -90,10 +134,9 @@ function ChatInputMobile({ onSendMessage, onFocus, onBlur }) {
             strokeLinejoin="round"
           />
         </svg>
-
-        </button>
+      </button>
     </form>
   );
-}
+});
 
 export default ChatInputMobile;
