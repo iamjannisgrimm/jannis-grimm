@@ -774,43 +774,17 @@ h1 {
 .timeline-item {
   font-family: 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
                'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-/* HStack wrapper for date/icon + title/subtitle */
-.timeline-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px; /* matches your JSX gap */
-  margin-bottom: 1rem;
-}
-
-/* VStack helper */
-.timeline-vstack {
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Left column overrides (centers icon) */
-.timeline-left {
-  width: 100px; /* your JSX width */
   align-items: center;
-  text-align: center;
-}
-
-/* Date text */
-.timeline-date {
-  font-size: 18px;
-  color: gray;
-  margin: 0;
-}
-
-/* Icon */
-.timeline-icon {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  margin-top: 10px;
+  overflow: visible !important;
 }
 
 /* Title + subtitle block */
@@ -818,6 +792,7 @@ h1 {
   font-size: 28px;
   font-weight: 800;
   margin: 0;
+  text-align: center;
 }
 
 .timeline-title-block .subtitle {
@@ -825,6 +800,7 @@ h1 {
   font-weight: 650;
   margin: 0;
   color: #555;
+  text-align: center;
 }
 
 /* Main content */
@@ -832,11 +808,13 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-left: calc(100px + 20px); /* indent under the row */
+  align-items: center;
+  max-width: 800px;
+  width: 100%;
 }
 
 .timeline-content img {
-  max-width: min(650px, 70vw);
+  max-width: min(650px, 90vw);
   width: 100%;
   height: auto;
   border-radius: 8px;
@@ -846,52 +824,41 @@ h1 {
 .description {
   margin: 0;
   line-height: 1.5;
+  text-align: center;
 }
 
 /* Tech stack */
 .timeline-techstack {
   display: flex;
   gap: 15px;
+  justify-content: center;
 }
 
 .timeline-techstack img {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 
 /* Links & buttons */
 .timeline-learnmore,
 .timeline-expand-button {
   font-size: 0.875rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 1rem;
   text-decoration: none;
   cursor: pointer;
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
 }
 
 .timeline-learnmore {
   color: var(--color-link);
   transition: opacity 0.2s ease;
+  border: 1px solid;
 }
 
 .timeline-learnmore:hover {
   opacity: 1;
-}
-
-.timeline-expand-button {
-  background-color: var(--color-link);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-}
-
-.timeline-item {
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  width: 100vw;
-  box-sizing: border-box; /* ensure padding still works */
 }
 
 /* Make the header edge-to-edge */
@@ -903,23 +870,80 @@ h1 {
   margin-right: -50vw;
   width: 100vw;
   box-sizing: border-box;
-  /* preserve your existing padding */
-  padding: 1rem 0;
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* And have the inner content stretch too (remove max-width) */
 .timeline-header-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center; /* or space-between if you want them apart */
   width: 100%;
-  padding: 0 1rem;          /* your horizontal gutter */
+  max-width: 800px;
+  padding: 0 1rem;
 }
 
 /* Example: if you still want to cap the text line-length, you can add */
 .timeline-title {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.2rem;
+  font-family: 'SF Pro Display', system-ui, sans-serif;
+  color: inherit;
+}
+
+.timeline-sort-button {
+  all: unset;
+  cursor: pointer;
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 30px;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.timeline-sort-button:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+.timeline-sort-icon {
+  background: none;
+  width: 16px;
+  height: 16px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .timeline-header-content {
+    padding: 0 0.5rem;
+  }
+  
+  .timeline-title {
+    font-size: 1.2rem;
+  }
+  
+  .timeline-content {
+    padding: 0 1rem;
+  }
+  
+  .timeline-sort-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    right: 10px;
+  }
+  
+  .timeline-sort-button span {
+    display: none;
+  }
 }
 
 /* Make footer span the full viewport width */
@@ -951,16 +975,6 @@ footer hr {
 .timeline-item {
   /* remove any overflow hiding */
   overflow: visible !important;
-}
-
-.timeline-sort-button {
-  all: unset;
-  cursor: pointer;
-  background: none;
-}
-
-.timeline-sort-icon {
-  background: none;
 }
 
 .profile-header .profile-title {
@@ -1601,9 +1615,46 @@ footer hr {
   }
 }
 
-/* Timeline transition animations */
-.timeline-container {
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+/* Timeline item animations */
+@keyframes timelineItemReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.timeline-item {
+  animation-duration: 0.8s;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: inherit;
+  z-index: -1;
+}
+
+.timeline-item.visible {
+  animation-name: timelineItemReveal;
 }
 
 @keyframes slideUpIn {
@@ -1956,8 +2007,9 @@ footer hr {
 button[aria-label="Close chat"] {
   z-index: 2000 !important;
   opacity: 1 !important;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
   transition: transform 0.2s ease, background-color 0.2s ease !important;
+  border: 2px solid rgba(0,0,0,0.1) !important; /* Add border */
 }
 
 button[aria-label="Close chat"]:hover,
@@ -2031,4 +2083,31 @@ button[aria-label="Close chat"]:active {
 
 .messages-container.exiting {
   opacity: 0;
+}
+
+/* Add active (touch) state for mobile */
+@media (max-width: 600px) {
+  button[aria-label="Close chat"]:active {
+    transform: scale(0.95) !important;
+    background-color: #d0d0d0 !important;
+  }
+  
+  /* Make the close button stand out more */
+  button[aria-label="Close chat"] {
+    background-color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3) !important;
+    border: 2.5px solid rgba(0,0,0,0.15) !important; /* Thicker border on mobile */
+  }
+  
+  /* Add animation to draw attention to the button */
+  @keyframes pulseButton {
+    0% { transform: scale(1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.35); }
+    100% { transform: scale(1); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+  }
+  
+  /* Apply the animation to the button */
+  .chat-view-fixed button[aria-label="Close chat"] {
+    animation: pulseButton 2s ease-in-out 1; /* Play once when chat opens */
+  }
 }

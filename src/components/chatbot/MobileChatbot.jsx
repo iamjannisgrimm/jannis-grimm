@@ -241,29 +241,61 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             paddingTop: "env(safe-area-inset-top, 0)", /* Handle safe area insets */
           }}
         >
+          {/* Header with gradient background */}
+          <div
+            className="chat-header-background"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "120px", /* Increased from 90px */
+              background: "linear-gradient(to bottom, rgba(255,255,255,1) 80%, rgba(255,255,255,0))",
+              zIndex: 1500,
+              pointerEvents: "none", /* Allow clicks to pass through to elements below */
+            }}
+          />
+          
+          {/* Header title */}
+          <div 
+            style={{
+              position: "absolute",
+              top: "calc(env(safe-area-inset-top, 20px) + 50px)", /* Match close button position */
+              left: "20px",
+              zIndex: 1900,
+              fontFamily: "'SF Pro Display', system-ui, sans-serif",
+              fontSize: "20px",
+              fontWeight: "600",
+              color: "#333333"
+            }}
+          >
+            Chat
+          </div>
+          
           {/* Close button positioned absolutely in the top-right corner */}
           <button
             onClick={handleClose}
             aria-label="Close chat"
             style={{
               position: "absolute",
-              top: "calc(env(safe-area-inset-top, 10px) + 10px)", /* Account for safe area */
+              top: "calc(env(safe-area-inset-top, 20px) + 40px)", /* Moved down significantly */
               right: "15px",
               zIndex: 2000,
-              width: "44px",
-              height: "44px",
+              width: "56px", /* Increased from 50px */
+              height: "56px", /* Increased from 50px */
               borderRadius: "50%",
               backgroundColor: "#f0f0f0",
               border: "none",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.25)", /* Increased shadow */
               cursor: "pointer",
-              padding: 0
+              padding: 0,
+              transition: "transform 0.2s ease, background-color 0.2s ease" /* Add transition */
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18 6L6 18M6 6L18 18" stroke="#333" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
@@ -277,7 +309,7 @@ const MobileChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
               overflowX: "hidden",
               WebkitOverflowScrolling: "touch",
               /* Increase top padding to prevent messages from flowing off the top */
-              paddingTop: "170px", /* Increased from 120px to 170px for better positioning */
+              paddingTop: "200px", /* Increased from 170px to accommodate header */
               /* Make sure there's adequate padding on the sides */
               paddingLeft: "16px",
               paddingRight: "16px",

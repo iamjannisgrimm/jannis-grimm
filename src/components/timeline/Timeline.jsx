@@ -46,33 +46,82 @@ export default function Timeline({ items }) {
     <div className="timeline-container">
       <div
         className="timeline-header"
-        style={{ backgroundColor: bgColor, color: txtColor }}
+        style={{ 
+          backgroundColor: bgColor, 
+          color: txtColor,
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '40px 20px',
+          position: 'relative'
+        }}
       >
-        <div className="timeline-header-content">
-          <p className="timeline-title" style={{ color: txtColor, paddingLeft: '30px', paddingRight: '30px' }}>
-            The projects and experiences that have inspired me over the years...
-          </p>
-          <button
-            className="timeline-sort-button"
-            onClick={handleSortToggle}
-            style={{ color: txtColor, backgorund: 'none' }}
+        <div 
+          className="timeline-header-content" 
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            maxWidth: '800px',
+            width: '100%'
+          }}
+        >
+          <h2 
+            className="timeline-title" 
+            style={{ 
+              color: txtColor, 
+              textAlign: 'center',
+              fontSize: '1.2rem',
+              fontWeight: 600,
+              margin: 0,
+              fontFamily: "'SF Pro Display', system-ui, sans-serif"
+            }}
           >
-            <ArrowsUpDownIcon
-              className="timeline-sort-icon"
-              style={{
-                width: '24px',
-                height: '24px',
-                background: 'none',
-                margin: '10px',
-                color: txtColor,
-                transform: 'translateY(5px)',
-              }}
-            />
-          </button>
+            The projects and experiences that have inspired me over the years...
+          </h2>
         </div>
+        
+        <button
+          className="timeline-sort-button"
+          onClick={handleSortToggle}
+          style={{ 
+            color: txtColor, 
+            background: 'none',
+            border: `1px solid ${txtColor}`,
+            borderRadius: '30px',
+            padding: '6px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            position: 'absolute',
+            right: '20px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: '0.8rem',
+            opacity: 0.7
+          }}
+        >
+          <span>Toggle</span>
+          <ArrowsUpDownIcon
+            className="timeline-sort-icon"
+            style={{
+              width: '16px',
+              height: '16px',
+              color: txtColor
+            }}
+          />
+        </button>
       </div>
 
-      <div className="timeline-items">
+      <div 
+        className="timeline-items"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%'
+        }}
+      >
         {animatedData.map((item, i) => {
           // when reversed, swap top/bottom spacing
           const topSpacing = isReversed
@@ -89,7 +138,8 @@ export default function Timeline({ items }) {
               style={{
                 opacity: item.isFadingOut ? 0 : 1,
                 transform: item.isFadingIn ? "scale(1.02)" : "scale(1)",
-                transition: "opacity .3s ease, transform .3s ease"
+                transition: "opacity .3s ease, transform .3s ease",
+                width: '100%'
               }}
             >
               <TimelineItem
