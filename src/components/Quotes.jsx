@@ -21,11 +21,10 @@ export default function Quotes() {
             maxWidth: 600,
             marginLeft: "auto",
             marginRight: "auto",
-            marginTop: isMobile ? "30px" : "10px",
-            marginBottom: isMobile ? "60px" : "100px",
+            marginBottom: isMobile ? "60px" : "70px",
             display: "flex",
             flexDirection: "column",
-            gap: "2rem",
+            gap: isMobile ? "2rem" : "1.5rem",
             alignItems: "center",
           }}
         >

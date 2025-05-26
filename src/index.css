@@ -136,6 +136,15 @@ h1 {
   width: 100%;
   text-align: center;
 }
+
+/* Desktop-specific ProfileHeader adjustments */
+@media (min-width: 601px) {
+  .profile-header {
+    padding-top: 0; /* Remove top padding on desktop */
+    padding-bottom: 20px; /* Reduce bottom padding on desktop */
+  }
+}
+
 .profile-header .profile-title {
   margin: 0 0 20px 0;
   color: #000000;
@@ -1827,12 +1836,27 @@ footer hr {
 
 /* Adjust quotes spacing for desktop */
 @media (min-width: 601px) {
-  .github-desktop-contributions {
-    margin-bottom: -40px !important;
+  .home-container .github-desktop-contributions {
+    margin-bottom: -120px !important; /* Force a large negative margin */
+    transform: scale(0.90) !important; /* Make it slightly smaller */
+    position: relative !important;
+    z-index: 0 !important; /* Lower z-index so quotes can overlap */
   }
   
-  section:has(.quotes-container) {
+  .home-container section:has(.quotes-container) {
+    margin-top: -100px !important; /* Force a large negative top margin on the quotes section */
+    position: relative !important;
+    z-index: 1 !important; /* Higher z-index to overlap contributions */
+  }
+  
+  /* Adjust the quotes container internal spacing */
+  .home-container .quotes-container {
+    margin-top: -60px !important; /* Additional negative margin inside the container */
     padding-top: 0 !important;
-    margin-top: -30px !important;
+  }
+  
+  /* Make sure the GitHub contributions element doesn't get cut off */
+  .home-container .github-desktop-contributions .content-container {
+    padding-bottom: 80px !important; /* Add padding to prevent cutting off contributions */
   }
 }

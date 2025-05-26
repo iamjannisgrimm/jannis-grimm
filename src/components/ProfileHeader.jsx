@@ -74,7 +74,8 @@ const ProfileHeader = ({
         style={{
           wordSpacing: "1rem",
           opacity: titleOpacity,
-          transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
+          transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
+          marginTop: "-140px"
         }}
       >
         {title}

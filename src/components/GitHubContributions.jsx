@@ -59,11 +59,13 @@ const GitHubContributions = ({ username }) => {
       width: "100%",
       maxWidth: 800,
       margin: "0 auto",
-      marginBottom: isMobile ? 0 : "-20px",
+      marginBottom: isMobile ? 0 : "-40px",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       paddingBottom: isMobile ? "20px" : "0",
+      transform: isMobile ? "none" : "scale(0.95)",
+      transformOrigin: "center bottom"
     }}>
       {/* Calendar is scrollable on mobile */}
       <div
@@ -95,7 +97,7 @@ const GitHubContributions = ({ username }) => {
       {total !== null && (
         <div
           style={{
-            marginTop: "6px",
+            marginTop: isMobile ? "6px" : "2px",
             fontSize: "0.98rem",
             color: "#5f6368",
             textAlign: "center",

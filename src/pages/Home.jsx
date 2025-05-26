@@ -9,7 +9,6 @@ import Achievements from '../components/Achievements';
 import Quotes from '../components/Quotes';
 import Skills from '../components/Skills';
 import Chevron from "../components/Chevron";
-import ScrollToTop from "../components/ScrollToTop";
 import { useInView } from "../components/hooks/useInView";
 import { useFadeEffect } from "../components/hooks/useFadeEffect";
 import { useMobileInView } from "../components/hooks/useMobileInView";
@@ -272,7 +271,9 @@ export function Home() {
                 cursor: "pointer",
                 opacity: githubOpacity,
                 transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-                marginBottom: "-50px" // Add negative bottom margin to reduce space
+                marginBottom: "-100px", // Reasonable negative margin
+                transform: !isMobile ? "scale(0.9)" : "none", // Scale down slightly on desktop
+                transformOrigin: "center bottom"
               }}
               title="View GitHub Profile"
               onClick={(e) => {
@@ -294,7 +295,7 @@ export function Home() {
             opacity: quotesOpacity,
             transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
             paddingBottom: "10px",
-            marginTop: isMobile ? "100px" : "-20px", // Negative margin for desktop
+            marginTop: isMobile ? "100px" : "0px", // No margin for desktop now
             position: "relative",
             zIndex: 1 // Ensure quotes appear above any overlapping elements
           }}
@@ -343,7 +344,6 @@ export function Home() {
           />
         </div>
       </div>
-      <ScrollToTop />
     </div>
   );
 }
