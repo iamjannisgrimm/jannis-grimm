@@ -111,8 +111,8 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
           className="chat-close-button"
           style={{
             position: "absolute",
-            top: "12px",
-            right: "12px",
+            top: "30px",
+            right: "10px",
             zIndex: 100,
             background: "none",
             border: "none",
@@ -122,20 +122,22 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             alignItems: "center",
             justifyContent: "center",
             borderRadius: "50%",
-            width: "32px",
-            height: "32px",
+            width: "36px",
+            height: "36px",
             backgroundColor: "#f1f1f1",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            transition: "background-color 0.2s ease"
+            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+            transition: "all 0.2s ease"
           }}
           onMouseOver={(e) => {
             e.currentTarget.style.backgroundColor = "#e5e5e5";
+            e.currentTarget.style.transform = "scale(1.05)";
           }}
           onMouseOut={(e) => {
             e.currentTarget.style.backgroundColor = "#f1f1f1";
+            e.currentTarget.style.transform = "scale(1)";
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 6L6 18M6 6L18 18" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
@@ -158,7 +160,7 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             borderRadius: "16px",
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
             position: "relative",
-            marginBottom: "16px"
+            marginBottom: "24px"
           }}
         >
           <div className="starters-wrapper" style={{ 
@@ -181,12 +183,12 @@ const DesktopChatbot = forwardRef(({ onFocus, onBlur }, ref) => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "flex-end",
-            height: "420px",
+            height: "450px",
             borderRadius: "16px",
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
             backgroundColor: "#ffffff",
             padding: "16px",
-            marginBottom: "16px",
+            marginBottom: "24px",
             position: "relative"
           }}
         >
