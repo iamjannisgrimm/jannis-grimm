@@ -4,8 +4,8 @@ const timelineData = [
     title: "SeeMe",
     subtitle: "Lead Software Engineer",
     location: "Tech Company Inc., San Francisco",
-    description: "Your digital, fully-private life coach who truly understands you.",
-    secondDescription: "Scaled venture to $2.5M valuation, attracting interest from Silicon Valley investors.",
+    description: "Led development on your digital, fully-private life coach who truly understands you.",
+    secondDescription: "Scaled venture to $2.5M valuation (pre-product), attracting substantial interest from Silicon Valley investors.",
     icon: "seeme25/Icon.png",
     image: "seeme25/seemelineup.png",
     background: "#2A2A2A",
@@ -24,8 +24,9 @@ const timelineData = [
   {
     date: "2024 - Present",
     title: "Synechron Inc",
-    subtitle: "Software Engineer",
-    description: "Hands-on AI Engineering consultant building intelligent systems that drive real-world impact.",
+    subtitle: "Software Developer & Project Manager",
+    description: "Revitalized a failing AI product by being deeply involved in the strategic planning, stakeholder-focused storyboarding, technical execution & agile management.",
+    secondDescription: "Relaunched the product as an accelerator attracting new clients.",
     icon: "synechron/synechron.png",
     background: "#2A2A2A",
     techStack: [
@@ -48,7 +49,7 @@ const timelineData = [
     subtitle: "Side Project",
     icon: "coverletter/terminal.png",
     description: "Ability to generate cover letters in seconds, maximizing application efficiency.",
-    secondDescription: "10 seconds vs. 10 minutes manually—saving hours per job search.",
+    secondDescription: "Published open source. Saving Thousands of hours in applications combined.",
     image: "coverletter/coverlettergen.png",
     background: "#2A2A2A",
     techStack: [
@@ -67,7 +68,7 @@ const timelineData = [
     title: "Lufthansa",
     subtitle: "Software Engineer Intern",
     icon: "lufthansa/lhicon.png",
-    description: "Built a GoLang and Angular based microservice with Docker/Kubernetes for efficient database management.",
+    description: "Built a microservice around efficient database management.",
     secondDescription: "Attracted two new clients, boosting revenue and market competitiveness.",
     background: "#FFFFFF",
     techStack: [
@@ -90,7 +91,7 @@ const timelineData = [
     title: "SeeMe LLC",
     subtitle: "Founder & CEO",
     icon: "seeme2023/seemeoldicon.png",
-    description: "Led a team to build digital life coach with OpenAI API for AI-driven feedback and tracking.",
+    description: "Led a team to build digital life companion with OpenAI API for AI-driven feedback and tracking.",
     secondDescription: "Monitored 50+ test users closely, driving iterative improvements for next development phase.",
     image: "seeme2023/seeme2023lineup.png",
     background: "#FFFFFF",
@@ -133,7 +134,7 @@ const timelineData = [
     subtitle: "Passion Project",
     icon: "seeme2022/seeme22icon.png",
     image: "seeme2022/seeme22lineup.png",
-    description: "Developed the first iteration of a journaling app, reinventing personal reflection with a product I wanted for myself.",
+    description: "Developed first iteration of a journaling app, reinventing personal reflection.",
     background: "#2A2A2A",
     techStack: [
       "techstack/swiftui.png",
@@ -151,7 +152,8 @@ const timelineData = [
     subtitle: "Lead iOS Engineer",
     icon: "introhm/introhmicon.png",
     image: "introhm/introhmlineup.png",
-    description: "Led development of a fitness app using Swift and Objective-C, integrating ML models for deep athlete performance analytics.",
+    description: "Led development of an innovative ML-powered fitness app.",
+    secondDescription: "Successfully launched alpha release, leading to next round of funding.",
     background: "#2A2A2A",
     techStack: [
       "techstack/swiftui.png",
@@ -172,7 +174,7 @@ const timelineData = [
     title: "Arizona State University",
     subtitle: "B.S. Computer Science",
     icon: "asu/asuiconrm.png",
-    description: "Focused on Software Engineering, Design, and Innovation at ASU, consistently ranked #1 university in innovation.",
+    description: "Focused on: Software Engineering, Design, and Innovation. At the #1 ranked university in innovation.",
     background: "#2A2A2A",
     techStack: [
     ],
@@ -188,8 +190,8 @@ const timelineData = [
     subtitle: "iOS Passion Project",
     icon: "mylife/mylifeicon.png",
     image: "mylife/mylifelineup.png",
-    description: "Built 'My Life at a Glance' to help users track milestones and achievements.",
-    secondDescription: "10,000+ downloads and a 4.8+ rating, driving user satisfaction and engagement.",
+    description: "'My Life at a Glance' helps users track milestones and achievements in their lives.",
+    secondDescription: "75K+ downloads and a 4.8+ rating.",
     background: "#FFFFFF",
     techStack: [
       "techstack/swiftui.png",
@@ -207,7 +209,8 @@ const timelineData = [
     subtitle: "iOS Passion Project",
     icon: "flightlogbook/flightlogbookicon.png",
     image: "flightlogbook/flightlogbooklineup.png",
-    description: "Built 'Flight Log Book' for aviation enthusiasts to document flight experiences.",
+    description: "First published app: Flight Log Book",
+    secondDescription: "For aviation and travel enthusiasts to document flight experiences replacing physical logbooks.",
     background: "#FFFFFF",
     techStack: [
       "techstack/swiftui.png",
