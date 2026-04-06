@@ -1,0 +1,148 @@
+/* ===== Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: white;
+}
+
+#root {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Fonts ===== */
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./assets/fonts/SF-Pro-Text-Regular.woff2') format('woff2'),
+       url('./assets/fonts/SF-Pro-Text-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./assets/fonts/SF-Pro-Text-Medium.woff2') format('woff2'),
+       url('./assets/fonts/SF-Pro-Text-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./assets/fonts/SF-Pro-Text-Semibold.woff2') format('woff2'),
+       url('./assets/fonts/SF-Pro-Text-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./assets/fonts/SF-Pro-Text-Bold.woff2') format('woff2'),
+       url('./assets/fonts/SF-Pro-Text-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./assets/fonts/SF-Pro-Text-Heavy.woff2') format('woff2'),
+       url('./assets/fonts/SF-Pro-Text-Heavy.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SF Pro';
+  src: url('./assets/fonts/SF-Pro-Text-Black.woff2') format('woff2'),
+       url('./assets/fonts/SF-Pro-Text-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+
+* {
+  font-family: 'SF Pro', sans-serif !important;
+}
+
+/* ===== CSS Variables ===== */
+:root {
+  --primary-spacing: 1rem;
+  --section-spacing: 2rem;
+  --content-max-width: 1200px;
+  --text-color: #000000;
+  --background-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --primary-spacing: 0.75rem;
+    --section-spacing: 1.5rem;
+  }
+}
+
+/* ===== Layout Helpers ===== */
+.center-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.content-container {
+  width: 100%;
+  max-width: var(--content-max-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Profile Title Parts (mobile stacking) ===== */
+.title-part {
+  display: inline;
+}
+.title-part + .title-part::before {
+  content: " ";
+}
+@media (max-width: 768px) {
+  .title-part {
+    display: block;
+  }
+  .title-part + .title-part::before {
+    content: none;
+  }
+}
+
+/* ===== GitHub Contributions ===== */
+.github-contributions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--background-color);
+  padding: var(--section-spacing) 0;
+}
+
+.github-calendar-wrapper {
+  width: 90%;
+  max-width: 800px;
+  transition: width 0.3s ease-in-out;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .github-calendar-wrapper { width: 95%; }
+}
