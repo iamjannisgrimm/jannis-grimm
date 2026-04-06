@@ -148,7 +148,6 @@ const Timeline = () => {
       if (!isTouchTrackingRef.current) return;
       if (!canConsumeTouchScroll()) return;
       const currentTouchY = e.touches[0].clientY;
-      e.preventDefault();
       const deltaY = touchStartY - currentTouchY;
       const primaryDelta = deltaY * MOBILE_SCROLL_MULTIPLIER;
 
@@ -159,6 +158,7 @@ const Timeline = () => {
       }
 
       if (!consumeTouchHorizontalScroll(primaryDelta)) return;
+      e.preventDefault();
       touchStartY = currentTouchY;
       touchStartX = e.touches[0].clientX;
     };
