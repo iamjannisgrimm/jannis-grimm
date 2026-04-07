@@ -1,4 +1,34 @@
+import aviatarImage from "../assets/aviatar.jpeg";
+import asuImage from "../assets/asu.jpg";
+import lufthansaImage from "../assets/lufthansa.jpeg";
+import seeme2026Background from "../assets/seeme-2026-background.PNG";
+import seeme2026AppStoreBadge from "../assets/seeme-2026-appstorebadge.png";
+import seeme2026ProductMobile from "../assets/seeme-2026-product-mobile.png";
+import seeme2026Product from "../assets/seeme-2026-product.png";
+import synechronImage from "../assets/synechron.jpg";
+
 const timelineData = [
+  {
+    date: "2026",
+    title: "SeeMe",
+    subtitle: "Hero",
+    description: "A private, personal AI built around how you think, reflect, and grow - with expert coaches in your corner.",
+    secondDescription: "Background image and product visual will be added next.",
+    background: "#111111",
+    backgroundImage: seeme2026Background,
+    productImage: seeme2026Product,
+    productImageMobile: seeme2026ProductMobile,
+    appStoreBadge: seeme2026AppStoreBadge,
+    appStoreUrl: "https://apps.apple.com/us/app/seeme-personal-growth/id6739706517",
+    website: "https://seemeai.app",
+    techStack: [],
+    link: "",
+    linkColor: "#FFFFFF",
+    isHero: true,
+    //-------------------------------------------
+    topSpacing: 0,
+    bottomSpacing: 0,
+  },
   {
     date: "2025",
     title: "SeeMe",
@@ -27,6 +57,7 @@ const timelineData = [
     subtitle: "Software Engineer",
     description: "Hands-on AI Engineering consultant building intelligent systems that drive real-world impact.",
     icon: "synechron/synechron.png",
+    image: synechronImage,
     background: "#2A2A2A",
     techStack: [
       "techstack/swiftui.png",
@@ -69,6 +100,7 @@ const timelineData = [
     icon: "lufthansa/lhicon.png",
     description: "Built a GoLang and Angular based microservice with Docker/Kubernetes for efficient database management.",
     secondDescription: "Attracted two new clients, boosting revenue and market competitiveness.",
+    image: lufthansaImage,
     background: "#FFFFFF",
     techStack: [
       "techstack/angular.png",
@@ -115,6 +147,7 @@ const timelineData = [
     icon: "lufthansa/lhicon.png",
     description: "Enhanced UI/UX for a digital flight logbook used by pilots and maintenance crews.",
     secondDescription: "Reduced maintenance-related calls by 40% and increased user satisfaction by 25%.",
+    image: aviatarImage,
     background: "#FFFFFF",
     techStack: [
       "techstack/angular.png",
@@ -172,6 +205,7 @@ const timelineData = [
     title: "Arizona State University",
     subtitle: "B.S. Computer Science",
     icon: "asu/asuiconrm.png",
+    image: asuImage,
     description: "Focused on Software Engineering, Design, and Innovation at ASU, consistently ranked #1 university in innovation.",
     background: "#2A2A2A",
     techStack: [

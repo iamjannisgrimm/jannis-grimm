@@ -12,7 +12,7 @@ export const achievements = [
       subtitle: "Software Engineer",
     },
     {
-      title: "4+",
+      title: "6+",
       subtitle: "Years of Experience",
     },  
   ];
