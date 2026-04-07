@@ -28,7 +28,7 @@ const ProfileHeader = ({ image, title }) => {
           padding: 0,
           margin: "0 0 30px 0",
           width: "100%",
-          maxWidth: "800px"
+          maxWidth: "800px",
         }}
       >
         {title.split(". ").map((part, i, arr) => (
@@ -44,7 +44,7 @@ const ProfileHeader = ({ image, title }) => {
         width: "100%",
         margin: 0,
         padding: 0,
-        position: "relative"
+        position: "relative",
       }}>
         <img
           src={`${import.meta.env.BASE_URL}${image}`}
@@ -56,7 +56,7 @@ const ProfileHeader = ({ image, title }) => {
             borderRadius: "12px",
             objectFit: "cover",
             display: "block",
-            margin: 0
+            margin: 0,
           }}
         />
         <div style={{

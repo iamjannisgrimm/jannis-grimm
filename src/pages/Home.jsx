@@ -8,34 +8,70 @@ import Footer from "../components/Footer";
 
 export function Home() {
   return (
-    <div style={{
-      width: "100%",
-      overflowX: "hidden",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      margin: 0,
-      padding: 0
-    }}>
+    <div
+      style={{
+        width: "100%",
+        overflowX: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        margin: 0,
+        padding: 0,
+      }}
+    >
       {/* Hero */}
-      <div className="center-container" style={{ width: "100%" }}>
+      <div
+        className="center-container"
+        style={{ width: "100%" }}
+      >
         <div className="content-container">
           <ProfileHeader image="me/JannisGrimm.png" title="Engineer. Innovator. Leader" />
         </div>
       </div>
 
-      {/* GitHub Contributions */}
-      <div className="center-container" style={{ width: "100%", backgroundColor: "white", padding: "60px 0 0" }}>
-        <div className="content-container">
-          <GitHubContributions username="iamjannisgrimm" />
+      <div
+        style={{
+          width: "100%",
+          position: "relative",
+          overflow: "hidden",
+          background: "white",
+        }}
+      >
+        {/* Quote */}
+        <div
+          className="center-container"
+          style={{
+            width: "100%",
+            backgroundColor: "transparent",
+            padding: "60px 0 0",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <div className="content-container">
+            <Quotes />
+          </div>
         </div>
-      </div>
 
-      {/* Stats + Quote */}
-      <div className="center-container" style={{ width: "100%", padding: "48px 0 100px" }}>
-        <div className="content-container">
-          <Achievements />
-          <Quotes />
+        {/* Stats + GitHub Contributions */}
+        <div
+          className="center-container"
+          style={{
+            width: "100%",
+            padding: "48px 0 255px",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <div className="content-container">
+            <div>
+              <Achievements />
+            </div>
+
+            <div>
+              <GitHubContributions username="iamjannisgrimm" />
+            </div>
+          </div>
         </div>
       </div>
 

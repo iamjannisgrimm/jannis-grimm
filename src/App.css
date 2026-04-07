@@ -108,7 +108,7 @@ body, html {
 
 /* ===== Profile Title Parts (mobile stacking) ===== */
 .title-part {
-  display: inline;
+  display: inline-block;
 }
 .title-part + .title-part::before {
   content: " ";
@@ -116,9 +116,13 @@ body, html {
 @media (max-width: 768px) {
   .title-part {
     display: block;
+    margin-bottom: 0.3em;
   }
   .title-part + .title-part::before {
     content: none;
+  }
+  .title-part:last-child {
+    margin-bottom: 0;
   }
 }
 

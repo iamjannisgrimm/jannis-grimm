@@ -19,6 +19,9 @@ export default function Quotes() {
           style={{
             width: "100%",
             maxWidth: 600,
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            boxSizing: "border-box",
             marginLeft: "auto",
             marginRight: "auto",
             marginBottom: "0px",
