@@ -17,6 +17,22 @@
     <meta name="twitter:image" content="https://iamjannisgrimm.com/thumbnail.png" />
     <title>Jannis Grimm</title>
     <link rel="stylesheet" crossorigin href="./assets/index-CqnRAZRC.css">
+    <style>
+      .privacy-footer-link {
+        display: inline;
+        margin-left: 10px;
+        color: inherit;
+        text-decoration: none;
+        opacity: 0.78;
+        font-size: 12px;
+        font-family: inherit;
+        transition: opacity 160ms ease;
+      }
+
+      .privacy-footer-link:hover {
+        opacity: 1;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -40,6 +56,22 @@
       function getMediaPath(media, predicate) {
         const match = media.find(predicate);
         return typeof match?.path === "string" ? match.path : "";
+      }
+
+      function attachPrivacyFooterLink() {
+        const footerCopy = Array.from(document.querySelectorAll("p")).find((element) =>
+          element.textContent?.includes("All rights reserved."),
+        );
+
+        if (!footerCopy || footerCopy.querySelector(".privacy-footer-link")) {
+          return;
+        }
+
+        const privacyLink = document.createElement("a");
+        privacyLink.href = "./privacy.html";
+        privacyLink.className = "privacy-footer-link";
+        privacyLink.textContent = "Privacy";
+        footerCopy.appendChild(privacyLink);
       }
 
       function mapTimelineRow(row) {
@@ -148,6 +180,10 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           await import("./assets/index-Xk-FGBtY.js?v=supabase-live-2");
+          requestAnimationFrame(() => {
+            attachPrivacyFooterLink();
+            window.setTimeout(attachPrivacyFooterLink, 300);
+          });
         }
       }
 
