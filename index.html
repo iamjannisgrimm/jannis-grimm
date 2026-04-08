@@ -16,10 +16,125 @@
     <meta name="twitter:description" content="Engineer. Innovator. Leader." />
     <meta name="twitter:image" content="https://iamjannisgrimm.com/thumbnail.png" />
     <title>Jannis Grimm</title>
-    <script type="module" crossorigin src="./assets/index-Xk-FGBtY.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-CqnRAZRC.css">
   </head>
   <body>
     <div id="root"></div>
+    <script type="module">
+      const SUPABASE_URL = "https://dndmthvnajpritxxjrie.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuZG10aHZuYWpwcml0eHhqcmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MDIxMDgsImV4cCI6MjA5MTE3ODEwOH0.PKfbsVyx4M4AInzdKPUvyfrE3Z9IZjAYu_kAY8gLQy0";
+
+      function stringValue(value, fallback = "") {
+        return typeof value === "string" ? value : fallback;
+      }
+
+      function numberValue(value, fallback = 0) {
+        return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+      }
+
+      function getMediaPath(media, predicate) {
+        const match = media.find(predicate);
+        return typeof match?.path === "string" ? match.path : "";
+      }
+
+      function mapTimelineRow(row) {
+        const metadata =
+          row && typeof row.metadata === "object" && row.metadata !== null ? row.metadata : {};
+        const media = Array.isArray(row?.event_media)
+          ? [...row.event_media].sort(
+              (left, right) => numberValue(left?.sort_order) - numberValue(right?.sort_order),
+            )
+          : [];
+        const firstLink =
+          Array.isArray(row?.links) && typeof row.links[0] === "string" ? row.links[0] : "";
+        const heroCover = getMediaPath(media, (item) => item.kind === "cover");
+        const lineupImage = getMediaPath(media, (item) =>
+          ["lineup", "cover", "detail", "asset"].includes(item.kind),
+        );
+        const productImage = getMediaPath(
+          media,
+          (item) => item.kind === "asset" && item.alt?.toLowerCase().includes("product"),
+        );
+        const productImageMobile = getMediaPath(
+          media,
+          (item) => item.kind === "asset" && item.alt?.toLowerCase().includes("mobile"),
+        );
+        const appStoreBadge = getMediaPath(
+          media,
+          (item) => item.kind === "asset" && item.alt?.toLowerCase().includes("app store"),
+        );
+
+        return {
+          date: stringValue(row?.period_label),
+          title: stringValue(row?.title),
+          subtitle: stringValue(row?.subtitle),
+          location: stringValue(row?.location),
+          description: stringValue(row?.summary),
+          secondDescription: stringValue(metadata.secondDescription),
+          icon: getMediaPath(media, (item) => item.kind === "icon"),
+          image: lineupImage,
+          background: stringValue(metadata.background, "#FFFFFF"),
+          techStack: Array.isArray(row?.tech_stack)
+            ? row.tech_stack.filter((item) => typeof item === "string")
+            : [],
+          link: firstLink,
+          linkColor: stringValue(metadata.linkColor, "#000000"),
+          topSpacing: numberValue(metadata.topSpacing),
+          bottomSpacing: numberValue(metadata.bottomSpacing),
+          isHero: Boolean(metadata.isHero),
+          backgroundImage: stringValue(metadata.backgroundImage, heroCover),
+          productImage: stringValue(metadata.productImage, productImage),
+          productImageMobile: stringValue(metadata.productImageMobile, productImageMobile),
+          appStoreBadge: stringValue(metadata.appStoreBadge, appStoreBadge),
+          appStoreUrl: stringValue(metadata.appStoreUrl),
+          website: stringValue(metadata.website),
+        };
+      }
+
+      async function bootstrapPortfolio() {
+        try {
+          const url = new URL("/rest/v1/timeline_events", SUPABASE_URL);
+          url.searchParams.set(
+            "select",
+            "slug,title,subtitle,period_label,location,category,status,sort_order,featured,summary,tech_stack,links,metadata,event_media(kind,path,alt,sort_order)",
+          );
+          url.searchParams.set("status", "eq.published");
+          url.searchParams.set("order", "sort_order.desc");
+          url.searchParams.set("event_media.order", "sort_order.asc");
+
+          const response = await fetch(url, {
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+          });
+
+          if (response.ok) {
+            const rows = await response.json();
+            if (Array.isArray(rows) && rows.length > 0) {
+              const orderedRows = [...rows].sort((left, right) => {
+                const leftIsHero = Boolean(left?.metadata?.isHero);
+                const rightIsHero = Boolean(right?.metadata?.isHero);
+
+                if (leftIsHero !== rightIsHero) {
+                  return leftIsHero ? -1 : 1;
+                }
+
+                return (Number(right?.sort_order) || 0) - (Number(left?.sort_order) || 0);
+              });
+
+              window.__PORTFOLIO_TIMELINE_DATA__ = orderedRows.map(mapTimelineRow);
+            }
+          }
+        } catch (error) {
+          console.warn("Portfolio timeline bootstrap fallback", error);
+        } finally {
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-2");
+        }
+      }
+
+      bootstrapPortfolio();
+    </script>
   </body>
 </html>
