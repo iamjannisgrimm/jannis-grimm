@@ -32,6 +32,20 @@
       .privacy-footer-link:hover {
         opacity: 1;
       }
+
+      @keyframes timeline-image-shimmer {
+        0% {
+          background-position: 0% 50%;
+        }
+
+        50% {
+          background-position: 100% 50%;
+        }
+
+        100% {
+          background-position: 0% 50%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -98,6 +112,228 @@
         privacyLink.className = "privacy-footer-link";
         privacyLink.textContent = "Privacy";
         footerCopy.appendChild(privacyLink);
+      }
+
+      function parseRgbColor(value) {
+        if (typeof value !== "string") {
+          return [255, 255, 255];
+        }
+
+        const trimmed = value.trim();
+
+        if (trimmed.startsWith("#")) {
+          let hex = trimmed.slice(1);
+          if (hex.length === 3) {
+            hex = hex
+              .split("")
+              .map((char) => char + char)
+              .join("");
+          }
+
+          if (hex.length === 6) {
+            const parsed = Number.parseInt(hex, 16);
+            return [(parsed >> 16) & 255, (parsed >> 8) & 255, parsed & 255];
+          }
+        }
+
+        const match = trimmed.match(/rgba?\(([^)]+)\)/i);
+        if (!match) {
+          return [255, 255, 255];
+        }
+
+        const channels = match[1].split(",").map((part) => Number.parseFloat(part.trim()));
+        return [channels[0] || 255, channels[1] || 255, channels[2] || 255];
+      }
+
+      function rgbToCss(rgb) {
+        return `rgb(${Math.round(rgb[0])}, ${Math.round(rgb[1])}, ${Math.round(rgb[2])})`;
+      }
+
+      function mixColor(base, target, amount) {
+        return [
+          base[0] + (target[0] - base[0]) * amount,
+          base[1] + (target[1] - base[1]) * amount,
+          base[2] + (target[2] - base[2]) * amount,
+        ];
+      }
+
+      function isDarkColor(rgb) {
+        return (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 < 170;
+      }
+
+      function findTimelineImageBaseColor(element) {
+        let current = element.parentElement;
+
+        while (current && current !== document.body) {
+          const background = window.getComputedStyle(current).backgroundColor;
+          if (background && background !== "rgba(0, 0, 0, 0)" && background !== "transparent") {
+            return parseRgbColor(background);
+          }
+          current = current.parentElement;
+        }
+
+        return [255, 255, 255];
+      }
+
+      function isTimelineContentImage(image) {
+        const source = image.getAttribute("src") || "";
+
+        if (!source) {
+          return false;
+        }
+
+        if (/appstorebadge|icon|techstack/i.test(source)) {
+          return false;
+        }
+
+        return (
+          /lineup|coverlettergen|synechron-|asu-|lufthansa-|aviatar-|seeme-2026-product/i.test(
+            source,
+          ) || source.includes("product-mobile")
+        );
+      }
+
+      function ensureTimelineImageHost(image) {
+        const parent = image.parentElement;
+        if (!parent) {
+          return null;
+        }
+
+        if (parent.childElementCount === 1) {
+          if (window.getComputedStyle(parent).position === "static") {
+            parent.style.position = "relative";
+          }
+          parent.style.overflow = "hidden";
+          return parent;
+        }
+
+        const wrapper = document.createElement("div");
+        const computed = window.getComputedStyle(image);
+
+        wrapper.style.position = "relative";
+        wrapper.style.display = "block";
+        wrapper.style.overflow = "hidden";
+        wrapper.style.width = image.style.width || "100%";
+        wrapper.style.height =
+          image.style.height && image.style.height !== "auto" ? image.style.height : computed.height;
+        wrapper.style.maxWidth = image.style.maxWidth || computed.maxWidth;
+        wrapper.style.maxHeight = image.style.maxHeight || computed.maxHeight;
+        wrapper.style.borderRadius = computed.borderRadius;
+        wrapper.style.margin = computed.margin;
+        wrapper.style.alignSelf = computed.alignSelf;
+
+        image.style.margin = "0";
+        image.style.width = "100%";
+        image.style.height = "100%";
+        image.style.maxWidth = "100%";
+        image.style.maxHeight = "100%";
+
+        parent.insertBefore(wrapper, image);
+        wrapper.appendChild(image);
+        return wrapper;
+      }
+
+      function enhanceTimelineImage(image) {
+        if (!(image instanceof HTMLImageElement) || image.dataset.timelineImageEnhanced === "true") {
+          return;
+        }
+
+        if (!isTimelineContentImage(image)) {
+          return;
+        }
+
+        const host = ensureTimelineImageHost(image);
+        if (!host) {
+          return;
+        }
+
+        image.dataset.timelineImageEnhanced = "true";
+
+        const base = findTimelineImageBaseColor(host);
+        const dark = isDarkColor(base);
+        const highlight = mixColor(base, dark ? [255, 255, 255] : [0, 0, 0], 0.12);
+        const accent = mixColor(base, dark ? [255, 255, 255] : [0, 0, 0], 0.28);
+        const borderColor = dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.32)";
+
+        const placeholder = document.createElement("div");
+        placeholder.setAttribute("aria-hidden", "true");
+        placeholder.style.position = "absolute";
+        placeholder.style.inset = "0";
+        placeholder.style.borderRadius = window.getComputedStyle(image).borderRadius;
+        placeholder.style.background = `linear-gradient(135deg, ${rgbToCss(highlight)} 0%, ${rgbToCss(
+          accent,
+        )} 52%, ${rgbToCss(highlight)} 100%)`;
+        placeholder.style.backgroundSize = "180% 180%";
+        placeholder.style.animation = "timeline-image-shimmer 2.4s ease-in-out infinite";
+        placeholder.style.boxShadow = `inset 0 0 0 1px ${borderColor}`;
+        placeholder.style.transition = "opacity 700ms ease";
+        placeholder.style.pointerEvents = "none";
+
+        image.style.opacity = "0";
+        image.style.transition = image.style.transition
+          ? `${image.style.transition}, opacity 700ms ease`
+          : "opacity 700ms ease";
+        image.style.position = "relative";
+        image.style.zIndex = "1";
+
+        host.insertBefore(placeholder, image);
+
+        const reveal = () => {
+          image.style.opacity = "1";
+          placeholder.style.opacity = "0";
+          window.setTimeout(() => placeholder.remove(), 720);
+        };
+
+        if (image.complete && image.naturalWidth > 0) {
+          requestAnimationFrame(reveal);
+          return;
+        }
+
+        image.addEventListener("load", reveal, { once: true });
+        image.addEventListener(
+          "error",
+          () => {
+            image.style.opacity = "1";
+            placeholder.remove();
+          },
+          { once: true },
+        );
+      }
+
+      function enhanceTimelineImages(root = document) {
+        if (!(root instanceof Element || root instanceof Document)) {
+          return;
+        }
+
+        if (root instanceof HTMLImageElement) {
+          enhanceTimelineImage(root);
+          return;
+        }
+
+        root.querySelectorAll("img").forEach((image) => enhanceTimelineImage(image));
+      }
+
+      function startTimelineImageEnhancer() {
+        enhanceTimelineImages();
+
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            mutation.addedNodes.forEach((node) => {
+              if (!(node instanceof Element)) {
+                return;
+              }
+
+              if (node instanceof HTMLImageElement) {
+                enhanceTimelineImage(node);
+                return;
+              }
+
+              enhanceTimelineImages(node);
+            });
+          }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
       }
 
       function mapTimelineRow(row) {
@@ -227,6 +463,7 @@
           await import("./assets/index-Xk-FGBtY.js?v=supabase-live-2");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
+            startTimelineImageEnhancer();
             window.setTimeout(attachPrivacyFooterLink, 300);
           });
         }
