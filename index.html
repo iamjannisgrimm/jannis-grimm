@@ -24,6 +24,10 @@
       const SUPABASE_URL = "https://dndmthvnajpritxxjrie.supabase.co";
       const SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuZG10aHZuYWpwcml0eHhqcmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MDIxMDgsImV4cCI6MjA5MTE3ODEwOH0.PKfbsVyx4M4AInzdKPUvyfrE3Z9IZjAYu_kAY8gLQy0";
+      const VISIT_TRACKING_ENDPOINT =
+        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+          ? "http://localhost:5173/api/visits"
+          : "https://dashboard.iamjannisgrimm.com/api/visits";
 
       function stringValue(value, fallback = "") {
         return typeof value === "string" ? value : fallback;
@@ -94,6 +98,19 @@
 
       async function bootstrapPortfolio() {
         try {
+          void fetch(VISIT_TRACKING_ENDPOINT, {
+            method: "POST",
+            mode: "cors",
+            keepalive: true,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              path: window.location.pathname,
+              referrer: document.referrer || "",
+            }),
+          }).catch(() => {});
+
           const url = new URL("/rest/v1/timeline_events", SUPABASE_URL);
           url.searchParams.set(
             "select",
