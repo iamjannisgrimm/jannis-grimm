@@ -40,10 +40,24 @@
       const SUPABASE_URL = "https://dndmthvnajpritxxjrie.supabase.co";
       const SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRuZG10aHZuYWpwcml0eHhqcmllIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MDIxMDgsImV4cCI6MjA5MTE3ODEwOH0.PKfbsVyx4M4AInzdKPUvyfrE3Z9IZjAYu_kAY8gLQy0";
+      const CONTENT_ENDPOINT_BASE =
+        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+          ? "https://dashboard.iamjannisgrimm.com/api/content"
+          : "https://dashboard.iamjannisgrimm.com/api/content";
       const VISIT_TRACKING_ENDPOINT =
         window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
           ? "http://localhost:5173/api/visits"
           : "https://dashboard.iamjannisgrimm.com/api/visits";
+      const DEFAULT_QUOTE = {
+        quote: "Driven by innovation and fueled by purpose, I craft exceptional solutions that elevate the human experience.",
+        author: "Jannis Grimm",
+      };
+      const DEFAULT_NUMBER_STACK = [
+        { title: "100K +", subtitle: "Downloads on AppStore" },
+        { title: "$2.5M", subtitle: "Startup Valuation" },
+        { title: "NYC", subtitle: "Software Engineer" },
+        { title: "6+", subtitle: "Years of Experience" },
+      ];
 
       function stringValue(value, fallback = "") {
         return typeof value === "string" ? value : fallback;
@@ -56,6 +70,18 @@
       function getMediaPath(media, predicate) {
         const match = media.find(predicate);
         return typeof match?.path === "string" ? match.path : "";
+      }
+
+      function parseJsonContent(value, fallback) {
+        if (typeof value !== "string" || !value.trim()) {
+          return fallback;
+        }
+
+        try {
+          return JSON.parse(value);
+        } catch {
+          return fallback;
+        }
       }
 
       function attachPrivacyFooterLink() {
@@ -142,6 +168,25 @@
               referrer: document.referrer || "",
             }),
           }).catch(() => {});
+
+          const [quoteResponse, stackResponse] = await Promise.allSettled([
+            fetch(`${CONTENT_ENDPOINT_BASE}?key=hero_quote`),
+            fetch(`${CONTENT_ENDPOINT_BASE}?key=number_stack`),
+          ]);
+
+          if (quoteResponse.status === "fulfilled" && quoteResponse.value.ok) {
+            const payload = await quoteResponse.value.json();
+            window.__PORTFOLIO_QUOTE_DATA__ = [parseJsonContent(payload.body, DEFAULT_QUOTE)];
+          } else {
+            window.__PORTFOLIO_QUOTE_DATA__ = [DEFAULT_QUOTE];
+          }
+
+          if (stackResponse.status === "fulfilled" && stackResponse.value.ok) {
+            const payload = await stackResponse.value.json();
+            window.__PORTFOLIO_ACHIEVEMENTS__ = parseJsonContent(payload.body, DEFAULT_NUMBER_STACK);
+          } else {
+            window.__PORTFOLIO_ACHIEVEMENTS__ = DEFAULT_NUMBER_STACK;
+          }
 
           const url = new URL("/rest/v1/timeline_events", SUPABASE_URL);
           url.searchParams.set(
