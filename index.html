@@ -72,9 +72,23 @@
         { title: "NYC", subtitle: "Software Engineer" },
         { title: "6+", subtitle: "Years of Experience" },
       ];
+      const HERO_MEDIA_FALLBACKS = {
+        backgroundImage: "./assets/seeme-2026-background-C7t6J_Vv.PNG",
+        productImage: "./assets/seeme-2026-product-DE4NKLzH.png",
+        productImageMobile: "./assets/seeme-2026-product-mobile-C0z3M5fN.png",
+        appStoreBadge: "./assets/seeme-2026-appstorebadge-CuZzHL2I.png",
+      };
 
       function stringValue(value, fallback = "") {
         return typeof value === "string" ? value : fallback;
+      }
+
+      function hasText(value) {
+        return typeof value === "string" && value.trim().length > 0;
+      }
+
+      function firstText(...values) {
+        return values.find((value) => hasText(value)) || "";
       }
 
       function numberValue(value, fallback = 0) {
@@ -96,6 +110,94 @@
         } catch {
           return fallback;
         }
+      }
+
+      function isTimelineHeroEntry(entry) {
+        return Boolean(entry?.isHero) || stringValue(entry?.title).trim().toLowerCase() === "seeme";
+      }
+
+      function applyHeroMediaFallbacks(entry) {
+        if (!isTimelineHeroEntry(entry)) {
+          return entry;
+        }
+
+        return {
+          ...entry,
+          backgroundImage: firstText(entry.backgroundImage, HERO_MEDIA_FALLBACKS.backgroundImage),
+          productImage: firstText(
+            entry.productImage,
+            entry.productImageMobile,
+            HERO_MEDIA_FALLBACKS.productImage,
+          ),
+          productImageMobile: firstText(
+            entry.productImageMobile,
+            entry.productImage,
+            HERO_MEDIA_FALLBACKS.productImageMobile,
+          ),
+          appStoreBadge: firstText(entry.appStoreBadge, HERO_MEDIA_FALLBACKS.appStoreBadge),
+        };
+      }
+
+      function preloadImage(source) {
+        if (!hasText(source)) {
+          return Promise.resolve("");
+        }
+
+        return new Promise((resolve) => {
+          const image = new Image();
+          image.onload = () => resolve(source);
+          image.onerror = () => resolve("");
+          image.src = source;
+        });
+      }
+
+      async function ensureHeroMediaAvailability(entries) {
+        if (!Array.isArray(entries) || entries.length === 0) {
+          return entries;
+        }
+
+        const heroIndex = entries.findIndex((entry) => isTimelineHeroEntry(entry));
+        if (heroIndex < 0) {
+          return entries;
+        }
+
+        const heroEntry = applyHeroMediaFallbacks(entries[heroIndex]);
+        const [backgroundImage, productImage, productImageMobile, appStoreBadge] = await Promise.all(
+          [
+            preloadImage(heroEntry.backgroundImage).then((source) =>
+              firstText(source, HERO_MEDIA_FALLBACKS.backgroundImage),
+            ),
+            preloadImage(heroEntry.productImage).then((source) =>
+              firstText(
+                source,
+                heroEntry.productImageMobile,
+                HERO_MEDIA_FALLBACKS.productImage,
+                HERO_MEDIA_FALLBACKS.productImageMobile,
+              ),
+            ),
+            preloadImage(heroEntry.productImageMobile).then((source) =>
+              firstText(
+                source,
+                heroEntry.productImage,
+                HERO_MEDIA_FALLBACKS.productImageMobile,
+                HERO_MEDIA_FALLBACKS.productImage,
+              ),
+            ),
+            preloadImage(heroEntry.appStoreBadge).then((source) =>
+              firstText(source, HERO_MEDIA_FALLBACKS.appStoreBadge),
+            ),
+          ],
+        );
+
+        const nextEntries = [...entries];
+        nextEntries[heroIndex] = {
+          ...heroEntry,
+          backgroundImage,
+          productImage,
+          productImageMobile,
+          appStoreBadge,
+        };
+        return nextEntries;
       }
 
       function attachPrivacyFooterLink() {
@@ -497,7 +599,9 @@
                 return (Number(right?.sort_order) || 0) - (Number(left?.sort_order) || 0);
               });
 
-              window.__PORTFOLIO_TIMELINE_DATA__ = orderedRows.map(mapTimelineRow);
+              window.__PORTFOLIO_TIMELINE_DATA__ = await ensureHeroMediaAvailability(
+                orderedRows.map(mapTimelineRow),
+              );
             }
           }
         } catch (error) {
