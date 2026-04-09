@@ -83,15 +83,6 @@
         font-style: italic;
       }
 
-      .journey-opt-in-author {
-        margin: -8px 0 4px;
-        color: #7a7a89;
-        font-family: SF Pro, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        font-size: 1rem;
-        font-weight: 500;
-        text-align: center;
-      }
-
       .journey-opt-in-button,
       .journey-opt-in-submit {
         min-height: 46px;
@@ -175,7 +166,7 @@
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: #111111;
+        background: #19a463;
         color: #ffffff;
         display: inline-flex;
         align-items: center;
@@ -183,7 +174,8 @@
         flex: 0 0 auto;
         font-size: 1rem;
         font-weight: 800;
-        animation: journey-check-pop 620ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+        box-shadow: 0 0 0 0 rgba(25, 164, 99, 0.34);
+        animation: journey-check-pop 760ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
       }
 
       @keyframes journey-success-rise {
@@ -200,14 +192,17 @@
 
       @keyframes journey-check-pop {
         0% {
+          box-shadow: 0 0 0 0 rgba(25, 164, 99, 0.34);
           transform: scale(0.4);
         }
 
         55% {
+          box-shadow: 0 0 0 12px rgba(25, 164, 99, 0);
           transform: scale(1.16);
         }
 
         100% {
+          box-shadow: 0 0 0 0 rgba(25, 164, 99, 0);
           transform: scale(1);
         }
       }
@@ -273,7 +268,7 @@
       };
       const DEFAULT_JOURNEY_QUOTE = {
         quote:
-          "I am here for the journey becuase I genuinly love building. Opt in to receive a short quarterly update on what my latest creations are.",
+          "Things move fast in today's AI age, but there's also never been a better time to build what you dream. Opt in for a human-written quarterly update to stay in the loop about the cool things I build.",
         author: "Jannis Grimm",
       };
       const DEFAULT_NUMBER_STACK = [
@@ -512,7 +507,6 @@
         const sectionParent = footerContainer?.parentElement;
         const quoteData = window.__PORTFOLIO_JOURNEY_QUOTE_DATA__ || DEFAULT_JOURNEY_QUOTE;
         const quote = stringValue(quoteData.quote, DEFAULT_JOURNEY_QUOTE.quote);
-        const author = stringValue(quoteData.author, DEFAULT_JOURNEY_QUOTE.author);
         let section = document.querySelector(".journey-opt-in-section");
 
         if (!footerContainer || !sectionParent) {
@@ -526,10 +520,9 @@
           section.innerHTML = `
             <div class="journey-opt-in-inner">
               <blockquote class="journey-opt-in-quote"></blockquote>
-              <div class="journey-opt-in-author"></div>
               <button class="journey-opt-in-button" type="button">Receive quarterly updates</button>
               <form class="journey-opt-in-form">
-                <input class="journey-opt-in-input" type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
+                <input class="journey-opt-in-input" type="email" name="email" autocomplete="email" placeholder="gavin@hooli.com" required />
                 <button class="journey-opt-in-submit" type="submit">Opt in</button>
               </form>
               <p class="journey-opt-in-status" aria-live="polite"></p>
@@ -545,7 +538,6 @@
         }
 
         const quoteElement = section.querySelector(".journey-opt-in-quote");
-        const authorElement = section.querySelector(".journey-opt-in-author");
         const openButton = section.querySelector(".journey-opt-in-button");
         const form = section.querySelector(".journey-opt-in-form");
         const input = section.querySelector(".journey-opt-in-input");
@@ -556,10 +548,6 @@
 
         if (quoteElement) {
           quoteElement.textContent = quote;
-        }
-
-        if (authorElement) {
-          authorElement.textContent = `— ${author}`;
         }
 
         if (openButton && form && !openButton.dataset.bound) {
