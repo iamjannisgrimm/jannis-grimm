@@ -336,6 +336,49 @@
         observer.observe(document.body, { childList: true, subtree: true });
       }
 
+      function adjustTimelineHeroSubtitleWidth() {
+        if (window.innerWidth <= 768) {
+          return;
+        }
+
+        const heroAnchor = document.querySelector("a[href*='seemeai.app']");
+        let heroBlock = heroAnchor instanceof Element ? heroAnchor.closest("div") : null;
+
+        while (heroBlock && !heroBlock.querySelector("h1, h2, h3")) {
+          heroBlock = heroBlock.parentElement;
+        }
+
+        if (!heroBlock) {
+          return;
+        }
+
+        const heroHeading = Array.from(heroBlock.querySelectorAll("h1, h2, h3")).find(
+          (element) => element.textContent?.trim() === "SeeMe",
+        );
+        const titleBlock = heroHeading?.parentElement;
+        if (!titleBlock) {
+          return;
+        }
+
+        const subtitleParagraphs = Array.from(titleBlock.querySelectorAll("p"));
+        if (subtitleParagraphs.length === 0) {
+          return;
+        }
+
+        const [heroSubtitle] = subtitleParagraphs;
+        if (!(heroSubtitle instanceof HTMLElement)) {
+          return;
+        }
+
+        titleBlock.style.maxWidth = "660px";
+        titleBlock.style.marginLeft = "auto";
+        titleBlock.style.marginRight = "auto";
+        heroSubtitle.style.maxWidth = "520px";
+        heroSubtitle.style.width = "100%";
+        heroSubtitle.style.marginLeft = "auto";
+        heroSubtitle.style.marginRight = "auto";
+      }
+
       function mapTimelineRow(row) {
         const metadata =
           row && typeof row.metadata === "object" && row.metadata !== null ? row.metadata : {};
@@ -464,7 +507,9 @@
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startTimelineImageEnhancer();
+            adjustTimelineHeroSubtitleWidth();
             window.setTimeout(attachPrivacyFooterLink, 300);
+            window.setTimeout(adjustTimelineHeroSubtitleWidth, 300);
           });
         }
       }
