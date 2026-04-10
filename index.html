@@ -21,6 +21,16 @@
     <title>Jannis Grimm</title>
     <link rel="stylesheet" crossorigin href="./assets/index-CqnRAZRC.css">
     <style>
+      @keyframes timeline-image-shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
       .privacy-footer-link {
         display: inline;
         margin-left: 10px;
@@ -1661,7 +1671,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-149");
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-150");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();

@@ -73,6 +73,87 @@ function MarkdownDescriptionBlock({ block, isDark, isMobile, topPadding = 0 }) {
   );
 }
 
+function useImageReady(src) {
+  const [isReady, setIsReady] = useState(() => !src);
+
+  useEffect(() => {
+    if (!src) {
+      setIsReady(true);
+      return;
+    }
+
+    let cancelled = false;
+    const image = new Image();
+    const markReady = () => {
+      if (!cancelled) {
+        setIsReady(true);
+      }
+    };
+
+    setIsReady(false);
+    image.onload = markReady;
+    image.onerror = markReady;
+    image.src = src;
+
+    if (image.complete) {
+      markReady();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [src]);
+
+  return isReady;
+}
+
+function TimelineImageSurface({
+  src,
+  alt,
+  isDark,
+  borderRadius,
+  shellStyle,
+  imageStyle,
+}) {
+  const isReady = useImageReady(src);
+  const shimmerBackground = isDark
+    ? "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)"
+    : "linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 100%)";
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        ...shellStyle,
+      }}
+    >
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderRadius,
+          background: shimmerBackground,
+          backgroundSize: "200% 100%",
+          animation: "timeline-image-shimmer 1.4s ease-in-out infinite",
+          opacity: isReady ? 0 : 1,
+          transition: "opacity 0.25s ease",
+        }}
+      />
+
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          ...imageStyle,
+          opacity: isReady ? 1 : 0,
+          transition: "opacity 0.3s ease",
+        }}
+      />
+    </div>
+  );
+}
+
 const Timeline = () => {
   const outerRef = useRef(null);
   const trackRef = useRef(null);
@@ -272,6 +353,8 @@ const Card = ({ item, index, total }) => {
   const cardWidth = isHero ? "100vw" : isMobile ? "86vw" : `${CARD_WIDTH}px`;
   const shouldCropImage = item.title === "Synechron Inc" || item.title === "Arizona State University" || item.title === "Lufthansa";
   const descriptionBlocks = getDescriptionBlocks(item);
+  const heroProductSource = isMobile ? item.productImageMobile || item.productImage : item.productImage;
+  const heroBackgroundReady = useImageReady(isHero ? item.backgroundImage : "");
 
   const nextItem = index < total - 1 ? null : null;
   const showRightBorder = index < total - 1;
@@ -298,10 +381,26 @@ const Card = ({ item, index, total }) => {
           style={{
             position: "absolute",
             inset: 0,
+            borderRadius: isHero ? 0 : "inherit",
+            background: isDark
+              ? "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)"
+              : "linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 100%)",
+            backgroundSize: "200% 100%",
+            animation: "timeline-image-shimmer 1.4s ease-in-out infinite",
+            opacity: item.backgroundImage && !heroBackgroundReady ? 1 : 0,
+            transition: "opacity 0.25s ease",
+          }}
+        />
+
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
             backgroundImage: item.backgroundImage ? `url(${item.backgroundImage})` : "none",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            opacity: item.backgroundImage ? 0.2 : 1,
+            opacity: item.backgroundImage ? (heroBackgroundReady ? 0.2 : 0) : 1,
+            transition: "opacity 0.3s ease",
           }}
         />
 
@@ -372,15 +471,27 @@ const Card = ({ item, index, total }) => {
             </div>
           </div>
 
-          {(isMobile ? item.productImageMobile || item.productImage : item.productImage) ? (
-            <img
-              src={isMobile ? item.productImageMobile || item.productImage : item.productImage}
+          {heroProductSource ? (
+            <TimelineImageSurface
+              src={heroProductSource}
               alt={item.title}
-              style={{
-                maxWidth: isMobile ? "72%" : "68%",
-                maxHeight: isMobile ? "340px" : "calc(100% - 92px)",
+              isDark
+              borderRadius={isMobile ? "22px" : "26px"}
+              shellStyle={{
+                width: isMobile ? "72%" : "68%",
+                minHeight: isMobile ? "340px" : "420px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              imageStyle={{
+                width: "100%",
+                height: "100%",
+                maxHeight: "100%",
                 objectFit: "contain",
                 display: "block",
+                position: "relative",
+                zIndex: 1,
               }}
             />
           ) : (
@@ -508,15 +619,23 @@ const Card = ({ item, index, total }) => {
 
       {item.image && (
         <div style={{ marginBottom: isMobile ? "14px" : "18px" }}>
-          <img
+          <TimelineImageSurface
             src={item.image}
             alt={item.title}
-            style={{
+            isDark={isDark}
+            borderRadius={isMobile ? "16px" : "18px"}
+            shellStyle={{
               width: "100%",
-              maxHeight: isMobile ? "180px" : "240px",
+              height: isMobile ? "180px" : "240px",
+            }}
+            imageStyle={{
+              width: "100%",
+              height: "100%",
               objectFit: shouldCropImage ? "cover" : "contain",
               objectPosition: shouldCropImage ? "center" : "center",
               display: "block",
+              position: "relative",
+              zIndex: 1,
               borderRadius: shouldCropImage ? (isMobile ? "16px" : "18px") : "0px",
             }}
           />
