@@ -71,6 +71,7 @@
           pointer-events: none;
           background: var(--timeline-app-background, #ffffff);
           opacity: 0;
+          transition: opacity 180ms ease;
         }
 
         html.timeline-app-background-active .timeline-safe-area-fill {
@@ -489,6 +490,27 @@
       function getMediaPath(media, predicate) {
         const match = media.find(predicate);
         return typeof match?.path === "string" ? match.path : "";
+      }
+
+      function getDescriptionBlocks(summary, metadata) {
+        if (Array.isArray(metadata.descriptionBlocks)) {
+          const blocks = metadata.descriptionBlocks
+            .slice(0, 3)
+            .map((block) => ({
+              body: stringValue(block?.body).trim(),
+              style: block?.style === "light" ? "light" : "default",
+            }))
+            .filter((block) => block.body);
+
+          if (blocks.length > 0) {
+            return blocks;
+          }
+        }
+
+        return [
+          summary ? { body: summary, style: "default" } : null,
+          stringValue(metadata.secondDescription) ? { body: stringValue(metadata.secondDescription), style: "light" } : null,
+        ].filter(Boolean);
       }
 
       function parseJsonContent(value, fallback) {
@@ -1299,21 +1321,38 @@
         return progress > 0.025 && progress < 0.975;
       }
 
+      function isTimelineCellInSafeAreaRange(cellIndex, cellCount) {
+        if (
+          typeof cellIndex !== "number" ||
+          !Number.isFinite(cellIndex) ||
+          typeof cellCount !== "number" ||
+          !Number.isFinite(cellCount) ||
+          cellCount < 2
+        ) {
+          return true;
+        }
+
+        return cellIndex > 0 && cellIndex < cellCount - 1;
+      }
+
       function installTimelineBackgroundBridge() {
         ensureTimelineSafeAreaFills();
 
-        window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = (color, progress) => {
+        window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = (color, progress, cellIndex, cellCount) => {
           if (!window.matchMedia("(max-width: 768px)").matches) {
+            window.__portfolioTimelineSafeAreaBarsAllowed = false;
             setMobileTimelineAppBackground("#ffffff");
             return;
           }
 
           const timelineShell = findTimelineShell();
-          const nextColor =
-            isTimelineProgressInSafeAreaRange(progress) && !isTransparentColor(color)
-              ? color || "#ffffff"
-              : "#ffffff";
+          const shouldUseTimelineBars =
+            isTimelineProgressInSafeAreaRange(progress) &&
+            isTimelineCellInSafeAreaRange(cellIndex, cellCount) &&
+            !isTransparentColor(color);
+          const nextColor = shouldUseTimelineBars ? color || "#ffffff" : "#ffffff";
 
+          window.__portfolioTimelineSafeAreaBarsAllowed = shouldUseTimelineBars;
           setMobileTimelineAppBackground(nextColor);
           setTimelineSurroundingBackground(timelineShell, nextColor);
         };
@@ -1346,6 +1385,16 @@
           }
 
           if (!(timelineShell instanceof HTMLElement)) {
+            return;
+          }
+
+          if (window.__portfolioTimelineSafeAreaBarsAllowed === false) {
+            if (lastColor !== "#ffffff") {
+              setMobileTimelineAppBackground("#ffffff");
+              lastColor = "#ffffff";
+            }
+
+            setTimelineSurroundingBackground(timelineShell, "#ffffff");
             return;
           }
 
@@ -1411,12 +1460,15 @@
           (item) => item.kind === "asset" && item.alt?.toLowerCase().includes("app store"),
         );
 
+        const description = stringValue(row?.summary);
+
         return {
           date: stringValue(row?.period_label),
           title: stringValue(row?.title),
           subtitle: stringValue(row?.subtitle),
           location: stringValue(row?.location),
-          description: stringValue(row?.summary),
+          description,
+          descriptionBlocks: getDescriptionBlocks(description, metadata),
           secondDescription: stringValue(metadata.secondDescription),
           icon: getMediaPath(media, (item) => item.kind === "icon"),
           image: lineupImage,
@@ -1527,7 +1579,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-139");
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-142");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
