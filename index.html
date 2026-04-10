@@ -1614,7 +1614,7 @@
             "slug,title,subtitle,period_label,location,category,status,sort_order,featured,summary,tech_stack,links,metadata,event_media(kind,path,alt,sort_order)",
           );
           url.searchParams.set("status", "eq.published");
-          url.searchParams.set("order", "sort_order.desc");
+          url.searchParams.set("order", "sort_order.asc");
           url.searchParams.set("event_media.order", "sort_order.asc");
 
           const response = await fetch(url, {
@@ -1635,6 +1635,13 @@
                   return leftIsHero ? -1 : 1;
                 }
 
+                const sortOrderDelta =
+                  numberValue(left?.sort_order) - numberValue(right?.sort_order);
+
+                if (sortOrderDelta !== 0) {
+                  return sortOrderDelta;
+                }
+
                 const leftYear = timelineYearValue(left?.period_label);
                 const rightYear = timelineYearValue(right?.period_label);
 
@@ -1642,7 +1649,7 @@
                   return rightYear - leftYear;
                 }
 
-                return numberValue(right?.sort_order) - numberValue(left?.sort_order);
+                return 0;
               });
 
               window.__PORTFOLIO_TIMELINE_DATA__ = await ensureHeroMediaAvailability(
@@ -1654,7 +1661,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-147");
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-149");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();

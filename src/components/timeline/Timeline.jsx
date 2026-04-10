@@ -527,7 +527,7 @@ const Card = ({ item, index, total }) => {
       <div
         style={{
           display: "grid",
-          gap: isMobile ? "8px" : "25px",
+          gap: isMobile ? "3px" : "20px",
           alignContent: "start",
           alignItems: "start",
           gridAutoRows: "max-content",
@@ -540,7 +540,7 @@ const Card = ({ item, index, total }) => {
             block={block}
             isDark={isDark}
             isMobile={isMobile}
-            topPadding={blockIndex === 0 ? (isMobile ? 3 : 8) : 0}
+            topPadding={blockIndex === 0 ? (isMobile ? 3 : 5) : 0}
           />
         ))}
       </div>
