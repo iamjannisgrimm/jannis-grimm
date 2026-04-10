@@ -131,6 +131,16 @@
         box-sizing: border-box;
       }
 
+      .journey-opt-in-input:focus,
+      .journey-opt-in-input.is-highlighted {
+        border-color: #111111;
+        box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.14);
+      }
+
+      .journey-opt-in-input::selection {
+        background: rgba(17, 17, 17, 0.16);
+      }
+
       .journey-opt-in-input::placeholder {
         color: #7a7a89;
       }
@@ -470,6 +480,59 @@
         }
       }
 
+      function isMobileInteractionViewport() {
+        return window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      }
+
+      function scrollJourneyOptInFormAboveKeyboard(input, form) {
+        if (!isMobileInteractionViewport()) {
+          return;
+        }
+
+        const settle = () => {
+          const target = form instanceof HTMLElement ? form : input;
+          const visualViewport = window.visualViewport;
+          const visibleTop = visualViewport?.offsetTop || 0;
+          const visibleHeight = visualViewport?.height || window.innerHeight;
+          const visibleBottom = visibleTop + visibleHeight;
+          const targetBottom = visibleBottom - 14;
+          const rect = target.getBoundingClientRect();
+          const delta = rect.bottom - targetBottom;
+
+          if (Math.abs(delta) > 8) {
+            window.scrollBy({ top: delta, behavior: "smooth" });
+          }
+        };
+
+        window.requestAnimationFrame(settle);
+        window.setTimeout(settle, 120);
+        window.setTimeout(settle, 260);
+        window.setTimeout(settle, 480);
+      }
+
+      function focusAndSelectJourneyInput(input, form) {
+        if (!(input instanceof HTMLInputElement)) {
+          return;
+        }
+
+        input.classList.add("is-highlighted");
+
+        try {
+          input.focus({ preventScroll: true });
+        } catch {
+          input.focus();
+        }
+
+        try {
+          input.select();
+          input.setSelectionRange(0, input.value.length);
+        } catch {
+          // Some mobile browsers disallow selection before the keyboard fully opens.
+        }
+
+        scrollJourneyOptInFormAboveKeyboard(input, form);
+      }
+
       function stabilizeJourneyInputFocus(input, form) {
         if (!(input instanceof HTMLInputElement) || input.dataset.focusStabilized === "true") {
           return;
@@ -477,28 +540,11 @@
 
         input.dataset.focusStabilized = "true";
         input.addEventListener("focus", () => {
-          if (!window.matchMedia("(hover: none), (pointer: coarse)").matches) {
-            return;
-          }
-
-          const settle = () => {
-            const target = form instanceof HTMLElement ? form : input;
-            const visualViewport = window.visualViewport;
-            const visibleTop = visualViewport?.offsetTop || 0;
-            const visibleHeight = visualViewport?.height || window.innerHeight;
-            const visibleBottom = visibleTop + visibleHeight;
-            const targetBottom = visibleBottom - 14;
-            const rect = target.getBoundingClientRect();
-            const delta = rect.bottom - targetBottom;
-
-            if (Math.abs(delta) > 8) {
-              window.scrollBy({ top: delta, behavior: "smooth" });
-            }
-          };
-
-          window.requestAnimationFrame(settle);
-          window.setTimeout(settle, 180);
-          window.setTimeout(settle, 360);
+          input.classList.add("is-highlighted");
+          scrollJourneyOptInFormAboveKeyboard(input, form);
+        });
+        input.addEventListener("input", () => {
+          input.classList.remove("is-highlighted");
         });
       }
 
@@ -554,15 +600,11 @@
           openButton.dataset.bound = "true";
           openButton.addEventListener("click", () => {
             form.classList.add("is-visible");
+            form.classList.add("is-focused");
             openButton.style.display = "none";
             if (input instanceof HTMLInputElement) {
-              window.requestAnimationFrame(() => {
-                try {
-                  input.focus({ preventScroll: true });
-                } catch {
-                  input.focus();
-                }
-              });
+              focusAndSelectJourneyInput(input, form);
+              window.requestAnimationFrame(() => focusAndSelectJourneyInput(input, form));
             }
           });
         }
@@ -574,6 +616,7 @@
           });
           input.addEventListener("blur", () => {
             form.classList.remove("is-focused");
+            input.classList.remove("is-highlighted");
           });
         }
 
@@ -886,6 +929,40 @@
         heroSubtitle.style.marginRight = "auto";
       }
 
+      function matchTimelineDateSizeToTitles() {
+        const timelineTitleSize = window.matchMedia("(max-width: 768px)").matches
+          ? "clamp(20px, 5vw, 26px)"
+          : "clamp(22px, 2.6vw, 32px)";
+        const dateLabelSizes = new Set([
+          "clamp(28px, 3vw, 40px)",
+          "clamp(30px, 8vw, 42px)",
+          "clamp(42px, 5vw, 68px)",
+        ]);
+
+        document.querySelectorAll("[style]").forEach((element) => {
+          if (!(element instanceof HTMLElement) || !dateLabelSizes.has(element.style.fontSize)) {
+            return;
+          }
+
+          element.style.fontSize = timelineTitleSize;
+        });
+      }
+
+      function reduceTimelineCellTopPadding() {
+        const nonHeroCellPadding = new Map([
+          ["32px 20px 28px", "24px 20px 28px"],
+          ["36px 56px 40px", "28px 56px 40px"],
+        ]);
+
+        document.querySelectorAll("[style]").forEach((element) => {
+          if (!(element instanceof HTMLElement) || !nonHeroCellPadding.has(element.style.padding)) {
+            return;
+          }
+
+          element.style.padding = nonHeroCellPadding.get(element.style.padding);
+        });
+      }
+
       function mapTimelineRow(row) {
         const metadata =
           row && typeof row.metadata === "object" && row.metadata !== null ? row.metadata : {};
@@ -1034,12 +1111,20 @@
             startJourneyOptInPlacement();
             startTimelineImageEnhancer();
             adjustTimelineHeroSubtitleWidth();
+            matchTimelineDateSizeToTitles();
+            reduceTimelineCellTopPadding();
             attachGithubContributionsClick();
             window.setTimeout(attachPrivacyFooterLink, 300);
             window.setTimeout(startJourneyOptInPlacement, 300);
             window.setTimeout(adjustTimelineHeroSubtitleWidth, 300);
+            window.setTimeout(matchTimelineDateSizeToTitles, 300);
+            window.setTimeout(matchTimelineDateSizeToTitles, 1200);
+            window.setTimeout(reduceTimelineCellTopPadding, 300);
+            window.setTimeout(reduceTimelineCellTopPadding, 1200);
             window.setTimeout(attachGithubContributionsClick, 300);
             window.setTimeout(attachGithubContributionsClick, 1200);
+            window.addEventListener("resize", matchTimelineDateSizeToTitles, { passive: true });
+            window.addEventListener("resize", reduceTimelineCellTopPadding, { passive: true });
           });
         }
       }
