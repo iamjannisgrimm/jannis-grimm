@@ -487,6 +487,11 @@
         return typeof value === "number" && Number.isFinite(value) ? value : fallback;
       }
 
+      function timelineYearValue(periodLabel) {
+        const match = stringValue(periodLabel).match(/\b(?:19|20)\d{2}\b/);
+        return match ? Number(match[0]) : 0;
+      }
+
       function getMediaPath(media, predicate) {
         const match = media.find(predicate);
         return typeof match?.path === "string" ? match.path : "";
@@ -1245,6 +1250,63 @@
         return "";
       }
 
+      function setTimelineInjectedBackground(target, color) {
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+
+        if (!target.dataset.timelineOriginalBackground) {
+          target.dataset.timelineOriginalBackground = target.style.background || "__empty__";
+          target.dataset.timelineOriginalBackgroundColor = target.style.backgroundColor || "__empty__";
+          target.dataset.timelineOriginalTransition = target.style.transition || "__empty__";
+        }
+
+        target.style.backgroundColor = color;
+        target.style.background = color;
+        target.style.transition = "none";
+      }
+
+      function clearTimelineInjectedBackground(target) {
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+
+        const originalBackground = target.dataset.timelineOriginalBackground;
+        const originalBackgroundColor = target.dataset.timelineOriginalBackgroundColor;
+        const originalTransition = target.dataset.timelineOriginalTransition;
+
+        if (typeof originalBackground === "string") {
+          if (originalBackground === "__empty__") {
+            target.style.removeProperty("background");
+          } else {
+            target.style.background = originalBackground;
+          }
+          delete target.dataset.timelineOriginalBackground;
+        } else {
+          target.style.removeProperty("background");
+        }
+
+        if (typeof originalBackgroundColor === "string") {
+          if (originalBackgroundColor === "__empty__") {
+            target.style.removeProperty("background-color");
+          } else {
+            target.style.backgroundColor = originalBackgroundColor;
+          }
+          delete target.dataset.timelineOriginalBackgroundColor;
+        } else {
+          target.style.removeProperty("background-color");
+        }
+
+        if (typeof originalTransition === "string") {
+          if (originalTransition === "__empty__") {
+            target.style.removeProperty("transition");
+          } else {
+            target.style.transition = originalTransition;
+          }
+          delete target.dataset.timelineOriginalTransition;
+        }
+      }
+
       function setMobileTimelineAppBackground(color) {
         const targetColor = color || "#ffffff";
         const themeTargetColor = rgbToHexColor(targetColor);
@@ -1275,21 +1337,27 @@
             return;
           }
 
-          target.style.backgroundColor = targetColor;
-          target.style.background = targetColor;
-          target.style.transition = "none";
+          if (isActive) {
+            setTimelineInjectedBackground(target, targetColor);
+          } else {
+            clearTimelineInjectedBackground(target);
+          }
         });
       }
 
       function setTimelineSurroundingBackground(shell, color) {
         const targetColor = color || "#ffffff";
+        const isActive = targetColor !== "#ffffff" && targetColor !== "rgb(255, 255, 255)";
         let current = shell instanceof HTMLElement ? shell.parentElement : null;
         let depth = 0;
 
         while (current instanceof HTMLElement && current !== document.body && depth < 5) {
-          current.style.backgroundColor = targetColor;
-          current.style.background = targetColor;
-          current.style.transition = "none";
+          if (isActive) {
+            setTimelineInjectedBackground(current, targetColor);
+          } else {
+            clearTimelineInjectedBackground(current);
+          }
+
           current = current.parentElement;
           depth += 1;
         }
@@ -1567,7 +1635,14 @@
                   return leftIsHero ? -1 : 1;
                 }
 
-                return (Number(right?.sort_order) || 0) - (Number(left?.sort_order) || 0);
+                const leftYear = timelineYearValue(left?.period_label);
+                const rightYear = timelineYearValue(right?.period_label);
+
+                if (leftYear !== rightYear) {
+                  return rightYear - leftYear;
+                }
+
+                return numberValue(right?.sort_order) - numberValue(left?.sort_order);
               });
 
               window.__PORTFOLIO_TIMELINE_DATA__ = await ensureHeroMediaAvailability(
@@ -1579,7 +1654,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-142");
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-143");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
