@@ -92,10 +92,14 @@ function useImageReady(src) {
 
     setIsReady(false);
     image.onload = markReady;
-    image.onerror = markReady;
+    image.onerror = () => {
+      if (!cancelled) {
+        setIsReady(false);
+      }
+    };
     image.src = src;
 
-    if (image.complete) {
+    if (image.complete && image.naturalWidth > 0) {
       markReady();
     }
 
@@ -115,7 +119,12 @@ function TimelineImageSurface({
   shellStyle,
   imageStyle,
 }) {
-  const isReady = useImageReady(src);
+  const [isReady, setIsReady] = useState(() => false);
+
+  useEffect(() => {
+    setIsReady(false);
+  }, [src]);
+
   const shimmerBackground = isDark
     ? "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)"
     : "linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 100%)";
@@ -144,6 +153,10 @@ function TimelineImageSurface({
       <img
         src={src}
         alt={alt}
+        loading="eager"
+        decoding="async"
+        onLoad={() => setIsReady(true)}
+        onError={() => setIsReady(false)}
         style={{
           ...imageStyle,
           opacity: isReady ? 1 : 0,
