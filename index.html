@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="description" content="Jannis Grimm portfolio: engineer, innovator, and leader." />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Jannis Grimm" />
@@ -39,6 +42,50 @@
         min-height: -webkit-fill-available;
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
+      }
+
+      @media (max-width: 768px) {
+        html.timeline-app-background-active,
+        body.timeline-app-background-active,
+        html.timeline-app-background-active body,
+        html.timeline-app-background-active #root,
+        html.timeline-app-background-active #root > div {
+          background: var(--timeline-app-background, #ffffff) !important;
+          background-color: var(--timeline-app-background, #ffffff) !important;
+        }
+
+        body.timeline-app-background-active::before {
+          content: "";
+          position: fixed;
+          inset: -140px 0;
+          z-index: -1;
+          pointer-events: none;
+          background: var(--timeline-app-background, #ffffff);
+        }
+
+        .timeline-safe-area-fill {
+          position: fixed;
+          left: 0;
+          right: 0;
+          z-index: 2147483646;
+          pointer-events: none;
+          background: var(--timeline-app-background, #ffffff);
+          opacity: 0;
+        }
+
+        html.timeline-app-background-active .timeline-safe-area-fill {
+          opacity: 1;
+        }
+
+        .timeline-safe-area-fill-top {
+          top: 0;
+          height: max(72px, env(safe-area-inset-top));
+        }
+
+        .timeline-safe-area-fill-bottom {
+          bottom: 0;
+          height: max(48px, env(safe-area-inset-bottom));
+        }
       }
 
       @supports (min-height: 100svh) {
@@ -1121,6 +1168,210 @@
         });
       }
 
+      function isTransparentColor(value) {
+        return (
+          !value ||
+          value === "transparent" ||
+          value === "rgba(0, 0, 0, 0)" ||
+          value === "rgba(255, 255, 255, 0)"
+        );
+      }
+
+      function rgbToHexColor(value) {
+        const [red, green, blue] = parseRgbColor(value);
+        const toHex = (channel) =>
+          Math.max(0, Math.min(255, Math.round(channel))).toString(16).padStart(2, "0");
+
+        return `#${toHex(red)}${toHex(green)}${toHex(blue)}`;
+      }
+
+      function findTimelineShell() {
+        return Array.from(document.querySelectorAll("div[style]")).find((element) => {
+          if (!(element instanceof HTMLElement)) {
+            return false;
+          }
+
+          return (
+            element.textContent?.includes("Experience & Projects") &&
+            element.style.width === "100vw" &&
+            element.style.marginLeft.includes("-50vw")
+          );
+        });
+      }
+
+      function getTimelineBackgroundForApp(shell) {
+        if (!(shell instanceof HTMLElement)) {
+          return "";
+        }
+
+        const timelineLabel = Array.from(shell.querySelectorAll("p")).find(
+          (element) => element.textContent?.trim() === "Experience & Projects",
+        );
+        const candidates = [shell, shell.firstElementChild, timelineLabel?.parentElement].filter(Boolean);
+
+        for (const candidate of candidates) {
+          if (!(candidate instanceof HTMLElement)) {
+            continue;
+          }
+
+          const color = window.getComputedStyle(candidate).backgroundColor;
+          if (!isTransparentColor(color)) {
+            return color;
+          }
+        }
+
+        return "";
+      }
+
+      function setMobileTimelineAppBackground(color) {
+        const targetColor = color || "#ffffff";
+        const themeTargetColor = rgbToHexColor(targetColor);
+        const isActive = targetColor !== "#ffffff" && targetColor !== "rgb(255, 255, 255)";
+        let themeColor = document.querySelector("meta[name='theme-color']");
+
+        if (!(themeColor instanceof HTMLMetaElement)) {
+          themeColor = document.createElement("meta");
+          themeColor.name = "theme-color";
+          document.head.appendChild(themeColor);
+        }
+
+        themeColor.content = themeTargetColor;
+        document.documentElement.style.setProperty("--timeline-app-background", targetColor);
+        document.body.style.setProperty("--timeline-app-background", targetColor);
+        document.documentElement.classList.toggle("timeline-app-background-active", isActive);
+        document.body.classList.toggle("timeline-app-background-active", isActive);
+
+        const targets = [
+          document.documentElement,
+          document.body,
+          document.getElementById("root"),
+          document.querySelector("#root > div"),
+        ];
+
+        targets.forEach((target) => {
+          if (!(target instanceof HTMLElement)) {
+            return;
+          }
+
+          target.style.backgroundColor = targetColor;
+          target.style.background = targetColor;
+          target.style.transition = "none";
+        });
+      }
+
+      function setTimelineSurroundingBackground(shell, color) {
+        const targetColor = color || "#ffffff";
+        let current = shell instanceof HTMLElement ? shell.parentElement : null;
+        let depth = 0;
+
+        while (current instanceof HTMLElement && current !== document.body && depth < 5) {
+          current.style.backgroundColor = targetColor;
+          current.style.background = targetColor;
+          current.style.transition = "none";
+          current = current.parentElement;
+          depth += 1;
+        }
+      }
+
+      function ensureTimelineSafeAreaFills() {
+        const fillSpecs = [
+          ["top", "timeline-safe-area-fill timeline-safe-area-fill-top"],
+          ["bottom", "timeline-safe-area-fill timeline-safe-area-fill-bottom"],
+        ];
+
+        fillSpecs.forEach(([placement, className]) => {
+          if (document.querySelector(`.timeline-safe-area-fill-${placement}`)) {
+            return;
+          }
+
+          const fill = document.createElement("div");
+          fill.className = className;
+          fill.setAttribute("aria-hidden", "true");
+          document.body.appendChild(fill);
+        });
+      }
+
+      function installTimelineBackgroundBridge() {
+        ensureTimelineSafeAreaFills();
+
+        window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = (color) => {
+          if (!window.matchMedia("(max-width: 768px)").matches) {
+            setMobileTimelineAppBackground("#ffffff");
+            return;
+          }
+
+          const nextColor = isTransparentColor(color) ? "#ffffff" : color || "#ffffff";
+          const timelineShell = findTimelineShell();
+          setMobileTimelineAppBackground(nextColor);
+          setTimelineSurroundingBackground(timelineShell, nextColor);
+        };
+      }
+
+      function startMobileTimelineAppBackgroundSync() {
+        if (window.__portfolioTimelineAppBackgroundSyncStarted) {
+          return;
+        }
+
+        window.__portfolioTimelineAppBackgroundSyncStarted = true;
+
+        let timelineShell = null;
+        let lastColor = "";
+        let frame = 0;
+
+        const sync = () => {
+          frame = 0;
+
+          if (!window.matchMedia("(max-width: 768px)").matches) {
+            if (lastColor !== "#ffffff") {
+              setMobileTimelineAppBackground("#ffffff");
+              lastColor = "#ffffff";
+            }
+            return;
+          }
+
+          if (!(timelineShell instanceof HTMLElement) || !document.body.contains(timelineShell)) {
+            timelineShell = findTimelineShell();
+          }
+
+          if (!(timelineShell instanceof HTMLElement)) {
+            return;
+          }
+
+          const rect = timelineShell.getBoundingClientRect();
+          const isTimelineVisible = rect.top < window.innerHeight && rect.bottom > 0;
+          const nextColor = isTimelineVisible ? getTimelineBackgroundForApp(timelineShell) : "#ffffff";
+
+          if (nextColor && nextColor !== lastColor) {
+            setMobileTimelineAppBackground(nextColor);
+            lastColor = nextColor;
+          }
+
+          if (nextColor) {
+            setTimelineSurroundingBackground(timelineShell, nextColor);
+          }
+        };
+
+        const scheduleSync = () => {
+          if (!frame) {
+            frame = window.requestAnimationFrame(sync);
+          }
+        };
+
+        const observer = new MutationObserver(scheduleSync);
+        observer.observe(document.body, {
+          attributes: true,
+          attributeFilter: ["style"],
+          childList: true,
+          subtree: true,
+        });
+
+        scheduleSync();
+        window.setTimeout(scheduleSync, 300);
+        window.setTimeout(scheduleSync, 1200);
+        window.addEventListener("scroll", scheduleSync, { passive: true });
+        window.addEventListener("resize", scheduleSync, { passive: true });
+      }
+
       function mapTimelineRow(row) {
         const metadata =
           row && typeof row.metadata === "object" && row.metadata !== null ? row.metadata : {};
@@ -1263,7 +1514,8 @@
         } catch (error) {
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-136");
+          installTimelineBackgroundBridge();
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-137");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
@@ -1271,6 +1523,7 @@
             adjustTimelineHeroSubtitleWidth();
             matchTimelineDateSizeToTitles();
             reduceTimelineCellTopPadding();
+            startMobileTimelineAppBackgroundSync();
             attachGithubContributionsClick();
             window.setTimeout(attachPrivacyFooterLink, 300);
             window.setTimeout(startJourneyOptInPlacement, 300);
@@ -1279,6 +1532,8 @@
             window.setTimeout(matchTimelineDateSizeToTitles, 1200);
             window.setTimeout(reduceTimelineCellTopPadding, 300);
             window.setTimeout(reduceTimelineCellTopPadding, 1200);
+            window.setTimeout(startMobileTimelineAppBackgroundSync, 300);
+            window.setTimeout(startMobileTimelineAppBackgroundSync, 1200);
             window.setTimeout(attachGithubContributionsClick, 300);
             window.setTimeout(attachGithubContributionsClick, 1200);
             window.addEventListener("resize", matchTimelineDateSizeToTitles, { passive: true });
