@@ -1034,10 +1034,74 @@
             startJourneyOptInPlacement();
             startTimelineImageEnhancer();
             adjustTimelineHeroSubtitleWidth();
+            attachGithubContributionsClick();
             window.setTimeout(attachPrivacyFooterLink, 300);
             window.setTimeout(startJourneyOptInPlacement, 300);
             window.setTimeout(adjustTimelineHeroSubtitleWidth, 300);
+            window.setTimeout(attachGithubContributionsClick, 300);
+            window.setTimeout(attachGithubContributionsClick, 1200);
           });
+        }
+      }
+
+      const GITHUB_PROFILE_URL = "https://github.com/iamjannisgrimm";
+
+      function openGithubProfileFromWidget(event) {
+        if (event?.metaKey || event?.ctrlKey || event?.shiftKey || event?.altKey) {
+          return;
+        }
+
+        event?.preventDefault();
+        event?.stopPropagation();
+        window.open(GITHUB_PROFILE_URL, "_blank", "noopener,noreferrer");
+      }
+
+      function attachGithubContributionsClick() {
+        const calendar =
+          document.querySelector(".github-contributions-link") ||
+          document.querySelector(".react-activity-calendar")?.closest("a");
+
+        if (!calendar) {
+          return;
+        }
+
+        calendar.setAttribute("href", GITHUB_PROFILE_URL);
+        calendar.setAttribute("target", "_blank");
+        calendar.setAttribute("rel", "noopener noreferrer");
+        calendar.setAttribute("aria-label", "Open Jannis Grimm on GitHub");
+        calendar.classList.add("github-contributions-link");
+        calendar.style.position = "relative";
+        calendar.style.zIndex = "50";
+        calendar.style.pointerEvents = "auto";
+        calendar.style.cursor = "pointer";
+
+        if (calendar.parentElement) {
+          calendar.parentElement.style.position = "relative";
+          calendar.parentElement.style.zIndex = "50";
+          calendar.parentElement.style.pointerEvents = "auto";
+        }
+
+        calendar.querySelectorAll(".react-activity-calendar, .react-activity-calendar *").forEach((node) => {
+          node.style.pointerEvents = "none";
+        });
+
+        let overlay = calendar.querySelector(".portfolio-github-click-overlay");
+        if (!overlay) {
+          overlay = document.createElement("span");
+          overlay.className = "portfolio-github-click-overlay";
+          overlay.setAttribute("aria-hidden", "true");
+          overlay.style.position = "absolute";
+          overlay.style.inset = "0";
+          overlay.style.zIndex = "60";
+          overlay.style.cursor = "pointer";
+          overlay.style.background = "transparent";
+          calendar.appendChild(overlay);
+        }
+
+        if (!calendar.dataset.githubClickAttached) {
+          calendar.addEventListener("click", openGithubProfileFromWidget, true);
+          overlay.addEventListener("click", openGithubProfileFromWidget, true);
+          calendar.dataset.githubClickAttached = "true";
         }
       }
 
