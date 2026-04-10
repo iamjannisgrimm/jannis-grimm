@@ -133,23 +133,14 @@ function TimelineImageSurface({
     <div
       style={{
         position: "relative",
+        overflow: "hidden",
+        borderRadius,
+        background: shimmerBackground,
+        backgroundSize: "200% 100%",
+        animation: isReady ? "none" : "timeline-image-shimmer 1.4s ease-in-out infinite",
         ...shellStyle,
       }}
     >
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          borderRadius,
-          background: shimmerBackground,
-          backgroundSize: "200% 100%",
-          animation: "timeline-image-shimmer 1.4s ease-in-out infinite",
-          opacity: isReady ? 0 : 1,
-          transition: "opacity 0.25s ease",
-        }}
-      />
-
       <img
         src={src}
         alt={alt}
