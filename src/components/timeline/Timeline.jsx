@@ -128,6 +128,8 @@ function TimelineImageSurface({
   const shimmerBackground = isDark
     ? "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)"
     : "linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 100%)";
+  const shellBackground = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
+  const shellBorder = isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)";
 
   return (
     <div
@@ -135,12 +137,23 @@ function TimelineImageSurface({
         position: "relative",
         overflow: "hidden",
         borderRadius,
-        background: shimmerBackground,
-        backgroundSize: "200% 100%",
-        animation: isReady ? "none" : "timeline-image-shimmer 1.4s ease-in-out infinite",
+        background: shellBackground,
+        border: shellBorder,
         ...shellStyle,
       }}
     >
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: shimmerBackground,
+          backgroundSize: "200% 100%",
+          animation: isReady ? "none" : "timeline-image-shimmer 1.4s ease-in-out infinite",
+          opacity: isReady ? 0 : 1,
+          transition: "opacity 0.25s ease",
+        }}
+      />
       {src ? (
         <img
           src={src}
