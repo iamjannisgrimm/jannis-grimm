@@ -141,19 +141,21 @@ function TimelineImageSurface({
         ...shellStyle,
       }}
     >
-      <img
-        src={src}
-        alt={alt}
-        loading="eager"
-        decoding="async"
-        onLoad={() => setIsReady(true)}
-        onError={() => setIsReady(false)}
-        style={{
-          ...imageStyle,
-          opacity: isReady ? 1 : 0,
-          transition: "opacity 0.3s ease",
-        }}
-      />
+      {src ? (
+        <img
+          src={src}
+          alt={alt}
+          loading="eager"
+          decoding="async"
+          onLoad={() => setIsReady(true)}
+          onError={() => setIsReady(false)}
+          style={{
+            ...imageStyle,
+            opacity: isReady ? 1 : 0,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -621,31 +623,29 @@ const Card = ({ item, index, total }) => {
 
       <div style={{ height: "1px", background: dividerColor, marginBottom: isMobile ? "14px" : "20px" }} />
 
-      {item.image && (
-        <div style={{ marginBottom: isMobile ? "14px" : "18px" }}>
-          <TimelineImageSurface
-            src={item.image}
-            alt={item.title}
-            isDark={isDark}
-            borderRadius={isMobile ? "16px" : "18px"}
-            shellStyle={{
-              width: "100%",
-              height: isMobile ? "180px" : "240px",
-            }}
-            imageStyle={{
-              width: "100%",
-              height: "100%",
-              objectFit: shouldCropImage ? "cover" : "contain",
-              objectPosition: shouldCropImage ? "center" : "center",
-              display: "block",
-              position: "relative",
-              zIndex: 1,
-              borderRadius: shouldCropImage ? (isMobile ? "16px" : "18px") : "0px",
-            }}
-          />
-          <div style={{ height: "1px", background: dividerColor, marginTop: isMobile ? "14px" : "20px" }} />
-        </div>
-      )}
+      <div style={{ marginBottom: isMobile ? "14px" : "18px" }}>
+        <TimelineImageSurface
+          src={item.image}
+          alt={item.title}
+          isDark={isDark}
+          borderRadius={isMobile ? "16px" : "18px"}
+          shellStyle={{
+            width: "100%",
+            height: isMobile ? "180px" : "240px",
+          }}
+          imageStyle={{
+            width: "100%",
+            height: "100%",
+            objectFit: shouldCropImage ? "cover" : "contain",
+            objectPosition: shouldCropImage ? "center" : "center",
+            display: "block",
+            position: "relative",
+            zIndex: 1,
+            borderRadius: shouldCropImage ? (isMobile ? "16px" : "18px") : "0px",
+          }}
+        />
+        <div style={{ height: "1px", background: dividerColor, marginTop: isMobile ? "14px" : "20px" }} />
+      </div>
 
       <div
         style={{
