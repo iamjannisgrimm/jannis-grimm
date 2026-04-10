@@ -83,39 +83,121 @@
         font-style: italic;
       }
 
-      .journey-opt-in-button,
-      .journey-opt-in-submit {
-        min-height: 46px;
-        border: 1px solid #111111;
-        border-radius: 8px;
-        padding: 0 18px;
-        background: #111111;
-        color: #ffffff;
-        font-family: SF Pro, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        font-size: 0.95rem;
-        font-weight: 700;
-        cursor: pointer;
+      .journey-opt-in-control-stage {
+        width: min(460px, 100%);
+        max-width: 100%;
+        min-height: 42px;
+        display: grid;
+        align-items: start;
         box-sizing: border-box;
       }
 
+      .journey-opt-in-actions,
       .journey-opt-in-form {
-        width: min(520px, 100%);
+        grid-area: 1 / 1;
+      }
+
+      .journey-opt-in-actions {
+        width: 100%;
         max-width: 100%;
-        display: none;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        box-sizing: border-box;
+        opacity: 1;
+        transform: translateX(0);
+        transition:
+          opacity 220ms ease,
+          transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .journey-opt-in-actions.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-22px);
+      }
+
+      .journey-opt-in-button,
+      .journey-inquire-button,
+      .journey-opt-in-submit {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid #111111;
+        border-radius: 8px;
+        padding: 0 16px;
+        background: #111111;
+        color: #ffffff;
+        font-family: SF Pro, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-sizing: border-box;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .journey-inquire-button {
+        background: #111111;
+        border-color: #111111;
+        color: #ffffff;
+      }
+
+      .journey-opt-in-button:hover,
+      .journey-opt-in-button:focus,
+      .journey-opt-in-button:focus-visible,
+      .journey-inquire-button:hover,
+      .journey-inquire-button:focus,
+      .journey-inquire-button:focus-visible,
+      .journey-opt-in-submit:hover,
+      .journey-opt-in-submit:focus,
+      .journey-opt-in-submit:focus-visible {
+        background: #111111;
+        border-color: #111111;
+        color: #ffffff;
+        outline: none;
+      }
+
+      .journey-opt-in-form {
+        width: 100%;
+        max-width: 100%;
+        display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 10px;
         box-sizing: border-box;
         align-items: stretch;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-26px);
+        visibility: hidden;
+        transition:
+          opacity 240ms ease,
+          transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          visibility 0s linear 240ms;
       }
 
       .journey-opt-in-form.is-visible {
-        display: grid;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+        visibility: visible;
+        transition:
+          opacity 240ms ease,
+          transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          visibility 0s linear 0s;
+      }
+
+      .journey-opt-in-form.is-visible .journey-opt-in-input {
+        animation: journey-input-reveal 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .journey-opt-in-form.is-visible .journey-opt-in-submit {
+        animation: journey-submit-reveal 380ms cubic-bezier(0.22, 1, 0.36, 1) 45ms both;
       }
 
       .journey-opt-in-input {
         width: 100%;
         min-width: 0;
-        min-height: 46px;
+        min-height: 42px;
         border: 1px solid #d8d8d8;
         border-radius: 8px;
         padding: 0 14px;
@@ -188,6 +270,32 @@
         animation: journey-check-pop 760ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
       }
 
+      @keyframes journey-input-reveal {
+        from {
+          opacity: 0;
+          transform: translateX(-18px) scaleX(0.72);
+          transform-origin: left center;
+        }
+
+        to {
+          opacity: 1;
+          transform: translateX(0) scaleX(1);
+          transform-origin: left center;
+        }
+      }
+
+      @keyframes journey-submit-reveal {
+        from {
+          opacity: 0;
+          transform: translateX(-34px) scale(0.96);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+
       @keyframes journey-success-rise {
         from {
           opacity: 0;
@@ -231,9 +339,25 @@
           width: 100%;
         }
 
+        .journey-opt-in-control-stage {
+          width: 100%;
+        }
+
+        .journey-opt-in-actions {
+          width: 100%;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .journey-opt-in-actions .journey-opt-in-button,
+        .journey-opt-in-actions .journey-inquire-button {
+          padding: 0 10px;
+          font-size: 0.84rem;
+          white-space: nowrap;
+        }
+
         .journey-opt-in-form.is-focused {
-          padding-top: 35px;
-          padding-bottom: 50px;
+          padding-top: 0;
+          padding-bottom: 110px;
         }
 
         .journey-opt-in-submit {
@@ -279,9 +403,13 @@
       };
       const DEFAULT_JOURNEY_QUOTE = {
         quote:
-          "Things move fast in today's AI age, but there's also never been a better time to build what you dream. Opt in for a human-written quarterly update to stay in the loop about the cool things I build.",
+          "Things move fast in today's AI age, but there's never been a better time to build what you dream. Opt in for a human-written quarterly update to stay in the loop, collaborate, or explore fitting opportunities.",
         author: "Jannis Grimm",
       };
+      const LEGACY_JOURNEY_QUOTE =
+        "Things move fast in today's AI age, but there's also never been a better time to build what you dream. Opt in for a human-written quarterly update to stay in the loop about the cool things I build.";
+      const INQUIRE_EMAIL = "iamjannisgrimm@gmail.com";
+      const INQUIRE_SUBJECT = "Portfolio inquiry";
       const DEFAULT_NUMBER_STACK = [
         { title: "100K +", subtitle: "Downloads on AppStore" },
         { title: "$2.5M", subtitle: "Startup Valuation" },
@@ -326,6 +454,17 @@
         } catch {
           return fallback;
         }
+      }
+
+      function normalizeJourneyQuote(value) {
+        const quote = stringValue(value, DEFAULT_JOURNEY_QUOTE.quote);
+        return quote === LEGACY_JOURNEY_QUOTE ? DEFAULT_JOURNEY_QUOTE.quote : quote;
+      }
+
+      function openInquireEmail() {
+        const subject = encodeURIComponent(INQUIRE_SUBJECT);
+        const body = encodeURIComponent("Hi Jannis,\n\n");
+        window.location.href = `mailto:${INQUIRE_EMAIL}?subject=${subject}&body=${body}`;
       }
 
       function isTimelineHeroEntry(entry) {
@@ -553,7 +692,7 @@
         const footerContainer = findFooterContainer();
         const sectionParent = footerContainer?.parentElement;
         const quoteData = window.__PORTFOLIO_JOURNEY_QUOTE_DATA__ || DEFAULT_JOURNEY_QUOTE;
-        const quote = stringValue(quoteData.quote, DEFAULT_JOURNEY_QUOTE.quote);
+        const quote = normalizeJourneyQuote(quoteData.quote);
         let section = document.querySelector(".journey-opt-in-section");
 
         if (!footerContainer || !sectionParent) {
@@ -567,11 +706,16 @@
           section.innerHTML = `
             <div class="journey-opt-in-inner">
               <blockquote class="journey-opt-in-quote"></blockquote>
-              <button class="journey-opt-in-button" type="button">Receive quarterly updates</button>
-              <form class="journey-opt-in-form">
-                <input class="journey-opt-in-input" type="email" name="email" autocomplete="email" placeholder="gavin@hooli.com" required />
-                <button class="journey-opt-in-submit" type="submit">Opt in</button>
-              </form>
+              <div class="journey-opt-in-control-stage">
+                <div class="journey-opt-in-actions">
+                  <button class="journey-opt-in-button" type="button">Receive updates</button>
+                  <button class="journey-inquire-button" type="button">Inquire</button>
+                </div>
+                <form class="journey-opt-in-form">
+                  <input class="journey-opt-in-input" type="email" name="email" autocomplete="email" placeholder="gavin@hooli.com" required />
+                  <button class="journey-opt-in-submit" type="submit">Opt in</button>
+                </form>
+              </div>
               <p class="journey-opt-in-status" aria-live="polite"></p>
               <div class="journey-opt-in-success" aria-live="polite">
                 <span class="journey-opt-in-success-mark">✓</span>
@@ -585,7 +729,9 @@
         }
 
         const quoteElement = section.querySelector(".journey-opt-in-quote");
+        const actions = section.querySelector(".journey-opt-in-actions");
         const openButton = section.querySelector(".journey-opt-in-button");
+        const inquireButton = section.querySelector(".journey-inquire-button");
         const form = section.querySelector(".journey-opt-in-form");
         const input = section.querySelector(".journey-opt-in-input");
         const status = section.querySelector(".journey-opt-in-status");
@@ -602,12 +748,21 @@
           openButton.addEventListener("click", () => {
             form.classList.add("is-visible");
             form.classList.add("is-focused");
-            openButton.style.display = "none";
+            if (actions instanceof HTMLElement) {
+              actions.classList.add("is-hidden");
+            } else {
+              openButton.style.display = "none";
+            }
             if (input instanceof HTMLInputElement) {
               focusAndSelectJourneyInput(input, form);
               window.requestAnimationFrame(() => focusAndSelectJourneyInput(input, form));
             }
           });
+        }
+
+        if (inquireButton && !inquireButton.dataset.bound) {
+          inquireButton.dataset.bound = "true";
+          inquireButton.addEventListener("click", openInquireEmail);
         }
 
         if (input instanceof HTMLInputElement && form instanceof HTMLElement && !input.dataset.spacingBound) {
@@ -635,7 +790,9 @@
               input.value = "";
               form.classList.remove("is-visible");
               form.classList.remove("is-focused");
-              if (openButton instanceof HTMLElement) {
+              if (actions instanceof HTMLElement) {
+                actions.classList.add("is-hidden");
+              } else if (openButton instanceof HTMLElement) {
                 openButton.style.display = "none";
               }
               if (success instanceof HTMLElement) {
