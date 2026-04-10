@@ -1291,17 +1291,29 @@
         });
       }
 
+      function isTimelineProgressInSafeAreaRange(progress) {
+        if (typeof progress !== "number" || !Number.isFinite(progress)) {
+          return true;
+        }
+
+        return progress > 0.025 && progress < 0.975;
+      }
+
       function installTimelineBackgroundBridge() {
         ensureTimelineSafeAreaFills();
 
-        window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = (color) => {
+        window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = (color, progress) => {
           if (!window.matchMedia("(max-width: 768px)").matches) {
             setMobileTimelineAppBackground("#ffffff");
             return;
           }
 
-          const nextColor = isTransparentColor(color) ? "#ffffff" : color || "#ffffff";
           const timelineShell = findTimelineShell();
+          const nextColor =
+            isTimelineProgressInSafeAreaRange(progress) && !isTransparentColor(color)
+              ? color || "#ffffff"
+              : "#ffffff";
+
           setMobileTimelineAppBackground(nextColor);
           setTimelineSurroundingBackground(timelineShell, nextColor);
         };
@@ -1515,7 +1527,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-137");
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-139");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
