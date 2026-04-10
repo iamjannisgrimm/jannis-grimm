@@ -37,7 +37,7 @@ function getDescriptionBlocks(item) {
   ].filter(Boolean);
 }
 
-function MarkdownDescriptionBlock({ block, isDark, isMobile, fill }) {
+function MarkdownDescriptionBlock({ block, isDark, isMobile, topPadding = 0 }) {
   const isLight = block.style === "light";
   const color = isLight ? (isDark ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)") : isDark ? "#fff" : "#000";
 
@@ -49,7 +49,8 @@ function MarkdownDescriptionBlock({ block, isDark, isMobile, fill }) {
         fontWeight: isLight ? 450 : 500,
         lineHeight: 1.65,
         margin: 0,
-        flex: fill ? 1 : "none",
+        paddingTop: topPadding,
+        flex: "none",
       }}
     >
       <ReactMarkdown
@@ -360,7 +361,7 @@ const Card = ({ item, index, total }) => {
             <div
               style={{
                 margin: isMobile ? "12px auto 0 auto" : "18px auto 0 auto",
-                maxWidth: isMobile ? "300px" : "360px",
+                maxWidth: isMobile ? "300px" : "430px",
                 display: "grid",
                 gap: isMobile ? "8px" : "10px",
               }}
@@ -519,17 +520,27 @@ const Card = ({ item, index, total }) => {
               borderRadius: shouldCropImage ? (isMobile ? "16px" : "18px") : "0px",
             }}
           />
+          <div style={{ height: "1px", background: dividerColor, marginTop: isMobile ? "14px" : "20px" }} />
         </div>
       )}
 
-      <div style={{ display: "grid", gap: isMobile ? "8px" : "10px", flex: isMobile ? "none" : 1 }}>
+      <div
+        style={{
+          display: "grid",
+          gap: isMobile ? "8px" : "25px",
+          alignContent: "start",
+          alignItems: "start",
+          gridAutoRows: "max-content",
+          flex: isMobile ? "none" : 1,
+        }}
+      >
         {descriptionBlocks.map((block, blockIndex) => (
           <MarkdownDescriptionBlock
             key={blockIndex}
             block={block}
             isDark={isDark}
             isMobile={isMobile}
-            fill={!isMobile && blockIndex === descriptionBlocks.length - 1}
+            topPadding={blockIndex === 0 ? (isMobile ? 3 : 8) : 0}
           />
         ))}
       </div>
