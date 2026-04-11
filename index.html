@@ -1085,8 +1085,8 @@
         image.addEventListener(
           "error",
           () => {
-            image.style.opacity = "1";
-            placeholder.remove();
+            image.style.opacity = "0";
+            placeholder.style.opacity = "1";
           },
           { once: true },
         );
