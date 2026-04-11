@@ -990,6 +990,10 @@
         return true;
       }
 
+      function findTimelineRoot() {
+        return findTimelineShell();
+      }
+
       function ensureTimelineImageHost(image) {
         const parent = image.parentElement;
         if (!parent) {
@@ -1006,13 +1010,28 @@
 
         const wrapper = document.createElement("div");
         const computed = window.getComputedStyle(image);
+        const resolvedWidth =
+          image.style.width ||
+          image.style.maxWidth ||
+          (computed.width && computed.width !== "0px" ? computed.width : "") ||
+          (computed.maxWidth && computed.maxWidth !== "none" ? computed.maxWidth : "") ||
+          "100%";
+        const resolvedHeight =
+          (image.style.height && image.style.height !== "auto" ? image.style.height : "") ||
+          (computed.height && computed.height !== "0px" ? computed.height : "") ||
+          (image.style.maxHeight && image.style.maxHeight !== "none" ? image.style.maxHeight : "") ||
+          (computed.maxHeight && computed.maxHeight !== "none" ? computed.maxHeight : "");
 
         wrapper.style.position = "relative";
-        wrapper.style.display = "block";
+        wrapper.style.display = "flex";
+        wrapper.style.alignItems = "center";
+        wrapper.style.justifyContent = "center";
         wrapper.style.overflow = "hidden";
-        wrapper.style.width = image.style.width || "100%";
-        wrapper.style.height =
-          image.style.height && image.style.height !== "auto" ? image.style.height : computed.height;
+        wrapper.style.width = resolvedWidth;
+        if (resolvedHeight) {
+          wrapper.style.height = resolvedHeight;
+        }
+        wrapper.style.minHeight = image.style.minHeight || computed.minHeight;
         wrapper.style.maxWidth = image.style.maxWidth || computed.maxWidth;
         wrapper.style.maxHeight = image.style.maxHeight || computed.maxHeight;
         wrapper.style.borderRadius = computed.borderRadius;
@@ -1021,7 +1040,9 @@
 
         image.style.margin = "0";
         image.style.width = "100%";
-        image.style.height = "100%";
+        if (resolvedHeight) {
+          image.style.height = "100%";
+        }
         image.style.maxWidth = "100%";
         image.style.maxHeight = "100%";
 
@@ -1039,14 +1060,13 @@
           return;
         }
 
-        const currentSrc = image.currentSrc || image.getAttribute("src") || "";
-        if (!currentSrc) {
-          return;
-        }
+        const sourceAttr = image.getAttribute("src") || "";
+        const currentSrc = image.currentSrc || sourceAttr || "";
+        const trackedSrc = currentSrc || "__pending__";
 
         if (
           image.dataset.timelineImageEnhanced === "true" &&
-          image.dataset.timelineImageEnhancedSrc === currentSrc
+          image.dataset.timelineImageEnhancedSrc === trackedSrc
         ) {
           return;
         }
@@ -1057,7 +1077,23 @@
         }
 
         image.dataset.timelineImageEnhanced = "true";
-        image.dataset.timelineImageEnhancedSrc = currentSrc;
+        image.dataset.timelineImageEnhancedSrc = trackedSrc;
+
+        const hostRect = host.getBoundingClientRect();
+        if (hostRect.height < 24) {
+          const likelyHeroProduct = /seeme-2026-product|product-mobile/i.test(currentSrc || sourceAttr);
+          const fallbackHeight = likelyHeroProduct
+            ? window.innerWidth <= 768
+              ? "250px"
+              : "420px"
+            : window.innerWidth <= 768
+              ? "180px"
+              : "240px";
+          host.style.minHeight = fallbackHeight;
+          if (!host.style.height || host.style.height === "0px") {
+            host.style.height = fallbackHeight;
+          }
+        }
 
         const existingPlaceholder = host.querySelector(":scope > .timeline-image-loading-placeholder");
         if (existingPlaceholder instanceof HTMLElement) {
@@ -1126,6 +1162,11 @@
           },
           { once: true },
         );
+
+        if (!currentSrc) {
+          placeholder.style.opacity = "1";
+          image.style.opacity = "0";
+        }
       }
 
       function enhanceTimelineImages(root = document) {
