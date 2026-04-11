@@ -126,10 +126,11 @@ function TimelineImageSurface({
   }, [src]);
 
   const shimmerBackground = isDark
-    ? "linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 100%)"
-    : "linear-gradient(90deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 100%)";
-  const shellBackground = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
-  const shellBorder = isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)";
+    ? "linear-gradient(90deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.26) 50%, rgba(255,255,255,0.10) 100%)"
+    : "linear-gradient(90deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.08) 100%)";
+  const shellBackground = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
+  const shellBorder = isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(0,0,0,0.10)";
+  const labelColor = isDark ? "rgba(255,255,255,0.72)" : "rgba(0,0,0,0.50)";
 
   return (
     <div
@@ -154,6 +155,26 @@ function TimelineImageSurface({
           transition: "opacity 0.25s ease",
         }}
       />
+      {!isReady ? (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: labelColor,
+            fontSize: "12px",
+            fontWeight: 600,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            zIndex: 1,
+          }}
+        >
+          Loading preview
+        </div>
+      ) : null}
       {src ? (
         <img
           src={src}

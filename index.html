@@ -1045,13 +1045,22 @@
         const dark = isDarkColor(base);
         const highlight = mixColor(base, dark ? [255, 255, 255] : [0, 0, 0], 0.12);
         const accent = mixColor(base, dark ? [255, 255, 255] : [0, 0, 0], 0.28);
-        const borderColor = dark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.32)";
+        const borderColor = dark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.10)";
+        const labelColor = dark ? "rgba(255,255,255,0.72)" : "rgba(0,0,0,0.5)";
 
         const placeholder = document.createElement("div");
         placeholder.setAttribute("aria-hidden", "true");
         placeholder.style.position = "absolute";
         placeholder.style.inset = "0";
         placeholder.style.borderRadius = window.getComputedStyle(image).borderRadius;
+        placeholder.style.display = "flex";
+        placeholder.style.alignItems = "center";
+        placeholder.style.justifyContent = "center";
+        placeholder.style.color = labelColor;
+        placeholder.style.fontSize = "12px";
+        placeholder.style.fontWeight = "600";
+        placeholder.style.letterSpacing = "0.08em";
+        placeholder.style.textTransform = "uppercase";
         placeholder.style.background = `linear-gradient(135deg, ${rgbToCss(highlight)} 0%, ${rgbToCss(
           accent,
         )} 52%, ${rgbToCss(highlight)} 100%)`;
@@ -1060,6 +1069,7 @@
         placeholder.style.boxShadow = `inset 0 0 0 1px ${borderColor}`;
         placeholder.style.transition = "opacity 700ms ease";
         placeholder.style.pointerEvents = "none";
+        placeholder.textContent = "Loading preview";
 
         image.style.opacity = "0";
         image.style.transition = image.style.transition
@@ -1671,7 +1681,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-154");
+          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-155");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
