@@ -194,6 +194,49 @@ function TimelineImageSurface({
   );
 }
 
+function PersistentImagePlaceholder({ isDark, height = 18, label = "Loading preview" }) {
+  const shimmerBackground = isDark
+    ? "linear-gradient(90deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.26) 50%, rgba(255,255,255,0.10) 100%)"
+    : "linear-gradient(90deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.16) 50%, rgba(0,0,0,0.08) 100%)";
+  const shellBackground = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
+  const shellBorder = isDark ? "1px solid rgba(255,255,255,0.16)" : "1px solid rgba(0,0,0,0.10)";
+  const labelColor = isDark ? "rgba(255,255,255,0.72)" : "rgba(0,0,0,0.50)";
+
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        width: "100%",
+        height,
+        borderRadius: 10,
+        background: shellBackground,
+        border: shellBorder,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: labelColor,
+        fontSize: "10px",
+        fontWeight: 600,
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: shimmerBackground,
+          backgroundSize: "200% 100%",
+          animation: "timeline-image-shimmer 1.4s ease-in-out infinite",
+        }}
+      />
+      <span style={{ position: "relative", zIndex: 1 }}>{label}</span>
+    </div>
+  );
+}
+
 const Timeline = () => {
   const outerRef = useRef(null);
   const trackRef = useRef(null);
@@ -512,28 +555,33 @@ const Card = ({ item, index, total }) => {
           </div>
 
           {heroProductSource ? (
-            <TimelineImageSurface
-              src={heroProductSource}
-              alt={item.title}
-              isDark
-              borderRadius={isMobile ? "22px" : "26px"}
-              shellStyle={{
-                width: isMobile ? "72%" : "68%",
-                minHeight: isMobile ? "340px" : "420px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              imageStyle={{
-                width: "100%",
-                height: "100%",
-                maxHeight: "100%",
-                objectFit: "contain",
-                display: "block",
-                position: "relative",
-                zIndex: 1,
-              }}
-            />
+            <div style={{ width: isMobile ? "72%" : "68%" }}>
+              <TimelineImageSurface
+                src={heroProductSource}
+                alt={item.title}
+                isDark
+                borderRadius={isMobile ? "22px" : "26px"}
+                shellStyle={{
+                  width: "100%",
+                  minHeight: isMobile ? "340px" : "420px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                imageStyle={{
+                  width: "100%",
+                  height: "100%",
+                  maxHeight: "100%",
+                  objectFit: "contain",
+                  display: "block",
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              />
+              <div style={{ marginTop: isMobile ? "10px" : "14px" }}>
+                <PersistentImagePlaceholder isDark height={isMobile ? 16 : 18} />
+              </div>
+            </div>
           ) : (
             <div
               style={{
@@ -679,6 +727,9 @@ const Card = ({ item, index, total }) => {
           }}
         />
         <div style={{ height: "1px", background: dividerColor, marginTop: isMobile ? "14px" : "20px" }} />
+        <div style={{ marginTop: isMobile ? "10px" : "12px" }}>
+          <PersistentImagePlaceholder isDark={isDark} height={isMobile ? 16 : 18} />
+        </div>
       </div>
 
       <div

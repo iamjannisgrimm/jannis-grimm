@@ -969,8 +969,9 @@
 
       function isTimelineContentImage(image) {
         const source = image.getAttribute("src") || "";
+        const timelineRoot = findTimelineRoot();
 
-        if (!source) {
+        if (!timelineRoot || !timelineRoot.contains(image)) {
           return false;
         }
 
@@ -978,11 +979,15 @@
           return false;
         }
 
-        return (
-          /lineup|coverlettergen|synechron-|asu-|lufthansa-|aviatar-|seeme-2026-product/i.test(
-            source,
-          ) || source.includes("product-mobile")
-        );
+        const parentLink = image.closest("a");
+        if (
+          parentLink &&
+          /apps\.apple\.com|app\s*store/i.test(parentLink.getAttribute("href") || "")
+        ) {
+          return false;
+        }
+
+        return true;
       }
 
       function ensureTimelineImageHost(image) {
@@ -1026,11 +1031,23 @@
       }
 
       function enhanceTimelineImage(image) {
-        if (!(image instanceof HTMLImageElement) || image.dataset.timelineImageEnhanced === "true") {
+        if (!(image instanceof HTMLImageElement)) {
           return;
         }
 
         if (!isTimelineContentImage(image)) {
+          return;
+        }
+
+        const currentSrc = image.currentSrc || image.getAttribute("src") || "";
+        if (!currentSrc) {
+          return;
+        }
+
+        if (
+          image.dataset.timelineImageEnhanced === "true" &&
+          image.dataset.timelineImageEnhancedSrc === currentSrc
+        ) {
           return;
         }
 
@@ -1040,6 +1057,12 @@
         }
 
         image.dataset.timelineImageEnhanced = "true";
+        image.dataset.timelineImageEnhancedSrc = currentSrc;
+
+        const existingPlaceholder = host.querySelector(":scope > .timeline-image-loading-placeholder");
+        if (existingPlaceholder instanceof HTMLElement) {
+          existingPlaceholder.remove();
+        }
 
         const base = findTimelineImageBaseColor(host);
         const dark = isDarkColor(base);
@@ -1069,8 +1092,11 @@
         placeholder.style.boxShadow = `inset 0 0 0 1px ${borderColor}`;
         placeholder.style.transition = "opacity 700ms ease";
         placeholder.style.pointerEvents = "none";
+        placeholder.className = "timeline-image-loading-placeholder";
         placeholder.textContent = "Loading preview";
 
+        image.setAttribute("loading", "eager");
+        image.setAttribute("decoding", "async");
         image.style.opacity = "0";
         image.style.transition = image.style.transition
           ? `${image.style.transition}, opacity 700ms ease`
@@ -1120,6 +1146,13 @@
 
         const observer = new MutationObserver((mutations) => {
           for (const mutation of mutations) {
+            if (mutation.type === "attributes" && mutation.target instanceof HTMLImageElement) {
+              delete mutation.target.dataset.timelineImageEnhanced;
+              delete mutation.target.dataset.timelineImageEnhancedSrc;
+              enhanceTimelineImage(mutation.target);
+              continue;
+            }
+
             mutation.addedNodes.forEach((node) => {
               if (!(node instanceof Element)) {
                 return;
@@ -1135,7 +1168,12 @@
           }
         });
 
-        observer.observe(document.body, { childList: true, subtree: true });
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["src"],
+        });
       }
 
       function adjustTimelineHeroSubtitleWidth() {
@@ -1681,7 +1719,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-Xk-FGBtY.js?v=supabase-live-155");
+          await import("./assets/index-DOlbZ8iU.js?v=supabase-live-158");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
