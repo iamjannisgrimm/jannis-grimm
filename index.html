@@ -1041,6 +1041,234 @@
         return "pending";
       }
 
+      function ensureTimelineImageDebugPanel() {
+        let panel = document.getElementById("timeline-image-debug-panel");
+        if (panel instanceof HTMLElement) {
+          return panel;
+        }
+
+        panel = document.createElement("div");
+        panel.id = "timeline-image-debug-panel";
+        panel.style.position = "fixed";
+        panel.style.top = "12px";
+        panel.style.left = "50%";
+        panel.style.transform = "translateX(-50%)";
+        panel.style.zIndex = "2147483647";
+        panel.style.width = "min(420px, calc(100vw - 24px))";
+        panel.style.maxHeight = "min(60vh, 520px)";
+        panel.style.overflow = "auto";
+        panel.style.background = "rgba(127, 29, 29, 0.96)";
+        panel.style.color = "#fff";
+        panel.style.border = "2px solid rgba(255,255,255,0.9)";
+        panel.style.borderRadius = "10px";
+        panel.style.padding = "12px";
+        panel.style.boxShadow = "0 18px 40px rgba(0,0,0,0.34)";
+        panel.style.fontFamily =
+          "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        panel.style.fontSize = "13px";
+        panel.style.lineHeight = "1.35";
+        panel.style.pointerEvents = "auto";
+        panel.style.webkitOverflowScrolling = "touch";
+        panel.style.touchAction = "pan-y";
+        panel.innerHTML = `
+          <div style="font-weight:800; margin-bottom:8px; letter-spacing:0.06em; text-transform:uppercase; font-size:12px;">
+            Timeline Image States
+          </div>
+          <div style="opacity:0.92;">Debug panel mounted. Waiting for timeline images...</div>
+        `;
+        document.body.appendChild(panel);
+        return panel;
+      }
+
+      function renderTimelineImageDebugPanel() {
+        if (!window.__PORTFOLIO_TIMELINE_IMAGE_STATES__) {
+          return;
+        }
+
+        const panel = ensureTimelineImageDebugPanel();
+        const entries = Object.entries(window.__PORTFOLIO_TIMELINE_IMAGE_STATES__);
+
+        panel.innerHTML = `
+          <div style="font-weight:800; margin-bottom:8px; letter-spacing:0.06em; text-transform:uppercase; font-size:12px;">
+            Timeline Image States (${entries.length})
+          </div>
+          ${entries
+            .map(([key, value]) => {
+              const stateColor =
+                value.state === "loaded"
+                  ? "#86efac"
+                  : value.state === "error"
+                    ? "#fca5a5"
+                    : "#fde68a";
+              return `
+                <div style="padding:8px 0; border-top:1px solid rgba(255,255,255,0.12);">
+                  <div style="display:flex; justify-content:space-between; gap:8px;">
+                    <span style="font-weight:700; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                      ${value.title || key}
+                    </span>
+                    <span style="color:${stateColor}; font-weight:700; text-transform:uppercase;">
+                      ${value.state}
+                    </span>
+                  </div>
+                  <div style="margin-top:4px; opacity:0.72; word-break:break-all;">
+                    ${value.source || "__pending__"}
+                  </div>
+                </div>
+              `;
+            })
+            .join("")}
+        `;
+      }
+
+      function syncTimelineImageState(image) {
+        const meta = getTimelineTrackedImageMeta(image);
+        if (!(image instanceof HTMLImageElement) || !meta) {
+          return;
+        }
+
+        const state = getTimelineImageState(image);
+        const source = image.currentSrc || image.getAttribute("src") || "__pending__";
+        const key =
+          meta.key ||
+          image.dataset.timelineImageKey ||
+          `${meta.title || "timeline-image"}-${Math.random().toString(36).slice(2, 10)}`;
+
+        image.dataset.timelineImageKey = key;
+        image.dataset.timelineImageState = state;
+
+        if (!window.__PORTFOLIO_TIMELINE_IMAGE_STATES__) {
+          window.__PORTFOLIO_TIMELINE_IMAGE_STATES__ = {};
+        }
+
+        window.__PORTFOLIO_TIMELINE_IMAGE_STATES__[key] = {
+          state,
+          source,
+          title: meta.title || image.alt || "",
+        };
+        renderTimelineImageDebugPanel();
+
+        const host = image.parentElement;
+        if (host instanceof HTMLElement) {
+          ensureTimelineImageStateBadge(host, image);
+        }
+      }
+
+      function ensureTimelineImageStateBadge(host, image) {
+        if (!(host instanceof HTMLElement) || !(image instanceof HTMLImageElement)) {
+          return null;
+        }
+
+        let badge = host.querySelector(":scope > .timeline-image-state-badge");
+        if (!(badge instanceof HTMLElement)) {
+          badge = document.createElement("div");
+          badge.className = "timeline-image-state-badge";
+          badge.setAttribute("aria-hidden", "true");
+          badge.style.position = "absolute";
+          badge.style.left = "10px";
+          badge.style.bottom = "10px";
+          badge.style.zIndex = "3";
+          badge.style.padding = "6px 8px";
+          badge.style.borderRadius = "8px";
+          badge.style.background = "rgba(0,0,0,0.72)";
+          badge.style.color = "#ffffff";
+          badge.style.fontSize = "11px";
+          badge.style.fontWeight = "600";
+          badge.style.lineHeight = "1";
+          badge.style.letterSpacing = "0.04em";
+          badge.style.textTransform = "uppercase";
+          badge.style.pointerEvents = "none";
+          badge.style.fontFamily =
+            "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+          host.appendChild(badge);
+        }
+
+        const state = image.dataset.timelineImageState || "pending";
+        badge.textContent = state;
+        badge.style.background =
+          state === "loaded"
+            ? "rgba(15, 23, 42, 0.78)"
+            : state === "error"
+              ? "rgba(127, 29, 29, 0.82)"
+              : "rgba(0,0,0,0.72)";
+
+        return badge;
+      }
+
+      function bindTimelineImageState(image) {
+        if (!(image instanceof HTMLImageElement) || !isTimelineContentImage(image)) {
+          return;
+        }
+
+        syncTimelineImageState(image);
+
+        if (image.dataset.timelineImageStateBound === "true") {
+          return;
+        }
+
+        image.dataset.timelineImageStateBound = "true";
+        image.addEventListener("load", () => syncTimelineImageState(image));
+        image.addEventListener("error", () => syncTimelineImageState(image));
+      }
+
+      function trackHeroBackgroundImage() {
+        const heroBackground = Array.from(document.querySelectorAll("div[style]")).find((element) => {
+          if (!(element instanceof HTMLElement)) {
+            return false;
+          }
+
+          const backgroundUrl = parseBackgroundImageUrl(element.style.backgroundImage);
+          return (
+            backgroundUrl &&
+            /seeme-2026-background/i.test(backgroundUrl) &&
+            element.style.backgroundSize === "cover"
+          );
+        });
+
+        if (!window.__PORTFOLIO_TIMELINE_IMAGE_STATES__) {
+          window.__PORTFOLIO_TIMELINE_IMAGE_STATES__ = {};
+        }
+
+        if (!(heroBackground instanceof HTMLElement)) {
+          window.__PORTFOLIO_TIMELINE_IMAGE_STATES__["hero-background-image"] = {
+            state: "pending",
+            source: "__pending__",
+            title: "Hero Background",
+          };
+          renderTimelineImageDebugPanel();
+          return;
+        }
+
+        const source = parseBackgroundImageUrl(heroBackground.style.backgroundImage) || "__pending__";
+        window.__PORTFOLIO_TIMELINE_IMAGE_STATES__["hero-background-image"] = {
+          state: source === "__pending__" ? "pending" : "loading",
+          source,
+          title: "Hero Background",
+        };
+        renderTimelineImageDebugPanel();
+
+        if (source === "__pending__") {
+          return;
+        }
+
+        const image = new Image();
+        image.onload = () => {
+          window.__PORTFOLIO_TIMELINE_IMAGE_STATES__["hero-background-image"] = {
+            state: "loaded",
+            source,
+            title: "Hero Background",
+          };
+          renderTimelineImageDebugPanel();
+        };
+        image.onerror = () => {
+          window.__PORTFOLIO_TIMELINE_IMAGE_STATES__["hero-background-image"] = {
+            state: "error",
+            source,
+            title: "Hero Background",
+          };
+          renderTimelineImageDebugPanel();
+        };
+        image.src = source;
+      }
 
       function ensureTimelineImageHost(image) {
         const parent = image.parentElement;
@@ -1124,6 +1352,7 @@
           return;
         }
 
+        ensureTimelineImageStateBadge(host, image);
         image.dataset.timelineImageEnhanced = "true";
         image.dataset.timelineImageEnhancedSrc = trackedSrc;
 
@@ -1191,6 +1420,8 @@
         host.insertBefore(placeholder, image);
 
         const reveal = () => {
+          syncTimelineImageState(image);
+          ensureTimelineImageStateBadge(host, image);
           image.style.opacity = "1";
           placeholder.style.opacity = "0";
           window.setTimeout(() => placeholder.remove(), 720);
@@ -1205,6 +1436,8 @@
         image.addEventListener(
           "error",
           () => {
+            syncTimelineImageState(image);
+            ensureTimelineImageStateBadge(host, image);
             image.style.opacity = "0";
             placeholder.style.opacity = "1";
           },
@@ -1212,6 +1445,7 @@
         );
 
         if (!currentSrc) {
+          ensureTimelineImageStateBadge(host, image);
           placeholder.style.opacity = "1";
           image.style.opacity = "0";
         }
@@ -1223,24 +1457,35 @@
         }
 
         if (root instanceof HTMLImageElement) {
+          bindTimelineImageState(root);
           enhanceTimelineImage(root);
           return;
         }
 
         root.querySelectorAll("img").forEach((image) => {
+          bindTimelineImageState(image);
           enhanceTimelineImage(image);
         });
       }
 
       function startTimelineImageEnhancer() {
+        ensureTimelineImageDebugPanel();
         enhanceTimelineImages();
+        trackHeroBackgroundImage();
+        renderTimelineImageDebugPanel();
 
         const observer = new MutationObserver((mutations) => {
           for (const mutation of mutations) {
             if (mutation.type === "attributes" && mutation.target instanceof HTMLImageElement) {
               delete mutation.target.dataset.timelineImageEnhanced;
               delete mutation.target.dataset.timelineImageEnhancedSrc;
+              syncTimelineImageState(mutation.target);
               enhanceTimelineImage(mutation.target);
+              continue;
+            }
+
+            if (mutation.type === "attributes" && mutation.target instanceof HTMLElement) {
+              trackHeroBackgroundImage();
               continue;
             }
 
@@ -1250,11 +1495,13 @@
               }
 
               if (node instanceof HTMLImageElement) {
+                bindTimelineImageState(node);
                 enhanceTimelineImage(node);
                 return;
               }
 
               enhanceTimelineImages(node);
+              trackHeroBackgroundImage();
             });
           }
         });
