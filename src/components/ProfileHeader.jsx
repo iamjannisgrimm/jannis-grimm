@@ -1,6 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const ProfileHeader = ({ image, title }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const imageSrc = /^https?:\/\//.test(image)
+    ? image
+    : `${import.meta.env.BASE_URL}${image}`;
+
+  useEffect(() => {
+    let isActive = true;
+    const preloadImage = new Image();
+    preloadImage.src = imageSrc;
+
+    const revealImage = async () => {
+      try {
+        if (typeof preloadImage.decode === "function") {
+          await preloadImage.decode();
+        }
+      } catch {
+        // Ignore decode failures and reveal the already-loaded asset.
+      }
+
+      if (!isActive) {
+        return;
+      }
+      setIsLoaded(true);
+      requestAnimationFrame(() => {
+        if (isActive) {
+          setIsVisible(true);
+        }
+      });
+    };
+
+    if (preloadImage.complete) {
+      revealImage();
+      return () => {
+        isActive = false;
+      };
+    }
+
+    preloadImage.onload = revealImage;
+    preloadImage.onerror = revealImage;
+
+    return () => {
+      isActive = false;
+    };
+  }, [imageSrc]);
+
   return (
     <div
       style={{
@@ -46,19 +92,32 @@ const ProfileHeader = ({ image, title }) => {
         padding: 0,
         position: "relative",
       }}>
-        <img
-          src={`${import.meta.env.BASE_URL}${image}`}
-          alt="Profile"
+        <div
           style={{
-            maxWidth: "400px",
             width: "90%",
-            height: "auto",
+            maxWidth: "400px",
+            aspectRatio: "2131 / 2050",
+            position: "relative",
             borderRadius: "12px",
-            objectFit: "cover",
-            display: "block",
-            margin: 0,
+            overflow: "hidden",
+            background: "white",
+            backgroundImage: isLoaded ? `url("${imageSrc}")` : "none",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "contain",
           }}
-        />
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "white",
+              opacity: isVisible ? 0 : 1,
+              transition: "opacity 900ms cubic-bezier(0.22, 1, 0.36, 1)",
+              pointerEvents: "none",
+            }}
+          />
+        </div>
         <div style={{
           position: "absolute",
           bottom: 0,

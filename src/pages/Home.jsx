@@ -25,7 +25,10 @@ export function Home() {
         style={{ width: "100%" }}
       >
         <div className="content-container">
-          <ProfileHeader image="me/JannisGrimm.png" title="Engineer. Innovator. Leader" />
+          <ProfileHeader
+            image="https://dndmthvnajpritxxjrie.supabase.co/storage/v1/object/public/images/me/JannisGrimm.png"
+            title="Engineer. Innovator. Leader"
+          />
         </div>
       </div>
 
