@@ -13,6 +13,26 @@ body, html {
   background-color: white;
 }
 
+html.home-scroll-snap,
+body.home-scroll-snap,
+html.home-scroll-snap body,
+html.home-scroll-snap #root,
+html.home-scroll-snap #root > div,
+html.home-scroll-snap.timeline-app-background-active,
+body.home-scroll-snap.timeline-app-background-active,
+html.home-scroll-snap.timeline-app-background-active body,
+html.home-scroll-snap.timeline-app-background-active #root,
+html.home-scroll-snap.timeline-app-background-active #root > div {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+html.home-scroll-snap .timeline-safe-area-fill,
+body.home-scroll-snap .timeline-safe-area-fill {
+  background: #ffffff !important;
+  opacity: 0 !important;
+}
+
 #root {
   width: 100%;
   display: flex;
@@ -20,6 +40,18 @@ body, html {
   align-items: center;
   margin: 0;
   padding: 0;
+}
+
+.app-top-safe-scrim {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  height: calc(env(safe-area-inset-top, 0px) + 20px);
+  pointer-events: none;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.92) 52%, rgba(255, 255, 255, 0) 100%);
 }
 
 /* ===== Fonts ===== */
@@ -84,6 +116,12 @@ body, html {
     --primary-spacing: 0.75rem;
     --section-spacing: 1.5rem;
   }
+
+  .app-top-safe-scrim {
+    display: block;
+    height: calc(env(safe-area-inset-top, 0px) + 28px);
+    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.96) 58%, rgba(255, 255, 255, 0) 100%);
+  }
 }
 
 /* ===== Layout Helpers ===== */
@@ -104,6 +142,53 @@ body, html {
   align-items: center;
   margin: 0;
   padding: 0;
+}
+
+.home-scroll-shell {
+  width: 100%;
+}
+
+.home-snap-section {
+  scroll-snap-align: none;
+}
+
+.overview-quote-block {
+  padding: clamp(92px, 14vh, 140px) 0 0;
+}
+
+.overview-stats-block {
+  padding: 56px 0 clamp(420px, 34vh, 520px);
+}
+
+@media (max-width: 768px) {
+  .overview-quote-block {
+    padding-top: clamp(132px, 22vh, 188px);
+  }
+
+  .overview-stats-block {
+    padding-top: 64px;
+    padding-bottom: clamp(360px, 38vh, 460px);
+  }
+}
+
+.home-highlights-section {
+  position: relative;
+  width: 100%;
+}
+
+.home-highlights-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: clamp(72px, 10vh, 96px);
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%),
+    linear-gradient(90deg, rgba(194, 181, 187, 0.92) 0%, rgba(231, 199, 198, 0.92) 100%);
+  transform: translateY(-100%);
 }
 
 /* ===== Profile Title Parts (mobile stacking) ===== */

@@ -1,0 +1,215 @@
+.highlights-stack {
+  position: relative;
+  width: 100%;
+  background: #0b0e14;
+  color: #ffffff;
+  padding: 0 0 20vh;
+}
+
+.highlights-stack--planner {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.08), transparent 32%),
+    linear-gradient(180deg, #35495e 0%, #263546 100%);
+}
+
+.highlights-stack__eyebrow,
+.highlights-stack__panelEyebrow {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.highlights-stack__cards {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  padding-top: 0;
+}
+
+.highlights-stack__card {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  min-height: 90vh;
+  margin-top: 0;
+  display: grid;
+  align-items: stretch;
+  border-radius: 30px;
+  overflow: hidden;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.highlights-stack__card + .highlights-stack__card {
+  margin-top: 20px;
+}
+
+.highlights-stack__card--hero {
+  position: relative;
+  min-height: 100vh;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.highlights-stack__heroBackdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.highlights-stack__heroSnapTarget {
+  position: absolute;
+  top: clamp(72px, 10vh, 96px);
+  left: 0;
+  right: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+.highlights-stack__heroBackground {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+  filter: blur(12px);
+  transform: scale(1.04);
+  transform-origin: center center;
+  opacity: 1;
+}
+
+.highlights-stack__card--product {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin-top: calc(-100vh + 20px);
+}
+
+.highlights-stack__productShell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  gap: 18px;
+}
+
+.highlights-stack__productImage {
+  width: min(84vw, 1120px);
+  max-height: 72vh;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  filter: drop-shadow(0 30px 64px rgba(0, 0, 0, 0.22));
+}
+
+.highlights-stack__badgeWrap {
+  position: relative;
+  z-index: 2;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 4px 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.highlights-stack__badge {
+  display: block;
+  height: 32px;
+  width: auto;
+}
+
+.highlights-stack__card--text {
+  grid-template-columns: 1fr;
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+}
+
+.highlights-stack__card--secondary {
+  background: transparent;
+}
+
+.highlights-stack__textPanel {
+  width: min(760px, calc(100% - 56px));
+  margin: auto;
+  padding: 56px 0;
+}
+
+.highlights-stack__card--text .highlights-stack__panelEyebrow {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.highlights-stack__panelTitle {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.07em;
+}
+
+.highlights-stack__panelHeadline {
+  margin: 18px 0 0;
+  font-size: 1.08rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.highlights-stack__panelBody {
+  margin: 14px 0 0;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.highlights-stack__panelLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 22px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 980px) {
+  .highlights-stack {
+    padding-bottom: 12vh;
+  }
+
+  .highlights-stack__cards {
+    width: 100%;
+    padding-top: 0;
+  }
+
+  .highlights-stack__card {
+    min-height: 74vh;
+  }
+
+  .highlights-stack__productShell {
+    min-height: 74vh;
+    gap: 14px;
+  }
+
+  .highlights-stack__productImage {
+    width: min(92vw, 640px);
+    max-height: 58vh;
+  }
+
+  .highlights-stack__textPanel {
+    width: min(100%, calc(100% - 40px));
+    padding: 40px 0;
+  }
+}

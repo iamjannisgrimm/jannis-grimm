@@ -1,14 +1,448 @@
-import React from "react";
-import Timeline from "../components/timeline/Timeline";
+import React, { useEffect } from "react";
 import GitHubContributions from "../components/GitHubContributions";
 import ProfileHeader from "../components/ProfileHeader";
 import Achievements from "../components/Achievements";
 import Quotes from "../components/Quotes";
 import Footer from "../components/Footer";
+import FeaturedProjectsStory from "../components/featured/FeaturedProjectsStory";
+import EventPlannerStory from "../components/featured/EventPlannerStory";
+import AssistantsShowcase from "../components/featured/AssistantsShowcase";
+
+const SNAP_SECTION_IDS = ["home", "overview"];
+const SNAP_OFFSET = 92;
+const SNAP_LOCK_MS = 40;
+const SNAP_IDLE_MS = 48;
+const SNAP_ANIMATION_MS = 100;
+const SNAP_DIRECTION_THRESHOLD = 10;
+const SNAP_LARGE_GESTURE_THRESHOLD = 220;
 
 export function Home() {
+  useEffect(() => {
+    document.documentElement.classList.add("home-scroll-snap");
+    document.body.classList.add("home-scroll-snap");
+
+    let isProgrammaticSnap = false;
+    let snapLockUntil = 0;
+    let snapTimeout = 0;
+    let animationFrameId = 0;
+    let animationToken = 0;
+    let lastInputAt = 0;
+    let lastInputDirection = 0;
+    let touchStartY = 0;
+    let touchLastY = 0;
+    let lastSnappedTarget = null;
+    let gestureTravel = 0;
+    const previousSafeAreaBarsAllowed = window.__portfolioTimelineSafeAreaBarsAllowed;
+    const previousTimelineBackgroundSetter = window.__PORTFOLIO_SET_TIMELINE_BACKGROUND;
+
+    const enforceNeutralTopChrome = () => {
+      const themeColor = document.querySelector("meta[name='theme-color']");
+      if (themeColor) {
+        if (themeColor.getAttribute("content") !== "#ffffff") {
+          themeColor.setAttribute("content", "#ffffff");
+        }
+      }
+
+      window.__portfolioTimelineSafeAreaBarsAllowed = false;
+      document.documentElement.style.setProperty("--timeline-app-background", "#ffffff");
+      document.body.style.setProperty("--timeline-app-background", "#ffffff");
+      document.documentElement.classList.remove("timeline-app-background-active");
+      document.body.classList.remove("timeline-app-background-active");
+      document.documentElement.style.backgroundColor = "#ffffff";
+      document.body.style.backgroundColor = "#ffffff";
+
+      const root = document.getElementById("root");
+      if (root instanceof HTMLElement) {
+        root.style.backgroundColor = "#ffffff";
+      }
+
+      const rootChild = document.querySelector("#root > div");
+      if (rootChild instanceof HTMLElement) {
+        rootChild.style.backgroundColor = "#ffffff";
+      }
+
+      document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
+        if (!(element instanceof HTMLElement)) {
+          return;
+        }
+
+        element.style.opacity = "0";
+        element.style.background = "#ffffff";
+      });
+    };
+
+    enforceNeutralTopChrome();
+    window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = () => {
+      enforceNeutralTopChrome();
+    };
+
+    const themeColor = document.querySelector("meta[name='theme-color']");
+    const themeObserver =
+      themeColor instanceof HTMLElement
+        ? new MutationObserver(() => {
+            enforceNeutralTopChrome();
+          })
+        : null;
+
+    if (themeObserver && themeColor) {
+      themeObserver.observe(themeColor, {
+        attributes: true,
+        attributeFilter: ["content"],
+      });
+    }
+
+    const getSections = () =>
+      SNAP_SECTION_IDS
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+
+    const getCardTargets = () =>
+      Array.from(document.querySelectorAll("[data-page-snap='card']")).filter(Boolean);
+
+    const getOrderedSnapTargets = () => {
+      const combined = [...getSections(), ...getCardTargets()];
+      const unique = combined.filter((element, index) => combined.indexOf(element) === index);
+
+      return unique.sort((left, right) => getTargetTop(left) - getTargetTop(right));
+    };
+
+    const getNearestTargetIndex = (targets) => {
+      if (targets.length === 0) {
+        return -1;
+      }
+
+      const currentY = window.scrollY;
+      let bestIndex = 0;
+      let bestDistance = Math.abs(getTargetTop(targets[0]) - currentY);
+
+      for (let index = 1; index < targets.length; index += 1) {
+        const distance = Math.abs(getTargetTop(targets[index]) - currentY);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestIndex = index;
+        }
+      }
+
+      return bestIndex;
+    };
+
+    const getSnapAnchor = (section) =>
+      section.querySelector("[data-snap-anchor='center']") || section;
+
+    const getSectionTop = (section) => {
+      const anchor = getSnapAnchor(section);
+      const snapMode = anchor.getAttribute("data-snap-anchor") || "center";
+      const snapBaseOffset = Number(anchor.getAttribute("data-snap-base-offset") || SNAP_OFFSET);
+      const snapOffsetAdjustment = Number(anchor.getAttribute("data-snap-offset") || 0);
+      const rect = anchor.getBoundingClientRect();
+      const absoluteTop = window.scrollY + rect.top;
+
+      if (snapMode === "top") {
+        return Math.max(0, absoluteTop - snapBaseOffset + snapOffsetAdjustment);
+      }
+
+      const visibleTop = SNAP_OFFSET;
+      const visibleHeight = window.innerHeight - visibleTop;
+      const targetTop = absoluteTop + rect.height / 2 - (visibleTop + visibleHeight / 2);
+
+      return Math.max(0, targetTop + snapOffsetAdjustment);
+    };
+
+    const getTargetTop = (element) => getSectionTop(element);
+
+    const getTargetSection = (sections) => {
+      if (sections.length === 0) {
+        return null;
+      }
+
+      const currentY = window.scrollY;
+      const sectionEntries = sections.map((section) => ({
+        section,
+        top: getSectionTop(section),
+      }));
+
+      let target = sectionEntries[0].section;
+
+      for (let index = 0; index < sectionEntries.length - 1; index += 1) {
+        const current = sectionEntries[index];
+        const next = sectionEntries[index + 1];
+        const midpoint = current.top + (next.top - current.top) / 2;
+
+        if (currentY >= midpoint) {
+          target = next.section;
+        }
+      }
+
+      return target;
+    };
+
+    const getClosestSection = (sections) => {
+      const currentY = window.scrollY;
+
+      return sections.reduce((bestSection, section) => {
+        if (!bestSection) {
+          return section;
+        }
+
+      const sectionTop = getTargetTop(section);
+      const bestTop = getTargetTop(bestSection);
+        return Math.abs(sectionTop - currentY) < Math.abs(bestTop - currentY)
+          ? section
+          : bestSection;
+      }, null);
+    };
+
+    const isInTopSnapZone = (sections) => {
+      const overviewSection = sections.find((section) => section.id === "overview");
+      if (!overviewSection) {
+        return false;
+      }
+
+      const overviewTop = getSectionTop(overviewSection);
+      return window.scrollY <= overviewTop + 80;
+    };
+
+    const easeOutCubic = (value) => 1 - (1 - value) ** 3;
+
+    const finishSnap = () => {
+      isProgrammaticSnap = false;
+      snapLockUntil = Date.now() + SNAP_LOCK_MS;
+      gestureTravel = 0;
+    };
+
+    const cancelSnapAnimation = () => {
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+      if (snapTimeout) {
+        window.clearTimeout(snapTimeout);
+        snapTimeout = 0;
+      }
+      animationToken += 1;
+      isProgrammaticSnap = false;
+      snapLockUntil = 0;
+    };
+
+    const animateScrollTo = (targetTop) => {
+      const startTop = window.scrollY;
+      const distance = targetTop - startTop;
+
+      if (Math.abs(distance) < 2) {
+        window.scrollTo(0, targetTop);
+        finishSnap();
+        return;
+      }
+
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+
+      animationToken += 1;
+      const token = animationToken;
+      const startTime = performance.now();
+
+      const tick = (now) => {
+        if (token !== animationToken) {
+          return;
+        }
+
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / SNAP_ANIMATION_MS);
+        const eased = easeOutCubic(progress);
+        const nextTop = startTop + distance * eased;
+
+        window.scrollTo(0, nextTop);
+
+        if (progress < 1) {
+          animationFrameId = window.requestAnimationFrame(tick);
+          return;
+        }
+
+        window.scrollTo(0, targetTop);
+        animationFrameId = 0;
+        finishSnap();
+      };
+
+      animationFrameId = window.requestAnimationFrame(tick);
+    };
+
+    const snapToSection = (targetSection) => {
+      if (isProgrammaticSnap || !targetSection) {
+        return;
+      }
+
+      const currentTop = window.scrollY;
+      const targetTop = getSectionTop(targetSection);
+
+      if (Math.abs(targetTop - currentTop) < 12) {
+        return;
+      }
+
+      isProgrammaticSnap = true;
+      snapLockUntil = Date.now() + SNAP_LOCK_MS;
+      lastSnappedTarget = targetSection;
+      animateScrollTo(targetTop);
+    };
+
+    const maybeSnapNearestSection = () => {
+      const sections = getSections();
+      const cardTargets = getCardTargets();
+      if (sections.length === 0 && cardTargets.length === 0) {
+        return;
+      }
+
+      if (Date.now() - lastInputAt < SNAP_IDLE_MS) {
+        scheduleSnap();
+        return;
+      }
+
+      if (isProgrammaticSnap || Date.now() < snapLockUntil) {
+        return;
+      }
+
+      let targetElement = null;
+      const orderedTargets = getOrderedSnapTargets();
+      const isLargeGesture = Math.abs(gestureTravel) >= SNAP_LARGE_GESTURE_THRESHOLD;
+
+      if (isLargeGesture && orderedTargets.length > 0) {
+        targetElement = getClosestSection(orderedTargets);
+      } else if (lastInputDirection !== 0 && orderedTargets.length > 1) {
+        const referenceTarget =
+          lastSnappedTarget && orderedTargets.includes(lastSnappedTarget)
+            ? lastSnappedTarget
+            : null;
+        const baseIndex = referenceTarget
+          ? orderedTargets.indexOf(referenceTarget)
+          : getNearestTargetIndex(orderedTargets);
+
+        if (baseIndex >= 0) {
+          const baseTarget = orderedTargets[baseIndex];
+          const baseTop = getTargetTop(baseTarget);
+          const nextIndex =
+            lastInputDirection > 0
+              ? Math.min(orderedTargets.length - 1, baseIndex + 1)
+              : Math.max(0, baseIndex - 1);
+          const adjacentTarget = orderedTargets[nextIndex];
+          const adjacentTop = getTargetTop(adjacentTarget);
+          const midpoint = baseTop + (adjacentTop - baseTop) / 2;
+          const shouldAdvance =
+            lastInputDirection > 0
+              ? window.scrollY >= midpoint
+              : window.scrollY <= midpoint;
+
+          targetElement = shouldAdvance ? adjacentTarget : baseTarget;
+        }
+      }
+
+      if (!targetElement) {
+        if (isInTopSnapZone(sections)) {
+          targetElement = getTargetSection(sections) || getClosestSection(sections);
+        } else {
+          targetElement = getClosestSection(cardTargets);
+        }
+      }
+
+      if (!targetElement) {
+        return;
+      }
+
+      const targetTop = getTargetTop(targetElement);
+      if (Math.abs(targetTop - window.scrollY) < 18) {
+        lastSnappedTarget = targetElement;
+        lastInputDirection = 0;
+        gestureTravel = 0;
+        return;
+      }
+
+      snapToSection(targetElement);
+      lastInputDirection = 0;
+    };
+
+    const scheduleSnap = () => {
+      if (snapTimeout) {
+        window.clearTimeout(snapTimeout);
+      }
+
+      const delay = Math.max(0, SNAP_IDLE_MS - (Date.now() - lastInputAt));
+      snapTimeout = window.setTimeout(() => {
+        maybeSnapNearestSection();
+      }, delay);
+    };
+
+    const handleScroll = () => {
+      if (isProgrammaticSnap) {
+        return;
+      }
+      scheduleSnap();
+    };
+
+    const handleWheel = (event) => {
+      lastInputAt = Date.now();
+      gestureTravel += event.deltaY;
+      if (Math.abs(event.deltaY) >= SNAP_DIRECTION_THRESHOLD) {
+        lastInputDirection = event.deltaY > 0 ? 1 : -1;
+      }
+      cancelSnapAnimation();
+      scheduleSnap();
+    };
+
+    const handleTouchStart = (event) => {
+      lastInputAt = Date.now();
+      touchStartY = event.touches?.[0]?.clientY || 0;
+      touchLastY = touchStartY;
+      lastInputDirection = 0;
+      gestureTravel = 0;
+      cancelSnapAnimation();
+    };
+
+    const handleTouchMove = (event) => {
+      lastInputAt = Date.now();
+      const nextY = event.touches?.[0]?.clientY || touchLastY;
+      const delta = touchLastY - nextY;
+      gestureTravel += delta;
+      if (Math.abs(delta) >= 8) {
+        lastInputDirection = delta > 0 ? 1 : -1;
+      }
+      touchLastY = nextY;
+      cancelSnapAnimation();
+      scheduleSnap();
+    };
+
+    const handleTouchEnd = () => {
+      lastInputAt = Date.now();
+      const totalDelta = touchStartY - touchLastY;
+      if (Math.abs(totalDelta) >= SNAP_DIRECTION_THRESHOLD) {
+        lastInputDirection = totalDelta > 0 ? 1 : -1;
+      }
+      cancelSnapAnimation();
+      scheduleSnap();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      themeObserver?.disconnect();
+      cancelSnapAnimation();
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = previousTimelineBackgroundSetter;
+      window.__portfolioTimelineSafeAreaBarsAllowed = previousSafeAreaBarsAllowed;
+      document.documentElement.classList.remove("home-scroll-snap");
+      document.body.classList.remove("home-scroll-snap");
+    };
+  }, []);
+
   return (
     <div
+      className="home-scroll-shell"
       style={{
         width: "100%",
         overflowX: "hidden",
@@ -21,10 +455,11 @@ export function Home() {
     >
       {/* Hero */}
       <div
-        className="center-container"
+        id="home"
+        className="center-container home-snap-section"
         style={{ width: "100%" }}
       >
-        <div className="content-container">
+        <div className="content-container" data-snap-anchor="center">
           <ProfileHeader
             image="https://dndmthvnajpritxxjrie.supabase.co/storage/v1/object/public/images/me/JannisGrimm.png"
             title="Engineer. Innovator. Leader"
@@ -33,6 +468,8 @@ export function Home() {
       </div>
 
       <div
+        id="overview"
+        className="home-snap-section"
         style={{
           width: "100%",
           position: "relative",
@@ -40,49 +477,66 @@ export function Home() {
           background: "white",
         }}
       >
-        {/* Quote */}
-        <div
-          className="center-container"
-          style={{
-            width: "100%",
-            backgroundColor: "transparent",
-            padding: "60px 0 0",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          <div className="content-container">
-            <Quotes />
-          </div>
-        </div>
-
-        {/* Stats + GitHub Contributions */}
-        <div
-          className="center-container"
-          style={{
-            width: "100%",
-            padding: "48px 0 255px",
-            position: "relative",
-            zIndex: 1,
-          }}
-        >
-          <div className="content-container">
-            <div>
-              <Achievements />
+        <div data-snap-anchor="center">
+          {/* Quote */}
+          <div
+            className="center-container overview-quote-block"
+            style={{
+              width: "100%",
+              backgroundColor: "transparent",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            <div className="content-container">
+              <Quotes />
             </div>
+          </div>
 
-            <div>
-              <GitHubContributions username="iamjannisgrimm" />
+          {/* Stats + GitHub Contributions */}
+          <div
+            className="center-container overview-stats-block"
+            style={{
+              width: "100%",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            <div className="content-container">
+              <div>
+                <Achievements />
+              </div>
+
+              <div>
+                <GitHubContributions username="iamjannisgrimm" />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Timeline */}
-      <Timeline />
+      <div
+        id="highlights"
+        className="home-snap-section home-highlights-section"
+        style={{ width: "100%" }}
+      >
+        <div data-snap-anchor="center">
+          <FeaturedProjectsStory />
+        </div>
+      </div>
+
+      <div style={{ width: "100%" }}>
+        <EventPlannerStory />
+      </div>
+
+      <div style={{ width: "100%" }}>
+        <AssistantsShowcase />
+      </div>
+
+      <div id="services" style={{ width: "100%", height: 1 }} />
 
       {/* Footer */}
-      <div className="center-container" style={{ width: "100%" }}>
+      <div id="contact" className="center-container home-snap-section" style={{ width: "100%" }}>
         <div className="content-container">
           <Footer />
         </div>
