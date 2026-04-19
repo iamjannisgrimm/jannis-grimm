@@ -34,31 +34,36 @@ export function Home() {
     let gestureTravel = 0;
     const previousSafeAreaBarsAllowed = window.__portfolioTimelineSafeAreaBarsAllowed;
     const previousTimelineBackgroundSetter = window.__PORTFOLIO_SET_TIMELINE_BACKGROUND;
+    const previousThemeColorContent =
+      document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff";
 
-    const enforceNeutralTopChrome = () => {
+    const applyMobileChromeColor = (color) => {
+      const nextColor = color || "#ffffff";
       const themeColor = document.querySelector("meta[name='theme-color']");
       if (themeColor) {
-        if (themeColor.getAttribute("content") !== "#ffffff") {
-          themeColor.setAttribute("content", "#ffffff");
+        if (themeColor.getAttribute("content") !== nextColor) {
+          themeColor.setAttribute("content", nextColor);
         }
       }
 
       window.__portfolioTimelineSafeAreaBarsAllowed = false;
-      document.documentElement.style.setProperty("--timeline-app-background", "#ffffff");
-      document.body.style.setProperty("--timeline-app-background", "#ffffff");
+      document.documentElement.style.setProperty("--timeline-app-background", nextColor);
+      document.body.style.setProperty("--timeline-app-background", nextColor);
+      document.documentElement.style.setProperty("--app-top-chrome", nextColor);
+      document.body.style.setProperty("--app-top-chrome", nextColor);
       document.documentElement.classList.remove("timeline-app-background-active");
       document.body.classList.remove("timeline-app-background-active");
-      document.documentElement.style.backgroundColor = "#ffffff";
-      document.body.style.backgroundColor = "#ffffff";
+      document.documentElement.style.backgroundColor = nextColor;
+      document.body.style.backgroundColor = nextColor;
 
       const root = document.getElementById("root");
       if (root instanceof HTMLElement) {
-        root.style.backgroundColor = "#ffffff";
+        root.style.backgroundColor = nextColor;
       }
 
       const rootChild = document.querySelector("#root > div");
       if (rootChild instanceof HTMLElement) {
-        rootChild.style.backgroundColor = "#ffffff";
+        rootChild.style.backgroundColor = nextColor;
       }
 
       document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
@@ -67,29 +72,61 @@ export function Home() {
         }
 
         element.style.opacity = "0";
-        element.style.background = "#ffffff";
+        element.style.background = nextColor;
+      });
+    };
+    let activeMobileChromeColor = "#ffffff";
+    let mobileChromeFrame = 0;
+
+    const syncMobileChromeColor = () => {
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        activeMobileChromeColor = "#ffffff";
+        applyMobileChromeColor("#ffffff");
+        return;
+      }
+
+      const sections = Array.from(
+        document.querySelectorAll("[data-mobile-chrome-color]"),
+      ).filter((element) => element instanceof HTMLElement);
+
+      if (sections.length === 0) {
+        activeMobileChromeColor = "#ffffff";
+        applyMobileChromeColor("#ffffff");
+        return;
+      }
+
+      const viewportAnchor = window.innerHeight * 0.2;
+      const activeSection =
+        sections.find((section) => {
+          const rect = section.getBoundingClientRect();
+          return rect.top <= viewportAnchor && rect.bottom >= viewportAnchor;
+        }) || sections[0];
+
+      const nextColor =
+        activeSection?.getAttribute("data-mobile-chrome-color") || "#ffffff";
+
+      if (nextColor !== activeMobileChromeColor) {
+        activeMobileChromeColor = nextColor;
+      }
+
+      applyMobileChromeColor(activeMobileChromeColor);
+    };
+
+    const requestMobileChromeSync = () => {
+      if (mobileChromeFrame) {
+        return;
+      }
+
+      mobileChromeFrame = window.requestAnimationFrame(() => {
+        mobileChromeFrame = 0;
+        syncMobileChromeColor();
       });
     };
 
-    enforceNeutralTopChrome();
+    syncMobileChromeColor();
     window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = () => {
-      enforceNeutralTopChrome();
+      applyMobileChromeColor(activeMobileChromeColor);
     };
-
-    const themeColor = document.querySelector("meta[name='theme-color']");
-    const themeObserver =
-      themeColor instanceof HTMLElement
-        ? new MutationObserver(() => {
-            enforceNeutralTopChrome();
-          })
-        : null;
-
-    if (themeObserver && themeColor) {
-      themeObserver.observe(themeColor, {
-        attributes: true,
-        attributeFilter: ["content"],
-      });
-    }
 
     const getSections = () =>
       SNAP_SECTION_IDS
@@ -371,6 +408,7 @@ export function Home() {
     };
 
     const handleScroll = () => {
+      requestMobileChromeSync();
       if (isProgrammaticSnap) {
         return;
       }
@@ -424,17 +462,27 @@ export function Home() {
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("resize", requestMobileChromeSync);
 
     return () => {
-      themeObserver?.disconnect();
+      if (mobileChromeFrame) {
+        window.cancelAnimationFrame(mobileChromeFrame);
+      }
       cancelSnapAnimation();
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("resize", requestMobileChromeSync);
       window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = previousTimelineBackgroundSetter;
       window.__portfolioTimelineSafeAreaBarsAllowed = previousSafeAreaBarsAllowed;
+      document.documentElement.style.removeProperty("--app-top-chrome");
+      document.body.style.removeProperty("--app-top-chrome");
+      const themeColorMeta = document.querySelector("meta[name='theme-color']");
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute("content", previousThemeColorContent);
+      }
       document.documentElement.classList.remove("home-scroll-snap");
       document.body.classList.remove("home-scroll-snap");
     };
@@ -457,11 +505,12 @@ export function Home() {
       <div
         id="home"
         className="center-container home-snap-section"
+        data-mobile-chrome-color="#ffffff"
         style={{ width: "100%" }}
       >
         <div className="content-container" data-snap-anchor="center">
           <ProfileHeader
-            image="https://dndmthvnajpritxxjrie.supabase.co/storage/v1/object/public/images/me/JannisGrimm.png"
+            image={`${import.meta.env.DEV ? "/images" : "https://pub-6eb94f6bdfbf410fa3232ad37ef1deab.r2.dev"}/me/JannisGrimm.png`}
             title="Engineer. Innovator. Leader"
           />
         </div>
@@ -470,6 +519,7 @@ export function Home() {
       <div
         id="overview"
         className="home-snap-section"
+        data-mobile-chrome-color="#ffffff"
         style={{
           width: "100%",
           position: "relative",
@@ -518,6 +568,7 @@ export function Home() {
       <div
         id="highlights"
         className="home-snap-section home-highlights-section"
+        data-mobile-chrome-color="#d5c1c5"
         style={{ width: "100%" }}
       >
         <div data-snap-anchor="center">
@@ -525,18 +576,23 @@ export function Home() {
         </div>
       </div>
 
-      <div style={{ width: "100%" }}>
+      <div style={{ width: "100%" }} data-mobile-chrome-color="#2f4257">
         <EventPlannerStory />
       </div>
 
-      <div style={{ width: "100%" }}>
+      <div style={{ width: "100%" }} data-mobile-chrome-color="#ffffff">
         <AssistantsShowcase />
       </div>
 
       <div id="services" style={{ width: "100%", height: 1 }} />
 
       {/* Footer */}
-      <div id="contact" className="center-container home-snap-section" style={{ width: "100%" }}>
+      <div
+        id="contact"
+        className="center-container home-snap-section"
+        data-mobile-chrome-color="#ffffff"
+        style={{ width: "100%" }}
+      >
         <div className="content-container">
           <Footer />
         </div>
