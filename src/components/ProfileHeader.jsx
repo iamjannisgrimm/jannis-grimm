@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 const ProfileHeader = ({ image, title }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const imageSrc = /^https?:\/\//.test(image)
+  const imageSrc = /^https?:\/\//.test(image) || image.startsWith("/")
     ? image
     : `${import.meta.env.BASE_URL}${image}`;
 
