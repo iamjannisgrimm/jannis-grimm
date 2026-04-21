@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./FeaturedProjectsStory.css";
@@ -78,6 +78,50 @@ function makeSnapConfig(hasCompanion = false) {
   };
 }
 
+function MobileCarousel({ images, title }) {
+  const [cur, setCur] = useState(0);
+  const [prev, setPrev] = useState(null);
+
+  useEffect(() => {
+    let clearPrev;
+    const tick = setInterval(() => {
+      setCur((c) => {
+        const next = (c + 1) % images.length;
+        setPrev(c);
+        clearPrev = setTimeout(() => setPrev(null), 450);
+        return next;
+      });
+    }, 3000);
+    return () => {
+      clearInterval(tick);
+      clearTimeout(clearPrev);
+    };
+  }, [images.length]);
+
+  return (
+    <div className="highlights-stack__carouselTrack">
+      {prev !== null ? (
+        <img
+          key={`out-${prev}`}
+          className="highlights-stack__carouselImg highlights-stack__carouselImg--out"
+          src={images[prev]}
+          alt={`${title} ${prev + 1}`}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : null}
+      <img
+        key={`in-${cur}`}
+        className={`highlights-stack__carouselImg${prev !== null ? " highlights-stack__carouselImg--in" : ""}`}
+        src={images[cur]}
+        alt={`${title} ${cur + 1}`}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  );
+}
+
 function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, companionImageRef, badgeRef, urlRef, infoRefsObj }) {
   const { hero } = panelContent;
   const hasCompanion = !!hero.companionImage;
@@ -91,27 +135,32 @@ function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, compan
 
       <div className="highlights-stack__productImageGroup">
         {Array.isArray(hero.productImages) && hero.productImages.length ? (
-          <div ref={imageRef} className="highlights-stack__productImages">
-            {hero.productImages.map((src, i) => (
-              <img
-                key={i}
-                className="highlights-stack__productImageItem"
-                src={src}
-                alt={`${hero.title} ${i + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
-            ))}
-            {hasCompanion ? (
-              <img
-                ref={companionImageRef}
-                className="highlights-stack__productImageItem highlights-stack__productImageItem--companion"
-                src={hero.companionImage}
-                alt={`${hero.title} companion`}
-                loading="lazy"
-                decoding="async"
-              />
-            ) : null}
+          <div ref={imageRef} className="highlights-stack__productImagesOuter">
+            {/* Desktop: all images side by side */}
+            <div className="highlights-stack__productImages highlights-stack__productImages--desktop">
+              {hero.productImages.map((src, i) => (
+                <img
+                  key={i}
+                  className="highlights-stack__productImageItem"
+                  src={src}
+                  alt={`${hero.title} ${i + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))}
+              {hasCompanion ? (
+                <img
+                  ref={companionImageRef}
+                  className="highlights-stack__productImageItem highlights-stack__productImageItem--companion"
+                  src={hero.companionImage}
+                  alt={`${hero.title} companion`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : null}
+            </div>
+            {/* Mobile: auto-advancing carousel */}
+            <MobileCarousel images={hero.productImages} title={hero.title} />
           </div>
         ) : hero.productImage && hasCompanion ? (
           <div ref={imageRef} className="highlights-stack__productImages highlights-stack__productImages--pair">
