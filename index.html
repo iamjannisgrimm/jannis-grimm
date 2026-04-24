@@ -19,7 +19,7 @@
     <meta name="twitter:description" content="Engineer. Innovator. Leader." />
     <meta name="twitter:image" content="https://iamjannisgrimm.com/thumbnail.png" />
     <title>Jannis Grimm</title>
-    <link rel="stylesheet" crossorigin href="./assets/index-CqnRAZRC.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-DQ-6i5RC.css">
     <style>
       @keyframes timeline-image-shimmer {
         0% {
@@ -1729,7 +1729,13 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          await import("./assets/index-DOlbZ8iU.js?v=supabase-live-158");
+          const shouldUseDevEntry =
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1";
+          const appEntry = shouldUseDevEntry
+            ? "/src/main.jsx"
+            : "./assets/index-DOlbZ8iU-QuXIjxtg.js?v=featured-story-1";
+          await import(appEntry);
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();

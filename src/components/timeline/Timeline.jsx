@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import timelineData from "../../data/timeline-data";
+import { getOrderedTimelineData } from "../../data/portfolio-data";
 
 const CARD_WIDTH = 680;
 const TIMELINE_ANCHOR_TOP = 40;
@@ -11,14 +11,6 @@ const TIMELINE_VIEWPORT_HEIGHT = "100dvh";
 const MOBILE_TIMELINE_HEIGHT = "130dvh";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const liveTimelineData =
-  typeof window !== "undefined" && Array.isArray(window.__PORTFOLIO_TIMELINE_DATA__)
-    ? window.__PORTFOLIO_TIMELINE_DATA__
-    : timelineData;
-
-// Oldest → newest so the latest item sits at the far end initially.
-const orderedData = [...liveTimelineData].reverse();
 
 function getDescriptionBlocks(item) {
   if (Array.isArray(item.descriptionBlocks) && item.descriptionBlocks.length > 0) {
@@ -238,6 +230,7 @@ function PersistentImagePlaceholder({ isDark, height = 18, label = "Loading prev
 }
 
 const Timeline = () => {
+  const orderedData = getOrderedTimelineData();
   const outerRef = useRef(null);
   const trackRef = useRef(null);
   const stickyRef = useRef(null);

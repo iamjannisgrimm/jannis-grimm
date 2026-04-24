@@ -46,8 +46,8 @@ export default function Achievements() {
               display: 'flex',
               width: 'max-content',
               alignItems: 'stretch',
-              gap: '18px',
-              animation: 'achievements-marquee 18s linear infinite',
+              gap: '10px',
+              animation: 'achievements-marquee 13.5s linear infinite',
             }}
           >
             {mobileTrack.map(({ title, subtitle }, idx) => (
@@ -58,8 +58,8 @@ export default function Achievements() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  minWidth: '148px',
-                  padding: '0 6px',
+                  minWidth: '136px',
+                  padding: '0 4px',
                   flexShrink: 0,
                 }}
               >

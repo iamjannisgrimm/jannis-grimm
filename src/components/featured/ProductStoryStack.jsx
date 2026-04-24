@@ -269,8 +269,6 @@ export default function ProductStoryStack({
   className = "",
   backgroundStyle,
 }) {
-  const isDesktopViewport =
-    typeof window === "undefined" ? true : window.innerWidth > 768;
   const sectionRef = useRef(null);
   const heroCardRef = useRef(null);
   const productCardRef = useRef(null);
@@ -385,7 +383,7 @@ export default function ProductStoryStack({
         preventOverlaps: stackId,
         animation: tl,
         invalidateOnRefresh: true,
-        snap: isDesktop ? false : makeSnapConfig(!!productCompanion),
+        snap: makeSnapConfig(!!productCompanion),
         onUpdate: (self) => {
           if (productCarouselRef.current) {
             productCarouselRef.current(self.progress);
@@ -448,7 +446,7 @@ export default function ProductStoryStack({
           preventOverlaps: stackId,
           animation: overlayTl,
           invalidateOnRefresh: true,
-          snap: isDesktop ? false : {
+          snap: {
             snapTo: (value) => combinedStops.reduce((a, b) =>
               Math.abs(b - value) < Math.abs(a - value) ? b : a
             ),
@@ -512,9 +510,6 @@ export default function ProductStoryStack({
       {/* Product card */}
       <article
         ref={productCardRef}
-        data-page-snap={isDesktopViewport ? "card" : undefined}
-        data-snap-anchor={isDesktopViewport ? "top" : undefined}
-        data-snap-base-offset={isDesktopViewport ? "0" : undefined}
         className="highlights-stack__card highlights-stack__card--product"
       >
         <PanelShell
@@ -534,9 +529,6 @@ export default function ProductStoryStack({
       {content.overlay ? (
         <article
           ref={overlayCardRef}
-          data-page-snap={isDesktopViewport ? "card" : undefined}
-          data-snap-anchor={isDesktopViewport ? "top" : undefined}
-          data-snap-base-offset={isDesktopViewport ? "0" : undefined}
           className="highlights-stack__card highlights-stack__card--overlay"
           style={{
             backgroundColor:

@@ -109,6 +109,7 @@ body.home-scroll-snap .timeline-safe-area-fill {
   --content-max-width: 1200px;
   --text-color: #000000;
   --background-color: #ffffff;
+  --app-top-chrome: #ffffff;
 }
 
 @media (max-width: 768px) {
@@ -120,7 +121,7 @@ body.home-scroll-snap .timeline-safe-area-fill {
   .app-top-safe-scrim {
     display: block;
     height: calc(env(safe-area-inset-top, 0px) + 28px);
-    background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.96) 58%, rgba(255, 255, 255, 0) 100%);
+    background: transparent;
   }
 }
 
