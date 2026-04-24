@@ -4,6 +4,9 @@
   background: #0b0e14;
   color: #ffffff;
   padding: 0 0 20vh;
+  /* Clip in-flow overflow so images never bleed into adjacent sections.
+     position:fixed GSAP-pinned elements are viewport-relative and unaffected. */
+  overflow: hidden;
 }
 
 .highlights-stack--has-overlay {
@@ -38,7 +41,7 @@
 
 .highlights-stack__card--hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   border-radius: 0;
   overflow: hidden;
 }
@@ -75,7 +78,7 @@
   background: transparent;
   border: none;
   box-shadow: none;
-  margin-top: calc(-100vh + 20px);
+  margin-top: calc(-100dvh + 20px);
   overflow: visible;
 }
 
@@ -83,7 +86,8 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,6 +132,7 @@
   align-items: center;
   gap: 30px;
   will-change: transform;
+  width: 100%;
 }
 
 .highlights-stack__productImage {
@@ -159,49 +164,40 @@
 
 .highlights-stack__productImagesOuter {
   will-change: transform;
+  overflow: visible;
+  width: 100%;
 }
 
 .highlights-stack__productImages--desktop {
   display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .highlights-stack__carouselTrack {
   display: none;
   position: relative;
-  overflow: hidden;
-  width: 68vw;
-  height: clamp(300px, 54vh, 560px);
+  width: 100%;
+  height: clamp(300px, 54dvh, 560px);
 }
 
 .highlights-stack__carouselImg {
   position: absolute;
   height: 100%;
   width: auto;
-  max-width: 68vw;
+  max-width: 78vw;
   object-fit: contain;
   object-position: center bottom;
   left: 50%;
   transform: translateX(-50%);
   border-radius: 18px;
   filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.5)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
+  opacity: 0;
+  transition: opacity 0.35s ease;
 }
 
-.highlights-stack__carouselImg--in {
-  animation: carouselSlideIn 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-.highlights-stack__carouselImg--out {
-  animation: carouselSlideOut 0.42s cubic-bezier(0.55, 0, 0.75, 0.06) forwards;
-}
-
-@keyframes carouselSlideIn {
-  from { transform: translateX(calc(-50% + 100vw)); }
-  to   { transform: translateX(-50%); }
-}
-
-@keyframes carouselSlideOut {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(calc(-50% - 100vw)); }
+.highlights-stack__carouselImg--active {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -211,6 +207,39 @@
 
   .highlights-stack__carouselTrack {
     display: block;
+    height: clamp(260px, 40dvh, 380px);
+  }
+
+  /* Badge and URL add ~80px; hiding them lets the carousel be larger */
+  .highlights-stack__badgeWrap,
+  .highlights-stack__productUrl {
+    display: none;
+  }
+
+  /* Reduced padding so total shell height stays within viewport */
+  .highlights-stack__productShell {
+    justify-content: flex-start;
+    padding-top: clamp(72px, 10dvh, 96px);
+    padding-bottom: clamp(180px, 24dvh, 230px);
+  }
+}
+
+@media (min-width: 769px) {
+  .highlights-stack__productShell {
+    justify-content: flex-start;
+    padding-top: clamp(104px, 13vh, 132px);
+    padding-bottom: clamp(120px, 16vh, 160px);
+  }
+
+  .highlights-stack__infoWindow {
+    bottom: clamp(54px, 8vh, 88px);
+    height: 170px;
+  }
+
+  .highlights-stack__card--overlay {
+    min-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -272,7 +301,8 @@
 .highlights-stack__infoWindow {
   /* Absolute so it floats independently from the image/header flex group */
   position: absolute;
-  bottom: clamp(100px, 14vh, 150px);
+  z-index: 1;
+  bottom: clamp(100px, 14dvh, 150px);
   left: 50%;
   transform: translateX(-50%);
   height: 200px;
@@ -286,52 +316,36 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: clamp(200px, 28vw, 320px);
+  width: min(760px, calc(100% - 80px));
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   gap: 10px;
   will-change: transform, opacity;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
-/* Desktop: each block at a clearly distinct horizontal zone */
-@media (min-width: 769px) {
-  .highlights-stack__infoBlock[data-block-index="0"] {
-    left: 0;
-    right: auto;
-  }
-  /* Block 1: left:50% + GSAP xPercent:-50 = centered */
-  .highlights-stack__infoBlock[data-block-index="1"] {
-    left: 50%;
-    right: auto;
-    align-items: flex-start;
-  }
-  .highlights-stack__infoBlock[data-block-index="2"] {
-    right: 0;
-    left: auto;
-    align-items: flex-end;
-    text-align: right;
-  }
-}
-
-/* Mobile: all full-width, column layout */
 @media (max-width: 768px) {
   .highlights-stack__infoBlock {
     left: 0;
     right: 0;
     width: 100%;
-    align-items: center;
-    text-align: center;
+    transform: none;
   }
 }
 
 .highlights-stack__infoTitleSide {
   flex: 0 0 auto;
+  width: 100%;
 }
 
 .highlights-stack__infoBodySide {
   flex: 0 0 auto;
+  width: 100%;
 }
 
 .highlights-stack__infoEyebrow {
@@ -350,7 +364,6 @@
   line-height: 0.88;
   letter-spacing: -0.05em;
   color: #ffffff;
-  white-space: nowrap;
 }
 
 .highlights-stack__infoBody {
@@ -358,7 +371,9 @@
   font-size: clamp(0.8rem, 1.2vw, 0.9rem);
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.7);
-  max-width: 28ch;
+  max-width: 34ch;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* ── Overlay card ───────────────────────────────────────────────────────── */
@@ -378,11 +393,12 @@
 }
 
 .highlights-stack__card--overlay {
-  min-height: 100vh;
+  min-height: 100dvh;
   border-radius: 28px 28px 0 0;
   overflow: visible;
   box-shadow: 0 -8px 48px rgba(0, 0, 0, 0.4);
 }
+
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 
@@ -401,11 +417,11 @@
   }
 
   .highlights-stack__card--overlay {
-    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .highlights-stack__productShell {
-    min-height: 100vh;
+    min-height: 100dvh;
     gap: 12px;
   }
 
