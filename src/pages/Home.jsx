@@ -14,7 +14,7 @@ const SNAP_LOCK_MS = 40;
 const SNAP_IDLE_MS = 48;
 const SNAP_ANIMATION_MS = 100;
 const SNAP_DIRECTION_THRESHOLD = 10;
-const SNAP_LARGE_GESTURE_THRESHOLD = 220;
+const SNAP_GESTURE_COMMIT_THRESHOLD = 12;
 
 export function Home() {
   useEffect(() => {
@@ -32,6 +32,8 @@ export function Home() {
     let touchLastY = 0;
     let lastSnappedTarget = null;
     let gestureTravel = 0;
+    let gestureActive = false;
+    let gestureBaseTarget = null;
     const previousSafeAreaBarsAllowed = window.__portfolioTimelineSafeAreaBarsAllowed;
     const previousTimelineBackgroundSetter = window.__PORTFOLIO_SET_TIMELINE_BACKGROUND;
     const previousThemeColorContent =
@@ -143,36 +145,43 @@ export function Home() {
       return unique.sort((left, right) => getTargetTop(left) - getTargetTop(right));
     };
 
-    const getNearestTargetIndex = (targets) => {
-      if (targets.length === 0) {
-        return -1;
-      }
+    const isInsideOwnedStack = () => {
+      const viewportAnchor = SNAP_OFFSET + 24;
+      const stacks = Array.from(document.querySelectorAll(".highlights-stack"));
 
-      const currentY = window.scrollY;
-      let bestIndex = 0;
-      let bestDistance = Math.abs(getTargetTop(targets[0]) - currentY);
-
-      for (let index = 1; index < targets.length; index += 1) {
-        const distance = Math.abs(getTargetTop(targets[index]) - currentY);
-        if (distance < bestDistance) {
-          bestDistance = distance;
-          bestIndex = index;
+      return stacks.some((stack) => {
+        if (!(stack instanceof HTMLElement)) {
+          return false;
         }
-      }
 
-      return bestIndex;
+        const rect = stack.getBoundingClientRect();
+        return rect.top <= viewportAnchor && rect.bottom >= viewportAnchor;
+      });
     };
 
     const getSnapAnchor = (section) =>
       section.querySelector("[data-snap-anchor='center']") || section;
+
+    const getDocumentTop = (element) => {
+      let top = 0;
+      let current = element;
+
+      while (current instanceof HTMLElement) {
+        top += current.offsetTop;
+        current = current.offsetParent;
+      }
+
+      return top;
+    };
 
     const getSectionTop = (section) => {
       const anchor = getSnapAnchor(section);
       const snapMode = anchor.getAttribute("data-snap-anchor") || "center";
       const snapBaseOffset = Number(anchor.getAttribute("data-snap-base-offset") || SNAP_OFFSET);
       const snapOffsetAdjustment = Number(anchor.getAttribute("data-snap-offset") || 0);
+      const isCardAnchor = anchor.closest("[data-page-snap='card']") || anchor.getAttribute("data-page-snap") === "card";
       const rect = anchor.getBoundingClientRect();
-      const absoluteTop = window.scrollY + rect.top;
+      const absoluteTop = isCardAnchor ? getDocumentTop(anchor) : window.scrollY + rect.top;
 
       if (snapMode === "top") {
         return Math.max(0, absoluteTop - snapBaseOffset + snapOffsetAdjustment);
@@ -186,32 +195,6 @@ export function Home() {
     };
 
     const getTargetTop = (element) => getSectionTop(element);
-
-    const getTargetSection = (sections) => {
-      if (sections.length === 0) {
-        return null;
-      }
-
-      const currentY = window.scrollY;
-      const sectionEntries = sections.map((section) => ({
-        section,
-        top: getSectionTop(section),
-      }));
-
-      let target = sectionEntries[0].section;
-
-      for (let index = 0; index < sectionEntries.length - 1; index += 1) {
-        const current = sectionEntries[index];
-        const next = sectionEntries[index + 1];
-        const midpoint = current.top + (next.top - current.top) / 2;
-
-        if (currentY >= midpoint) {
-          target = next.section;
-        }
-      }
-
-      return target;
-    };
 
     const getClosestSection = (sections) => {
       const currentY = window.scrollY;
@@ -229,22 +212,15 @@ export function Home() {
       }, null);
     };
 
-    const isInTopSnapZone = (sections) => {
-      const overviewSection = sections.find((section) => section.id === "overview");
-      if (!overviewSection) {
-        return false;
-      }
-
-      const overviewTop = getSectionTop(overviewSection);
-      return window.scrollY <= overviewTop + 80;
-    };
-
     const easeOutCubic = (value) => 1 - (1 - value) ** 3;
 
     const finishSnap = () => {
       isProgrammaticSnap = false;
       snapLockUntil = Date.now() + SNAP_LOCK_MS;
       gestureTravel = 0;
+      gestureActive = false;
+      gestureBaseTarget = null;
+      lastInputDirection = 0;
     };
 
     const cancelSnapAnimation = () => {
@@ -259,6 +235,24 @@ export function Home() {
       animationToken += 1;
       isProgrammaticSnap = false;
       snapLockUntil = 0;
+    };
+
+    const ensureGestureBaseTarget = () => {
+      if (gestureBaseTarget) {
+        return gestureBaseTarget;
+      }
+
+      const orderedTargets = getOrderedSnapTargets();
+      if (orderedTargets.length === 0) {
+        return null;
+      }
+
+      gestureBaseTarget =
+        lastSnappedTarget && orderedTargets.includes(lastSnappedTarget)
+          ? lastSnappedTarget
+          : getClosestSection(orderedTargets);
+
+      return gestureBaseTarget;
     };
 
     const animateScrollTo = (targetTop) => {
@@ -323,9 +317,8 @@ export function Home() {
     };
 
     const maybeSnapNearestSection = () => {
-      const sections = getSections();
-      const cardTargets = getCardTargets();
-      if (sections.length === 0 && cardTargets.length === 0) {
+      const orderedTargets = getOrderedSnapTargets();
+      if (orderedTargets.length === 0) {
         return;
       }
 
@@ -338,55 +331,48 @@ export function Home() {
         return;
       }
 
-      let targetElement = null;
-      const orderedTargets = getOrderedSnapTargets();
-      const isLargeGesture = Math.abs(gestureTravel) >= SNAP_LARGE_GESTURE_THRESHOLD;
-
-      if (isLargeGesture && orderedTargets.length > 0) {
-        targetElement = getClosestSection(orderedTargets);
-      } else if (lastInputDirection !== 0 && orderedTargets.length > 1) {
-        const referenceTarget =
-          lastSnappedTarget && orderedTargets.includes(lastSnappedTarget)
-            ? lastSnappedTarget
-            : null;
-        const baseIndex = referenceTarget
-          ? orderedTargets.indexOf(referenceTarget)
-          : getNearestTargetIndex(orderedTargets);
-
-        if (baseIndex >= 0) {
-          const baseTarget = orderedTargets[baseIndex];
-          const baseTop = getTargetTop(baseTarget);
-          const nextIndex =
-            lastInputDirection > 0
-              ? Math.min(orderedTargets.length - 1, baseIndex + 1)
-              : Math.max(0, baseIndex - 1);
-          const adjacentTarget = orderedTargets[nextIndex];
-          const adjacentTop = getTargetTop(adjacentTarget);
-          const midpoint = baseTop + (adjacentTop - baseTop) / 2;
-          const shouldAdvance =
-            lastInputDirection > 0
-              ? window.scrollY >= midpoint
-              : window.scrollY <= midpoint;
-
-          targetElement = shouldAdvance ? adjacentTarget : baseTarget;
-        }
+      if (isInsideOwnedStack()) {
+        lastInputDirection = 0;
+        gestureTravel = 0;
+        gestureActive = false;
+        gestureBaseTarget = null;
+        return;
       }
 
-      if (!targetElement) {
-        if (isInTopSnapZone(sections)) {
-          targetElement = getTargetSection(sections) || getClosestSection(sections);
-        } else {
-          targetElement = getClosestSection(cardTargets);
-        }
-      }
+      const baseTarget = ensureGestureBaseTarget() || getClosestSection(orderedTargets);
+      let targetElement = baseTarget;
 
       if (!targetElement) {
         return;
       }
 
+      const direction =
+        lastInputDirection !== 0
+          ? lastInputDirection
+          : gestureTravel > 0
+            ? 1
+            : gestureTravel < 0
+              ? -1
+              : 0;
+
+      const baseIndex = orderedTargets.indexOf(baseTarget);
+      if (
+        direction !== 0 &&
+        Math.abs(gestureTravel) >= SNAP_GESTURE_COMMIT_THRESHOLD &&
+        baseIndex >= 0
+      ) {
+        const adjacentIndex =
+          direction > 0
+            ? Math.min(orderedTargets.length - 1, baseIndex + 1)
+            : Math.max(0, baseIndex - 1);
+        targetElement = orderedTargets[adjacentIndex] || baseTarget;
+      }
+
       const targetTop = getTargetTop(targetElement);
       if (Math.abs(targetTop - window.scrollY) < 18) {
         lastSnappedTarget = targetElement;
+        gestureActive = false;
+        gestureBaseTarget = null;
         lastInputDirection = 0;
         gestureTravel = 0;
         return;
@@ -409,7 +395,7 @@ export function Home() {
 
     const handleScroll = () => {
       requestMobileChromeSync();
-      if (isProgrammaticSnap) {
+      if (isProgrammaticSnap || !gestureActive) {
         return;
       }
       scheduleSnap();
@@ -417,6 +403,13 @@ export function Home() {
 
     const handleWheel = (event) => {
       lastInputAt = Date.now();
+      if (!gestureActive) {
+        gestureActive = true;
+        gestureBaseTarget = null;
+        gestureTravel = 0;
+        lastInputDirection = 0;
+        ensureGestureBaseTarget();
+      }
       gestureTravel += event.deltaY;
       if (Math.abs(event.deltaY) >= SNAP_DIRECTION_THRESHOLD) {
         lastInputDirection = event.deltaY > 0 ? 1 : -1;
@@ -429,8 +422,11 @@ export function Home() {
       lastInputAt = Date.now();
       touchStartY = event.touches?.[0]?.clientY || 0;
       touchLastY = touchStartY;
+      gestureActive = true;
+      gestureBaseTarget = null;
       lastInputDirection = 0;
       gestureTravel = 0;
+      ensureGestureBaseTarget();
       cancelSnapAnimation();
     };
 

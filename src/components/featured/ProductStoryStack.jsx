@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./FeaturedProjectsStory.css";
@@ -129,7 +129,18 @@ function MobileCarousel({ images, title, carouselRef }) {
   );
 }
 
-function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, companionImageRef, badgeRef, urlRef, infoRefsObj, carouselRef }) {
+function PanelShell({
+  panelContent,
+  panelInfoBlocks,
+  headerRef,
+  imageRef,
+  companionImageRef,
+  badgeRef,
+  urlRef,
+  infoRefsObj,
+  carouselRef,
+  prioritizeMedia = false,
+}) {
   const { hero } = panelContent;
   const hasCompanion = !!hero.companionImage;
 
@@ -151,7 +162,8 @@ function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, compan
                   className="highlights-stack__productImageItem"
                   src={src}
                   alt={`${hero.title} ${i + 1}`}
-                  loading="lazy"
+                  loading={prioritizeMedia ? "eager" : "lazy"}
+                  fetchPriority={prioritizeMedia && i === 0 ? "high" : undefined}
                   decoding="async"
                 />
               ))}
@@ -175,7 +187,8 @@ function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, compan
               className="highlights-stack__productImageItem"
               src={hero.productImage}
               alt={hero.title}
-              loading="lazy"
+              loading={prioritizeMedia ? "eager" : "lazy"}
+              fetchPriority={prioritizeMedia ? "high" : undefined}
               decoding="async"
             />
             <img
@@ -193,7 +206,8 @@ function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, compan
             className="highlights-stack__productImage"
             src={hero.productImage}
             alt={hero.title}
-            loading="lazy"
+            loading={prioritizeMedia ? "eager" : "lazy"}
+            fetchPriority={prioritizeMedia ? "high" : undefined}
             decoding="async"
           />
         ) : null}
@@ -211,7 +225,8 @@ function PanelShell({ panelContent, panelInfoBlocks, headerRef, imageRef, compan
               className="highlights-stack__badge"
               src={hero.badge}
               alt="Download on the App Store"
-              loading="lazy"
+              loading={prioritizeMedia ? "eager" : "lazy"}
+              fetchPriority={prioritizeMedia ? "high" : undefined}
               decoding="async"
             />
           </a>
@@ -269,6 +284,8 @@ export default function ProductStoryStack({
   className = "",
   backgroundStyle,
 }) {
+  const isDesktopViewport = typeof window !== "undefined" ? window.innerWidth > 768 : true;
+  const isPrimaryStack = stackId === "highlights-stack";
   const sectionRef = useRef(null);
   const heroCardRef = useRef(null);
   const productCardRef = useRef(null);
@@ -315,6 +332,37 @@ export default function ProductStoryStack({
     }
     return [];
   }, [content]);
+
+  useLayoutEffect(() => {
+    if (!isPrimaryStack) {
+      return undefined;
+    }
+
+    const sources = [
+      content.hero.backgroundImage,
+      ...(Array.isArray(content.hero.productImages) ? content.hero.productImages : []),
+      content.hero.productImage,
+      content.hero.badge,
+    ].filter(Boolean);
+
+    const preloaded = sources.map((src) => {
+      const image = new Image();
+      image.src = src;
+      return image;
+    });
+
+    return () => {
+      preloaded.forEach((image) => {
+        image.src = "";
+      });
+    };
+  }, [
+    content.hero.backgroundImage,
+    content.hero.badge,
+    content.hero.productImage,
+    content.hero.productImages,
+    isPrimaryStack,
+  ]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -374,10 +422,10 @@ export default function ProductStoryStack({
         id: `${stackId}-product`,
         trigger: productCard,
         start: "top top",
-        end: isDesktop ? "+=240%" : "+=280%",
+        end: isDesktop ? "+=180%" : "+=220%",
         pin: true,
         pinSpacing: true,
-        scrub: isDesktop ? 0.08 : 0.22,
+        scrub: isDesktop ? 0.08 : 0.1,
         anticipatePin: 1,
         fastScrollEnd: true,
         preventOverlaps: stackId,
@@ -395,12 +443,6 @@ export default function ProductStoryStack({
       let overlayTrigger = null;
 
       if (overlayCard && oInfos.length) {
-        // Entry fraction: 100vh slide-in + 280vh content = 380vh total
-        const entrySpan = 100;
-        const contentSpan = isDesktop ? 220 : 280;
-        const totalSpan = entrySpan + contentSpan;
-        const ENTRY_FRAC = entrySpan / totalSpan;
-
         const contentTl = buildPanelTimeline({
           header: overlayHeader,
           image: overlayImage,
@@ -411,50 +453,20 @@ export default function ProductStoryStack({
           isDesktop,
           travel,
         });
-        // Scale content tl to fill remaining fraction
-        contentTl.totalDuration(1 - ENTRY_FRAC);
-
-        // Combined timeline: entry slide → content animations
-        const overlayTl = gsap.timeline({ paused: true });
-        overlayTl.fromTo(
-          overlayCard,
-          { y: 0 },
-          { y: () => -(window.visualViewport?.height ?? window.innerHeight), ease: "none", duration: ENTRY_FRAC },
-          0,
-        );
-        overlayTl.add(contentTl, ENTRY_FRAC);
-
-        // Map content snap stops into combined timeline space
-        const contentStops = !!overlayCompanion
-          ? [0, 0.42, 0.64, 0.83, 1.0]
-          : [0, 0.32, 0.64, 1.0];
-        const combinedStops = [
-          ENTRY_FRAC,
-          ...contentStops.filter((s) => s > 0).map((s) => ENTRY_FRAC + s * (1 - ENTRY_FRAC)),
-        ];
-
         overlayTrigger = ScrollTrigger.create({
           id: `${stackId}-overlay`,
           trigger: overlayCard,
-          start: "top bottom",
-          end: `+=${totalSpan}%`,
+          start: "top top",
+          end: isDesktop ? "+=180%" : "+=220%",
           pin: true,
           pinSpacing: true,
-          scrub: isDesktop ? 0.08 : 0.22,
+          scrub: isDesktop ? 0.06 : 0.1,
           anticipatePin: 1,
           fastScrollEnd: true,
           preventOverlaps: stackId,
-          animation: overlayTl,
+          animation: contentTl,
           invalidateOnRefresh: true,
-          snap: {
-            snapTo: (value) => combinedStops.reduce((a, b) =>
-              Math.abs(b - value) < Math.abs(a - value) ? b : a
-            ),
-            duration: { min: 0.08, max: 0.16 },
-            delay: 0,
-            inertia: false,
-            ease: "power3.out",
-          },
+          snap: makeSnapConfig(!!overlayCompanion),
         });
       }
 
@@ -489,9 +501,9 @@ export default function ProductStoryStack({
       >
         <div
           className="highlights-stack__heroSnapTarget"
-          data-page-snap="card"
-          data-snap-anchor="top"
-          data-snap-base-offset="0"
+          data-page-snap={!isDesktopViewport ? "card" : undefined}
+          data-snap-anchor={!isDesktopViewport ? "top" : undefined}
+          data-snap-base-offset={!isDesktopViewport ? "0" : undefined}
           aria-hidden="true"
         />
         <div className="highlights-stack__heroBackdrop">
@@ -512,6 +524,13 @@ export default function ProductStoryStack({
         ref={productCardRef}
         className="highlights-stack__card highlights-stack__card--product"
       >
+        <div
+          className="highlights-stack__panelSnapTarget"
+          data-page-snap={isDesktopViewport ? "card" : undefined}
+          data-snap-anchor={isDesktopViewport ? "top" : undefined}
+          data-snap-base-offset={isDesktopViewport ? "0" : undefined}
+          aria-hidden="true"
+        />
         <PanelShell
           panelContent={content}
           panelInfoBlocks={infoBlocks}
@@ -522,6 +541,7 @@ export default function ProductStoryStack({
           urlRef={productUrlRef}
           infoRefsObj={infoRefs}
           carouselRef={productCarouselRef}
+          prioritizeMedia={isPrimaryStack}
         />
       </article>
 
@@ -544,6 +564,7 @@ export default function ProductStoryStack({
             badgeRef={overlayBadgeRef}
             urlRef={overlayUrlRef}
             infoRefsObj={overlayInfoRefs}
+            prioritizeMedia={false}
           />
         </article>
       ) : null}
