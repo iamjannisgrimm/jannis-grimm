@@ -9,6 +9,7 @@ function buildPanelTimeline({ header, image, companion, badge, url, infos, isDes
   const headerH = header ? header.offsetHeight + 16 : 0;
   const hasCompanion = !!companion;
   const useStackedDesktopInfo = isDesktop && !hasCompanion;
+  const introHold = hasCompanion ? 0.18 : 0.2;
 
   if (infos[0]) gsap.set(infos[0], { opacity: 0, x: useStackedDesktopInfo ? 0 : -travel, y: useStackedDesktopInfo ? 34 : 12 });
   if (infos[1]) {
@@ -21,56 +22,56 @@ function buildPanelTimeline({ header, image, companion, badge, url, infos, isDes
   const tl = gsap.timeline({ paused: true });
 
   // Phase 1: title out + image up
-  if (header) tl.to(header, { y: -22, opacity: 0, duration: 0.14, ease: "power1.in" }, 0);
-  if (image && headerH > 0) tl.to(image, { y: -headerH, duration: 0.18, ease: "power2.inOut" }, 0);
+  if (header) tl.to(header, { y: -22, opacity: 0, duration: 0.14, ease: "power1.in" }, introHold);
+  if (image && headerH > 0) tl.to(image, { y: -headerH, duration: 0.18, ease: "power2.inOut" }, introHold);
   const extras = [badge, url].filter(Boolean);
-  if (extras.length) tl.to(extras, { opacity: 0, duration: 0.12, ease: "power1.in" }, 0);
+  if (extras.length) tl.to(extras, { opacity: 0, duration: 0.12, ease: "power1.in" }, introHold);
 
   if (hasCompanion) {
     // Phase 2: companion fades in, both images pan left together
     const slideX = image && image.offsetWidth
       ? -Math.round(image.offsetWidth * 0.50)
       : -Math.round(window.innerWidth * 0.22);
-    tl.to(companion, { opacity: 1, duration: 0.22, ease: "power2.out" }, 0.20);
-    tl.to(image, { x: slideX, duration: 0.26, ease: "power2.inOut" }, 0.20);
+    tl.to(companion, { opacity: 1, duration: 0.22, ease: "power2.out" }, 0.36);
+    tl.to(image, { x: slideX, duration: 0.26, ease: "power2.inOut" }, 0.36);
 
     // Phase 3–5: info blocks (shifted to make room for companion phase)
     if (infos[0]) {
-      tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.48);
-      tl.to(infos[0], { x: -Math.round(travel * 0.6), y: -8, opacity: 0, duration: 0.11, ease: "power1.in" }, 0.62);
+      tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.58);
+      tl.to(infos[0], { x: -Math.round(travel * 0.6), y: -8, opacity: 0, duration: 0.11, ease: "power1.in" }, 0.7);
     }
     if (infos[1]) {
-      tl.to(infos[1], { y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.69);
-      tl.to(infos[1], { y: -36, opacity: 0, duration: 0.11, ease: "power1.in" }, 0.81);
+      tl.to(infos[1], { y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.78);
+      tl.to(infos[1], { y: -36, opacity: 0, duration: 0.11, ease: "power1.in" }, 0.88);
     }
     if (infos[2]) {
-      tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.87);
+      tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.94);
     }
   } else {
     if (useStackedDesktopInfo) {
       if (infos[0]) {
-        tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.12);
-        tl.to(infos[0], { x: 0, y: -24, opacity: 0, duration: 0.16, ease: "power1.inOut" }, 0.40);
+        tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.42);
+        tl.to(infos[0], { x: 0, y: -24, opacity: 0, duration: 0.16, ease: "power1.inOut" }, 0.58);
       }
       if (infos[1]) {
-        tl.to(infos[1], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.50);
-        tl.to(infos[1], { x: 0, y: -24, opacity: 0, duration: 0.16, ease: "power1.inOut" }, 0.72);
+        tl.to(infos[1], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.68);
+        tl.to(infos[1], { x: 0, y: -24, opacity: 0, duration: 0.16, ease: "power1.inOut" }, 0.84);
       }
       if (infos[2]) {
-        tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.82);
+        tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.92);
       }
     } else {
       // Original info block positions (no companion — unchanged)
       if (infos[0]) {
-        tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.10);
-        tl.to(infos[0], { x: -Math.round(travel * 0.6), y: -8, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.42);
+        tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.42);
+        tl.to(infos[0], { x: -Math.round(travel * 0.6), y: -8, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.58);
       }
       if (infos[1]) {
-        tl.to(infos[1], { y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.50);
-        tl.to(infos[1], { y: -36, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.70);
+        tl.to(infos[1], { y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.68);
+        tl.to(infos[1], { y: -36, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.84);
       }
       if (infos[2]) {
-        tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.78);
+        tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.92);
       }
     }
   }
@@ -80,8 +81,8 @@ function buildPanelTimeline({ header, image, companion, badge, url, infos, isDes
 
 function makeSnapConfig(hasCompanion = false) {
   const stops = hasCompanion
-    ? [0, 0.42, 0.64, 0.83, 1.0]
-    : [0, 0.32, 0.64, 1.0];
+    ? [0, 0.58, 0.78, 0.94, 1.0]
+    : [0, 0.42, 0.68, 0.92, 1.0];
   return {
     snapTo: (value) => stops.reduce((a, b) =>
       Math.abs(b - value) < Math.abs(a - value) ? b : a
@@ -154,7 +155,6 @@ function PanelShell({
       <div className="highlights-stack__productImageGroup">
         {Array.isArray(hero.productImages) && hero.productImages.length ? (
           <div ref={imageRef} className="highlights-stack__productImagesOuter">
-            {/* Desktop: all images side by side */}
             <div className="highlights-stack__productImages highlights-stack__productImages--desktop">
               {hero.productImages.map((src, i) => (
                 <img
@@ -178,7 +178,6 @@ function PanelShell({
                 />
               ) : null}
             </div>
-            {/* Mobile: auto-advancing carousel */}
             <MobileCarousel images={hero.productImages} title={hero.title} carouselRef={carouselRef} />
           </div>
         ) : hero.productImage && hasCompanion ? (
@@ -284,7 +283,6 @@ export default function ProductStoryStack({
   className = "",
   backgroundStyle,
 }) {
-  const isDesktopViewport = typeof window !== "undefined" ? window.innerWidth > 768 : true;
   const isPrimaryStack = stackId === "highlights-stack";
   const sectionRef = useRef(null);
   const heroCardRef = useRef(null);
@@ -334,10 +332,16 @@ export default function ProductStoryStack({
   }, [content]);
 
   useLayoutEffect(() => {
-    if (!isPrimaryStack) {
-      return undefined;
-    }
+    const heroCard = heroCardRef.current;
+    const productCard = productCardRef.current;
+    if (!heroCard || !productCard) return;
+    const vh = window.visualViewport?.height ?? window.innerHeight;
+    heroCard.style.height = `${vh}px`;
+    const shell = productCard.querySelector(".highlights-stack__productShell");
+    if (shell) shell.style.minHeight = `${vh}px`;
+  }, []);
 
+  useLayoutEffect(() => {
     const sources = [
       content.hero.backgroundImage,
       ...(Array.isArray(content.hero.productImages) ? content.hero.productImages : []),
@@ -361,7 +365,6 @@ export default function ProductStoryStack({
     content.hero.badge,
     content.hero.productImage,
     content.hero.productImages,
-    isPrimaryStack,
   ]);
 
   useEffect(() => {
@@ -388,8 +391,7 @@ export default function ProductStoryStack({
     // Fix mobile Safari: 100vh ≠ window.innerHeight when URL bar is visible
     const applyVh = () => {
       const vh = window.visualViewport?.height ?? window.innerHeight;
-      heroCard.style.minHeight = `${vh}px`;
-      productCard.style.marginTop = `-${vh - 20}px`;
+      heroCard.style.height = `${vh}px`;
       const shell = productCard.querySelector(".highlights-stack__productShell");
       if (shell) shell.style.minHeight = `${vh}px`;
     };
@@ -426,7 +428,6 @@ export default function ProductStoryStack({
         pin: true,
         pinSpacing: true,
         scrub: isDesktop ? 0.08 : 0.1,
-        anticipatePin: 1,
         fastScrollEnd: true,
         preventOverlaps: stackId,
         animation: tl,
@@ -461,7 +462,6 @@ export default function ProductStoryStack({
           pin: true,
           pinSpacing: true,
           scrub: isDesktop ? 0.06 : 0.1,
-          anticipatePin: 1,
           fastScrollEnd: true,
           preventOverlaps: stackId,
           animation: contentTl,
@@ -478,7 +478,6 @@ export default function ProductStoryStack({
         end: () => (overlayTrigger ? overlayTrigger.end : productTrigger.end),
         pin: true,
         pinSpacing: false,
-        anticipatePin: 1,
         invalidateOnRefresh: true,
       });
     }, section);
@@ -501,9 +500,6 @@ export default function ProductStoryStack({
       >
         <div
           className="highlights-stack__heroSnapTarget"
-          data-page-snap={!isDesktopViewport ? "card" : undefined}
-          data-snap-anchor={!isDesktopViewport ? "top" : undefined}
-          data-snap-base-offset={!isDesktopViewport ? "0" : undefined}
           aria-hidden="true"
         />
         <div className="highlights-stack__heroBackdrop">
@@ -526,9 +522,6 @@ export default function ProductStoryStack({
       >
         <div
           className="highlights-stack__panelSnapTarget"
-          data-page-snap={isDesktopViewport ? "card" : undefined}
-          data-snap-anchor={isDesktopViewport ? "top" : undefined}
-          data-snap-base-offset={isDesktopViewport ? "0" : undefined}
           aria-hidden="true"
         />
         <PanelShell
@@ -541,7 +534,7 @@ export default function ProductStoryStack({
           urlRef={productUrlRef}
           infoRefsObj={infoRefs}
           carouselRef={productCarouselRef}
-          prioritizeMedia={isPrimaryStack}
+          prioritizeMedia
         />
       </article>
 

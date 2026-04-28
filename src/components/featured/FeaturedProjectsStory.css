@@ -4,9 +4,8 @@
   background: #0b0e14;
   color: #ffffff;
   padding: 0 0 20vh;
-  /* Clip in-flow overflow so images never bleed into adjacent sections.
-     position:fixed GSAP-pinned elements are viewport-relative and unaffected. */
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .highlights-stack--has-overlay {
@@ -40,10 +39,27 @@
 }
 
 .highlights-stack__card--hero {
-  position: relative;
-  min-height: 100dvh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100dvh;
+  margin-left: 0;
+  z-index: 0;
   border-radius: 0;
   overflow: hidden;
+}
+
+.highlights-stack__card--hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(80px, 12vh, 128px);
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .highlights-stack__heroSnapTarget {
@@ -68,6 +84,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  z-index: 0;
 }
 
 .highlights-stack__heroBackground {
@@ -84,11 +101,14 @@
 /* ── Product card ───────────────────────────────────────────────────────── */
 
 .highlights-stack__card--product {
+  position: relative;
+  z-index: 2;
   background: transparent;
   border: none;
   box-shadow: none;
-  margin-top: calc(-100dvh + 20px);
+  margin-top: 20px;
   overflow: visible;
+  will-change: auto;
 }
 
 .highlights-stack__productShell {
@@ -194,7 +214,7 @@
   position: absolute;
   height: 100%;
   width: auto;
-  max-width: 78vw;
+  max-width: 86vw;
   object-fit: contain;
   object-position: center bottom;
   left: 50%;
@@ -203,6 +223,10 @@
   filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.5)) drop-shadow(0 6px 20px rgba(0, 0, 0, 0.3));
   opacity: 0;
   transition: opacity 0.35s ease;
+}
+
+.highlights-stack__card--overlay .highlights-stack__carouselImg {
+  filter: none;
 }
 
 .highlights-stack__carouselImg--active {
@@ -216,7 +240,7 @@
 
   .highlights-stack__carouselTrack {
     display: block;
-    height: clamp(260px, 40dvh, 380px);
+    height: clamp(300px, 50dvh, 460px);
   }
 
   /* Badge and URL add ~80px; hiding them lets the carousel be larger */
@@ -236,7 +260,7 @@
 @media (min-width: 769px) {
   .highlights-stack__productShell {
     justify-content: flex-start;
-    padding-top: clamp(104px, 13vh, 132px);
+    padding-top: clamp(60px, 8vh, 92px);
     padding-bottom: clamp(120px, 16vh, 160px);
   }
 
@@ -403,6 +427,7 @@
 
 .highlights-stack__card--overlay {
   position: relative;
+  z-index: 3;
   min-height: 100dvh;
   border-radius: 28px 28px 0 0;
   overflow: visible;
@@ -415,6 +440,10 @@
 @media (max-width: 980px) {
   .highlights-stack {
     padding-bottom: 12vh;
+  }
+
+  .highlights-stack--has-overlay {
+    padding-bottom: 0;
   }
 
   .highlights-stack__cards {
