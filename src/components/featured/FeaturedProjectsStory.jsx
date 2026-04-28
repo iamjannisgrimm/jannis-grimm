@@ -65,11 +65,10 @@ function buildHighlightContent() {
         title: "Coaches",
         headline: "Real experts in your corner, exactly when it matters.",
         backgroundColor: "#0d1117",
-        productImage:
-          coachesProject?.productImage ||
-          coachesProject?.productImageMobile ||
-          coachesProject?.image ||
-          "",
+        productImages: [
+          `${BUCKET}/SeeMe/SeeMeCoach1.png`,
+          `${BUCKET}/SeeMe/SeeMeCoach2.png`,
+        ],
         badge: coachesProject?.appStoreBadge || heroProject?.appStoreBadge || "",
         link: coachesProject?.appStoreUrl || heroProject?.appStoreUrl || "",
         productUrl: coachesProject?.website || heroProject?.website || "https://seemeai.app",
