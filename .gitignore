@@ -29,4 +29,9 @@ dist/
 .vscode/
 .DS_Store
 .idea/
-public/images/
+public/images/**
+!public/images/SeeMe/
+public/images/SeeMe/**
+!public/images/SeeMe/SeeMeCoach1.png
+!public/images/SeeMe/SeeMeCoach2.png
+!public/images/SeeMe/SeeMeCoach3.png
