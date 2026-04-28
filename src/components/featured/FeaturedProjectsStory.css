@@ -274,6 +274,11 @@
     border-radius: 0;
     box-shadow: none;
   }
+
+  /* SeeMe has 5 side-by-side images — scale them down on desktop */
+  .highlights-stack:not(.highlights-stack--planner) .highlights-stack__productImageItem {
+    height: clamp(220px, 38vh, 460px);
+  }
 }
 
 .highlights-stack__productImageItem {
