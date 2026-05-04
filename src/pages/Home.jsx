@@ -135,30 +135,6 @@ export function Home() {
         .map((id) => document.getElementById(id))
         .filter(Boolean);
 
-    const getCardTargets = () =>
-      Array.from(document.querySelectorAll("[data-page-snap='card']")).filter(Boolean);
-
-    const getOrderedSnapTargets = () => {
-      const combined = [...getSections(), ...getCardTargets()];
-      const unique = combined.filter((element, index) => combined.indexOf(element) === index);
-
-      return unique.sort((left, right) => getTargetTop(left) - getTargetTop(right));
-    };
-
-    const isInsideOwnedStack = () => {
-      const viewportAnchor = SNAP_OFFSET + 24;
-      const stacks = Array.from(document.querySelectorAll(".highlights-stack"));
-
-      return stacks.some((stack) => {
-        if (!(stack instanceof HTMLElement)) {
-          return false;
-        }
-
-        const rect = stack.getBoundingClientRect();
-        return rect.top <= viewportAnchor && rect.bottom >= viewportAnchor;
-      });
-    };
-
     const getSnapAnchor = (section) =>
       section.querySelector("[data-snap-anchor='center']") || section;
 
@@ -212,6 +188,17 @@ export function Home() {
       }, null);
     };
 
+    const isWithinTopSnapRange = () => {
+      const sections = getSections();
+      const overviewSection = sections.find((section) => section.id === "overview");
+      if (!overviewSection) {
+        return false;
+      }
+
+      const overviewTop = getTargetTop(overviewSection);
+      return window.scrollY <= overviewTop + window.innerHeight * 0.35;
+    };
+
     const easeOutCubic = (value) => 1 - (1 - value) ** 3;
 
     const finishSnap = () => {
@@ -242,15 +229,15 @@ export function Home() {
         return gestureBaseTarget;
       }
 
-      const orderedTargets = getOrderedSnapTargets();
-      if (orderedTargets.length === 0) {
+      const sections = getSections();
+      if (sections.length === 0) {
         return null;
       }
 
       gestureBaseTarget =
-        lastSnappedTarget && orderedTargets.includes(lastSnappedTarget)
+        lastSnappedTarget && sections.includes(lastSnappedTarget)
           ? lastSnappedTarget
-          : getClosestSection(orderedTargets);
+          : getClosestSection(sections);
 
       return gestureBaseTarget;
     };
@@ -317,8 +304,8 @@ export function Home() {
     };
 
     const maybeSnapNearestSection = () => {
-      const orderedTargets = getOrderedSnapTargets();
-      if (orderedTargets.length === 0) {
+      const sections = getSections();
+      if (sections.length === 0) {
         return;
       }
 
@@ -331,15 +318,15 @@ export function Home() {
         return;
       }
 
-      if (isInsideOwnedStack()) {
-        lastInputDirection = 0;
-        gestureTravel = 0;
+      if (!isWithinTopSnapRange()) {
         gestureActive = false;
         gestureBaseTarget = null;
+        gestureTravel = 0;
+        lastInputDirection = 0;
         return;
       }
 
-      const baseTarget = ensureGestureBaseTarget() || getClosestSection(orderedTargets);
+      const baseTarget = ensureGestureBaseTarget() || getClosestSection(sections);
       let targetElement = baseTarget;
 
       if (!targetElement) {
@@ -355,7 +342,7 @@ export function Home() {
               ? -1
               : 0;
 
-      const baseIndex = orderedTargets.indexOf(baseTarget);
+      const baseIndex = sections.indexOf(baseTarget);
       if (
         direction !== 0 &&
         Math.abs(gestureTravel) >= SNAP_GESTURE_COMMIT_THRESHOLD &&
@@ -363,9 +350,9 @@ export function Home() {
       ) {
         const adjacentIndex =
           direction > 0
-            ? Math.min(orderedTargets.length - 1, baseIndex + 1)
+            ? Math.min(sections.length - 1, baseIndex + 1)
             : Math.max(0, baseIndex - 1);
-        targetElement = orderedTargets[adjacentIndex] || baseTarget;
+        targetElement = sections[adjacentIndex] || baseTarget;
       }
 
       const targetTop = getTargetTop(targetElement);

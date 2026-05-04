@@ -74,7 +74,7 @@ export default function TopSegmentedNav() {
       const isNearTop = currentY < 16;
       const isScrollingUp = currentY < previousY;
 
-      setIsVisible(isNearTop || isScrollingUp);
+      setIsVisible(isNearTop);
       previousY = currentY;
     };
 

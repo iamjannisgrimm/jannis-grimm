@@ -226,8 +226,12 @@
   transition: opacity 0.35s ease;
 }
 
-.highlights-stack__card--overlay .highlights-stack__carouselImg {
+.highlights-stack .highlights-stack__card--overlay .highlights-stack__carouselImg {
   filter: none;
+  height: auto;
+  max-height: 100%;
+  bottom: 0;
+  border-radius: 14px;
 }
 
 .highlights-stack__carouselImg--active {
@@ -241,7 +245,16 @@
 
   .highlights-stack__carouselTrack {
     display: block;
-    height: clamp(240px, 38dvh, 380px);
+    height: clamp(300px, 50dvh, 440px);
+    overflow: visible;
+  }
+
+  .highlights-stack__carouselImg {
+    filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.46)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.26));
+  }
+
+  .highlights-stack .highlights-stack__card--overlay .highlights-stack__carouselTrack {
+    height: clamp(340px, 56dvh, 500px);
   }
 
   /* Badge and URL add ~80px; hiding them lets the carousel be larger */
@@ -251,27 +264,26 @@
   }
 
   .highlights-stack__productShell {
-    justify-content: flex-start;
-    padding-top: clamp(52px, 6dvh, 72px);
-    padding-bottom: clamp(230px, 30dvh, 280px);
+    justify-content: center;
+    padding-top: clamp(88px, 13dvh, 120px);
+    padding-bottom: clamp(88px, 13dvh, 120px);
   }
 
-  /* Pull descriptions up so they clear the carousel */
   .highlights-stack__infoWindow {
-    bottom: clamp(120px, 16dvh, 160px);
+    bottom: clamp(24px, 4dvh, 48px);
     height: 170px;
   }
 }
 
 @media (min-width: 769px) {
   .highlights-stack__productShell {
-    justify-content: flex-start;
-    padding-top: clamp(80px, 10vh, 110px);
-    padding-bottom: clamp(200px, 26vh, 280px);
+    justify-content: center;
+    padding-top: clamp(100px, 13vh, 140px);
+    padding-bottom: clamp(120px, 14vh, 160px);
   }
 
   .highlights-stack__infoWindow {
-    bottom: clamp(80px, 11vh, 130px);
+    bottom: clamp(40px, 5vh, 70px);
     height: 180px;
   }
 
@@ -284,6 +296,11 @@
   /* SeeMe has 5 side-by-side images — scale them down on desktop */
   .highlights-stack:not(.highlights-stack--planner) .highlights-stack__productImageItem {
     height: clamp(220px, 38vh, 460px);
+  }
+
+  /* Overlay (coaches) has only 2 images — allow them to be larger */
+  .highlights-stack .highlights-stack__card--overlay .highlights-stack__productImageItem {
+    height: clamp(260px, 44vh, 520px);
   }
 }
 

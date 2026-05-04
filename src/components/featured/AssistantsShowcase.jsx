@@ -6,8 +6,6 @@ export default function AssistantsShowcase() {
     <section className="assistants-showcase">
       <div
         className="assistants-showcase__hero"
-        data-page-snap="card"
-        data-snap-anchor="center"
       >
         <div className="assistants-showcase__heroInner">
           <p className="assistants-showcase__label">Next up</p>

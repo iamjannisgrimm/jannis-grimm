@@ -335,10 +335,14 @@ export default function ProductStoryStack({
     const heroCard = heroCardRef.current;
     const productCard = productCardRef.current;
     if (!heroCard || !productCard) return;
-    const vh = window.visualViewport?.height ?? window.innerHeight;
-    heroCard.style.height = `${vh}px`;
+    const vvh = window.visualViewport?.height ?? window.innerHeight;
+    // On mobile use window.innerHeight (full layout viewport incl. safe areas)
+    // so the blurred background covers the device screen behind the URL bar/notch.
+    // Add 60px on mobile to cover env(safe-area-inset-bottom) + any rounding gaps
+    const heroH = window.innerWidth <= 768 ? window.innerHeight + 60 : vvh;
+    heroCard.style.height = `${heroH}px`;
     const shell = productCard.querySelector(".highlights-stack__productShell");
-    if (shell) shell.style.minHeight = `${vh}px`;
+    if (shell) shell.style.minHeight = `${vvh}px`;
   }, []);
 
   useLayoutEffect(() => {
@@ -390,10 +394,11 @@ export default function ProductStoryStack({
 
     // Fix mobile Safari: 100vh ≠ window.innerHeight when URL bar is visible
     const applyVh = () => {
-      const vh = window.visualViewport?.height ?? window.innerHeight;
-      heroCard.style.height = `${vh}px`;
+      const vvh = window.visualViewport?.height ?? window.innerHeight;
+      const heroH = window.innerWidth <= 768 ? window.innerHeight + 60 : vvh;
+      heroCard.style.height = `${heroH}px`;
       const shell = productCard.querySelector(".highlights-stack__productShell");
-      if (shell) shell.style.minHeight = `${vh}px`;
+      if (shell) shell.style.minHeight = `${vvh}px`;
     };
     applyVh();
     window.addEventListener("resize", applyVh, { passive: true });
@@ -427,12 +432,12 @@ export default function ProductStoryStack({
         end: isDesktop ? "+=180%" : "+=220%",
         pin: true,
         pinSpacing: true,
-        scrub: isDesktop ? 0.08 : 0.1,
-        fastScrollEnd: true,
+        scrub: isDesktop ? 0.08 : 0.04,
+        fastScrollEnd: isDesktop,
         preventOverlaps: stackId,
         animation: tl,
         invalidateOnRefresh: true,
-        snap: makeSnapConfig(!!productCompanion),
+        snap: isDesktop ? makeSnapConfig(!!productCompanion) : false,
         onUpdate: (self) => {
           if (productCarouselRef.current) {
             productCarouselRef.current(self.progress);
@@ -461,12 +466,12 @@ export default function ProductStoryStack({
           end: isDesktop ? "+=180%" : "+=220%",
           pin: true,
           pinSpacing: true,
-          scrub: isDesktop ? 0.06 : 0.1,
-          fastScrollEnd: true,
+          scrub: isDesktop ? 0.06 : 0.04,
+          fastScrollEnd: isDesktop,
           preventOverlaps: stackId,
           animation: contentTl,
           invalidateOnRefresh: true,
-          snap: makeSnapConfig(!!overlayCompanion),
+          snap: isDesktop ? makeSnapConfig(!!overlayCompanion) : false,
         });
       }
 

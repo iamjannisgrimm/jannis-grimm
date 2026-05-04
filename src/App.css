@@ -177,20 +177,6 @@ body.home-scroll-snap .timeline-safe-area-fill {
   width: 100%;
 }
 
-.home-highlights-section::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: clamp(72px, 10vh, 96px);
-  z-index: 2;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%),
-    linear-gradient(90deg, rgba(194, 181, 187, 0.92) 0%, rgba(231, 199, 198, 0.92) 100%);
-  transform: translateY(-100%);
-}
 
 /* ===== Profile Title Parts (mobile stacking) ===== */
 .title-part {
