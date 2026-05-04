@@ -12,6 +12,7 @@ function buildPlannerContent() {
       headline: "An AI event planner that feels calm, premium, and deeply useful from the very first screen.",
       backgroundImage: `${BUCKET}/weddingbg.png`,
       backgroundColor: "#2f4257",
+      themeColor: "#2f4257",
       productImages: [
         `${BUCKET}/Venty/Venty1.png?v=2`,
         `${BUCKET}/Venty/Venty3.png?v=2`,

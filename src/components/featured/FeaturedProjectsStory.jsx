@@ -30,6 +30,7 @@ function buildHighlightContent() {
       headline:
         heroProject?.description ||
         "A private, personal AI built around how you think, reflect, and grow.",
+      themeColor: "#c4a49a",
       backgroundImage: heroProject?.backgroundImage || heroProject?.image || "",
       productImages: [
         `${BUCKET}/SeeMe/SeeMe1.png`,

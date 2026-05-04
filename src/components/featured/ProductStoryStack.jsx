@@ -5,6 +5,11 @@ import "./FeaturedProjectsStory.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
+function setThemeColor(color) {
+  const meta = document.querySelector("meta[name='theme-color']");
+  if (meta) meta.setAttribute("content", color);
+}
+
 function buildPanelTimeline({ header, image, companion, badge, url, infos, isDesktop, travel }) {
   const headerH = header ? header.offsetHeight + 16 : 0;
   const hasCompanion = !!companion;
@@ -405,6 +410,9 @@ export default function ProductStoryStack({
     window.visualViewport?.addEventListener("resize", applyVh);
     ScrollTrigger.addEventListener("refresh", applyVh);
 
+    const heroThemeColor = content.hero.themeColor || content.hero.backgroundColor || "#ffffff";
+    const overlayThemeColor = content.overlay?.hero?.themeColor || content.overlay?.hero?.backgroundColor || "#ffffff";
+
     const ctx = gsap.context(() => {
       ScrollTrigger.getAll().forEach((t) => {
         if (t.vars.id?.startsWith(`${stackId}-`)) t.kill();
@@ -472,6 +480,10 @@ export default function ProductStoryStack({
           animation: contentTl,
           invalidateOnRefresh: true,
           snap: isDesktop ? makeSnapConfig(!!overlayCompanion) : false,
+          onEnter: () => setThemeColor(overlayThemeColor),
+          onEnterBack: () => setThemeColor(overlayThemeColor),
+          onLeaveBack: () => setThemeColor(heroThemeColor),
+          onLeave: () => setThemeColor("#ffffff"),
         });
       }
 
@@ -484,6 +496,15 @@ export default function ProductStoryStack({
         pin: true,
         pinSpacing: false,
         invalidateOnRefresh: true,
+        onEnter: () => {
+          setThemeColor(heroThemeColor);
+          heroCard.classList.add("is-pinned");
+        },
+        onLeaveBack: () => {
+          setThemeColor("#ffffff");
+          heroCard.classList.remove("is-pinned");
+        },
+        onLeave: () => heroCard.classList.remove("is-pinned"),
       });
     }, section);
 

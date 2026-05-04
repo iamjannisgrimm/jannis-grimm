@@ -61,6 +61,11 @@
   background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
   z-index: 2;
   pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.highlights-stack__card--hero.is-pinned::after {
+  opacity: 0;
 }
 
 .highlights-stack__heroSnapTarget {
