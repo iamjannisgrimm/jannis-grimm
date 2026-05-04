@@ -29,7 +29,7 @@ function buildHighlightContent() {
       title: heroProject?.title || "SeeMe",
       headline:
         heroProject?.description ||
-        "A private, personal AI built around how you think, reflect, and grow.",
+        "A personal AI built around how you think, reflect, and grow.",
       themeColor: "#c4a49a",
       backgroundImage: heroProject?.backgroundImage || heroProject?.image || "",
       productImages: [
@@ -48,17 +48,17 @@ function buildHighlightContent() {
       {
         eyebrow: "What it is",
         title: "Personal",
-        body: "A private, personal AI built around how you think, reflect, and grow — with expert coaches in your corner.",
+        body: "Your reflections, habits, and growth — in a space that adapts entirely to how you think.",
       },
       {
-        eyebrow: "How it feels",
+        eyebrow: "How it's built",
         title: "Private",
-        body: "Every reflection stays yours. No data shared, no profiling — just a space that learns how you think and grows with you.",
+        body: "Nothing shared, nothing sold. SeeMe learns from you without ever using you — your data stays yours, always.",
       },
       {
         eyebrow: "The next layer",
         title: "Growth",
-        body: "Expert coaches step in when it matters — turning the product into a system that supports real, lasting growth.",
+        body: "When you're ready to go deeper, expert coaches step in — turning self-awareness into real, lasting change.",
       },
     ],
     overlay: {
@@ -79,17 +79,17 @@ function buildHighlightContent() {
         {
           eyebrow: "Who they are",
           title: "Vetted",
-          body: "Every coach is carefully selected — professionals who bring real expertise and a track record of guiding meaningful change.",
+          body: "Hand-selected professionals with proven track records — not a marketplace, but a curated network built for real impact.",
         },
         {
           eyebrow: "How it works",
           title: "Matched",
-          body: "SeeMe surfaces the right coach at the right moment, based on what you're actually working through — not a generic list.",
+          body: "SeeMe reads what you're working through and connects you with the right person at exactly the right moment.",
         },
         {
           eyebrow: "The result",
           title: "Progress",
-          body: "Accountability with depth. A system that learns alongside you and brings the human touch exactly where it matters most.",
+          body: "Not just accountability — a relationship that deepens alongside your journey and shows up exactly when it counts.",
         },
       ],
     },
