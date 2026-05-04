@@ -29,18 +29,24 @@ function App() {
   }, []);
 
   return (
-    <div
-      style={{
-        backgroundColor: "white",
-        width: "100%",
-        minHeight: "100vh",
-        boxSizing: "border-box",
-      }}
-    >
-      <div className="app-top-safe-scrim" aria-hidden="true" />
-      <TopSegmentedNav />
-      {isTimelineRoute(pathname) ? <TimelinePage /> : <Home />}
-    </div>
+    <>
+      <div className="app-background-top-scrim" aria-hidden="true" />
+      <div className="app-bottom-safe-scrim" aria-hidden="true" />
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          backgroundColor: "white",
+          width: "100%",
+          minHeight: "100vh",
+          boxSizing: "border-box",
+        }}
+      >
+        <div className="app-top-safe-scrim" aria-hidden="true" />
+        <TopSegmentedNav />
+        {isTimelineRoute(pathname) ? <TimelinePage /> : <Home />}
+      </div>
+    </>
   );
 }
 

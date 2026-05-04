@@ -63,11 +63,6 @@ export function Home() {
         root.style.backgroundColor = nextColor;
       }
 
-      const rootChild = document.querySelector("#root > div");
-      if (rootChild instanceof HTMLElement) {
-        rootChild.style.backgroundColor = nextColor;
-      }
-
       document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
         if (!(element instanceof HTMLElement)) {
           return;
@@ -81,37 +76,33 @@ export function Home() {
     let mobileChromeFrame = 0;
 
     const syncMobileChromeColor = () => {
-      if (!window.matchMedia("(max-width: 768px)").matches) {
-        activeMobileChromeColor = "#ffffff";
-        applyMobileChromeColor("#ffffff");
-        return;
+      const maxScroll = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      const halfwayPoint = maxScroll * 0.5;
+      const pageCanvasColor = window.scrollY >= halfwayPoint ? "#2a2a2a" : "#ffffff";
+
+      if (pageCanvasColor !== activeMobileChromeColor) {
+        activeMobileChromeColor = pageCanvasColor;
       }
+      applyMobileChromeColor(activeMobileChromeColor);
 
       const sections = Array.from(
         document.querySelectorAll("[data-mobile-chrome-color]"),
       ).filter((element) => element instanceof HTMLElement);
 
       if (sections.length === 0) {
-        activeMobileChromeColor = "#ffffff";
-        applyMobileChromeColor("#ffffff");
         return;
       }
 
-      const viewportAnchor = window.innerHeight * 0.2;
-      const activeSection =
-        sections.find((section) => {
-          const rect = section.getBoundingClientRect();
-          return rect.top <= viewportAnchor && rect.bottom >= viewportAnchor;
-        }) || sections[0];
-
-      const nextColor =
-        activeSection?.getAttribute("data-mobile-chrome-color") || "#ffffff";
-
-      if (nextColor !== activeMobileChromeColor) {
-        activeMobileChromeColor = nextColor;
+      const footerSection = document.getElementById("contact");
+      if (footerSection instanceof HTMLElement) {
+        const footerRect = footerSection.getBoundingClientRect();
+        if (footerRect.top <= window.innerHeight) {
+          return;
+        }
       }
-
-      applyMobileChromeColor(activeMobileChromeColor);
     };
 
     const requestMobileChromeSync = () => {
@@ -573,13 +564,23 @@ export function Home() {
       <div
         id="contact"
         className="center-container home-snap-section"
-        data-mobile-chrome-color="#ffffff"
+        data-mobile-chrome-color="#2a2a2a"
         style={{ width: "100%" }}
       >
         <div className="content-container">
           <Footer />
         </div>
       </div>
+
+      <div
+        aria-hidden="true"
+        style={{
+          width: "100%",
+          height: "140px",
+          backgroundColor: "#2a2a2a",
+          flexShrink: 0,
+        }}
+      />
     </div>
   );
 }

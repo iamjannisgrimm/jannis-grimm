@@ -3,9 +3,25 @@ import React, { useEffect, useState } from "react";
 const ProfileHeader = ({ image, title }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false,
+  );
   const imageSrc = /^https?:\/\//.test(image) || image.startsWith("/")
     ? image
     : `${import.meta.env.BASE_URL}${image}`;
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     let isActive = true;
@@ -64,22 +80,36 @@ const ProfileHeader = ({ image, title }) => {
     >
       <h1
         style={{
-          marginBottom: "30px",
+          display: isMobile ? "flex" : "block",
+          flexDirection: isMobile ? "column" : undefined,
+          alignItems: isMobile ? "center" : undefined,
+          gap: isMobile ? "0.14em" : 0,
           color: "black",
-          fontSize: "clamp(32px, 5vw, 48px)",
+          fontSize: isMobile
+            ? "clamp(2.2rem, 8vw, 3.6rem)"
+            : "clamp(2.2rem, calc(4vw - 0.2rem), 3.3rem)",
           fontWeight: 800,
+          lineHeight: 0.93,
           textAlign: "center",
           fontFamily: "SF Pro",
-          letterSpacing: "-1px",
+          letterSpacing: "-0.06em",
           padding: 0,
           margin: "0 0 30px 0",
           width: "100%",
-          maxWidth: "800px",
+          maxWidth: isMobile ? "800px" : "1100px",
+          whiteSpace: isMobile ? "normal" : "nowrap",
         }}
       >
-        {title.split(". ").map((part, i, arr) => (
-          <span key={i} className="title-part">
-            {part}{i < arr.length - 1 ? "." : ""}
+        {title.split(". ").map((part, i) => (
+          <span
+            key={i}
+            className="title-part"
+            style={{
+              display: isMobile ? "block" : "inline-block",
+              marginRight: isMobile ? 0 : "0.2em",
+            }}
+          >
+            {part}{"."}
           </span>
         ))}
       </h1>
@@ -95,7 +125,7 @@ const ProfileHeader = ({ image, title }) => {
         <div
           style={{
             width: "90%",
-            maxWidth: "400px",
+            maxWidth: isMobile ? "400px" : "470px",
             aspectRatio: "2131 / 2050",
             position: "relative",
             borderRadius: "12px",

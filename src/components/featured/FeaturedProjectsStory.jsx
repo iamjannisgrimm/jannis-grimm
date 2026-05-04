@@ -27,9 +27,7 @@ function buildHighlightContent() {
   return {
     hero: {
       title: heroProject?.title || "SeeMe",
-      headline:
-        heroProject?.description ||
-        "A personal AI built around how you think, reflect, and grow.",
+      headline: <>A <strong>private, personal</strong> AI built around how you think, reflect, and grow — with expert coaches in your corner.</>,
       themeColor: "#c4a49a",
       backgroundImage: heroProject?.backgroundImage || heroProject?.image || "",
       productImages: [
@@ -39,6 +37,7 @@ function buildHighlightContent() {
         `${BUCKET}/SeeMe/SeeMe4.png`,
         `${BUCKET}/SeeMe/SeeMe5.png`,
       ],
+      mobileCarouselStartIndex: 1,
       badge: heroProject?.appStoreBadge || "",
       link: heroProject?.appStoreUrl || heroProject?.website || heroProject?.link || "",
       productUrl: heroProject?.website || heroProject?.link || "https://seemeai.app",
@@ -70,8 +69,13 @@ function buildHighlightContent() {
           `${BUCKET}/SeeMe/SeeMeCoach1.png`,
           `${BUCKET}/SeeMe/SeeMeCoach2.png`,
         ],
-        badge: coachesProject?.appStoreBadge || heroProject?.appStoreBadge || "",
-        link: coachesProject?.appStoreUrl || heroProject?.appStoreUrl || "",
+        ctaLabel: "Request Access",
+        ctaHref:
+          coachesProject?.website ||
+          heroProject?.website ||
+          heroProject?.appStoreUrl ||
+          "https://seemeai.app",
+        ctaAriaLabel: "Request access to SeeMe Coaches",
         productUrl: coachesProject?.website || heroProject?.website || "https://seemeai.app",
         productUrlLabel: "seemeai.app",
       },

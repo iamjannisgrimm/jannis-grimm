@@ -10,26 +10,25 @@ body, html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-color: white;
+  background-color: #ffffff;
 }
 
 html.home-scroll-snap,
 body.home-scroll-snap,
 html.home-scroll-snap body,
 html.home-scroll-snap #root,
-html.home-scroll-snap #root > div,
 html.home-scroll-snap.timeline-app-background-active,
 body.home-scroll-snap.timeline-app-background-active,
 html.home-scroll-snap.timeline-app-background-active body,
 html.home-scroll-snap.timeline-app-background-active #root,
-html.home-scroll-snap.timeline-app-background-active #root > div {
-  background: #ffffff !important;
-  background-color: #ffffff !important;
+html.home-scroll-snap.timeline-app-background-active #root {
+  background: var(--timeline-app-background, #ffffff) !important;
+  background-color: var(--timeline-app-background, #ffffff) !important;
 }
 
 html.home-scroll-snap .timeline-safe-area-fill,
 body.home-scroll-snap .timeline-safe-area-fill {
-  background: #ffffff !important;
+  background: var(--timeline-app-background, #ffffff) !important;
   opacity: 0 !important;
 }
 
@@ -52,6 +51,28 @@ body.home-scroll-snap .timeline-safe-area-fill {
   height: calc(env(safe-area-inset-top, 0px) + 20px);
   pointer-events: none;
   background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.92) 52%, rgba(255, 255, 255, 0) 100%);
+}
+
+.app-background-top-scrim {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: max(40vh, 280px);
+  pointer-events: none;
+  z-index: 0;
+  background: #ffffff;
+}
+
+.app-bottom-safe-scrim {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(28vh, 180px);
+  pointer-events: none;
+  z-index: 0;
+  background: #2a2a2a;
 }
 
 /* ===== Fonts ===== */
@@ -188,7 +209,7 @@ body.home-scroll-snap .timeline-safe-area-fill {
 @media (max-width: 768px) {
   .title-part {
     display: block;
-    margin-bottom: 0.3em;
+    margin-bottom: 0;
   }
   .title-part + .title-part::before {
     content: none;

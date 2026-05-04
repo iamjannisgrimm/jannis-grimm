@@ -19,7 +19,6 @@ function buildPanelTimeline({ header, image, companion, badge, url, infos, isDes
   if (infos[0]) gsap.set(infos[0], { opacity: 0, x: useStackedDesktopInfo ? 0 : -travel, y: useStackedDesktopInfo ? 34 : 12 });
   if (infos[1]) {
     gsap.set(infos[1], { opacity: 0, x: 0, y: useStackedDesktopInfo ? 42 : 56 });
-    if (isDesktop) gsap.set(infos[1], { xPercent: -50 });
   }
   if (infos[2]) gsap.set(infos[2], { opacity: 0, x: useStackedDesktopInfo ? 0 : travel, y: useStackedDesktopInfo ? 50 : 12 });
   if (companion) gsap.set(companion, { opacity: 0 });
@@ -99,24 +98,27 @@ function makeSnapConfig(hasCompanion = false) {
   };
 }
 
-function MobileCarousel({ images, title, carouselRef }) {
+function MobileCarousel({ images, title, carouselRef, startIndex = 0 }) {
   const imgRefs = useRef([]);
-  const curIdx = useRef(0);
+  const normalizedStartIndex =
+    images.length > 0 ? ((startIndex % images.length) + images.length) % images.length : 0;
+  const curIdx = useRef(normalizedStartIndex);
 
   useEffect(() => {
-    imgRefs.current[0]?.classList.add("highlights-stack__carouselImg--active");
+    imgRefs.current[normalizedStartIndex]?.classList.add("highlights-stack__carouselImg--active");
 
     if (!carouselRef) return;
     carouselRef.current = (progress) => {
       const total = images.length;
-      const idx = Math.min(Math.floor(progress * total), total - 1);
+      const rawIdx = Math.min(Math.floor(progress * total), total - 1);
+      const idx = total > 0 ? (rawIdx + normalizedStartIndex) % total : 0;
       if (idx === curIdx.current) return;
       imgRefs.current[curIdx.current]?.classList.remove("highlights-stack__carouselImg--active");
       imgRefs.current[idx]?.classList.add("highlights-stack__carouselImg--active");
       curIdx.current = idx;
     };
     return () => { if (carouselRef) carouselRef.current = null; };
-  }, [carouselRef, images.length]);
+  }, [carouselRef, images.length, normalizedStartIndex]);
 
   return (
     <div className="highlights-stack__carouselTrack">
@@ -149,6 +151,10 @@ function PanelShell({
 }) {
   const { hero } = panelContent;
   const hasCompanion = !!hero.companionImage;
+  const ctaHref = hero.link || hero.ctaHref || hero.productUrl || undefined;
+  const ctaAriaLabel =
+    hero.ctaAriaLabel ||
+    (hero.ctaLabel ? `${hero.ctaLabel} for ${hero.title}` : "Open project link");
 
   return (
     <div className="highlights-stack__productShell">
@@ -183,7 +189,12 @@ function PanelShell({
                 />
               ) : null}
             </div>
-            <MobileCarousel images={hero.productImages} title={hero.title} carouselRef={carouselRef} />
+            <MobileCarousel
+              images={hero.productImages}
+              title={hero.title}
+              carouselRef={carouselRef}
+              startIndex={hero.mobileCarouselStartIndex || 0}
+            />
           </div>
         ) : hero.productImage && hasCompanion ? (
           <div ref={imageRef} className="highlights-stack__productImages highlights-stack__productImages--pair">
@@ -220,7 +231,7 @@ function PanelShell({
           <a
             ref={badgeRef}
             className="highlights-stack__badgeWrap"
-            href={hero.link || hero.productUrl || undefined}
+            href={ctaHref}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Download on the App Store"
@@ -233,6 +244,17 @@ function PanelShell({
               fetchPriority={prioritizeMedia ? "high" : undefined}
               decoding="async"
             />
+          </a>
+        ) : hero.ctaLabel ? (
+          <a
+            ref={badgeRef}
+            className="highlights-stack__badgeWrap highlights-stack__badgeWrap--text"
+            href={ctaHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={ctaAriaLabel}
+          >
+            <span className="highlights-stack__badgeText">{hero.ctaLabel}</span>
           </a>
         ) : null}
 
@@ -339,12 +361,22 @@ export default function ProductStoryStack({
   useLayoutEffect(() => {
     const heroCard = heroCardRef.current;
     const productCard = productCardRef.current;
-    if (!heroCard || !productCard) return;
+    const section = sectionRef.current;
+    if (!heroCard || !productCard || !section) return;
     const vvh = window.visualViewport?.height ?? window.innerHeight;
-    // On mobile use window.innerHeight (full layout viewport incl. safe areas)
-    // so the blurred background covers the device screen behind the URL bar/notch.
-    // Add 60px on mobile to cover env(safe-area-inset-bottom) + any rounding gaps
-    const heroH = window.innerWidth <= 768 ? window.innerHeight + 60 : vvh;
+    const panelShells = Array.from(
+      section.querySelectorAll(".highlights-stack__productShell"),
+    );
+    const tallestShell = panelShells.reduce(
+      (maxHeight, shell) => Math.max(maxHeight, shell.scrollHeight),
+      0,
+    );
+    // On mobile, size the pinned backdrop to the taller story shell so
+    // the background image reaches the bottom of the section again.
+    const heroH =
+      window.innerWidth <= 768
+        ? Math.max(window.innerHeight + 60, tallestShell + 40)
+        : vvh;
     heroCard.style.height = `${heroH}px`;
     const shell = productCard.querySelector(".highlights-stack__productShell");
     if (shell) shell.style.minHeight = `${vvh}px`;
@@ -400,7 +432,17 @@ export default function ProductStoryStack({
     // Fix mobile Safari: 100vh ≠ window.innerHeight when URL bar is visible
     const applyVh = () => {
       const vvh = window.visualViewport?.height ?? window.innerHeight;
-      const heroH = window.innerWidth <= 768 ? window.innerHeight + 60 : vvh;
+      const panelShells = Array.from(
+        section.querySelectorAll(".highlights-stack__productShell"),
+      );
+      const tallestShell = panelShells.reduce(
+        (maxHeight, shell) => Math.max(maxHeight, shell.scrollHeight),
+        0,
+      );
+      const heroH =
+        window.innerWidth <= 768
+          ? Math.max(window.innerHeight + 60, tallestShell + 40)
+          : vvh;
       heroCard.style.height = `${heroH}px`;
       const shell = productCard.querySelector(".highlights-stack__productShell");
       if (shell) shell.style.minHeight = `${vvh}px`;
