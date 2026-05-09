@@ -164,13 +164,13 @@ function buildPanelTimeline({
       } else {
         tl.to([teamIntro.leftCard, teamIntro.bridge], {
           opacity: 0,
-          x: -56,
-          duration: 0.18,
+          x: -220,
+          duration: 0.22,
           ease: "power1.inOut",
         }, 0.98);
         tl.to(teamIntro.rightCard, {
-          x: desktopCardShiftX,
-          duration: 0.28,
+          x: desktopCardShiftX - 140,
+          duration: 0.32,
           ease: "power2.inOut",
         }, 1.0);
       }

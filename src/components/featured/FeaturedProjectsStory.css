@@ -826,6 +826,7 @@
     transform: translateY(-18%);
     width: min(34vw, 460px);
     min-height: 260px;
+    text-align: left;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBlock {
@@ -836,6 +837,12 @@
     align-items: flex-start;
     text-align: left;
     gap: 10px;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoTitleSide,
+  .highlights-stack__infoWindow--team .highlights-stack__infoBodySide {
+    width: 100%;
+    text-align: left;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBody {
