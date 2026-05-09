@@ -820,13 +820,14 @@
 
   .highlights-stack__infoWindow--team {
     top: 50%;
-    left: calc(50% + 170px);
+    left: calc(50% + 300px);
     right: auto;
     bottom: auto;
     transform: translateY(-18%);
-    width: min(30vw, 420px);
+    width: min(24vw, 340px);
     min-height: 260px;
     text-align: left;
+    z-index: 5;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBlock {
