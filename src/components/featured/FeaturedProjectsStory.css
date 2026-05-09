@@ -592,7 +592,7 @@
     inset: auto;
     height: 0;
     overflow: visible;
-    margin-top: -8px;
+    margin-top: 4px;
     margin-bottom: 0;
     order: 2;
   }
@@ -616,15 +616,15 @@
     align-items: center;
     gap: 0;
     order: 3;
-    margin-top: -8px;
+    margin-top: 2px;
     width: 100%;
   }
 
   .highlights-stack__teamBridge {
     width: 64px;
-    min-height: 56px;
-    margin: 6px auto;
-    transform: translateY(12px);
+    min-height: 66px;
+    margin: 10px auto;
+    transform: translateY(16px);
   }
 
   .highlights-stack__teamCard--support {
@@ -637,7 +637,7 @@
     width: 52px;
     height: auto;
     flex-direction: row;
-    transform: translate(-50%, calc(-50% - 20px));
+    transform: translate(-50%, calc(-50% - 16px));
   }
 
   .highlights-stack__teamBridgeIcon {
@@ -697,8 +697,8 @@
 
   .highlights-stack__teamConnector {
     width: 2px;
-    height: 58px;
-    transform: translate(-50%, calc(-50% - 20px));
+    height: 68px;
+    transform: translate(-50%, calc(-50% - 16px));
   }
 
   .highlights-stack__teamName {
