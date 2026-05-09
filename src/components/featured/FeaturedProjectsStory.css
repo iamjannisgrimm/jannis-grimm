@@ -877,6 +877,14 @@
     max-width: 28ch;
   }
 
+  .highlights-stack__teamCardsDescription {
+    width: min(48vw, 760px);
+    max-width: 48ch;
+    margin: 24px auto 0;
+    text-align: center;
+    align-self: center;
+  }
+
   /* SeeMe has 5 side-by-side images — scale them down on desktop */
   .highlights-stack:not(.highlights-stack--planner) .highlights-stack__productImageItem {
     height: clamp(220px, 38vh, 460px);
