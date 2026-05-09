@@ -607,15 +607,15 @@
     align-items: center;
     gap: 0;
     order: 3;
-    margin-top: -10px;
+    margin-top: -18px;
     width: 100%;
   }
 
   .highlights-stack__teamBridge {
     width: 64px;
-    min-height: 64px;
-    margin: 10px auto;
-    transform: translateY(6px);
+    min-height: 40px;
+    margin: 2px auto;
+    transform: translateY(2px);
   }
 
   .highlights-stack__teamCard--support {
