@@ -373,7 +373,7 @@
   left: 50%;
   top: 50%;
   width: 2px;
-  height: 44px;
+  height: 64px;
   display: block;
   background: rgba(110, 117, 132, 0.72);
   border-radius: 999px;
@@ -677,7 +677,7 @@
 
   .highlights-stack__teamConnector {
     width: 2px;
-    height: 32px;
+    height: 46px;
     transform: translate(-50%, calc(-50% - 25px));
   }
 
