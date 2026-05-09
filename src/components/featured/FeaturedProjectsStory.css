@@ -628,7 +628,7 @@
     width: 52px;
     height: auto;
     flex-direction: row;
-    transform: translate(-50%, calc(-50% - 25px));
+    transform: translate(-50%, calc(-50% - 20px));
   }
 
   .highlights-stack__teamBridgeIcon {
@@ -678,7 +678,7 @@
   .highlights-stack__teamConnector {
     width: 2px;
     height: 46px;
-    transform: translate(-50%, calc(-50% - 25px));
+    transform: translate(-50%, calc(-50% - 20px));
   }
 
   .highlights-stack__teamName {

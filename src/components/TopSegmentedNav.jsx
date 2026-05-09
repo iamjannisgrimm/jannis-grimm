@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { HomeIcon } from "@heroicons/react/24/solid";
 import { navigateTo } from "../lib/navigation";
 import "./TopSegmentedNav.css";
 
@@ -58,7 +57,7 @@ export default function TopSegmentedNav() {
   const [currentPath, setCurrentPath] = useState(() =>
     typeof window === "undefined" ? "/" : window.location.pathname || "/",
   );
-  const [activeKey, setActiveKey] = useState("home");
+  const [activeKey, setActiveKey] = useState("overview");
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -105,7 +104,7 @@ export default function TopSegmentedNav() {
       return undefined;
     }
 
-    const homeSections = ["home", "overview", "highlights", "assistants", "contact"];
+    const homeSections = ["overview", "highlights", "assistants", "contact"];
     let frameId = 0;
 
     const updateActiveKey = () => {
@@ -117,7 +116,7 @@ export default function TopSegmentedNav() {
       }
 
       const viewportAnchor = window.innerHeight * 0.28;
-      let nextActiveKey = "home";
+      let nextActiveKey = "overview";
 
       for (const sectionId of homeSections) {
         const element = document.getElementById(sectionId);
@@ -157,19 +156,6 @@ export default function TopSegmentedNav() {
 
   const items = useMemo(
     () => [
-      {
-        key: "home",
-        label: "Home",
-        iconOnly: true,
-        onClick: () => {
-          if (window.location.pathname !== "/") {
-            navigateTo("/");
-            window.setTimeout(() => scrollToSection("home"), 50);
-            return;
-          }
-          scrollToSection("home");
-        },
-      },
       {
         key: "overview",
         label: "Overview",
