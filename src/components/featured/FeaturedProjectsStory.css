@@ -816,6 +816,16 @@
 }
 
 @media (min-width: 769px) {
+  .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
+    padding-bottom: clamp(14px, 2.5vh, 28px);
+  }
+
+  .highlights-stack--light .highlights-stack__productShell {
+    justify-content: flex-start;
+    padding-top: clamp(113px, calc(15vh - 15px), 155px);
+    padding-bottom: clamp(90px, 12vh, 130px);
+  }
+
   .highlights-stack__productShell {
     justify-content: center;
     padding-top: clamp(84px, 10vh, 118px);
