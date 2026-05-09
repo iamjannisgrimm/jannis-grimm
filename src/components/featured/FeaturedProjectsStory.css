@@ -610,6 +610,7 @@
   }
 
   .highlights-stack__teamBridge {
+    width: 64px;
     min-height: 64px;
     margin: 10px auto;
     transform: translateY(6px);
@@ -620,7 +621,10 @@
   }
 
   .highlights-stack__teamBridgeIcons {
+    top: 50%;
+    left: 50%;
     width: 52px;
+    transform: translate(-50%, calc(-50% - 25px));
   }
 
   .highlights-stack__teamBridgeIcon {
@@ -668,7 +672,8 @@
   }
 
   .highlights-stack__teamConnector {
-    width: 22px;
+    width: 2px;
+    height: 22px;
     transform: translate(-50%, calc(-50% - 25px));
   }
 
