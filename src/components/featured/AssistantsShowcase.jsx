@@ -15,7 +15,6 @@ function buildAssistantsContent() {
       inlineTitles: ["Meet\nTARS", "Meet My\nAssistants"],
       teamIntroDescription:
         "The ultimate personal assistant ready to orchestrate my whole team of specialists automating my life.",
-      teamBridgeLabel: "Easily Invocable",
       teamCards: {
         left: {
           name: "Jannis",

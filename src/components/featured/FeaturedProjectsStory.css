@@ -325,33 +325,21 @@
 
 .highlights-stack__teamBridge {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  width: min(38vw, 360px);
-  max-width: 360px;
+  display: block;
+  width: 72px;
   min-height: 72px;
   margin: 0 auto;
 }
 
-.highlights-stack__teamBridgeLabel {
-  font-size: 0.95rem;
-  line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: rgba(90, 97, 111, 0.9);
-  text-align: left;
-  max-width: 148px;
-  flex: 0 0 148px;
-}
-
 .highlights-stack__teamBridgeIcons {
-  display: inline-flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  margin-left: auto;
-  position: relative;
+  justify-content: space-between;
   z-index: 1;
 }
 
@@ -376,6 +364,20 @@
   height: 20px;
   object-fit: contain;
   display: block;
+}
+
+.highlights-stack__teamConnector {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 2px;
+  display: block;
+  background: rgba(110, 117, 132, 0.72);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  z-index: 0;
 }
 
 .highlights-stack__teamIntroVisual {
@@ -608,13 +610,6 @@
   }
 
   .highlights-stack__teamBridge {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: min(88vw, 320px);
-    max-width: 320px;
     min-height: 64px;
     margin: 10px auto;
     transform: translateY(6px);
@@ -624,15 +619,8 @@
     margin-top: 0;
   }
 
-  .highlights-stack__teamBridgeLabel {
-    font-size: 0.84rem;
-    line-height: 1.15;
-    max-width: 110px;
-    flex: 0 0 110px;
-  }
-
   .highlights-stack__teamBridgeIcons {
-    gap: 8px;
+    width: 52px;
   }
 
   .highlights-stack__teamBridgeIcon {
@@ -680,18 +668,8 @@
   }
 
   .highlights-stack__teamConnector {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    height: auto;
-    display: block;
-    background: rgba(110, 117, 132, 0.72);
-    border-radius: 999px;
-    transform: translateX(-50%) translateY(-25px);
-    margin: 0;
-    z-index: 0;
+    width: 22px;
+    transform: translate(-50%, calc(-50% - 25px));
   }
 
   .highlights-stack__teamName {
