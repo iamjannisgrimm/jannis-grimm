@@ -29,6 +29,9 @@ function buildPanelTimeline({
   const hasInlineTitles = inlineTitles.length > 0;
 
   if (hasInlineTitles) {
+    if (teamIntro?.cardsDescription) {
+      gsap.set(teamIntro.cardsDescription, { opacity: 0, y: 18 });
+    }
     if (infos[0]) gsap.set(infos[0], { opacity: 0, y: 28 });
     if (infos[1]) gsap.set(infos[1], { opacity: 0, y: 36 });
     if (infos[2]) gsap.set(infos[2], { opacity: 0, y: 44 });
@@ -85,6 +88,9 @@ function buildPanelTimeline({
         if (teamIntro.rightCard) gsap.set(teamIntro.rightCard, { opacity: 0, y: 18 });
         if (teamIntro.infoWindow) gsap.set(teamIntro.infoWindow, { opacity: 0, y: 24 });
       }
+      if (header) {
+        gsap.set(header, { overflow: "hidden", height: header.offsetHeight });
+      }
       gsap.set(teamIntro.introVisual, {
         opacity: 1,
         x: 0,
@@ -135,6 +141,16 @@ function buildPanelTimeline({
         }, 0.74);
       }
 
+      if (header) {
+        tl.to(header, {
+          height: 0,
+          paddingBottom: 0,
+          opacity: 0,
+          duration: 0.2,
+          ease: "power2.inOut",
+        }, 0.56);
+      }
+
       tl.to(teamIntro.introVisual, {
         x: deltaX,
         y: deltaY - 46,
@@ -149,6 +165,15 @@ function buildPanelTimeline({
         ease: "power1.out",
       }, 0.84);
 
+      if (teamIntro.cardsDescription) {
+        tl.to(teamIntro.cardsDescription, {
+          opacity: 1,
+          y: 0,
+          duration: 0.16,
+          ease: "power2.out",
+        }, 0.86);
+      }
+
       if (isMobileTeamScene) {
         tl.to([teamIntro.leftSlot, teamIntro.bridge], {
           opacity: 0,
@@ -156,6 +181,14 @@ function buildPanelTimeline({
           duration: 0.16,
           ease: "power1.inOut",
         }, 0.98);
+        if (teamIntro.cardsDescription) {
+          tl.to(teamIntro.cardsDescription, {
+            opacity: 0,
+            y: -12,
+            duration: 0.14,
+            ease: "power1.inOut",
+          }, 0.98);
+        }
         tl.to(teamIntro.rightCard, {
           y: -320,
           duration: 0.32,
@@ -168,6 +201,14 @@ function buildPanelTimeline({
           duration: 0.22,
           ease: "power1.inOut",
         }, 0.98);
+        if (teamIntro.cardsDescription) {
+          tl.to(teamIntro.cardsDescription, {
+            opacity: 0,
+            y: -12,
+            duration: 0.14,
+            ease: "power1.inOut",
+          }, 0.98);
+        }
         tl.to(teamIntro.rightCard, {
           x: desktopCardShiftX - 140,
           duration: 0.32,
@@ -406,6 +447,7 @@ function PanelShell({
   teamConnectorRef,
   teamRightCardRef,
   teamRightCircleRef,
+  teamCardsDescriptionRef,
   teamInfoWindowRef,
   carouselRef,
   prioritizeMedia = false,
@@ -417,6 +459,7 @@ function PanelShell({
   const teamBridgeIcons = hero.teamBridgeIcons || null;
   const teamBridgeLabel = hero.teamBridgeLabel || "";
   const teamIntroDescription = hero.teamIntroDescription || "";
+  const teamCardsDescription = hero.teamCardsDescription || "";
   const hasStandaloneRotator = !hero.title && inlineTitles.length > 0;
   const hasMultilineInlineTitle = inlineTitles.some((title) => title.includes("\n"));
   const longestInlineTitle = inlineTitles.reduce(
@@ -663,6 +706,14 @@ function PanelShell({
                 ) : null}
               </article>
             </div>
+            {teamCardsDescription ? (
+              <p
+                ref={teamCardsDescriptionRef}
+                className="highlights-stack__teamCardsDescription"
+              >
+                {teamCardsDescription}
+              </p>
+            ) : null}
           </div>
         ) : hero.productImage ? (
           <img
@@ -783,6 +834,7 @@ export default function ProductStoryStack({
   const productTeamConnectorRef = useRef(null);
   const productTeamRightCardRef = useRef(null);
   const productTeamRightCircleRef = useRef(null);
+  const productTeamCardsDescriptionRef = useRef(null);
   const productTeamInfoWindowRef = useRef(null);
 
   const productCarouselRef = useRef(null);
@@ -891,6 +943,7 @@ export default function ProductStoryStack({
     const productTeamConnector = productTeamConnectorRef.current;
     const productTeamRightCard = productTeamRightCardRef.current;
     const productTeamRightCircle = productTeamRightCircleRef.current;
+    const productTeamCardsDescription = productTeamCardsDescriptionRef.current;
 
     const overlayCard = overlayCardRef.current;
     const overlayHeader = overlayHeaderRef.current;
@@ -963,6 +1016,7 @@ export default function ProductStoryStack({
               connector: productTeamConnector,
               rightCard: productTeamRightCard,
               targetCircle: productTeamRightCircle,
+              cardsDescription: productTeamCardsDescription,
               infoWindow: productTeamInfoWindowRef.current,
               }
             : null,
@@ -1110,6 +1164,7 @@ export default function ProductStoryStack({
             teamConnectorRef={productTeamConnectorRef}
             teamRightCardRef={productTeamRightCardRef}
             teamRightCircleRef={productTeamRightCircleRef}
+            teamCardsDescriptionRef={productTeamCardsDescriptionRef}
             teamInfoWindowRef={productTeamInfoWindowRef}
             carouselRef={productCarouselRef}
             prioritizeMedia

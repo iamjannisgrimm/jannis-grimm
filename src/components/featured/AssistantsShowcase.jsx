@@ -12,8 +12,10 @@ function buildAssistantsContent() {
       headline: "",
       backgroundColor: "#ffffff",
       themeColor: "#ffffff",
-      inlineTitles: ["Meet\nTARS", "Meet My\nAssistants"],
+      inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
+        "The ultimate personal assistant ready to orchestrate my whole team of specialists automating my life.",
+      teamCardsDescription:
         "The ultimate personal assistant ready to orchestrate my whole team of specialists automating my life.",
       teamCards: {
         left: {

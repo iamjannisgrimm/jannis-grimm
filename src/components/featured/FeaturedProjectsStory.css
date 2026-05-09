@@ -409,6 +409,15 @@
   color: rgba(17, 17, 17, 0.7);
 }
 
+.highlights-stack__teamCardsDescription {
+  margin: 18px auto 0;
+  max-width: 34ch;
+  font-size: clamp(1.1rem, 1.9vw, 1.3rem);
+  line-height: 1.58;
+  text-align: center;
+  color: rgba(17, 17, 17, 0.7);
+}
+
 .highlights-stack__teamCard {
   min-height: 500px;
   padding: clamp(24px, 2.4vw, 30px);
@@ -657,6 +666,13 @@
   }
 
   .highlights-stack__teamIntroDescription {
+    max-width: 26ch;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .highlights-stack__teamCardsDescription {
+    margin-top: 14px;
     max-width: 26ch;
     font-size: 1rem;
     line-height: 1.5;
