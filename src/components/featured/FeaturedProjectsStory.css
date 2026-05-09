@@ -379,7 +379,7 @@
 }
 
 .highlights-stack__teamIntroVisual {
-  width: min(30vw, 360px);
+  width: min(45vw, 540px);
   min-width: 240px;
   display: flex;
   align-items: center;
