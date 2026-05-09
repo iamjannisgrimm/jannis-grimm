@@ -615,7 +615,7 @@
     width: 64px;
     min-height: 40px;
     margin: 2px auto;
-    transform: translateY(2px);
+    transform: translateY(7px);
   }
 
   .highlights-stack__teamCard--support {
