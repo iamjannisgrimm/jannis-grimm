@@ -820,11 +820,11 @@
 
   .highlights-stack__infoWindow--team {
     top: 50%;
-    right: clamp(28px, 5vw, 72px);
-    left: auto;
+    left: calc(50% + 170px);
+    right: auto;
     bottom: auto;
     transform: translateY(-18%);
-    width: min(38vw, 520px);
+    width: min(30vw, 420px);
     min-height: 260px;
     text-align: left;
   }
