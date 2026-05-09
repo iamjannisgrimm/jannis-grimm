@@ -1015,6 +1015,20 @@
   margin-right: auto;
 }
 
+@media (min-width: 769px) {
+  .highlights-stack__infoWindow.highlights-stack__infoWindow--team {
+    top: 50%;
+    left: calc(50% + 420px);
+    right: auto;
+    bottom: auto;
+    transform: translateY(-18%);
+    width: min(20vw, 300px);
+    min-height: 260px;
+    text-align: left;
+    z-index: 6;
+  }
+}
+
 /* ── Overlay card ───────────────────────────────────────────────────────── */
 
 .highlights-stack__card--overlay .highlights-stack__productTitle,
