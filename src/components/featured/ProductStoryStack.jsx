@@ -29,6 +29,9 @@ function buildPanelTimeline({
   const hasInlineTitles = inlineTitles.length > 0;
 
   if (hasInlineTitles) {
+    if (teamIntro?.introDescription) {
+      gsap.set(teamIntro.introDescription, { opacity: 1, y: 0 });
+    }
     if (teamIntro?.cardsDescription) {
       gsap.set(teamIntro.cardsDescription, { opacity: 0, y: 18 });
     }
@@ -105,6 +108,14 @@ function buildPanelTimeline({
         duration: 0.26,
         ease: "power1.inOut",
       }, 0.56);
+      if (teamIntro.introDescription) {
+        tl.to(teamIntro.introDescription, {
+          opacity: 0,
+          y: -10,
+          duration: 0.14,
+          ease: "power1.inOut",
+        }, 0.56);
+      }
 
       if (isMobileTeamScene) {
         tl.to(teamIntro.leftSlot, {
@@ -447,6 +458,7 @@ function PanelShell({
   teamConnectorRef,
   teamRightCardRef,
   teamRightCircleRef,
+  teamIntroDescriptionRef,
   teamCardsDescriptionRef,
   teamInfoWindowRef,
   carouselRef,
@@ -629,7 +641,10 @@ function PanelShell({
                   />
                 </div>
                 {teamIntroDescription ? (
-                  <p className="highlights-stack__teamIntroDescription">
+                  <p
+                    ref={teamIntroDescriptionRef}
+                    className="highlights-stack__teamIntroDescription"
+                  >
                     {teamIntroDescription}
                   </p>
                 ) : null}
@@ -834,6 +849,7 @@ export default function ProductStoryStack({
   const productTeamConnectorRef = useRef(null);
   const productTeamRightCardRef = useRef(null);
   const productTeamRightCircleRef = useRef(null);
+  const productTeamIntroDescriptionRef = useRef(null);
   const productTeamCardsDescriptionRef = useRef(null);
   const productTeamInfoWindowRef = useRef(null);
 
@@ -943,6 +959,7 @@ export default function ProductStoryStack({
     const productTeamConnector = productTeamConnectorRef.current;
     const productTeamRightCard = productTeamRightCardRef.current;
     const productTeamRightCircle = productTeamRightCircleRef.current;
+    const productTeamIntroDescription = productTeamIntroDescriptionRef.current;
     const productTeamCardsDescription = productTeamCardsDescriptionRef.current;
 
     const overlayCard = overlayCardRef.current;
@@ -1016,6 +1033,7 @@ export default function ProductStoryStack({
               connector: productTeamConnector,
               rightCard: productTeamRightCard,
               targetCircle: productTeamRightCircle,
+              introDescription: productTeamIntroDescription,
               cardsDescription: productTeamCardsDescription,
               infoWindow: productTeamInfoWindowRef.current,
               }
@@ -1164,6 +1182,7 @@ export default function ProductStoryStack({
             teamConnectorRef={productTeamConnectorRef}
             teamRightCardRef={productTeamRightCardRef}
             teamRightCircleRef={productTeamRightCircleRef}
+            teamIntroDescriptionRef={productTeamIntroDescriptionRef}
             teamCardsDescriptionRef={productTeamCardsDescriptionRef}
             teamInfoWindowRef={productTeamInfoWindowRef}
             carouselRef={productCarouselRef}
