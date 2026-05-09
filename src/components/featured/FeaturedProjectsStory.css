@@ -592,7 +592,7 @@
     inset: auto;
     height: 0;
     overflow: visible;
-    margin-top: 8px;
+    margin-top: -18px;
     margin-bottom: 0;
     order: 2;
   }
@@ -672,10 +672,14 @@
   }
 
   .highlights-stack__teamCardsDescription {
-    margin-top: 14px;
+    display: block;
+    order: 4;
+    width: 100%;
+    margin-top: 10px;
     max-width: 26ch;
     font-size: 1rem;
     line-height: 1.5;
+    text-align: center;
   }
 
   .highlights-stack__teamCard {
