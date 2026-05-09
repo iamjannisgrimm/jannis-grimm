@@ -592,7 +592,7 @@
     inset: auto;
     height: 0;
     overflow: visible;
-    margin-top: -18px;
+    margin-top: -8px;
     margin-bottom: 0;
     order: 2;
   }
@@ -616,14 +616,14 @@
     align-items: center;
     gap: 0;
     order: 3;
-    margin-top: -18px;
+    margin-top: -8px;
     width: 100%;
   }
 
   .highlights-stack__teamBridge {
     width: 64px;
-    min-height: 40px;
-    margin: 2px auto;
+    min-height: 56px;
+    margin: 6px auto;
     transform: translateY(12px);
   }
 
@@ -697,7 +697,7 @@
 
   .highlights-stack__teamConnector {
     width: 2px;
-    height: 46px;
+    height: 58px;
     transform: translate(-50%, calc(-50% - 20px));
   }
 
