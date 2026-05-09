@@ -550,15 +550,33 @@ export function Home() {
         </div>
       </div>
 
-      <div style={{ width: "100%" }} data-mobile-chrome-color="#2f4257">
+      <div
+        style={{
+          width: "100%",
+          position: "relative",
+          zIndex: 3,
+          backgroundColor: "#2f4257",
+        }}
+        data-mobile-chrome-color="#2f4257"
+      >
         <EventPlannerStory />
       </div>
 
-      <div style={{ width: "100%" }} data-mobile-chrome-color="#ffffff">
-        <AssistantsShowcase />
+      <div
+        id="assistants"
+        className="home-snap-section"
+        style={{
+          width: "100%",
+          position: "relative",
+          zIndex: 1,
+          backgroundColor: "transparent",
+        }}
+        data-mobile-chrome-color="#ffffff"
+      >
+        <div data-snap-anchor="center">
+          <AssistantsShowcase />
+        </div>
       </div>
-
-      <div id="services" style={{ width: "100%", height: 1 }} />
 
       {/* Footer */}
       <div
@@ -571,16 +589,6 @@ export function Home() {
           <Footer />
         </div>
       </div>
-
-      <div
-        aria-hidden="true"
-        style={{
-          width: "100%",
-          height: "140px",
-          backgroundColor: "#2a2a2a",
-          flexShrink: 0,
-        }}
-      />
     </div>
   );
 }

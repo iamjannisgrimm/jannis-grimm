@@ -105,7 +105,7 @@ export default function TopSegmentedNav() {
       return undefined;
     }
 
-    const homeSections = ["home", "overview", "highlights", "services", "contact"];
+    const homeSections = ["home", "overview", "highlights", "assistants", "contact"];
     let frameId = 0;
 
     const updateActiveKey = () => {
@@ -192,6 +192,18 @@ export default function TopSegmentedNav() {
             return;
           }
           scrollToSection("highlights");
+        },
+      },
+      {
+        key: "assistants",
+        label: "Team",
+        onClick: () => {
+          if (window.location.pathname !== "/") {
+            navigateTo("/");
+            window.setTimeout(() => scrollToSection("assistants"), 50);
+            return;
+          }
+          scrollToSection("assistants");
         },
       },
       {

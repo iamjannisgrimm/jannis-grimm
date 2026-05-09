@@ -5,7 +5,7 @@ const Footer = () => {
     <footer style={{
       width: "100vw",
       backgroundColor: "#2A2A2A",
-      padding: "40px 0", // Slightly reduced padding
+      padding: "28px 0",
       marginTop: "0px",
       display: "flex",
       justifyContent: "center",
@@ -17,9 +17,9 @@ const Footer = () => {
         padding: "0 0px",
         textAlign: "center",
         color: "white",
-        marginBottom: "10px",
+        marginBottom: "2px",
         fontFamily: "SF Pro, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-        fontSize: "14px" // Made text slightly smaller
+        fontSize: "14px"
       }}>
         
         {/* Added LinkedIn Link */}
@@ -83,7 +83,7 @@ const Footer = () => {
 
         <p style={{ 
           margin: 0, 
-          fontSize: "12px", // Reduced footer copyright text size
+          fontSize: "12px",
           fontFamily: "SF Pro"
         }}>
           © {new Date().getFullYear()} Jannis Grimm. All rights reserved.
