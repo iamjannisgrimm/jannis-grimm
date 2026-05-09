@@ -463,7 +463,20 @@ function PanelShell({
                     title.includes("\n") ? "highlights-stack__titleWord--multiline" : ""
                   }`}
                 >
-                  {title}
+                  {title.includes("\n")
+                    ? title.split("\n").map((line, lineIndex, lines) => (
+                        <span
+                          key={`${title}-${lineIndex}`}
+                          className={`highlights-stack__titleLine ${
+                            i === 0 && lineIndex === lines.length - 1
+                              ? "highlights-stack__titleLine--heavy"
+                              : ""
+                          }`}
+                        >
+                          {line}
+                        </span>
+                      ))
+                    : title}
                 </span>
               ))}
             </span>

@@ -192,6 +192,14 @@
   text-align: center;
 }
 
+.highlights-stack__titleLine {
+  display: block;
+}
+
+.highlights-stack__titleLine--heavy {
+  font-weight: 900;
+}
+
 .highlights-stack__titleRotator--standalone {
   display: block;
   width: 100%;
