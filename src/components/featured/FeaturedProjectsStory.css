@@ -878,6 +878,8 @@
   }
 
   .highlights-stack__teamCardsDescription {
+    grid-column: 1 / -1;
+    justify-self: center;
     width: min(48vw, 760px);
     max-width: 48ch;
     margin: 24px auto 0;
