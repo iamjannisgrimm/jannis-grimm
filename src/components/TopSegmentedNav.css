@@ -131,7 +131,7 @@
 }
 
 .top-segmented-nav--onDark .top-segmented-nav__item--active {
-  color: #111111;
+  color: #ffffff;
 }
 
 .top-segmented-nav__item--active::before {
