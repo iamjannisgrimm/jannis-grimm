@@ -23,87 +23,90 @@ const Footer = () => {
         fontSize: "14px"
       }}>
         
-        {/* Added LinkedIn Link */}
-        <a 
-          href="https://www.linkedin.com/in/iamjannisgrimm" 
-          target="_blank"
-          rel="noopener noreferrer"
+        <nav
+          aria-label="Footer links"
           style={{
-            color: "white",
-            textDecoration: "none",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "22px",
             marginBottom: "12px",
-            display: "block",
-            opacity: 0.8,
-            transition: "opacity 0.2s ease",
-            fontSize: "14px",
-            fontFamily: "SF Pro"
+            flexWrap: "wrap"
           }}
-          onMouseOver={(e) => e.target.style.opacity = "1"}
-          onMouseOut={(e) => e.target.style.opacity = "0.8"}
         >
-          LinkedIn
-        </a>
+          <a 
+            href="https://www.linkedin.com/in/iamjannisgrimm" 
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              opacity: 0.8,
+              transition: "opacity 0.2s ease",
+              fontSize: "14px",
+              fontFamily: "SF Pro"
+            }}
+            onMouseOver={(e) => e.target.style.opacity = "1"}
+            onMouseOut={(e) => e.target.style.opacity = "0.8"}
+          >
+            LinkedIn
+          </a>
 
-        <a 
-          href="mailto:iamjannisgrimm@gmail.com" 
-          style={{
-            color: "white",
-            textDecoration: "none",
-            marginBottom: "12px",
-            display: "block",
-            opacity: 0.8,
-            transition: "opacity 0.2s ease",
-            fontSize: "14px",
-            fontFamily: "SF Pro"
-          }}
-          onMouseOver={(e) => e.target.style.opacity = "1"}
-          onMouseOut={(e) => e.target.style.opacity = "0.8"}
-        >
-          Email
-        </a>
+          <a 
+            href="mailto:iamjannisgrimm@gmail.com" 
+            style={{
+              color: "white",
+              textDecoration: "none",
+              opacity: 0.8,
+              transition: "opacity 0.2s ease",
+              fontSize: "14px",
+              fontFamily: "SF Pro"
+            }}
+            onMouseOver={(e) => e.target.style.opacity = "1"}
+            onMouseOut={(e) => e.target.style.opacity = "0.8"}
+          >
+            Email
+          </a>
 
-        <a 
-          href="https://github.com/iamjannisgrimm/my-portfolio" 
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            color: "white",
-            textDecoration: "none",
-            marginBottom: "12px",
-            display: "block",
-            opacity: 0.8,
-            transition: "opacity 0.2s ease",
-            fontSize: "14px",
-            fontFamily: "SF Pro"
-          }}
-          onMouseOver={(e) => e.target.style.opacity = "1"}
-          onMouseOut={(e) => e.target.style.opacity = "0.8"}
-        >
-          GitHub
-        </a>
+          <a 
+            href="https://github.com/iamjannisgrimm/my-portfolio" 
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              opacity: 0.8,
+              transition: "opacity 0.2s ease",
+              fontSize: "14px",
+              fontFamily: "SF Pro"
+            }}
+            onMouseOver={(e) => e.target.style.opacity = "1"}
+            onMouseOut={(e) => e.target.style.opacity = "0.8"}
+          >
+            GitHub
+          </a>
 
-        <button
-          type="button"
-          onClick={() => navigateTo("/timeline")}
-          style={{
-            color: "white",
-            textDecoration: "none",
-            margin: "0 auto 12px",
-            display: "block",
-            opacity: 0.8,
-            transition: "opacity 0.2s ease",
-            fontSize: "14px",
-            fontFamily: "SF Pro",
-            background: "transparent",
-            border: 0,
-            padding: 0,
-            cursor: "pointer"
-          }}
-          onMouseOver={(e) => e.currentTarget.style.opacity = "1"}
-          onMouseOut={(e) => e.currentTarget.style.opacity = "0.8"}
-        >
-          History
-        </button>
+          <button
+            type="button"
+            onClick={() => navigateTo("/timeline")}
+            style={{
+              color: "white",
+              textDecoration: "none",
+              opacity: 0.8,
+              transition: "opacity 0.2s ease",
+              fontSize: "14px",
+              fontFamily: "SF Pro",
+              background: "transparent",
+              border: 0,
+              padding: 0,
+              cursor: "pointer"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.opacity = "1"}
+            onMouseOut={(e) => e.currentTarget.style.opacity = "0.8"}
+          >
+            History
+          </button>
+        </nav>
 
         <p style={{ 
           margin: 0, 
