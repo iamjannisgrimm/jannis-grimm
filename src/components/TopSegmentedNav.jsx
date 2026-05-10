@@ -54,10 +54,111 @@ function scrollToSection(sectionId) {
 
 export default function TopSegmentedNav() {
   const [isVisible, setIsVisible] = useState(true);
+  const [isOnDarkHighlights, setIsOnDarkHighlights] = useState(false);
   const [currentPath, setCurrentPath] = useState(() =>
     typeof window === "undefined" ? "/" : window.location.pathname || "/",
   );
   const [activeKey, setActiveKey] = useState("overview");
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const parseHexColor = (value) => {
+      if (!value || typeof value !== "string") {
+        return null;
+      }
+
+      const normalized = value.trim();
+      const hex = normalized.startsWith("#") ? normalized.slice(1) : normalized;
+
+      if (hex.length === 3) {
+        return {
+          r: parseInt(hex[0] + hex[0], 16),
+          g: parseInt(hex[1] + hex[1], 16),
+          b: parseInt(hex[2] + hex[2], 16),
+        };
+      }
+
+      if (hex.length === 6) {
+        return {
+          r: parseInt(hex.slice(0, 2), 16),
+          g: parseInt(hex.slice(2, 4), 16),
+          b: parseInt(hex.slice(4, 6), 16),
+        };
+      }
+
+      return null;
+    };
+
+    const getRelativeLuminance = ({ r, g, b }) => {
+      const transform = (channel) => {
+        const value = channel / 255;
+        return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+      };
+
+      const rr = transform(r);
+      const gg = transform(g);
+      const bb = transform(b);
+      return 0.2126 * rr + 0.7152 * gg + 0.0722 * bb;
+    };
+
+    const syncDarkHighlights = () => {
+      if (currentPath !== "/" || activeKey !== "highlights") {
+        setIsOnDarkHighlights(false);
+        return;
+      }
+
+      const themeColor =
+        document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff";
+      const rgb = parseHexColor(themeColor);
+      if (!rgb) {
+        setIsOnDarkHighlights(false);
+        return;
+      }
+
+      setIsOnDarkHighlights(getRelativeLuminance(rgb) < 0.24);
+    };
+
+    let frameId = 0;
+    const requestSync = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        syncDarkHighlights();
+      });
+    };
+
+    const themeMeta = document.querySelector("meta[name='theme-color']");
+    const observer =
+      themeMeta instanceof HTMLElement
+        ? new MutationObserver(requestSync)
+        : null;
+
+    if (observer && themeMeta) {
+      observer.observe(themeMeta, {
+        attributes: true,
+        attributeFilter: ["content"],
+      });
+    }
+
+    syncDarkHighlights();
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync);
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+      observer?.disconnect();
+      window.removeEventListener("scroll", requestSync);
+      window.removeEventListener("resize", requestSync);
+    };
+  }, [activeKey, currentPath]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -225,7 +326,7 @@ export default function TopSegmentedNav() {
     <div
       className={`top-segmented-nav ${
         isVisible ? "top-segmented-nav--visible" : "top-segmented-nav--hidden"
-      } ${currentPath === "/" && activeKey === "highlights" ? "top-segmented-nav--onDark" : ""}`}
+      } ${isOnDarkHighlights ? "top-segmented-nav--onDark" : ""}`}
     >
       <div className="top-segmented-nav__shell" role="navigation" aria-label="Primary">
         {items.map((item) => (
