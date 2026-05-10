@@ -69,7 +69,22 @@ export default function Achievements({ githubContributionTotal }) {
             box-sizing: border-box;
           }
           .achievements-fade-viewport {
+            --achievement-fade-width: 58px;
             position: relative;
+            -webkit-mask-image: linear-gradient(
+              90deg,
+              transparent 0,
+              #000 var(--achievement-fade-width),
+              #000 calc(100% - var(--achievement-fade-width)),
+              transparent 100%
+            );
+            mask-image: linear-gradient(
+              90deg,
+              transparent 0,
+              #000 var(--achievement-fade-width),
+              #000 calc(100% - var(--achievement-fade-width)),
+              transparent 100%
+            );
           }
           .achievements-fade-viewport::before,
           .achievements-fade-viewport::after {
@@ -101,9 +116,12 @@ export default function Achievements({ githubContributionTotal }) {
             max-width: calc((760px - 48px - (var(--achievement-gap) * 3)) / 4);
           }
           @media (max-width: 768px) {
+            .achievements-fade-viewport {
+              --achievement-fade-width: 54px;
+            }
             .achievements-fade-viewport::before,
             .achievements-fade-viewport::after {
-              width: 42px;
+              width: 54px;
             }
           }
         `}
