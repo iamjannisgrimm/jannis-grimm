@@ -64,17 +64,27 @@ export default function TopSegmentedNav() {
       return undefined;
     }
 
-    let previousY = window.scrollY;
     let frameId = 0;
+    let idleTimeoutId = 0;
 
     const updateVisibility = () => {
       frameId = 0;
       const currentY = window.scrollY;
       const isNearTop = currentY < 16;
-      const isScrollingUp = currentY < previousY;
 
-      setIsVisible(isNearTop);
-      previousY = currentY;
+      if (idleTimeoutId) {
+        window.clearTimeout(idleTimeoutId);
+      }
+
+      if (isNearTop) {
+        setIsVisible(true);
+        return;
+      }
+
+      setIsVisible(false);
+      idleTimeoutId = window.setTimeout(() => {
+        setIsVisible(true);
+      }, 1500);
     };
 
     const requestTick = () => {
@@ -93,6 +103,9 @@ export default function TopSegmentedNav() {
     return () => {
       if (frameId) {
         window.cancelAnimationFrame(frameId);
+      }
+      if (idleTimeoutId) {
+        window.clearTimeout(idleTimeoutId);
       }
       window.removeEventListener("scroll", requestTick);
       window.removeEventListener("popstate", handlePopstate);
