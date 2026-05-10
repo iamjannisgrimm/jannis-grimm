@@ -351,6 +351,7 @@ const Timeline = () => {
   const chromeColor = isHeroChromeActive ? "rgba(0,0,0,0.5)" : isDarkBg ? "rgba(255,255,255,0.4)" : "#bbb";
   const progressBarBg = isHeroChromeActive ? "rgba(0,0,0,0.12)" : isDarkBg ? "rgba(255,255,255,0.15)" : "#eee";
   const progressBarFill = isHeroChromeActive ? "#000" : isDarkBg ? "rgba(255,255,255,0.8)" : "#000";
+  const dateRailX = -scrollDistance + progress * scrollDistance;
 
   return (
     <div
@@ -375,7 +376,7 @@ const Timeline = () => {
           transition: "background-color 0.4s ease",
         }}
       >
-        <div style={{ width: "100%", display: "flex", justifyContent: "center", padding: "22px 0 14px", flexShrink: 0 }}>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center", padding: "18px 0 10px", flexShrink: 0 }}>
           <p style={{
             fontSize: "11px",
             fontWeight: 600,
@@ -387,6 +388,48 @@ const Timeline = () => {
           }}>
             Experience &amp; Projects
           </p>
+        </div>
+
+        <div
+          style={{
+            width: "100%",
+            overflow: "hidden",
+            flexShrink: 0,
+            paddingBottom: "8px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              paddingLeft: "6vw",
+              transform: `translate3d(${dateRailX}px, 0, 0)`,
+              willChange: "transform",
+            }}
+          >
+            {orderedData.map((item, index) => {
+              const labelWidth = item.isHero ? "100vw" : isMobile ? "86vw" : `${CARD_WIDTH}px`;
+
+              return (
+                <div
+                  key={`${item.date}-${index}`}
+                  style={{
+                    width: labelWidth,
+                    flexShrink: 0,
+                    color: chromeColor,
+                    fontSize: isMobile ? "12px" : "13px",
+                    fontWeight: 750,
+                    letterSpacing: "0.04em",
+                    lineHeight: 1,
+                    fontVariantNumeric: "tabular-nums",
+                    transition: "color 0.4s ease",
+                  }}
+                >
+                  {item.date}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div style={{ width: "100%", height: "1px", background: progressBarBg, flexShrink: 0, transition: "background 0.4s ease" }}>

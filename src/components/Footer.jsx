@@ -41,7 +41,7 @@ const Footer = () => {
           onMouseOver={(e) => e.target.style.opacity = "1"}
           onMouseOut={(e) => e.target.style.opacity = "0.8"}
         >
-          Connect on LinkedIn
+          LinkedIn
         </a>
 
         <a 
@@ -59,7 +59,7 @@ const Footer = () => {
           onMouseOver={(e) => e.target.style.opacity = "1"}
           onMouseOut={(e) => e.target.style.opacity = "0.8"}
         >
-          iamjannisgrimm@gmail.com
+          Email
         </a>
 
         <a 
@@ -79,7 +79,7 @@ const Footer = () => {
           onMouseOver={(e) => e.target.style.opacity = "1"}
           onMouseOut={(e) => e.target.style.opacity = "0.8"}
         >
-          View Source on my GitHub
+          GitHub
         </a>
 
         <button
