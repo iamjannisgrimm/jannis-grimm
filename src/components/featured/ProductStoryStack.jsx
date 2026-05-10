@@ -51,6 +51,9 @@ function buildPanelTimeline({
       !!teamIntro?.introVisual && !!teamIntro?.cards && !!teamIntro?.targetCircle;
     const introStops = isTeamInlineSequence ? [0.18, 0.58] : [0.18, 0.5, 0.82];
     const outroStops = isTeamInlineSequence ? [0.5] : [0.38, 0.7];
+    const teamCardsExitStart = 1.22;
+    const teamSoloStart = 1.24;
+    const teamInfoStart = 1.48;
 
     if (teamIntro?.introVisual && teamIntro?.cards && teamIntro?.targetCircle) {
       const isMobileTeamScene =
@@ -191,40 +194,40 @@ function buildPanelTimeline({
           y: -18,
           duration: 0.16,
           ease: "power1.inOut",
-        }, 0.98);
+        }, teamCardsExitStart);
         if (teamIntro.cardsDescription) {
           tl.to(teamIntro.cardsDescription, {
             opacity: 0,
             y: -12,
             duration: 0.14,
             ease: "power1.inOut",
-          }, 0.98);
+          }, teamCardsExitStart);
         }
         tl.to(teamIntro.rightCard, {
           y: -320,
           duration: 0.32,
           ease: "power2.inOut",
-        }, 1.0);
+        }, teamSoloStart);
       } else {
         tl.to([teamIntro.leftCard, teamIntro.bridge], {
           opacity: 0,
           x: -220,
           duration: 0.22,
           ease: "power1.inOut",
-        }, 0.98);
+        }, teamCardsExitStart);
         if (teamIntro.cardsDescription) {
           tl.to(teamIntro.cardsDescription, {
             opacity: 0,
             y: -12,
             duration: 0.14,
             ease: "power1.inOut",
-          }, 0.98);
+          }, teamCardsExitStart);
         }
         tl.to(teamIntro.rightCard, {
           x: desktopCardShiftX - 140,
           duration: 0.32,
           ease: "power2.inOut",
-        }, 1.0);
+        }, teamSoloStart);
       }
 
       if (teamIntro.infoWindow) {
@@ -233,7 +236,7 @@ function buildPanelTimeline({
           y: 0,
           duration: 0.16,
           ease: "power2.out",
-        }, 1.16);
+        }, teamInfoStart);
       }
 
       if (infos[0]) {
@@ -242,14 +245,14 @@ function buildPanelTimeline({
           y: 0,
           duration: 0.18,
           ease: "power2.out",
-        }, 1.2);
+        }, teamInfoStart + 0.04);
         if (infos[1] || infos[2]) {
           tl.to(infos[0], {
             opacity: 0,
             y: -20,
             duration: 0.14,
             ease: "power1.inOut",
-          }, 1.42);
+          }, teamInfoStart + 0.26);
         }
       }
 
@@ -259,14 +262,14 @@ function buildPanelTimeline({
           y: 0,
           duration: 0.18,
           ease: "power2.out",
-        }, 1.48);
+        }, teamInfoStart + 0.32);
         if (infos[2]) {
           tl.to(infos[1], {
             opacity: 0,
             y: -20,
             duration: 0.14,
             ease: "power1.inOut",
-          }, 1.7);
+          }, teamInfoStart + 0.54);
         }
       }
 
@@ -276,7 +279,7 @@ function buildPanelTimeline({
           y: 0,
           duration: 0.18,
           ease: "power2.out",
-        }, 1.76);
+        }, teamInfoStart + 0.6);
       }
     }
 
@@ -387,9 +390,11 @@ function makeSnapConfig(hasCompanion = false) {
 
 function makeInlineTitleSnapConfig(count, isTeamInlineSequence = false) {
   const baseStops = isTeamInlineSequence
-    ? [0, 0.18, 0.58, 1]
+    ? [0, 0.18, 0.43, 0.66, 0.8, 0.92, 1]
     : [0, 0.18, 0.5, 0.82, 1];
-  const stops = baseStops.slice(0, Math.max(3, count + 2));
+  const stops = isTeamInlineSequence
+    ? baseStops
+    : baseStops.slice(0, Math.max(3, count + 2));
   return {
     snapTo: (value) => stops.reduce((a, b) =>
       Math.abs(b - value) < Math.abs(a - value) ? b : a
@@ -1054,9 +1059,9 @@ export default function ProductStoryStack({
         preventOverlaps: stackId,
         animation: tl,
         invalidateOnRefresh: true,
-        snap: isDesktop
+        snap: isDesktop || isTeamInlineSequence
           ? (productInlineTitles.length
-              ? makeInlineTitleSnapConfig(productInlineTitles.length)
+              ? makeInlineTitleSnapConfig(productInlineTitles.length, isTeamInlineSequence)
               : makeSnapConfig(!!productCompanion))
           : false,
         onUpdate: (self) => {
