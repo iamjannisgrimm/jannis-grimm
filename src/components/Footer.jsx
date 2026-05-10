@@ -1,4 +1,5 @@
 import React from 'react';
+import { navigateTo } from '../lib/navigation';
 
 const Footer = () => {
   return (
@@ -80,6 +81,29 @@ const Footer = () => {
         >
           View Source on my GitHub
         </a>
+
+        <button
+          type="button"
+          onClick={() => navigateTo("/timeline")}
+          style={{
+            color: "white",
+            textDecoration: "none",
+            margin: "0 auto 12px",
+            display: "block",
+            opacity: 0.8,
+            transition: "opacity 0.2s ease",
+            fontSize: "14px",
+            fontFamily: "SF Pro",
+            background: "transparent",
+            border: 0,
+            padding: 0,
+            cursor: "pointer"
+          }}
+          onMouseOver={(e) => e.currentTarget.style.opacity = "1"}
+          onMouseOut={(e) => e.currentTarget.style.opacity = "0.8"}
+        >
+          History
+        </button>
 
         <p style={{ 
           margin: 0, 
