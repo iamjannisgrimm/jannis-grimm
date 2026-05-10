@@ -106,6 +106,22 @@ const Footer = () => {
           >
             History
           </button>
+
+          <a
+            href="./privacy.html"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              opacity: 0.8,
+              transition: "opacity 0.2s ease",
+              fontSize: "14px",
+              fontFamily: "SF Pro"
+            }}
+            onMouseOver={(e) => e.target.style.opacity = "1"}
+            onMouseOut={(e) => e.target.style.opacity = "0.8"}
+          >
+            Privacy
+          </a>
         </nav>
 
         <p style={{ 

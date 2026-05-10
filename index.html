@@ -640,6 +640,11 @@
       }
 
       function attachPrivacyFooterLink() {
+        const footerNav = document.querySelector('nav[aria-label="Footer links"]');
+        if (footerNav?.textContent?.includes("Privacy")) {
+          return;
+        }
+
         const footerCopy = Array.from(document.querySelectorAll("p")).find((element) =>
           element.textContent?.includes("All rights reserved."),
         );
