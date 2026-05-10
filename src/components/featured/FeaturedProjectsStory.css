@@ -411,7 +411,7 @@
 }
 
 .highlights-stack__teamIntroVisual {
-  width: min(45vw, 540px);
+  width: min(42vw, 500px);
   min-width: 240px;
   display: flex;
   align-items: center;
@@ -426,6 +426,8 @@
   height: auto;
   display: block;
   object-fit: contain;
+  transform: scale(1.08);
+  transform-origin: center center;
 }
 
 .highlights-stack__teamIntroDescription {
@@ -447,8 +449,8 @@
 }
 
 .highlights-stack__teamCard {
-  min-height: 500px;
-  padding: clamp(24px, 2.4vw, 30px);
+  min-height: 470px;
+  padding: clamp(20px, 2.1vw, 26px);
   border-radius: 30px;
   background: #ffffff;
   border: 1px solid rgba(107, 117, 137, 0.12);
@@ -461,10 +463,10 @@
 }
 
 .highlights-stack__teamCircle {
-  width: min(19vw, 290px);
-  height: min(19vw, 290px);
-  min-width: 190px;
-  min-height: 190px;
+  width: min(18vw, 270px);
+  height: min(18vw, 270px);
+  min-width: 178px;
+  min-height: 178px;
   border-radius: 999px;
   overflow: hidden;
   background: #f4f6fa;
@@ -489,7 +491,7 @@
 .highlights-stack__teamPortrait--tars {
   object-fit: contain;
   object-position: center center;
-  transform: scale(0.82);
+  transform: scale(0.88);
 }
 
 .highlights-stack__teamConnector {
@@ -684,41 +686,41 @@
   }
 
   .highlights-stack__teamIntroVisual {
-    width: min(88vw, 384px);
+    width: min(78vw, 320px);
     min-width: 0;
   }
 
   .highlights-stack__teamIntroVisualWrap {
-    gap: 14px;
-    width: min(88vw, 384px);
+    gap: 10px;
+    width: min(78vw, 320px);
   }
 
   .highlights-stack__teamIntroDescription {
-    max-width: 26ch;
+    max-width: 30ch;
     font-size: 1rem;
-    line-height: 1.5;
+    line-height: 1.44;
   }
 
   .highlights-stack__teamCardsDescription {
     display: block;
     order: 4;
     width: 100%;
-    margin-top: 10px;
-    max-width: 26ch;
+    margin-top: 8px;
+    max-width: 30ch;
     font-size: 1rem;
-    line-height: 1.5;
+    line-height: 1.44;
     text-align: center;
   }
 
   .highlights-stack__teamCard {
     min-height: 0;
-    padding: 24px 14px 16px;
+    padding: 18px 12px 14px;
     border-radius: 22px;
   }
 
   .highlights-stack__teamCircle {
-    width: min(42vw, 164px);
-    height: min(42vw, 164px);
+    width: min(39vw, 154px);
+    height: min(39vw, 154px);
     min-width: 0;
     min-height: 0;
   }
@@ -738,6 +740,38 @@
     max-width: 18ch;
     font-size: 0.9rem;
     line-height: 1.28;
+  }
+
+  @media (max-height: 720px) {
+    .highlights-stack__teamIntroVisual {
+      width: min(74vw, 292px);
+    }
+
+    .highlights-stack__teamIntroVisualWrap {
+      width: min(74vw, 292px);
+      gap: 8px;
+    }
+
+    .highlights-stack__teamIntroDescription,
+    .highlights-stack__teamCardsDescription {
+      font-size: 0.95rem;
+      line-height: 1.38;
+      max-width: 31ch;
+    }
+
+    .highlights-stack__teamCard {
+      padding-top: 16px;
+      padding-bottom: 12px;
+    }
+
+    .highlights-stack__teamCircle {
+      width: min(36vw, 142px);
+      height: min(36vw, 142px);
+    }
+
+    .highlights-stack__teamName {
+      margin-top: 10px;
+    }
   }
 
   .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
@@ -872,13 +906,13 @@
   }
 
   .highlights-stack__infoWindow--team {
-    top: 50%;
-    left: calc(50% + 420px);
+    top: clamp(260px, 40vh, 380px);
+    left: calc(50% + 390px);
     right: auto;
     bottom: auto;
-    transform: translateY(-18%);
-    width: min(20vw, 300px);
-    min-height: 260px;
+    transform: none;
+    width: min(24vw, 380px);
+    min-height: 300px;
     text-align: left;
     z-index: 6;
   }
@@ -902,7 +936,9 @@
   .highlights-stack__infoWindow--team .highlights-stack__infoBody {
     margin-left: 0;
     margin-right: 0;
-    max-width: 28ch;
+    max-width: 32ch;
+    font-size: clamp(1rem, 1.45vw, 1.2rem);
+    line-height: 1.5;
   }
 
   .highlights-stack__teamCardsDescription {
@@ -1081,13 +1117,13 @@
 
 @media (min-width: 769px) {
   .highlights-stack__infoWindow.highlights-stack__infoWindow--team {
-    top: 50%;
-    left: calc(50% + 420px);
+    top: clamp(260px, 40vh, 380px);
+    left: calc(50% + 390px);
     right: auto;
     bottom: auto;
-    transform: translateY(-18%);
-    width: min(20vw, 300px);
-    min-height: 260px;
+    transform: none;
+    width: min(24vw, 380px);
+    min-height: 300px;
     text-align: left;
     z-index: 6;
   }
