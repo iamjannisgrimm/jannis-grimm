@@ -2,6 +2,39 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { achievements } from '../data/achievements'
 
 const WORK_CONTRIBUTION_OFFSET = 2500
+const DASHBOARD_CONTENT_ENDPOINT = 'https://dashboard.iamjannisgrimm.com/api/content?key=number_stack'
+
+const normalizeAchievementItems = (items, fallback = achievements) => {
+  if (!Array.isArray(items)) {
+    return fallback
+  }
+
+  return items
+    .map((item) => ({
+      title: typeof item?.title === 'string' ? item.title : '',
+      subtitle: typeof item?.subtitle === 'string' ? item.subtitle : '',
+    }))
+    .filter((item) => item.title.trim() || item.subtitle.trim())
+}
+
+const parseDashboardAchievements = (body) => {
+  try {
+    return normalizeAchievementItems(JSON.parse(body), achievements)
+  } catch {
+    return achievements
+  }
+}
+
+const getInitialAchievements = () => {
+  if (
+    typeof window !== 'undefined' &&
+    Array.isArray(window.__PORTFOLIO_ACHIEVEMENTS__)
+  ) {
+    return normalizeAchievementItems(window.__PORTFOLIO_ACHIEVEMENTS__)
+  }
+
+  return achievements
+}
 
 const formatMonthlyCommits = (githubContributionTotal) => {
   if (typeof githubContributionTotal !== 'number') {
@@ -13,6 +46,7 @@ const formatMonthlyCommits = (githubContributionTotal) => {
 }
 
 export default function Achievements({ githubContributionTotal }) {
+  const [baseStats, setBaseStats] = useState(getInitialAchievements)
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth <= 768 : false
   )
@@ -23,24 +57,55 @@ export default function Achievements({ githubContributionTotal }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  useEffect(() => {
+    let isMounted = true
+
+    const shouldRefreshFromDashboard =
+      import.meta.env.DEV ||
+      !Array.isArray(window.__PORTFOLIO_ACHIEVEMENTS__)
+
+    if (!shouldRefreshFromDashboard) {
+      return () => {
+        isMounted = false
+      }
+    }
+
+    fetch(DASHBOARD_CONTENT_ENDPOINT)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (!isMounted || typeof payload?.body !== 'string') {
+          return
+        }
+
+        setBaseStats(parseDashboardAchievements(payload.body))
+      })
+      .catch(() => {
+        // Keep the bundled/preloaded fallback if the dashboard content is unavailable.
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   const stats = useMemo(() => {
     const commitsPerMonth = {
       title: formatMonthlyCommits(githubContributionTotal),
       subtitle: 'Commits per Month',
     }
 
-    const experienceIndex = achievements.findIndex(({ subtitle }) => subtitle === 'Years of Experience')
+    const experienceIndex = baseStats.findIndex(({ subtitle }) => subtitle === 'Years of Experience')
 
     if (experienceIndex === -1) {
-      return [...achievements, commitsPerMonth]
+      return baseStats
     }
 
     return [
-      ...achievements.slice(0, experienceIndex + 1),
+      ...baseStats.slice(0, experienceIndex + 1),
       commitsPerMonth,
-      ...achievements.slice(experienceIndex + 1),
+      ...baseStats.slice(experienceIndex + 1),
     ]
-  }, [githubContributionTotal])
+  }, [baseStats, githubContributionTotal])
 
   const mobileTrack = [...stats, ...stats]
   const desktopTrack = [...stats, ...stats]
