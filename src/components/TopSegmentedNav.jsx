@@ -158,7 +158,13 @@ export default function TopSegmentedNav() {
     };
 
     const syncSurfaceTone = () => {
+      const activeSection =
+        currentPath === "/" ? document.getElementById(activeKey) : null;
+      const sectionColor =
+        activeSection?.getAttribute("data-mobile-chrome-color") ||
+        activeSection?.dataset?.mobileChromeColor;
       const themeColor =
+        sectionColor ||
         document.querySelector("meta[name='theme-color']")?.getAttribute("content") ||
         getComputedStyle(document.documentElement).getPropertyValue("--timeline-app-background") ||
         "#ffffff";
@@ -208,7 +214,7 @@ export default function TopSegmentedNav() {
       window.removeEventListener("scroll", requestSync);
       window.removeEventListener("resize", requestSync);
     };
-  }, []);
+  }, [activeKey, currentPath]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
