@@ -8,7 +8,8 @@ const formatMonthlyCommits = (githubContributionTotal) => {
     return '...'
   }
 
-  return Math.round((githubContributionTotal + WORK_CONTRIBUTION_OFFSET) / 12).toLocaleString('en-US')
+  const monthlyCommits = (githubContributionTotal + WORK_CONTRIBUTION_OFFSET) / 12
+  return `${(Math.round(monthlyCommits / 10) * 10).toLocaleString('en-US')}+`
 }
 
 export default function Achievements({ githubContributionTotal }) {
@@ -61,10 +62,32 @@ export default function Achievements({ githubContributionTotal }) {
           }
           .achievements-desktop-viewport {
             --achievement-gap: 32px;
+            position: relative;
             width: min(100%, 760px);
             overflow: hidden;
             padding: 0 24px;
             box-sizing: border-box;
+          }
+          .achievements-fade-viewport {
+            position: relative;
+          }
+          .achievements-fade-viewport::before,
+          .achievements-fade-viewport::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 58px;
+            z-index: 2;
+            pointer-events: none;
+          }
+          .achievements-fade-viewport::before {
+            left: 0;
+            background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+          }
+          .achievements-fade-viewport::after {
+            right: 0;
+            background: linear-gradient(270deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
           }
           .achievements-desktop-track {
             display: flex;
@@ -77,11 +100,18 @@ export default function Achievements({ githubContributionTotal }) {
             flex: 0 0 calc((min(100vw, 760px) - 48px - (var(--achievement-gap) * 3)) / 4);
             max-width: calc((760px - 48px - (var(--achievement-gap) * 3)) / 4);
           }
+          @media (max-width: 768px) {
+            .achievements-fade-viewport::before,
+            .achievements-fade-viewport::after {
+              width: 42px;
+            }
+          }
         `}
       </style>
 
       {isMobile ? (
         <div
+          className="achievements-fade-viewport"
           style={{
             width: '100%',
             overflow: 'hidden',
@@ -137,7 +167,7 @@ export default function Achievements({ githubContributionTotal }) {
           </div>
         </div>
       ) : (
-        <div className="achievements-desktop-viewport">
+        <div className="achievements-desktop-viewport achievements-fade-viewport">
           <div className="achievements-desktop-track">
             {desktopTrack.map(({ title, subtitle }, idx) => (
               <div key={`${title}-${subtitle}-${idx}`} className="achievements-desktop-card" style={{
