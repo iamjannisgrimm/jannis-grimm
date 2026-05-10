@@ -37,7 +37,7 @@ function buildPlannerContent() {
     ],
     overlay: {
       hero: {
-        title: "For your Invitees",
+        title: "For your Guests",
         headline: "Every guest gets their own beautiful event page — with everything they need from save the date to the big day.",
         backgroundColor: "#F6F2ED",
         productImages: [

@@ -27,7 +27,7 @@ function buildHighlightContent() {
   return {
     hero: {
       title: heroProject?.title || "SeeMe",
-      headline: <>A <strong>private, personal</strong> AI built around how you think, reflect, and grow — with expert coaches in your corner.</>,
+      headline: <>A <strong>private, personal</strong> AI built around how you think and grow — with expert coaches in your corner.</>,
       themeColor: "#c4a49a",
       backgroundImage: heroProject?.backgroundImage || heroProject?.image || "",
       productImages: [

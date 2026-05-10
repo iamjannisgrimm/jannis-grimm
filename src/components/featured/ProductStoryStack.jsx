@@ -21,6 +21,7 @@ function buildPanelTimeline({
   teamIntro = null,
   isDesktop,
   travel,
+  extraY = 0,
 }) {
   const headerH = header ? header.offsetHeight + 16 : 0;
   const hasCompanion = !!companion;
@@ -317,7 +318,7 @@ function buildPanelTimeline({
 
   // Phase 1: title out + image up
   if (header) tl.to(header, { y: -22, opacity: 0, duration: 0.14, ease: "power1.in" }, introHold);
-  if (image && headerH > 0) tl.to(image, { y: -headerH, duration: 0.18, ease: "power2.inOut" }, introHold);
+  if (image && headerH > 0) tl.to(image, { y: -(headerH + extraY), duration: 0.18, ease: "power2.inOut" }, introHold);
   const extras = [badge, url].filter(Boolean);
   if (extras.length) tl.to(extras, { opacity: 0, duration: 0.12, ease: "power1.in" }, introHold);
 
@@ -1019,6 +1020,7 @@ export default function ProductStoryStack({
       const hasTeamInfoSequence = isTeamInlineSequence && infos.length > 0;
 
       // ── Product panel ──────────────────────────────────────────────────────
+      const isPlanner = className.includes("highlights-stack--planner");
       const tl = buildPanelTimeline({
         header: productHeader,
         image: productImage,
@@ -1045,6 +1047,7 @@ export default function ProductStoryStack({
             : null,
         isDesktop,
         travel,
+        extraY: isPlanner ? 20 : 0,
       });
 
       const productTrigger = ScrollTrigger.create({
@@ -1085,6 +1088,7 @@ export default function ProductStoryStack({
           inlineTitles: overlayInlineTitles,
           isDesktop,
           travel,
+          extraY: isPlanner ? 20 : 0,
         });
         overlayTrigger = ScrollTrigger.create({
           id: `${stackId}-overlay`,

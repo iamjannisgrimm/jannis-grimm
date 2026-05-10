@@ -105,7 +105,7 @@ const ProfileHeader = ({ image, title }) => {
             display: isMobile ? "flex" : "block",
             flexDirection: isMobile ? "column" : undefined,
             alignItems: isMobile ? "center" : undefined,
-            gap: isMobile ? "0.14em" : 0,
+            gap: isMobile ? "calc(0.14em + 10px)" : 0,
             color: "black",
             fontSize: isMobile
               ? "clamp(2.2rem, 8vw, 3.6rem)"
@@ -116,19 +116,19 @@ const ProfileHeader = ({ image, title }) => {
             fontFamily: "SF Pro",
             letterSpacing: "-0.06em",
             padding: 0,
-            margin: "0 0 30px 0",
+            margin: "0 auto 30px",
             width: "100%",
             maxWidth: isMobile ? "800px" : "1100px",
             whiteSpace: isMobile ? "normal" : "nowrap",
           }}
         >
-          {title.split(". ").map((part, i) => (
+          {title.split(". ").map((part, i, arr) => (
             <span
               key={i}
               className="title-part"
               style={{
                 display: isMobile ? "block" : "inline-block",
-                marginRight: isMobile ? 0 : "0.2em",
+                marginRight: isMobile ? 0 : (i < arr.length - 1 ? "0.2em" : 0),
               }}
             >
               {part}{"."}
