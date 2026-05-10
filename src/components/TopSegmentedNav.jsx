@@ -84,7 +84,7 @@ export default function TopSegmentedNav() {
       setIsVisible(false);
       idleTimeoutId = window.setTimeout(() => {
         setIsVisible(true);
-      }, 1500);
+      }, 1000);
     };
 
     const requestTick = () => {
