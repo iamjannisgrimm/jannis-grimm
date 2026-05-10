@@ -166,10 +166,13 @@ export default function TopSegmentedNav() {
       const metaThemeColor =
         document.querySelector("meta[name='theme-color']")?.getAttribute("content");
       const themeColor =
-        metaThemeColor ||
-        sectionColor ||
-        getComputedStyle(document.documentElement).getPropertyValue("--timeline-app-background") ||
-        "#ffffff";
+        activeKey === "highlights"
+          ? metaThemeColor || sectionColor ||
+            getComputedStyle(document.documentElement).getPropertyValue("--timeline-app-background") ||
+            "#ffffff"
+          : sectionColor || metaThemeColor ||
+            getComputedStyle(document.documentElement).getPropertyValue("--timeline-app-background") ||
+            "#ffffff";
       const rgb = parseHexColor(themeColor);
       if (!rgb) {
         setIsDarkSurface(false);
