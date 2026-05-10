@@ -9,7 +9,7 @@ function buildPlannerContent() {
   return {
     hero: {
       title: "Venty",
-      headline: "An AI planner that makes complex events feel effortless — from first idea to the big day.",
+      headline: "Meet your personal event planner. Tell it what you want — it coordinates everyone and everything to make it happen.",
       backgroundImage: `${BUCKET}/weddingbg.png`,
       backgroundColor: "#2f4257",
       themeColor: "#2f4257",
@@ -20,25 +20,25 @@ function buildPlannerContent() {
     },
     infoBlocks: [
       {
-        eyebrow: "What it solves",
-        title: "Complexity",
-        body: "Venues, guests, vendors, timelines — Venty holds every detail together so the planning never overwhelms the vision.",
+        eyebrow: "How it starts",
+        title: "Just Talk",
+        body: "Describe your event in plain language. Venty understands what you need, builds the plan, and gets to work — no forms, no setup, no back-and-forth.",
       },
       {
-        eyebrow: "How it feels",
-        title: "Calm",
-        body: "No spreadsheets, no chasing replies. Every task, reminder, and coordination in one focused, beautiful space.",
+        eyebrow: "What it handles",
+        title: "Everything",
+        body: "Status checks, reminders, vendor follow-ups, guest questions, updates — Venty runs the entire coordination layer so you never have to chase anyone.",
       },
       {
         eyebrow: "The result",
-        title: "Confidence",
-        body: "Walk into your event knowing every detail is right — because Venty made sure nothing was ever left to chance.",
+        title: "Effortless",
+        body: "Walk into your event knowing every detail was handled. Venty coordinated it all while you stayed focused on the things that actually matter.",
       },
     ],
     overlay: {
       hero: {
-        title: "Assistant",
-        headline: "The coordinator behind the scenes — so you can stay in the moment.",
+        title: "For your Invitees",
+        headline: "Every guest gets their own beautiful event page — with everything they need from save the date to the big day.",
         backgroundColor: "#F6F2ED",
         productImages: [
           `${BUCKET}/Venty/Venty4.png?v=2`,
@@ -48,19 +48,19 @@ function buildPlannerContent() {
       },
       infoBlocks: [
         {
-          eyebrow: "What it handles",
-          title: "Logistics",
-          body: "Venues, vendors, timing, guests — every moving part tracked and coordinated so nothing slips through the cracks.",
+          eyebrow: "Their event page",
+          title: "Personal",
+          body: "A photo-first event page with all the details, schedule, and RSVP — everything your guests need, beautifully presented in one place.",
         },
         {
-          eyebrow: "How it works",
+          eyebrow: "Gift registry",
+          title: "Flexible",
+          body: "A built-in registry where guests can buy whole gifts or chip in together — no third-party site, no redirects, no friction.",
+        },
+        {
+          eyebrow: "Travel & resources",
           title: "Guided",
-          body: "Not a form or a checklist — a conversation that unfolds naturally and turns vague ideas into a fully coordinated plan.",
-        },
-        {
-          eyebrow: "The outcome",
-          title: "Confident",
-          body: "From first conversation to the big day — every step feels considered, backed by intelligence that anticipates what's next.",
+          body: "Curated travel guides, rental cars, restaurants, and local tips — Venty puts your guests in the know before they even arrive.",
         },
       ],
     },

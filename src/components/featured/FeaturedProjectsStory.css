@@ -150,6 +150,7 @@
 
 .highlights-stack__productHeader {
   width: 100%;
+  box-sizing: border-box;
   text-align: center;
   padding: 0 clamp(20px, 5vw, 60px) 16px;
   will-change: transform, opacity;
@@ -215,7 +216,7 @@
 }
 
 .highlights-stack__productTitle {
-  margin: 0 0 8px;
+  margin: 0 0 11px;
   font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 800;
   line-height: 0.93;
@@ -228,8 +229,9 @@
 }
 
 .highlights-stack__productSubtitle {
+  width: 100%;
+  max-width: 680px;
   margin: 0 auto;
-  max-width: 900px;
   font-size: clamp(1.1rem, 1.9vw, 1.3rem);
   line-height: 1.58;
   color: #ffffff;

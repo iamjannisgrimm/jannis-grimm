@@ -14,5 +14,5 @@ export const achievements = [
     {
       title: "6+",
       subtitle: "Years of Experience",
-    },  
+    },
   ];

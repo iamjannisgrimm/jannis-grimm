@@ -47,23 +47,23 @@ function buildHighlightContent() {
       {
         eyebrow: "What it is",
         title: "Personal",
-        body: "Your reflections, habits, and growth — in a space that adapts entirely to how you think.",
+        body: "Your coaches draw from your calendar, health, habits, journal, focus areas, and more — every signal from your life, woven into context that makes the coaching actually personal.",
       },
       {
         eyebrow: "How it's built",
         title: "Private",
-        body: "Nothing shared, nothing sold. SeeMe learns from you without ever using you — your data stays yours, always.",
+        body: "On-device by default. Your data stays on your phone — that's not a policy, it's the architecture. Cloud mode is optional, and even then, nothing is stored.",
       },
       {
-        eyebrow: "The next layer",
-        title: "Growth",
-        body: "When you're ready to go deeper, expert coaches step in — turning self-awareness into real, lasting change.",
+        eyebrow: "How it works",
+        title: "Structured",
+        body: "Morning check-ins, weekly reviews, Wheel of Life assessments — professional coaching frameworks available anytime, not just open-ended chat.",
       },
     ],
     overlay: {
       hero: {
-        title: "Coaches",
-        headline: "Real experts in your corner, exactly when it matters.",
+        title: "For Coaches",
+        headline: "Build your digital coaching presence — available to every client, every day, without you in the room.",
         backgroundColor: "#0d1117",
         productImages: [
           `${BUCKET}/SeeMe/SeeMeCoach1.png`,
@@ -81,19 +81,19 @@ function buildHighlightContent() {
       },
       infoBlocks: [
         {
-          eyebrow: "Who they are",
-          title: "Vetted",
-          body: "Hand-selected professionals with proven track records — not a marketplace, but a curated network built for real impact.",
+          eyebrow: "Your digital clone",
+          title: "Upload You",
+          body: "Upload your methodology, frameworks, and communication style. Your AI runs your approach — fully private, fully yours. Client data never leaves their device. Your IP stays yours.",
         },
         {
-          eyebrow: "How it works",
-          title: "Matched",
-          body: "SeeMe reads what you're working through and connects you with the right person at exactly the right moment.",
+          eyebrow: "Beyond live sessions",
+          title: "New Tools",
+          body: "Create reusable session programs that go beyond what a live call can do — daily check-ins, adaptive exercises, pattern recognition across all your clients, and progress that compounds automatically.",
         },
         {
-          eyebrow: "The result",
-          title: "Progress",
-          body: "Not just accountability — a relationship that deepens alongside your journey and shows up exactly when it counts.",
+          eyebrow: "Grow your practice",
+          title: <><span style={{fontWeight: 400}}>Up to </span><strong>10x Clients</strong></>,
+          body: "Assign sessions between calls, keep every client engaged and on track, and reclaim calendar time — so you can serve up to 10x more people without working more hours.",
         },
       ],
     },

@@ -14,9 +14,9 @@ function buildAssistantsContent() {
       themeColor: "#ffffff",
       inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
-        "The ultimate personal assistant ready to orchestrate my whole team of specialists automating my life.",
+        "My personal AI — built to orchestrate a team of specialists, hold full context across every conversation, and eliminate the overhead of running my own life.",
       teamCardsDescription:
-        "The ultimate personal assistant ready to orchestrate my whole team of specialists automating my life.",
+        "My personal AI — built to orchestrate a team of specialists, hold full context across every conversation, and eliminate the overhead of running my own life.",
       teamCards: {
         left: {
           name: "Jannis",
@@ -42,17 +42,17 @@ function buildAssistantsContent() {
       {
         eyebrow: "Invocation",
         title: "Instant Reach",
-        body: "Call on TARS in the moment you need it, without switching contexts or breaking flow.",
+        body: "Reach TARS by phone or message — no app to open, no context to re-establish. Available the moment you need it, exactly where you already are.",
       },
       {
         eyebrow: "Coordination",
         title: "Context Locked",
-        body: "Every prompt arrives with the right history, priorities, and active threads already in view.",
+        body: "Every prompt arrives with the right history, priorities, and active threads already loaded — no re-explaining, no lost threads.",
       },
       {
         eyebrow: "Execution",
         title: "Always On",
-        body: "TARS keeps momentum across conversations, tasks, and follow-ups so nothing drops off the map.",
+        body: "TARS keeps momentum across conversations, tasks, and follow-ups — the kind of operational continuity a human assistant would take months to build.",
       },
     ],
   };

@@ -98,18 +98,18 @@ export function getFeaturedStoryProjects() {
     {
       matcher: (project) => project.title === "Synechron Inc",
       eyebrow: "The AI chapter",
-      headline: "AI engineering turned from curiosity into professional craft.",
+      headline: "AI engineering became professional craft — delivered at enterprise scale.",
       body:
-        "Consulting across intelligent systems meant connecting strategy, interface design, and production delivery, while keeping the user experience legible and useful.",
+        "Production LLM systems, AI-first product features, and intelligent automation for major enterprise clients. The discipline of connecting strategy, engineering, and UX into deployed intelligence became the foundation for everything that followed.",
       accent: "#f6e228",
       surface: "#f8f8ea",
     },
     {
       matcher: (project) => project.title === "SeeMe" && project.isHero,
-      eyebrow: "The current vision",
-      headline: "Now the work converges into a personal AI product built around reflection, growth, and trust.",
+      eyebrow: "The current chapter",
+      headline: "Everything converges: a private AI coaching network built to make real growth accessible to everyone.",
       body:
-        "The newest chapter brings product design, AI systems, and narrative together in one place: software that feels deeply personal, calm, and consequential.",
+        "Sole engineer. iOS live. Multi-coach AI on a privacy-first, on-device architecture. Raising a $500K seed round at a $5M cap — and building toward a B2B platform for 232,000+ professional coaches.",
       accent: "#8cf0ff",
       surface: "#111111",
       dark: true,

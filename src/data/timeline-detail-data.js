@@ -1,36 +1,34 @@
 export const timelineDetailData = [
     {
       title: "Introduction",
-      body: "SeeMe is an innovative, privacy-first AI life coaching platform designed to prevent burnout and enhance productivity for Western professionals. With local data processing and personalized insights, it empowers users with secure, actionable guidance for personal growth and well-being in a tech-driven world.",
+      body: "SeeMe is a personal AI coaching network — a Mentor who guides your overall journey, plus specialized coaches for career, life, health, and wellbeing. They share context, hand off intelligently, and deliver structured sessions, not open-ended chat. Built on real coaching frameworks with a privacy-first architecture: all personal data lives on-device by default.",
       image: "seeme-detail/introduction.png",
     },
     {
       title: "Technology",
       subtitle: "System Architecture",
-      body: "SeeMe’s system architecture is modular, with abstracted layers for AI coaching, data processing, and user interfaces, connected via local protocols like IPC and SQLite, ensuring privacy-first scalability. It follows the MVVM design pattern for clean, maintainable code, powering life coaching for Western professionals.",
+      body: "Privacy-first by architecture, not just policy. All personal data lives in SwiftData on-device. Cloud-enhanced mode routes only encrypted prompt context through OpenAI or Anthropic APIs — never stored, never trained on. Users can switch between on-device models and cloud providers without losing continuity. The AI abstraction layer is fully decoupled from the storage layer by design.",
       image: "seeme-detail/architecture.png",
     },
     {
-        subtitle: "Data Model",
-        body: "SeeMe’s data model is local, stored securely in SwiftData, enabling on-device management of user journals, fitness metrics, and AI insights for privacy-first life coaching. Its structured, relational design supports real-time access and scalability for Western professionals.",
-        image: "seeme-detail/datamodel.png",
-      },
-      {
-        subtitle: "AI Engineering",
-        body: "SeeMe’s AI engineering optimizes token limitations in Mistral 7B for local processing, chunking user data into structured segments to maintain quality and performance in life coaching insights. This ensures privacy-first, real-time burnout prevention and productivity for Western professionals.",
-        image: "seeme-detail/ai-engineering.png",
-      },
-
-    {
-      title: "Skills",
-      body: "As SeeMe’s founder, I excel in architecting modular systems with local protocols, designing intuitive UIs, implementing AI solutions like Mistral 7B, envisioning product direction, and managing technical teams to deliver scalable, privacy-first software.",
+      subtitle: "Data Model",
+      body: "Every user builds a private intelligence layer: journal entries, session summaries, Wheel of Life scores, focus areas, habit logs, and optional integrations with HealthKit, Calendar, and Screen Time. Session summaries feed back into a living user context that personalizes every subsequent conversation. The system compounds in value over time without ever exfiltrating data.",
+      image: "seeme-detail/datamodel.png",
     },
     {
-      title: "Challenges & Lessons Learned",
-      body: "SeeMe faced technical difficulties hosting local AI models like Mistral 7B on devices, balancing quality and speed to deliver effective life coaching insights. Optimizing this tradeoff ensured privacy-first performance for burnout prevention and productivity in Western markets.",
+      subtitle: "AI Engineering",
+      body: "The multi-coach architecture gives each coach a distinct persona, framework, and communication style — while all read from the same shared user context. The Mentor orchestrates handoffs based on conversation signals, directing users to the right coach at the right moment. Custom prompt engineering enforces structured sessions and real professional coaching frameworks rather than open-ended LLM affirmation.",
+      image: "seeme-detail/ai-engineering.png",
     },
     {
-        body: "SeeMe learned to fail fast, staying curious about AI trends and developments globally to enhance coaching. Staying organized with documentation and valuing teamwork drove scalable, privacy-first solutions for 100K users by 2029.",
-      }
-  
+      title: "Skills Applied",
+      body: "Shipped a production iOS app as sole engineer: full-stack SwiftUI, SwiftData persistence, multi-provider AI integration (OpenAI, Anthropic, on-device models), vision board image generation, and custom prompt engineering systems. Also owns the B2B web landing page, an internal analytics dashboard (Next.js + Supabase), contractor agreements (SAFEs + NDAs), and a $500K seed fundraise.",
+    },
+    {
+      title: "Challenges & Lessons",
+      body: "The hardest problem wasn't technical — it was product. An AI that guides rather than affirms requires precise prompt architecture and real coaching frameworks, not just a personality wrapper. User sessions revealed people needed structure and scheduled check-ins more than open-ended chat. Privacy-first architecture added significant engineering constraints but became the core differentiator that justifies every tradeoff.",
+    },
+    {
+      body: "Building as a solo founder forced extreme prioritization. Every feature decision was also a fundraising decision — the B2B coach platform emerged from asking what makes the business defensible, not just what users want in the moment. The biggest lesson: the product you ship and the product you pitch are the same thing. Ship it. Then tell the story.",
+    }
   ];
