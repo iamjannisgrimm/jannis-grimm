@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import GitHubContributions from "../components/GitHubContributions";
 import ProfileHeader from "../components/ProfileHeader";
 import Achievements from "../components/Achievements";
@@ -17,6 +17,8 @@ const SNAP_DIRECTION_THRESHOLD = 10;
 const SNAP_GESTURE_COMMIT_THRESHOLD = 12;
 
 export function Home() {
+  const [githubContributionTotal, setGithubContributionTotal] = useState(null);
+
   useEffect(() => {
     document.documentElement.classList.add("home-scroll-snap");
     document.body.classList.add("home-scroll-snap");
@@ -528,11 +530,14 @@ export function Home() {
           >
             <div className="content-container">
               <div>
-                <Achievements />
+                <Achievements githubContributionTotal={githubContributionTotal} />
               </div>
 
               <div>
-                <GitHubContributions username="iamjannisgrimm" />
+                <GitHubContributions
+                  username="iamjannisgrimm"
+                  onTotalContributionsChange={setGithubContributionTotal}
+                />
               </div>
             </div>
           </div>

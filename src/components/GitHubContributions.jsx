@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import GitHubCalendar from "react-github-calendar";
 
-const GitHubContributions = ({ username }) => {
+const GitHubContributions = ({ username, onTotalContributionsChange }) => {
   const [containerWidth, setContainerWidth] = useState(0);
+  const reportedTotalRef = useRef(null);
 
   useEffect(() => {
     const calculateWidth = () => {
@@ -18,6 +19,16 @@ const GitHubContributions = ({ username }) => {
   const blockSize = Math.max(containerWidth / 90, 7);
   const blockMargin = Math.max(containerWidth / 250, 2);
   const fontSize = Math.max(containerWidth / 140, 8);
+  const transformContributionData = useCallback((data) => {
+    const total = data.reduce((sum, day) => sum + day.count, 0);
+
+    if (reportedTotalRef.current !== total) {
+      reportedTotalRef.current = total;
+      window.setTimeout(() => onTotalContributionsChange?.(total), 0);
+    }
+
+    return data;
+  }, [onTotalContributionsChange]);
 
   return (
     <div
@@ -74,6 +85,8 @@ const GitHubContributions = ({ username }) => {
           blockMargin={blockMargin}
           fontSize={fontSize}
           colorScheme="light"
+          transformData={transformContributionData}
+          transformTotalCount={false}
         />
       </div>
     </div>

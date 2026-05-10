@@ -1,7 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { achievements } from '../data/achievements'
 
-export default function Achievements() {
+const WORK_CONTRIBUTION_OFFSET = 2500
+
+const formatMonthlyCommits = (githubContributionTotal) => {
+  if (typeof githubContributionTotal !== 'number') {
+    return '...'
+  }
+
+  return Math.round((githubContributionTotal + WORK_CONTRIBUTION_OFFSET) / 12).toLocaleString('en-US')
+}
+
+export default function Achievements({ githubContributionTotal }) {
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth <= 768 : false
   )
@@ -12,7 +22,27 @@ export default function Achievements() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const mobileTrack = [...achievements, ...achievements]
+  const stats = useMemo(() => {
+    const commitsPerMonth = {
+      title: formatMonthlyCommits(githubContributionTotal),
+      subtitle: 'Commits per Month',
+    }
+
+    const experienceIndex = achievements.findIndex(({ subtitle }) => subtitle === 'Years of Experience')
+
+    if (experienceIndex === -1) {
+      return [...achievements, commitsPerMonth]
+    }
+
+    return [
+      ...achievements.slice(0, experienceIndex + 1),
+      commitsPerMonth,
+      ...achievements.slice(experienceIndex + 1),
+    ]
+  }, [githubContributionTotal])
+
+  const mobileTrack = [...stats, ...stats]
+  const desktopTrack = [...stats, ...stats]
 
   return (
     <div style={{
@@ -28,6 +58,24 @@ export default function Achievements() {
           @keyframes achievements-marquee {
             from { transform: translate3d(0, 0, 0); }
             to { transform: translate3d(-50%, 0, 0); }
+          }
+          .achievements-desktop-viewport {
+            --achievement-gap: 32px;
+            width: min(100%, 760px);
+            overflow: hidden;
+            padding: 0 24px;
+            box-sizing: border-box;
+          }
+          .achievements-desktop-track {
+            display: flex;
+            width: max-content;
+            align-items: stretch;
+            gap: var(--achievement-gap);
+            animation: achievements-marquee 18s linear infinite;
+          }
+          .achievements-desktop-card {
+            flex: 0 0 calc((min(100vw, 760px) - 48px - (var(--achievement-gap) * 3)) / 4);
+            max-width: calc((760px - 48px - (var(--achievement-gap) * 3)) / 4);
           }
         `}
       </style>
@@ -89,45 +137,38 @@ export default function Achievements() {
           </div>
         </div>
       ) : (
-        <div style={{
-          display: 'flex',
-          gap: '40px',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          maxWidth: '800px',
-          padding: '0 24px',
-          boxSizing: 'border-box',
-        }}>
-          {achievements.map(({ title, subtitle }, idx) => (
-            <div key={idx} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              minWidth: '100px',
-            }}>
-              <h3 style={{
-                margin: '0 0 4px',
-                fontSize: 'clamp(1.4rem, 4vw, 1.8rem)',
-                fontWeight: 800,
-                color: '#111827',
-                textAlign: 'center',
-                letterSpacing: '-0.5px',
+        <div className="achievements-desktop-viewport">
+          <div className="achievements-desktop-track">
+            {desktopTrack.map(({ title, subtitle }, idx) => (
+              <div key={`${title}-${subtitle}-${idx}`} className="achievements-desktop-card" style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-                {title}
-              </h3>
-              <p style={{
-                margin: 0,
-                fontSize: '0.85rem',
-                color: '#666',
-                textAlign: 'center',
-                lineHeight: 1.3,
-              }}>
-                {subtitle}
-              </p>
-            </div>
-          ))}
+                <h3 style={{
+                  margin: '0 0 4px',
+                  fontSize: 'clamp(1.4rem, 4vw, 1.8rem)',
+                  fontWeight: 800,
+                  color: '#111827',
+                  textAlign: 'center',
+                  letterSpacing: '-0.5px',
+                }}>
+                  {title}
+                </h3>
+                <p style={{
+                  margin: 0,
+                  fontSize: '0.85rem',
+                  color: '#666',
+                  textAlign: 'center',
+                  lineHeight: 1.3,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {subtitle}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
