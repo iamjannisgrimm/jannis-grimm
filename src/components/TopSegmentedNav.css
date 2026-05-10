@@ -47,10 +47,10 @@
   inset: 1px;
   border-radius: inherit;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.5), transparent 38%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04));
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.72;
 }
 
 .top-segmented-nav__shell::after {
@@ -59,7 +59,7 @@
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%),
     linear-gradient(0deg, rgba(122, 139, 166, 0.08), transparent 38%);
   pointer-events: none;
 }
