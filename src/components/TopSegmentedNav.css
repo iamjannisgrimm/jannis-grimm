@@ -83,6 +83,10 @@
     transform 180ms ease;
 }
 
+.top-segmented-nav--onDark .top-segmented-nav__item {
+  color: rgba(245, 247, 251, 0.9);
+}
+
 .top-segmented-nav__item::before {
   content: "";
   position: absolute;
@@ -113,6 +117,10 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+.top-segmented-nav--onDark .top-segmented-nav__item:hover {
+  color: #ffffff;
+}
+
 .top-segmented-nav__item:active {
   transform: scale(0.98);
 }
@@ -120,6 +128,10 @@
 .top-segmented-nav__item--active {
   color: #111111;
   background: transparent;
+}
+
+.top-segmented-nav--onDark .top-segmented-nav__item--active {
+  color: #111111;
 }
 
 .top-segmented-nav__item--active::before {

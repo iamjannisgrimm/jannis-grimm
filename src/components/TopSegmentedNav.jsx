@@ -225,7 +225,7 @@ export default function TopSegmentedNav() {
     <div
       className={`top-segmented-nav ${
         isVisible ? "top-segmented-nav--visible" : "top-segmented-nav--hidden"
-      }`}
+      } ${currentPath === "/" && activeKey === "highlights" ? "top-segmented-nav--onDark" : ""}`}
     >
       <div className="top-segmented-nav__shell" role="navigation" aria-label="Primary">
         {items.map((item) => (
