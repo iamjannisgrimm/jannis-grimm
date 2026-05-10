@@ -198,23 +198,6 @@ const ProfileHeader = ({ image, title }) => {
           pointerEvents: "none",
         }}
       >
-        <defs>
-          <linearGradient id="hero-chevron-gradient" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="rgba(0,0,0,0)" />
-            <stop offset="50%" stopColor="rgba(0,0,0,0.48)" />
-            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M3 4 C22 18, 42 20, 56 20 C70 20, 90 18, 109 4"
-          fill="none"
-          stroke="url(#hero-chevron-gradient)"
-          strokeWidth="1.65"
-          strokeLinecap="round"
-          style={{
-            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.1))",
-          }}
-        />
         <path
           d="M36 8 L56 18 L76 8"
           fill="none"
@@ -222,6 +205,9 @@ const ProfileHeader = ({ image, title }) => {
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          style={{
+            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.1))",
+          }}
         />
       </svg>
     </div>
