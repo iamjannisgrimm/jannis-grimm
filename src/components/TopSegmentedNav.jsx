@@ -54,7 +54,6 @@ function scrollToSection(sectionId) {
 
 export default function TopSegmentedNav() {
   const [isVisible, setIsVisible] = useState(true);
-  const [isDarkSurface, setIsDarkSurface] = useState(false);
   const [currentPath, setCurrentPath] = useState(() =>
     typeof window === "undefined" ? "/" : window.location.pathname || "/",
   );
@@ -112,10 +111,6 @@ export default function TopSegmentedNav() {
       window.removeEventListener("popstate", handlePopstate);
     };
   }, []);
-
-  useEffect(() => {
-    setIsDarkSurface(currentPath === "/" && activeKey === "highlights");
-  }, [activeKey, currentPath]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -230,7 +225,7 @@ export default function TopSegmentedNav() {
     <div
       className={`top-segmented-nav ${
         isVisible ? "top-segmented-nav--visible" : "top-segmented-nav--hidden"
-      } ${isDarkSurface ? "top-segmented-nav--dark" : "top-segmented-nav--light"}`}
+      }`}
     >
       <div className="top-segmented-nav__shell" role="navigation" aria-label="Primary">
         {items.map((item) => (
