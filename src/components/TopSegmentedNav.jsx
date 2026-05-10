@@ -92,33 +92,24 @@ export default function TopSegmentedNav() {
       return null;
     };
 
-    const getRelativeLuminance = ({ r, g, b }) => {
-      const transform = (channel) => {
-        const value = channel / 255;
-        return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
-      };
-
-      const rr = transform(r);
-      const gg = transform(g);
-      const bb = transform(b);
-      return 0.2126 * rr + 0.7152 * gg + 0.0722 * bb;
-    };
-
     const syncDarkHighlights = () => {
       if (currentPath !== "/" || activeKey !== "highlights") {
         setIsOnDarkHighlights(false);
         return;
       }
 
-      const themeColor =
-        document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff";
+      const themeColor = (
+        document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff"
+      ).trim().toLowerCase();
       const rgb = parseHexColor(themeColor);
       if (!rgb) {
         setIsOnDarkHighlights(false);
         return;
       }
 
-      setIsOnDarkHighlights(getRelativeLuminance(rgb) < 0.24);
+      const normalizedThemeColor =
+        themeColor.startsWith("#") ? themeColor : `#${themeColor}`;
+      setIsOnDarkHighlights(normalizedThemeColor === "#0d1117");
     };
 
     let frameId = 0;
