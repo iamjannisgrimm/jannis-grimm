@@ -163,9 +163,11 @@ export default function TopSegmentedNav() {
       const sectionColor =
         activeSection?.getAttribute("data-mobile-chrome-color") ||
         activeSection?.dataset?.mobileChromeColor;
+      const metaThemeColor =
+        document.querySelector("meta[name='theme-color']")?.getAttribute("content");
       const themeColor =
+        metaThemeColor ||
         sectionColor ||
-        document.querySelector("meta[name='theme-color']")?.getAttribute("content") ||
         getComputedStyle(document.documentElement).getPropertyValue("--timeline-app-background") ||
         "#ffffff";
       const rgb = parseHexColor(themeColor);
