@@ -65,51 +65,23 @@ export default function TopSegmentedNav() {
       return undefined;
     }
 
-    const parseHexColor = (value) => {
-      if (!value || typeof value !== "string") {
-        return null;
-      }
-
-      const normalized = value.trim();
-      const hex = normalized.startsWith("#") ? normalized.slice(1) : normalized;
-
-      if (hex.length === 3) {
-        return {
-          r: parseInt(hex[0] + hex[0], 16),
-          g: parseInt(hex[1] + hex[1], 16),
-          b: parseInt(hex[2] + hex[2], 16),
-        };
-      }
-
-      if (hex.length === 6) {
-        return {
-          r: parseInt(hex.slice(0, 2), 16),
-          g: parseInt(hex.slice(2, 4), 16),
-          b: parseInt(hex.slice(4, 6), 16),
-        };
-      }
-
-      return null;
-    };
-
     const syncDarkHighlights = () => {
       if (currentPath !== "/" || activeKey !== "highlights") {
         setIsOnDarkHighlights(false);
         return;
       }
 
-      const themeColor = (
-        document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff"
-      ).trim().toLowerCase();
-      const rgb = parseHexColor(themeColor);
-      if (!rgb) {
+      const coachesOverlay = document.querySelector(
+        "#highlights .highlights-stack__card--overlay",
+      );
+      if (!(coachesOverlay instanceof HTMLElement)) {
         setIsOnDarkHighlights(false);
         return;
       }
 
-      const normalizedThemeColor =
-        themeColor.startsWith("#") ? themeColor : `#${themeColor}`;
-      setIsOnDarkHighlights(normalizedThemeColor === "#0d1117");
+      const rect = coachesOverlay.getBoundingClientRect();
+      const navProbeY = 80;
+      setIsOnDarkHighlights(rect.top <= navProbeY && rect.bottom > navProbeY);
     };
 
     let frameId = 0;
@@ -124,19 +96,6 @@ export default function TopSegmentedNav() {
       });
     };
 
-    const themeMeta = document.querySelector("meta[name='theme-color']");
-    const observer =
-      themeMeta instanceof HTMLElement
-        ? new MutationObserver(requestSync)
-        : null;
-
-    if (observer && themeMeta) {
-      observer.observe(themeMeta, {
-        attributes: true,
-        attributeFilter: ["content"],
-      });
-    }
-
     syncDarkHighlights();
     window.addEventListener("scroll", requestSync, { passive: true });
     window.addEventListener("resize", requestSync);
@@ -145,7 +104,6 @@ export default function TopSegmentedNav() {
       if (frameId) {
         window.cancelAnimationFrame(frameId);
       }
-      observer?.disconnect();
       window.removeEventListener("scroll", requestSync);
       window.removeEventListener("resize", requestSync);
     };
