@@ -149,6 +149,7 @@
 /* ── Product header: title + subtitle above image ───────────────────────── */
 
 .highlights-stack__productHeader {
+  width: 100%;
   text-align: center;
   padding: 0 clamp(20px, 5vw, 60px) 16px;
   will-change: transform, opacity;
@@ -222,12 +223,17 @@
   color: #ffffff;
 }
 
+.highlights-stack__card--product .highlights-stack__productTitle {
+  font-size: clamp(3rem, 7.5vw, 6rem);
+}
+
 .highlights-stack__productSubtitle {
   margin: 0 auto;
-  max-width: 620px;
+  max-width: 900px;
   font-size: clamp(1.1rem, 1.9vw, 1.3rem);
   line-height: 1.58;
   color: #ffffff;
+  padding-bottom: 10px;
 }
 
 .highlights-stack__productSubtitle:empty {
@@ -955,6 +961,7 @@
 .highlights-stack__productUrl {
   position: relative;
   z-index: 4;
+  margin-top: -26px;
   font-size: 15px;
   letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.38);
@@ -1138,6 +1145,10 @@
     font-size: clamp(2.2rem, 8vw, 3.6rem);
   }
 
+  .highlights-stack__card--product .highlights-stack__productTitle {
+    font-size: clamp(2.6rem, 9vw, 4.4rem);
+  }
+
   .highlights-stack__productImage {
     width: min(90vw, 600px);
     max-height: 50vh;
@@ -1187,6 +1198,10 @@
 
   .highlights-stack__productTitle {
     font-size: clamp(3.45rem, calc(8vw + 1.25rem), 4.85rem);
+  }
+
+  .highlights-stack__card--product .highlights-stack__productTitle {
+    font-size: clamp(3.8rem, calc(9vw + 1.5rem), 5.4rem);
   }
 
   .highlights-stack__infoTitle {
