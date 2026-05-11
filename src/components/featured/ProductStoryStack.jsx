@@ -10,7 +10,7 @@ function setThemeColor(color) {
   if (meta) meta.setAttribute("content", color);
 }
 
-const TEAM_INFO_START = 1.48;
+const TEAM_INFO_START = 1.18;
 const TEAM_INFO_STEP = 0.72;
 const TEAM_MEDIA_TEXT_GAP = 0.36;
 const TEAM_INFO_EXIT_GAP = 0.64;
@@ -18,9 +18,9 @@ const TEAM_INFO_EXIT_GAP = 0.64;
 function makeTeamMediaSnapStops(infoCount, timelineDuration) {
   if (!timelineDuration) return [0, 1];
 
-  const stops = [0, 1.1, TEAM_INFO_START];
+  const stops = [0, 1.1];
   Array.from({ length: infoCount }).forEach((_, index) => {
-    const imageStart = TEAM_INFO_START + 0.08 + index * TEAM_INFO_STEP;
+    const imageStart = TEAM_INFO_START + index * TEAM_INFO_STEP;
     const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
     stops.push(imageStart + 0.18, textStart + 0.2);
   });
@@ -195,8 +195,8 @@ function buildPanelTimeline({
       !!teamIntro?.introVisual && !!teamIntro?.cards && !!teamIntro?.targetCircle;
     const introStops = isTeamInlineSequence ? [0.18, 0.58] : [0.18, 0.5, 0.82];
     const outroStops = isTeamInlineSequence ? [0.5] : [0.38, 0.7];
-    const teamCardsExitStart = 1.22;
-    const teamSoloStart = 1.24;
+    const teamCardsExitStart = 1.16;
+    const teamSoloStart = 1.18;
 
     if (teamIntro?.introVisual && teamIntro?.cards && teamIntro?.targetCircle) {
       const isMobileTeamScene =
@@ -401,7 +401,7 @@ function buildPanelTimeline({
 
       if (hasDesktopTeamMediaSequence) {
         teamInfoItems.forEach(({ root, media, content }, index) => {
-          const imageStart = TEAM_INFO_START + 0.08 + index * TEAM_INFO_STEP;
+          const imageStart = TEAM_INFO_START + index * TEAM_INFO_STEP;
           const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
           const exitStart = imageStart + TEAM_INFO_EXIT_GAP;
 
@@ -457,7 +457,7 @@ function buildPanelTimeline({
           opacity: 1,
           duration: 0.36,
           ease: "none",
-        }, TEAM_INFO_START + 0.08 + teamInfoItems.length * TEAM_INFO_STEP + 0.18);
+        }, TEAM_INFO_START + teamInfoItems.length * TEAM_INFO_STEP + 0.18);
       } else {
         if (infos[0]) {
           tl.to(infos[0], {
