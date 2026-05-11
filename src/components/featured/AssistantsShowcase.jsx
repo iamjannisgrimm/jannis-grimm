@@ -11,11 +11,11 @@ import NewsAgentIcon from "../../../me/agents/newslight.png";
 import PaAgentIcon from "../../../me/agents/palight.png";
 
 const tarsAgentCells = [
-  { image: CareerAgentIcon, alt: "Career" },
-  { image: ClawAgentIcon, alt: "Claw" },
-  { image: DevAgentIcon, alt: "Dev" },
-  { image: NewsAgentIcon, alt: "News" },
-  { image: PaAgentIcon, alt: "PA" },
+  { image: CareerAgentIcon, alt: "Career", title: "Career" },
+  { image: ClawAgentIcon, alt: "Claw", title: "Claw" },
+  { image: DevAgentIcon, alt: "Dev", title: "Dev" },
+  { image: NewsAgentIcon, alt: "News", title: "News" },
+  { image: PaAgentIcon, alt: "Assistant", title: "Assistant" },
 ];
 
 function buildAssistantsContent() {

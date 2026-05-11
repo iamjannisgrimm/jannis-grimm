@@ -941,6 +941,11 @@ function PanelShell({
                         loading={prioritizeMedia ? "eager" : "lazy"}
                         decoding="async"
                       />
+                      {media.title ? (
+                        <span className="highlights-stack__infoMediaTitle">
+                          {media.title}
+                        </span>
+                      ) : null}
                     </div>
                   ))}
                 </div>
