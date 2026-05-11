@@ -984,18 +984,25 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::before {
-    bottom: calc(100% - 4px);
-    width: clamp(48px, 3.6vw, 68px);
-    height: clamp(190px, 21vh, 280px);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 280' preserveAspectRatio='none'%3E%3Cpath d='M40 0 C40 72 24 100 40 140 C56 180 40 220 40 280' fill='none' stroke='%236b7589' stroke-width='3' stroke-linecap='round' opacity='0.58'/%3E%3C/svg%3E");
-    filter: drop-shadow(0 4px 8px rgba(107, 117, 137, 0.16));
+    bottom: calc(100% - 2px);
+    width: 2px;
+    height: clamp(84px, 10vh, 132px);
+    background: linear-gradient(
+      180deg,
+      rgba(107, 117, 137, 0.18) 0%,
+      rgba(107, 117, 137, 0.54) 26%,
+      rgba(107, 117, 137, 0.74) 100%
+    );
+    border-radius: 999px;
+    filter: drop-shadow(0 6px 10px rgba(107, 117, 137, 0.18));
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::after {
-    bottom: calc(100% + clamp(190px, 21vh, 280px) - 2px);
-    width: 8px;
-    height: 8px;
-    background: rgba(107, 117, 137, 0.28);
+    bottom: calc(100% + clamp(84px, 10vh, 132px) - 4px);
+    width: 9px;
+    height: 9px;
+    background: rgba(107, 117, 137, 0.34);
+    box-shadow: 0 0 0 5px rgba(107, 117, 137, 0.08);
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
