@@ -942,9 +942,9 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBlock {
-    left: 0;
+    left: calc(50% - 50vw);
     right: 0;
-    width: 100%;
+    width: 100vw;
     transform: none;
     align-items: center;
     justify-content: flex-start;
@@ -972,13 +972,11 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
-    position: fixed;
-    left: 50vw;
-    width: max-content;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-    translate: -50% 0;
+    width: fit-content;
+    max-width: calc(100vw - 96px);
+    margin-left: auto;
+    margin-right: auto;
+    translate: none;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
