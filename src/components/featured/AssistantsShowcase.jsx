@@ -9,6 +9,9 @@ import ClawAgentIcon from "../../../me/agents/clawlight.png";
 import DevAgentIcon from "../../../me/agents/devlight.png";
 import NewsAgentIcon from "../../../me/agents/newslight.png";
 import PaAgentIcon from "../../../me/agents/palight.png";
+import MarketerAgentIcon from "../../../me/agents/marketerlight.png";
+import ResearchAgentIcon from "../../../me/agents/researchlight.png";
+import SeeMeAgentIcon from "../../../me/agents/seemelight.png";
 
 const tarsAgentCells = [
   { image: CareerAgentIcon, alt: "Career", title: "Career" },
@@ -16,6 +19,12 @@ const tarsAgentCells = [
   { image: DevAgentIcon, alt: "Dev", title: "Dev" },
   { image: NewsAgentIcon, alt: "News", title: "News" },
   { image: PaAgentIcon, alt: "Assistant", title: "Assistant" },
+];
+
+const tarsExtendedAgentCells = [
+  { image: ResearchAgentIcon, alt: "Research", title: "Research" },
+  { image: MarketerAgentIcon, alt: "Marketing", title: "Marketing" },
+  { image: SeeMeAgentIcon, alt: "SeeMe", title: "SeeMe" },
 ];
 
 function buildAssistantsContent() {
@@ -53,22 +62,12 @@ function buildAssistantsContent() {
     },
     infoBlocks: [
       {
-        eyebrow: "Invocation",
-        title: "Instant Reach",
         mediaImages: tarsAgentCells,
-        body: "Reach TARS by phone or message — no app to open, no context to re-establish. Available the moment you need it, exactly where you already are.",
+        body: "TARS routes every request to the right specialist, keeping the whole team synchronized around my context, priorities, and active work.",
       },
       {
-        eyebrow: "Coordination",
-        title: "Context Locked",
-        mediaImages: tarsAgentCells,
-        body: "Every prompt arrives with the right history, priorities, and active threads already loaded — no re-explaining, no lost threads.",
-      },
-      {
-        eyebrow: "Execution",
-        title: "Always On",
-        mediaImages: tarsAgentCells,
-        body: "TARS keeps momentum across conversations, tasks, and follow-ups — the kind of operational continuity a human assistant would take months to build.",
+        mediaImages: tarsExtendedAgentCells,
+        body: "When the work shifts, TARS brings in the next specialist layer for research, marketing, and product context without losing the thread.",
       },
     ],
   };

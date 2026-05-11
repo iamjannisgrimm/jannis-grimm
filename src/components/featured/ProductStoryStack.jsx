@@ -10,6 +10,143 @@ function setThemeColor(color) {
   if (meta) meta.setAttribute("content", color);
 }
 
+const TEAM_INFO_START = 1.48;
+const TEAM_INFO_STEP = 0.72;
+const TEAM_MEDIA_TEXT_GAP = 0.36;
+const TEAM_INFO_EXIT_GAP = 0.64;
+
+function makeTeamMediaSnapStops(infoCount, timelineDuration) {
+  if (!timelineDuration) return [0, 1];
+
+  const stops = [0, 1.1, TEAM_INFO_START];
+  Array.from({ length: infoCount }).forEach((_, index) => {
+    const imageStart = TEAM_INFO_START + 0.08 + index * TEAM_INFO_STEP;
+    const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
+    stops.push(imageStart + 0.18, textStart + 0.2);
+  });
+  stops.push(timelineDuration);
+
+  return stops.map((stop) => Math.max(0, Math.min(1, stop / timelineDuration)));
+}
+
+function createOneStepScrollController(trigger, stops) {
+  if (!trigger || stops.length < 2) return () => {};
+
+  let isAnimating = false;
+  let isGestureLocked = false;
+  let unlockTimer = null;
+  let tween = null;
+  const gestureQuietMs = 280;
+
+  const nearestIndex = () =>
+    stops.reduce(
+      (nearest, stop, index) =>
+        Math.abs(stop - trigger.progress) < Math.abs(stops[nearest] - trigger.progress)
+          ? index
+          : nearest,
+      0,
+    );
+
+  const isInsideTrigger = () => {
+    const scrollY = window.scrollY || window.pageYOffset;
+    return scrollY >= trigger.start - 2 && scrollY <= trigger.end + 2;
+  };
+
+  const clearUnlock = () => {
+    if (unlockTimer) window.clearTimeout(unlockTimer);
+    unlockTimer = null;
+  };
+
+  const scheduleUnlock = () => {
+    if (unlockTimer) return;
+    unlockTimer = window.setTimeout(() => {
+      if (!isAnimating) isGestureLocked = false;
+      unlockTimer = null;
+    }, gestureQuietMs);
+  };
+
+  const moveOneStep = (direction) => {
+    const currentIndex = nearestIndex();
+    const targetIndex = Math.max(0, Math.min(stops.length - 1, currentIndex + direction));
+    if (targetIndex === currentIndex) return false;
+
+    const startY = window.scrollY || window.pageYOffset;
+    const targetY = trigger.start + (trigger.end - trigger.start) * stops[targetIndex];
+    const state = { y: startY };
+
+    tween?.kill();
+    isAnimating = true;
+    isGestureLocked = true;
+    tween = gsap.to(state, {
+      y: targetY,
+      duration: targetIndex === 1 ? 0.96 : 0.56,
+      ease: "power3.inOut",
+      overwrite: true,
+      onUpdate: () => {
+        window.scrollTo(0, state.y);
+      },
+      onComplete: () => {
+        isAnimating = false;
+        scheduleUnlock();
+      },
+    });
+
+    return true;
+  };
+
+  const blockGesture = () => {
+    isGestureLocked = true;
+    scheduleUnlock();
+  };
+
+  const onWheel = (event) => {
+    if (!isInsideTrigger()) return;
+
+    const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+    if (Math.abs(delta) < 6) {
+      event.preventDefault();
+      if (isGestureLocked) scheduleUnlock();
+      return;
+    }
+
+    if (isAnimating || isGestureLocked) {
+      event.preventDefault();
+      blockGesture();
+      return;
+    }
+
+    const direction = delta > 0 ? 1 : -1;
+    if (moveOneStep(direction)) {
+      event.preventDefault();
+      blockGesture();
+    }
+  };
+
+  const onKeyDown = (event) => {
+    if (!isInsideTrigger() || event.metaKey || event.ctrlKey || event.altKey) return;
+
+    const forwardKeys = ["ArrowDown", "PageDown", " "];
+    const backKeys = ["ArrowUp", "PageUp"];
+    if (!forwardKeys.includes(event.key) && !backKeys.includes(event.key)) return;
+
+    const direction = forwardKeys.includes(event.key) ? 1 : -1;
+    if (isAnimating || isGestureLocked || moveOneStep(direction)) {
+      event.preventDefault();
+      blockGesture();
+    }
+  };
+
+  window.addEventListener("wheel", onWheel, { passive: false, capture: true });
+  window.addEventListener("keydown", onKeyDown, { capture: true });
+
+  return () => {
+    window.removeEventListener("wheel", onWheel, { capture: true });
+    window.removeEventListener("keydown", onKeyDown, { capture: true });
+    clearUnlock();
+    tween?.kill();
+  };
+}
+
 function buildPanelTimeline({
   header,
   image,
@@ -60,8 +197,6 @@ function buildPanelTimeline({
     const outroStops = isTeamInlineSequence ? [0.5] : [0.38, 0.7];
     const teamCardsExitStart = 1.22;
     const teamSoloStart = 1.24;
-    const teamInfoStart = 1.48;
-    const teamInfoStep = 0.48;
 
     if (teamIntro?.introVisual && teamIntro?.cards && teamIntro?.targetCircle) {
       const isMobileTeamScene =
@@ -261,14 +396,14 @@ function buildPanelTimeline({
           y: 0,
           duration: 0.16,
           ease: "power2.out",
-        }, teamInfoStart);
+        }, TEAM_INFO_START);
       }
 
       if (hasDesktopTeamMediaSequence) {
         teamInfoItems.forEach(({ root, media, content }, index) => {
-          const imageStart = teamInfoStart + 0.08 + index * teamInfoStep;
-          const textStart = imageStart + 0.22;
-          const exitStart = imageStart + 0.42;
+          const imageStart = TEAM_INFO_START + 0.08 + index * TEAM_INFO_STEP;
+          const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
+          const exitStart = imageStart + TEAM_INFO_EXIT_GAP;
 
           if (root) {
             tl.to(root, {
@@ -322,48 +457,50 @@ function buildPanelTimeline({
           opacity: 1,
           duration: 0.36,
           ease: "none",
-        }, teamInfoStart + 0.08 + teamInfoItems.length * teamInfoStep + 0.18);
-      } else if (infos[0]) {
-        tl.to(infos[0], {
-          opacity: 1,
-          y: 0,
-          duration: 0.18,
-          ease: "power2.out",
-        }, teamInfoStart + 0.04);
-        if (infos[1] || infos[2]) {
+        }, TEAM_INFO_START + 0.08 + teamInfoItems.length * TEAM_INFO_STEP + 0.18);
+      } else {
+        if (infos[0]) {
           tl.to(infos[0], {
-            opacity: 0,
-            y: -20,
-            duration: 0.14,
-            ease: "power1.inOut",
-          }, teamInfoStart + 0.26);
+            opacity: 1,
+            y: 0,
+            duration: 0.18,
+            ease: "power2.out",
+          }, TEAM_INFO_START + 0.04);
+          if (infos[1] || infos[2]) {
+            tl.to(infos[0], {
+              opacity: 0,
+              y: -20,
+              duration: 0.14,
+              ease: "power1.inOut",
+            }, TEAM_INFO_START + 0.26);
+          }
         }
-      }
 
-      if (infos[1]) {
-        tl.to(infos[1], {
-          opacity: 1,
-          y: 0,
-          duration: 0.18,
-          ease: "power2.out",
-        }, teamInfoStart + 0.32);
-        if (infos[2]) {
+        if (infos[1]) {
           tl.to(infos[1], {
-            opacity: 0,
-            y: -20,
-            duration: 0.14,
-            ease: "power1.inOut",
-          }, teamInfoStart + 0.54);
+            opacity: 1,
+            y: 0,
+            duration: 0.18,
+            ease: "power2.out",
+          }, TEAM_INFO_START + 0.32);
+          if (infos[2]) {
+            tl.to(infos[1], {
+              opacity: 0,
+              y: -20,
+              duration: 0.14,
+              ease: "power1.inOut",
+            }, TEAM_INFO_START + 0.54);
+          }
         }
-      }
 
-      if (infos[2]) {
-        tl.to(infos[2], {
-          opacity: 1,
-          y: 0,
-          duration: 0.18,
-          ease: "power2.out",
-        }, teamInfoStart + 0.6);
+        if (infos[2]) {
+          tl.to(infos[2], {
+            opacity: 1,
+            y: 0,
+            duration: 0.18,
+            ease: "power2.out",
+          }, TEAM_INFO_START + 0.6);
+        }
       }
     }
 
@@ -1157,6 +1294,7 @@ export default function ProductStoryStack({
 
     const heroThemeColor = content.hero.themeColor || content.hero.backgroundColor || "#ffffff";
     const overlayThemeColor = content.overlay?.hero?.themeColor || content.overlay?.hero?.backgroundColor || "#ffffff";
+    let destroyProductStepScroll = null;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.getAll().forEach((t) => {
@@ -1165,7 +1303,6 @@ export default function ProductStoryStack({
 
       const isDesktop = window.innerWidth > 768;
       const travel = isDesktop ? Math.round(window.innerWidth * 0.55) : 120;
-      const teamMediaSnapStops = [0, 0.18, 0.43, 0.54, 0.62, 0.7, 0.78, 0.86, 0.94, 1];
       const isTeamInlineSequence =
         productInlineTitles.length > 0 &&
         !!productTeamIntro &&
@@ -1207,18 +1344,21 @@ export default function ProductStoryStack({
         travel,
         extraY: isPlanner ? 20 : 0,
       });
+      const teamMediaSnapStops = hasTeamMediaSequence
+        ? makeTeamMediaSnapStops(infos.length, tl.totalDuration())
+        : [];
 
       const productTrigger = ScrollTrigger.create({
         id: `${stackId}-product`,
         trigger: productCard,
         start: "top top",
         end: isDesktop
-          ? hasTeamMediaSequence ? "+=260%" : "+=180%"
+          ? hasTeamMediaSequence ? "+=320%" : "+=180%"
           : hasTeamInfoSequence ? "+=240%" : isTeamInlineSequence ? "+=155%" : "+=220%",
         pin: true,
         pinSpacing: true,
         scrub: isDesktop ? 0.08 : 0.04,
-        fastScrollEnd: isDesktop,
+        fastScrollEnd: isDesktop && !hasTeamMediaSequence,
         preventOverlaps: stackId,
         animation: tl,
         invalidateOnRefresh: true,
@@ -1239,6 +1379,9 @@ export default function ProductStoryStack({
           }
         },
       });
+      if (hasTeamMediaSequence) {
+        destroyProductStepScroll = createOneStepScrollController(productTrigger, teamMediaSnapStops);
+      }
 
       // ── Overlay panel ──────────────────────────────────────────────────────
       let overlayTrigger = null;
@@ -1302,6 +1445,7 @@ export default function ProductStoryStack({
       window.removeEventListener("resize", applyVh);
       window.visualViewport?.removeEventListener("resize", applyVh);
       ScrollTrigger.removeEventListener("refresh", applyVh);
+      destroyProductStepScroll?.();
       ctx.revert();
     };
   }, [stackId]);
