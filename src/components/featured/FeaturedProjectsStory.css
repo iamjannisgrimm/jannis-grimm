@@ -971,6 +971,25 @@
     text-align: center;
   }
 
+  .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
+    width: max-content;
+    max-width: none;
+    margin-left: 50%;
+    margin-right: 0;
+    translate: -50% 0;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
+    width: clamp(116px, 8.6vw, 154px);
+    min-height: clamp(128px, 9.6vw, 170px);
+    gap: 8px;
+    padding: 14px 10px 12px;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoMediaTitle {
+    font-size: clamp(0.78rem, 0.88vw, 0.96rem);
+  }
+
   .highlights-stack--light .highlights-stack__teamIntroVisual {
     width: min(34vw, 420px);
   }
