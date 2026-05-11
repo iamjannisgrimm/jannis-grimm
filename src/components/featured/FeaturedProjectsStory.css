@@ -1167,10 +1167,9 @@
   bottom: clamp(100px, 14dvh, 150px);
   left: 50%;
   transform: translateX(-50%);
-  min-height: 236px;
-  /* clip top/bottom only — x overflow free for slide-in animations */
+  min-height: clamp(280px, 30dvh, 360px);
   overflow: visible;
-  clip-path: inset(0px -999vw 0px -999vw);
+  clip-path: none;
   width: min(1100px, calc(100% - 48px));
   pointer-events: none;
 }
@@ -1199,6 +1198,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  overflow: visible;
 }
 
 .highlights-stack__infoMedia {
@@ -1325,11 +1325,13 @@
 .highlights-stack__infoTitleSide {
   flex: 0 0 auto;
   width: 100%;
+  overflow: visible;
 }
 
 .highlights-stack__infoBodySide {
   flex: 0 0 auto;
   width: 100%;
+  overflow: visible;
 }
 
 .highlights-stack__infoEyebrow {
@@ -1345,7 +1347,7 @@
   margin: 0;
   font-size: clamp(1.975rem, calc(6vw - 0.625rem), 4.375rem);
   font-weight: 800;
-  line-height: 0.93;
+  line-height: 1.02;
   letter-spacing: -0.06em;
   color: #ffffff;
 }
@@ -1529,5 +1531,150 @@
 
   .highlights-stack:not(.highlights-stack--planner) .highlights-stack__card--overlay .highlights-stack__carouselImg {
     bottom: 50px;
+  }
+}
+
+/* Team sequence polish: title the visual states and keep the mobile cards compact. */
+.highlights-stack--light .highlights-stack__teamCards::before {
+  content: "Meet My Assistants";
+  position: absolute;
+  top: clamp(18px, 3vh, 40px);
+  left: 50%;
+  z-index: 8;
+  width: max-content;
+  max-width: calc(100vw - 48px);
+  transform: translateX(-50%);
+  color: #111111;
+  font-size: clamp(2.5rem, 4.9vw, 5rem);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.065em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  pointer-events: none;
+}
+
+.highlights-stack--light .highlights-stack__teamCards:has(.highlights-stack__teamLeadSlot[style*="opacity: 1"])::before,
+.highlights-stack--light .highlights-stack__teamCards:has(.highlights-stack__teamCard--lead[style*="opacity: 1"])::before {
+  opacity: 1;
+}
+
+.highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
+  content: "Specialist Agents";
+  display: block;
+  margin: 0 auto clamp(12px, 1.7vh, 20px);
+  color: #111111;
+  font-size: clamp(2rem, 3.8vw, 3.8rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .highlights-stack--light .highlights-stack__teamCards {
+    width: min(94vw, 390px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-items: center;
+    justify-items: center;
+    column-gap: 6px;
+    row-gap: 8px;
+  }
+
+  .highlights-stack--light .highlights-stack__teamCards::before {
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: auto;
+    max-width: 100%;
+    transform: none;
+    font-size: clamp(2.35rem, 11vw, 3.15rem);
+    line-height: 0.92;
+    white-space: normal;
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntro {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+    margin-top: 0;
+  }
+
+  .highlights-stack--light .highlights-stack__teamLeadSlot {
+    grid-column: 1;
+    grid-row: 2;
+    width: 100%;
+    margin-top: 0 !important;
+    justify-content: center;
+  }
+
+  .highlights-stack--light .highlights-stack__teamSupport {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .highlights-stack--light .highlights-stack__teamBridge {
+    grid-column: 1;
+    width: 44px;
+    min-height: 58px;
+    margin: 0;
+    transform: translateY(10px);
+  }
+
+  .highlights-stack--light .highlights-stack__teamBridgeIcons {
+    width: 44px;
+    transform: translate(-50%, calc(-50% - 10px));
+  }
+
+  .highlights-stack--light .highlights-stack__teamConnector {
+    height: 62px;
+    transform: translate(-50%, calc(-50% - 10px));
+  }
+
+  .highlights-stack--light .highlights-stack__teamCard--lead,
+  .highlights-stack--light .highlights-stack__teamCard--support {
+    width: min(37vw, 142px);
+    padding: 12px 8px 10px;
+  }
+
+  .highlights-stack--light .highlights-stack__teamCard--lead {
+    padding-top: 16px;
+  }
+
+  .highlights-stack--light .highlights-stack__teamCard--support {
+    grid-column: 2;
+    margin-top: 0;
+  }
+
+  .highlights-stack--light .highlights-stack__teamCircle {
+    width: min(28vw, 104px);
+    height: min(28vw, 104px);
+  }
+
+  .highlights-stack--light .highlights-stack__teamName {
+    margin-top: 8px;
+    font-size: clamp(1rem, 4.2vw, 1.28rem);
+  }
+
+  .highlights-stack--light .highlights-stack__teamCardsDescription {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: min(84vw, 320px);
+    margin-top: 6px;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
+    margin-bottom: 10px;
+    font-size: clamp(2.25rem, 10vw, 3rem);
+    line-height: 0.92;
   }
 }
