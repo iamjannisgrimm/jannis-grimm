@@ -884,7 +884,7 @@
 
   .highlights-stack--light .highlights-stack__productShell {
     justify-content: flex-start;
-    padding-top: clamp(113px, calc(15vh - 15px), 155px);
+    padding-top: clamp(92px, 12vh, 128px);
     padding-bottom: clamp(90px, 12vh, 130px);
   }
 
@@ -939,6 +939,14 @@
     max-width: 32ch;
     font-size: clamp(1rem, 1.45vw, 1.2rem);
     line-height: 1.5;
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntroVisual {
+    width: min(34vw, 420px);
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntroVisualWrap {
+    gap: 14px;
   }
 
   .highlights-stack__teamCardsDescription {
