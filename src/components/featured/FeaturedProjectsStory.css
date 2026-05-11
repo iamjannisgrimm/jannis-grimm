@@ -1711,13 +1711,13 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
-    margin-bottom: clamp(320px, 38vh, 430px);
+    margin-bottom: clamp(360px, 42vh, 500px);
     font-size: clamp(2.5rem, 4.9vw, 5rem);
     line-height: 0.94;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
-    padding-top: clamp(110px, 12vh, 150px);
+    padding-top: clamp(150px, 16vh, 210px);
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::before {
@@ -1725,14 +1725,18 @@
     bottom: auto;
     left: 50%;
     width: calc(100% - clamp(76px, 5.8vw, 104px));
-    height: clamp(110px, 12vh, 150px);
+    height: clamp(150px, 16vh, 210px);
     transform: translateX(-50%);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 160' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.6' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C500 54 142 70 32 160'/%3E%3Cpath d='M500 0 C500 56 320 78 266 160'/%3E%3Cpath d='M500 0 C500 52 500 92 500 160'/%3E%3Cpath d='M500 0 C500 56 680 78 734 160'/%3E%3Cpath d='M500 0 C500 54 858 70 968 160'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 220' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.6' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C492 78 136 108 32 220'/%3E%3Cpath d='M500 0 C496 82 326 118 266 220'/%3E%3Cpath d='M500 0 C500 82 500 136 500 220'/%3E%3Cpath d='M500 0 C504 82 674 118 734 220'/%3E%3Cpath d='M500 0 C508 78 864 108 968 220'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-position: center top;
     filter: drop-shadow(0 7px 14px rgba(107, 117, 137, 0.12));
     z-index: 0;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
+    background: #ffffff;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::after,
