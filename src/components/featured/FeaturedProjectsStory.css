@@ -1166,12 +1166,24 @@
   z-index: 1;
   bottom: clamp(100px, 14dvh, 150px);
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, var(--info-window-y, 0px));
   min-height: clamp(280px, 30dvh, 360px);
   overflow: visible;
   clip-path: none;
   width: min(1100px, calc(100% - 48px));
   pointer-events: none;
+}
+
+.highlights-stack:not(.highlights-stack--planner) .highlights-stack__card--overlay .highlights-stack__infoWindow {
+  --info-window-y: 10px;
+}
+
+.highlights-stack--planner .highlights-stack__card--product .highlights-stack__infoWindow {
+  --info-window-y: 55px;
+}
+
+.highlights-stack--planner .highlights-stack__card--overlay .highlights-stack__infoWindow {
+  --info-window-y: 10px;
 }
 
 .highlights-stack__infoBlock {
@@ -1581,7 +1593,7 @@
     align-items: center;
     justify-items: center;
     column-gap: 6px;
-    row-gap: 8px;
+    row-gap: 18px;
   }
 
   .highlights-stack--light .highlights-stack__teamCards::before {
@@ -1673,8 +1685,34 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
-    margin-bottom: 10px;
+    margin-bottom: 18px;
     font-size: clamp(2.25rem, 10vw, 3rem);
     line-height: 0.92;
+  }
+}
+
+@media (min-width: 769px) {
+  .highlights-stack--light .highlights-stack__teamCard--lead,
+  .highlights-stack--light .highlights-stack__teamBridge,
+  .highlights-stack--light .highlights-stack__teamCard--support,
+  .highlights-stack--light .highlights-stack__teamCardsDescription {
+    top: clamp(144px, 12vh, 184px);
+  }
+
+  .highlights-stack__infoWindow.highlights-stack__infoWindow--team {
+    top: clamp(150px, 15vh, 190px);
+    width: min(1040px, calc(100% - 96px));
+    min-height: clamp(620px, 72vh, 760px);
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock {
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
+    margin-bottom: clamp(250px, 31vh, 340px);
+    font-size: clamp(2.5rem, 4.9vw, 5rem);
+    line-height: 0.94;
   }
 }
