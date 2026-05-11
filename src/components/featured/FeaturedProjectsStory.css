@@ -885,6 +885,18 @@
     box-sizing: border-box;
   }
 
+  .highlights-stack--light .highlights-stack__teamCards {
+    grid-template-columns: minmax(0, 1fr) clamp(87px, calc(9vw + 15px), 151px) minmax(0, 1fr);
+  }
+
+  .highlights-stack--light .highlights-stack__teamCard--lead,
+  .highlights-stack--light .highlights-stack__teamBridge,
+  .highlights-stack--light .highlights-stack__teamCard--support,
+  .highlights-stack--light .highlights-stack__teamCardsDescription {
+    position: relative;
+    top: 32px;
+  }
+
   .highlights-stack--light .highlights-stack__teamCard--support {
     width: clamp(330px, 25vw, 390px);
     justify-self: center;
