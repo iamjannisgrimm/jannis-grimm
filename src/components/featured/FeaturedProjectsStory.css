@@ -879,6 +879,12 @@
 }
 
 @media (min-width: 769px) {
+  .highlights-stack--light .highlights-stack__teamCard {
+    min-height: 0;
+    padding-top: clamp(20px, 2.1vw, 26px);
+    padding-bottom: clamp(20px, 2.1vw, 26px);
+  }
+
   .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
     padding-bottom: clamp(14px, 2.5vh, 28px);
   }
