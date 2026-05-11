@@ -1004,9 +1004,9 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::before {
-    bottom: calc(100% - 2px);
+    bottom: calc(100% + 18px);
     width: 2px;
-    height: clamp(84px, 10vh, 132px);
+    height: clamp(66px, 8vh, 108px);
     background: linear-gradient(
       180deg,
       rgba(107, 117, 137, 0.18) 0%,
@@ -1018,11 +1018,13 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::after {
-    bottom: calc(100% + clamp(84px, 10vh, 132px) - 4px);
-    width: 9px;
-    height: 9px;
-    background: rgba(107, 117, 137, 0.34);
-    box-shadow: 0 0 0 5px rgba(107, 117, 137, 0.08);
+    bottom: calc(100% + 17px);
+    width: calc(100% - clamp(116px, 8.6vw, 154px));
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(107, 117, 137, 0.56);
+    box-shadow: 0 5px 14px rgba(107, 117, 137, 0.12);
+    transform: translateX(-50%);
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
@@ -1032,6 +1034,20 @@
     min-height: clamp(128px, 9.6vw, 170px);
     gap: 8px;
     padding: 14px 10px 12px;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 2px;
+    height: 18px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: rgba(107, 117, 137, 0.58);
+    box-shadow: 0 5px 14px rgba(107, 117, 137, 0.1);
+    pointer-events: none;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMediaTitle {
