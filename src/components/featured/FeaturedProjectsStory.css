@@ -935,7 +935,7 @@
     right: auto;
     bottom: auto;
     transform: translateX(-50%);
-    width: min(42vw, 560px);
+    width: min(1040px, calc(100% - 96px));
     min-height: 360px;
     text-align: center;
     z-index: 6;
