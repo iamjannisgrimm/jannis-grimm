@@ -894,7 +894,7 @@
   .highlights-stack--light .highlights-stack__teamCard--support,
   .highlights-stack--light .highlights-stack__teamCardsDescription {
     position: relative;
-    top: 32px;
+    top: clamp(112px, 9.5vh, 148px);
   }
 
   .highlights-stack--light .highlights-stack__teamCard--support {
