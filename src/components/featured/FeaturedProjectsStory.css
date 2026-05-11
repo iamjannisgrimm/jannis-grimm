@@ -880,11 +880,14 @@
 
 @media (min-width: 769px) {
   .highlights-stack--light .highlights-stack__teamCard {
-    width: clamp(330px, 25vw, 390px);
     min-height: 0;
-    justify-self: center;
     padding: clamp(20px, 2.1vw, 26px);
     box-sizing: border-box;
+  }
+
+  .highlights-stack--light .highlights-stack__teamCard--support {
+    width: clamp(330px, 25vw, 390px);
+    justify-self: center;
   }
 
   .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
