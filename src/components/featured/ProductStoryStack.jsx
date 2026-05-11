@@ -36,6 +36,12 @@ function buildPanelTimeline({
     if (teamIntro?.cardsDescription) {
       gsap.set(teamIntro.cardsDescription, { opacity: 0, y: 18 });
     }
+    const teamInfoItems = infos.map((info) => ({
+      root: info,
+      media: info?.querySelector(".highlights-stack__infoMedia") || null,
+      content: info?.querySelector(".highlights-stack__infoContent") || null,
+    }));
+
     if (infos[0]) gsap.set(infos[0], { opacity: 0, y: 28 });
     if (infos[1]) gsap.set(infos[1], { opacity: 0, y: 36 });
     if (infos[2]) gsap.set(infos[2], { opacity: 0, y: 44 });
@@ -55,6 +61,7 @@ function buildPanelTimeline({
     const teamCardsExitStart = 1.22;
     const teamSoloStart = 1.24;
     const teamInfoStart = 1.48;
+    const teamInfoStep = 0.48;
 
     if (teamIntro?.introVisual && teamIntro?.cards && teamIntro?.targetCircle) {
       const isMobileTeamScene =
@@ -75,6 +82,15 @@ function buildPanelTimeline({
         !isMobileTeamScene && teamIntro.leftCard && teamIntro.rightCard
           ? teamIntro.leftCard.getBoundingClientRect().left - teamIntro.rightCard.getBoundingClientRect().left
           : 0;
+      const desktopCardCenterX =
+        !isMobileTeamScene && teamIntro.rightCard
+          ? (() => {
+              const rightRect = teamIntro.rightCard.getBoundingClientRect();
+              return window.innerWidth / 2 - (rightRect.left + rightRect.width / 2);
+            })()
+          : 0;
+      const hasDesktopTeamMediaSequence =
+        isDesktop && !isMobileTeamScene && teamInfoItems.some((item) => item.media);
 
       if (isMobileTeamScene) {
         gsap.set(teamIntro.leftSlot, {
@@ -94,6 +110,13 @@ function buildPanelTimeline({
         if (teamIntro.bridge) gsap.set(teamIntro.bridge, { opacity: 0, y: 10 });
         if (teamIntro.rightCard) gsap.set(teamIntro.rightCard, { opacity: 0, y: 18 });
         if (teamIntro.infoWindow) gsap.set(teamIntro.infoWindow, { opacity: 0, y: 24 });
+        if (hasDesktopTeamMediaSequence) {
+          teamInfoItems.forEach(({ root, media, content }) => {
+            if (root) gsap.set(root, { opacity: 0, y: 0 });
+            if (media) gsap.set(media, { opacity: 0, y: 58, scale: 0.98 });
+            if (content) gsap.set(content, { opacity: 0, y: 22 });
+          });
+        }
       }
       if (header) {
         gsap.set(header, { overflow: "hidden", height: header.offsetHeight });
@@ -225,7 +248,8 @@ function buildPanelTimeline({
           }, teamCardsExitStart);
         }
         tl.to(teamIntro.rightCard, {
-          x: desktopCardShiftX - 140,
+          x: hasDesktopTeamMediaSequence ? desktopCardCenterX : desktopCardShiftX - 140,
+          y: 0,
           duration: 0.32,
           ease: "power2.inOut",
         }, teamSoloStart);
@@ -240,7 +264,66 @@ function buildPanelTimeline({
         }, teamInfoStart);
       }
 
-      if (infos[0]) {
+      if (hasDesktopTeamMediaSequence) {
+        teamInfoItems.forEach(({ root, media, content }, index) => {
+          const imageStart = teamInfoStart + 0.08 + index * teamInfoStep;
+          const textStart = imageStart + 0.22;
+          const exitStart = imageStart + 0.42;
+
+          if (root) {
+            tl.to(root, {
+              opacity: 1,
+              y: 0,
+              duration: 0.12,
+              ease: "power2.out",
+            }, imageStart);
+          }
+          if (media) {
+            tl.to(media, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.2,
+              ease: "power3.out",
+            }, imageStart);
+            tl.to(media, {
+              opacity: 0,
+              y: -22,
+              scale: 0.98,
+              duration: 0.14,
+              ease: "power1.inOut",
+            }, textStart);
+          }
+          if (content) {
+            tl.to(content, {
+              opacity: 1,
+              y: 0,
+              duration: 0.18,
+              ease: "power2.out",
+            }, textStart + 0.03);
+            if (index < teamInfoItems.length - 1) {
+              tl.to(content, {
+                opacity: 0,
+                y: -20,
+                duration: 0.14,
+                ease: "power1.inOut",
+              }, exitStart);
+            }
+          }
+          if (root && index < teamInfoItems.length - 1) {
+            tl.to(root, {
+              opacity: 0,
+              duration: 0.1,
+              ease: "power1.inOut",
+            }, exitStart + 0.04);
+          }
+        });
+        tl.to(teamIntro.infoWindow, {
+          opacity: 1,
+          duration: 0.36,
+          ease: "none",
+        }, teamInfoStart + 0.08 + teamInfoItems.length * teamInfoStep + 0.18);
+      } else if (infos[0]) {
         tl.to(infos[0], {
           opacity: 1,
           y: 0,
@@ -389,9 +472,11 @@ function makeSnapConfig(hasCompanion = false) {
   };
 }
 
-function makeInlineTitleSnapConfig(count, isTeamInlineSequence = false) {
+function makeInlineTitleSnapConfig(count, isTeamInlineSequence = false, hasTeamMediaSequence = false) {
   const baseStops = isTeamInlineSequence
-    ? [0, 0.18, 0.43, 0.66, 0.8, 0.92, 1]
+    ? hasTeamMediaSequence
+      ? [0, 0.18, 0.43, 0.54, 0.62, 0.7, 0.78, 0.86, 0.94, 1]
+      : [0, 0.18, 0.43, 0.66, 0.8, 0.92, 1]
     : [0, 0.18, 0.5, 0.82, 1];
   const stops = isTeamInlineSequence
     ? baseStops
@@ -401,6 +486,37 @@ function makeInlineTitleSnapConfig(count, isTeamInlineSequence = false) {
       Math.abs(b - value) < Math.abs(a - value) ? b : a
     ),
     duration: { min: 0.08, max: 0.16 },
+    delay: 0,
+    inertia: false,
+    ease: "power3.out",
+  };
+}
+
+function makeOneStepSnapConfig(stops) {
+  let activeIndex = 0;
+  const nearestIndex = (value) =>
+    stops.reduce(
+      (nearest, stop, index) =>
+        Math.abs(stop - value) < Math.abs(stops[nearest] - value) ? index : nearest,
+      0,
+    );
+
+  return {
+    snapTo: (value, trigger) => {
+      const currentStop = stops[activeIndex] ?? 0;
+      if (Math.abs(value - currentStop) < 0.015) {
+        activeIndex = nearestIndex(value);
+        return stops[activeIndex];
+      }
+
+      const direction = trigger?.direction || (value > currentStop ? 1 : -1);
+      activeIndex = Math.max(
+        0,
+        Math.min(stops.length - 1, activeIndex + (direction > 0 ? 1 : -1)),
+      );
+      return stops[activeIndex];
+    },
+    duration: { min: 0.1, max: 0.18 },
     delay: 0,
     inertia: false,
     ease: "power3.out",
@@ -811,16 +927,48 @@ function PanelShell({
                 infoRefsObj.current[i] = node;
               }}
             >
-              {block.title ? (
-                <div className="highlights-stack__infoTitleSide">
-                  {block.eyebrow ? (
-                    <p className="highlights-stack__infoEyebrow">{block.eyebrow}</p>
-                  ) : null}
-                  <p className="highlights-stack__infoTitle">{block.title}</p>
+              {Array.isArray(block.mediaImages) && block.mediaImages.length ? (
+                <div className="highlights-stack__infoMedia highlights-stack__infoMedia--agents" aria-hidden="true">
+                  {block.mediaImages.map((media, mediaIndex) => (
+                    <div
+                      className="highlights-stack__infoMediaCell"
+                      key={`${media.alt || "agent"}-${mediaIndex}`}
+                    >
+                      <img
+                        className="highlights-stack__infoMediaImage"
+                        src={media.image}
+                        alt={media.alt || ""}
+                        loading={prioritizeMedia ? "eager" : "lazy"}
+                        decoding="async"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : block.mediaImage ? (
+                <div className="highlights-stack__infoMedia" aria-hidden="true">
+                  <div className="highlights-stack__infoMediaCell">
+                    <img
+                      className="highlights-stack__infoMediaImage"
+                      src={block.mediaImage}
+                      alt={block.mediaAlt || ""}
+                      loading={prioritizeMedia ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  </div>
                 </div>
               ) : null}
-              <div className="highlights-stack__infoBodySide">
-                <p className="highlights-stack__infoBody">{block.body}</p>
+              <div className="highlights-stack__infoContent">
+                {block.title ? (
+                  <div className="highlights-stack__infoTitleSide">
+                    {block.eyebrow ? (
+                      <p className="highlights-stack__infoEyebrow">{block.eyebrow}</p>
+                    ) : null}
+                    <p className="highlights-stack__infoTitle">{block.title}</p>
+                  </div>
+                ) : null}
+                <div className="highlights-stack__infoBodySide">
+                  <p className="highlights-stack__infoBody">{block.body}</p>
+                </div>
               </div>
             </div>
           ))}
@@ -1012,12 +1160,17 @@ export default function ProductStoryStack({
 
       const isDesktop = window.innerWidth > 768;
       const travel = isDesktop ? Math.round(window.innerWidth * 0.55) : 120;
+      const teamMediaSnapStops = [0, 0.18, 0.43, 0.54, 0.62, 0.7, 0.78, 0.86, 0.94, 1];
       const isTeamInlineSequence =
         productInlineTitles.length > 0 &&
         !!productTeamIntro &&
         !!productTeamCards &&
         !!productTeamRightCircle;
       const hasTeamInfoSequence = isTeamInlineSequence && infos.length > 0;
+      const hasTeamMediaSequence =
+        isDesktop &&
+        isTeamInlineSequence &&
+        infos.some((info) => info.querySelector(".highlights-stack__infoMedia"));
 
       // ── Product panel ──────────────────────────────────────────────────────
       const isPlanner = className.includes("highlights-stack--planner");
@@ -1054,7 +1207,9 @@ export default function ProductStoryStack({
         id: `${stackId}-product`,
         trigger: productCard,
         start: "top top",
-        end: isDesktop ? "+=180%" : hasTeamInfoSequence ? "+=240%" : isTeamInlineSequence ? "+=155%" : "+=220%",
+        end: isDesktop
+          ? hasTeamMediaSequence ? "+=260%" : "+=180%"
+          : hasTeamInfoSequence ? "+=240%" : isTeamInlineSequence ? "+=155%" : "+=220%",
         pin: true,
         pinSpacing: true,
         scrub: isDesktop ? 0.08 : 0.04,
@@ -1064,7 +1219,13 @@ export default function ProductStoryStack({
         invalidateOnRefresh: true,
         snap: isDesktop || isTeamInlineSequence
           ? (productInlineTitles.length
-              ? makeInlineTitleSnapConfig(productInlineTitles.length, isTeamInlineSequence)
+              ? hasTeamMediaSequence
+                ? makeOneStepSnapConfig(teamMediaSnapStops)
+                : makeInlineTitleSnapConfig(
+                    productInlineTitles.length,
+                    isTeamInlineSequence,
+                    hasTeamMediaSequence,
+                  )
               : makeSnapConfig(!!productCompanion))
           : false,
         onUpdate: (self) => {
