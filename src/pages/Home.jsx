@@ -83,7 +83,7 @@ export function Home() {
         document.documentElement.scrollHeight - window.innerHeight,
       );
       const halfwayPoint = maxScroll * 0.5;
-      const pageCanvasColor = window.scrollY >= halfwayPoint ? "#2a2a2a" : "#ffffff";
+      const pageCanvasColor = window.scrollY >= halfwayPoint ? "#0d1117" : "#ffffff";
 
       if (pageCanvasColor !== activeMobileChromeColor) {
         activeMobileChromeColor = pageCanvasColor;
@@ -587,7 +587,7 @@ export function Home() {
       <div
         id="contact"
         className="center-container home-snap-section"
-        data-mobile-chrome-color="#2a2a2a"
+        data-mobile-chrome-color="#0d1117"
         style={{ width: "100%" }}
       >
         <div className="content-container">
