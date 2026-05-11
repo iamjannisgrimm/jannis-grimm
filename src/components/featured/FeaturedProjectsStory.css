@@ -900,6 +900,26 @@
   .highlights-stack--light .highlights-stack__teamCard--support {
     width: clamp(330px, 25vw, 390px);
     justify-self: center;
+    overflow: visible;
+  }
+
+  .highlights-stack--light .highlights-stack__teamCard--support::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(100% - 1px);
+    width: 2px;
+    height: clamp(72px, 9vh, 118px);
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: linear-gradient(
+      180deg,
+      rgba(107, 117, 137, 0.72) 0%,
+      rgba(107, 117, 137, 0.56) 58%,
+      rgba(107, 117, 137, 0.12) 100%
+    );
+    box-shadow: 0 8px 18px rgba(107, 117, 137, 0.16);
+    pointer-events: none;
   }
 
   .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
