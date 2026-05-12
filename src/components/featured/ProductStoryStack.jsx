@@ -43,9 +43,11 @@ const storyStepScroll = {
   touchCommitted: false,
   tween: null,
   unlockTimer: null,
+  wheelGestureEndTimer: null,
   wheelResetTimer: null,
   wheelDeltaTotal: 0,
   wheelDirection: 0,
+  lastWheelAt: 0,
   currentUnlockDelay: 120,
 };
 
@@ -72,8 +74,9 @@ function ensureStoryStepScrollController() {
   storyStepScroll.installed = true;
 
   const gestureQuietMs = 120;
-  const wheelGestureQuietMs = 850;
+  const wheelGestureQuietMs = 420;
   const wheelCommitThreshold = 24;
+  const wheelGestureEndMs = 180;
   const wheelResetMs = 100;
   const touchCommitThreshold = 24;
 
@@ -89,12 +92,11 @@ function ensureStoryStepScrollController() {
       .flatMap(({ trigger, stops }) =>
         stops.map((stop) => {
           const rawY = trigger.start + (trigger.end - trigger.start) * stop;
-          const boundaryInset = Math.min(56, Math.max(36, (trigger.end - trigger.start) * 0.03));
           const y =
             stop <= 0
-              ? trigger.start + boundaryInset
+              ? trigger.start + 1
               : stop >= 1
-                ? trigger.end - boundaryInset
+                ? trigger.end + 1
                 : rawY;
 
           return { y, trigger };
@@ -172,6 +174,23 @@ function ensureStoryStepScrollController() {
     storyStepScroll.wheelResetTimer = window.setTimeout(clearWheelIntent, wheelResetMs);
   };
 
+  const scheduleWheelGestureEnd = () => {
+    if (storyStepScroll.wheelGestureEndTimer) {
+      window.clearTimeout(storyStepScroll.wheelGestureEndTimer);
+    }
+
+    storyStepScroll.wheelGestureEndTimer = window.setTimeout(() => {
+      const quietFor = Date.now() - storyStepScroll.lastWheelAt;
+      if (storyStepScroll.isAnimating || quietFor < wheelGestureEndMs) {
+        scheduleWheelGestureEnd();
+        return;
+      }
+
+      storyStepScroll.isGestureLocked = false;
+      storyStepScroll.wheelGestureEndTimer = null;
+    }, wheelGestureEndMs);
+  };
+
   const clearUnlock = () => {
     if (storyStepScroll.unlockTimer) window.clearTimeout(storyStepScroll.unlockTimer);
     storyStepScroll.unlockTimer = null;
@@ -207,7 +226,11 @@ function ensureStoryStepScrollController() {
       onComplete: () => {
         window.scrollTo(0, targetY);
         storyStepScroll.isAnimating = false;
-        scheduleUnlock(storyStepScroll.currentUnlockDelay);
+        if (storyStepScroll.currentUnlockDelay === wheelGestureQuietMs) {
+          scheduleWheelGestureEnd();
+        } else {
+          scheduleUnlock(storyStepScroll.currentUnlockDelay);
+        }
       },
     });
 
@@ -227,14 +250,17 @@ function ensureStoryStepScrollController() {
     const direction = delta > 0 ? 1 : -1;
     const targetY = getTargetY(direction, delta);
     if (targetY === null) return;
+    storyStepScroll.lastWheelAt = Date.now();
 
     stopGestureEvent(event);
 
     if (storyStepScroll.isAnimating || storyStepScroll.isGestureLocked) {
       clearWheelIntent();
-      scheduleUnlock(wheelGestureQuietMs);
+      scheduleWheelGestureEnd();
       return;
     }
+
+    if (Math.abs(targetY - getScrollY()) < 2) return;
 
     if (direction !== storyStepScroll.wheelDirection) {
       storyStepScroll.wheelDeltaTotal = 0;
@@ -322,15 +348,18 @@ function destroyStoryStepScrollController() {
   window.removeEventListener("touchcancel", storyStepScroll.onTouchEnd, { capture: true });
 
   if (storyStepScroll.unlockTimer) window.clearTimeout(storyStepScroll.unlockTimer);
+  if (storyStepScroll.wheelGestureEndTimer) window.clearTimeout(storyStepScroll.wheelGestureEndTimer);
   if (storyStepScroll.wheelResetTimer) window.clearTimeout(storyStepScroll.wheelResetTimer);
   storyStepScroll.tween?.kill();
   storyStepScroll.installed = false;
   storyStepScroll.isAnimating = false;
   storyStepScroll.isGestureLocked = false;
   storyStepScroll.unlockTimer = null;
+  storyStepScroll.wheelGestureEndTimer = null;
   storyStepScroll.wheelResetTimer = null;
   storyStepScroll.wheelDeltaTotal = 0;
   storyStepScroll.wheelDirection = 0;
+  storyStepScroll.lastWheelAt = 0;
   storyStepScroll.currentUnlockDelay = 120;
 }
 
