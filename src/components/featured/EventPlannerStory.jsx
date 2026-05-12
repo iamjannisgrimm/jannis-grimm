@@ -13,6 +13,8 @@ function buildPlannerContent() {
       backgroundImage: `${BUCKET}/weddingbg.png`,
       backgroundColor: "#2f4257",
       themeColor: "#2f4257",
+      mobileChromeTopColor: "#ECDED9",
+      mobileChromeBottomColor: "#BF9D90",
       productImages: [
         `${BUCKET}/Venty/Venty1.png?v=2`,
         `${BUCKET}/Venty/Venty3.png?v=2`,

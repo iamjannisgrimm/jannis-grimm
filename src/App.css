@@ -75,6 +75,10 @@ body.home-scroll-snap .timeline-safe-area-fill {
   background: #2a2a2a;
 }
 
+.portfolio-mobile-chrome-fill {
+  display: none;
+}
+
 /* ===== Fonts ===== */
 @font-face {
   font-family: 'SF Pro';
@@ -143,6 +147,29 @@ body.home-scroll-snap .timeline-safe-area-fill {
     display: block;
     height: calc(env(safe-area-inset-top, 0px) + 28px);
     background: transparent;
+  }
+
+  .portfolio-mobile-chrome-fill {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 2147483646;
+    pointer-events: none;
+    background: var(--portfolio-mobile-chrome, #ffffff);
+    transition: background-color 140ms ease, background 140ms ease;
+  }
+
+  .portfolio-mobile-chrome-fill--top {
+    top: 0;
+    height: max(env(safe-area-inset-top, 0px), 14px);
+    background: var(--portfolio-mobile-chrome-top, var(--portfolio-mobile-chrome, #ffffff));
+  }
+
+  .portfolio-mobile-chrome-fill--bottom {
+    bottom: 0;
+    height: max(env(safe-area-inset-bottom, 0px), 12px);
+    background: var(--portfolio-mobile-chrome-bottom, var(--portfolio-mobile-chrome, #ffffff));
   }
 }
 

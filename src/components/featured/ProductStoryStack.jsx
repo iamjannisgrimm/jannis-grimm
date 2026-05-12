@@ -34,238 +34,222 @@ function makeTeamMediaSnapStops(infoCount, timelineDuration) {
   return stops.map((stop) => Math.max(0, Math.min(1, stop / timelineDuration)));
 }
 
-function createOneStepScrollController(trigger, stops, options = {}) {
+const storyStepScroll = {
+  entries: new Set(),
+  installed: false,
+  isAnimating: false,
+  isGestureLocked: false,
+  touchStartY: 0,
+  touchCommitted: false,
+  tween: null,
+  unlockTimer: null,
+  wheelResetTimer: null,
+  wheelDeltaTotal: 0,
+  wheelDirection: 0,
+  currentUnlockDelay: 120,
+};
+
+function createOneStepScrollController(trigger, stops) {
   if (!trigger || stops.length < 2) return () => {};
 
-  const { previousTrigger = null, nextTrigger = null } = options;
-  const orderedStops = [...new Set(stops)]
-    .map((stop) => Math.max(0, Math.min(1, stop)))
-    .sort((left, right) => left - right);
-  let isAnimating = false;
-  let isGestureLocked = false;
-  let unlockTimer = null;
-  let tween = null;
-  let touchStartY = 0;
-  let touchCommitted = false;
-  let wheelDeltaTotal = 0;
-  let wheelDirection = 0;
-  let wheelResetTimer = null;
-  const gestureQuietMs = 240;
-  const wheelCommitThreshold = 28;
-  const wheelResetMs = 120;
+  const entry = {
+    trigger,
+    stops: [...new Set(stops)]
+      .map((stop) => Math.max(0, Math.min(1, stop)))
+      .sort((left, right) => left - right),
+  };
+  storyStepScroll.entries.add(entry);
+  ensureStoryStepScrollController();
+
+  return () => {
+    storyStepScroll.entries.delete(entry);
+    if (!storyStepScroll.entries.size) destroyStoryStepScrollController();
+  };
+}
+
+function ensureStoryStepScrollController() {
+  if (storyStepScroll.installed) return;
+  storyStepScroll.installed = true;
+
+  const gestureQuietMs = 120;
+  const wheelGestureQuietMs = 850;
+  const wheelCommitThreshold = 24;
+  const wheelResetMs = 100;
   const touchCommitThreshold = 24;
 
-  const nearestIndex = () =>
-    orderedStops.reduce(
-      (nearest, stop, index) =>
-        Math.abs(stop - trigger.progress) < Math.abs(orderedStops[nearest] - trigger.progress)
-          ? index
-          : nearest,
-      0,
-    );
-
   const getScrollY = () => window.scrollY || window.pageYOffset || 0;
-
-  const isInsideTrigger = (buffer = 2) => {
-    const scrollY = getScrollY();
-    return scrollY >= trigger.start - buffer && scrollY <= trigger.end + buffer;
-  };
-
-  const willEnterTrigger = (direction, magnitude) => {
-    if (!direction || !magnitude) return false;
-    const scrollY = getScrollY();
-    const projectedY = scrollY + direction * Math.max(Math.abs(magnitude), 140);
-
-    if (direction > 0) {
-      return scrollY < trigger.start && projectedY >= trigger.start;
-    }
-
-    return scrollY > trigger.end && projectedY <= trigger.end;
-  };
-
-  const isLeavingBoundary = (direction) => {
-    if (!isInsideTrigger(8)) return false;
-
-    const currentIndex = nearestIndex();
-    const boundaryTolerance = 0.06;
-    const isAtFirstStop =
-      currentIndex === 0 && trigger.progress <= orderedStops[0] + boundaryTolerance;
-    const isAtLastStop =
-      currentIndex === orderedStops.length - 1 &&
-      trigger.progress >= orderedStops[orderedStops.length - 1] - boundaryTolerance;
-
-    return (direction < 0 && isAtFirstStop) || (direction > 0 && isAtLastStop);
-  };
-
-  const getLinkedBoundaryY = (direction) => {
-    if (direction > 0 && nextTrigger) return nextTrigger.start;
-    if (direction < 0 && previousTrigger) return previousTrigger.end;
-
-    const snapTriggers = ScrollTrigger.getAll().filter((candidate) => {
-      const id = candidate.vars?.id || "";
-      return candidate !== trigger && /-(product|overlay)$/.test(id);
-    });
-
-    if (direction > 0) {
-      const next = snapTriggers
-        .filter((candidate) => candidate.start > trigger.end + 2)
-        .sort((left, right) => left.start - right.start)[0];
-      return next?.start ?? null;
-    }
-
-    const previous = snapTriggers
-      .filter((candidate) => candidate.end < trigger.start - 2)
-      .sort((left, right) => right.end - left.end)[0];
-    return previous?.end ?? null;
-  };
-
-  const shouldHandleGesture = (direction, magnitude) => {
-    if (isInsideTrigger()) {
-      return !isLeavingBoundary(direction) || getLinkedBoundaryY(direction) !== null;
-    }
-
-    return willEnterTrigger(direction, magnitude);
-  };
-
-  const getTargetIndex = (direction) => {
-    const scrollY = window.scrollY || window.pageYOffset;
-    if (direction > 0 && scrollY < trigger.start - 2) return 0;
-    if (direction < 0 && scrollY > trigger.end + 2) return orderedStops.length - 1;
-
-    const currentIndex = nearestIndex();
-    return Math.max(0, Math.min(orderedStops.length - 1, currentIndex + direction));
-  };
-
-  const clearUnlock = () => {
-    if (unlockTimer) window.clearTimeout(unlockTimer);
-    unlockTimer = null;
-  };
-
-  const clearWheelIntent = () => {
-    if (wheelResetTimer) window.clearTimeout(wheelResetTimer);
-    wheelResetTimer = null;
-    wheelDeltaTotal = 0;
-    wheelDirection = 0;
-  };
-
-  const scheduleWheelIntentReset = () => {
-    if (wheelResetTimer) window.clearTimeout(wheelResetTimer);
-    wheelResetTimer = window.setTimeout(() => {
-      clearWheelIntent();
-    }, wheelResetMs);
-  };
-
-  const scheduleUnlock = () => {
-    if (unlockTimer) return;
-    unlockTimer = window.setTimeout(() => {
-      if (!isAnimating) isGestureLocked = false;
-      unlockTimer = null;
-    }, gestureQuietMs);
-  };
-
-  const moveOneStep = (direction) => {
-    const boundaryTargetY = isLeavingBoundary(direction) ? getLinkedBoundaryY(direction) : null;
-    const targetIndex = getTargetIndex(direction);
-    const currentIndex = nearestIndex();
-    const isOutsideBefore = getScrollY() < trigger.start - 2;
-    const isOutsideAfter = getScrollY() > trigger.end + 2;
-    if (
-      boundaryTargetY === null &&
-      targetIndex === currentIndex &&
-      !isOutsideBefore &&
-      !isOutsideAfter
-    ) {
-      return false;
-    }
-
-    const startY = getScrollY();
-    const targetY =
-      boundaryTargetY ?? trigger.start + (trigger.end - trigger.start) * orderedStops[targetIndex];
-    const state = { y: startY };
-
-    tween?.kill();
-    isAnimating = true;
-    isGestureLocked = true;
-    const isEnteringFromOutside = isOutsideBefore || isOutsideAfter || boundaryTargetY !== null;
-    tween = gsap.to(state, {
-      y: targetY,
-      duration: isEnteringFromOutside ? 0.46 : 0.4,
-      ease: "power2.out",
-      overwrite: true,
-      onUpdate: () => {
-        window.scrollTo(0, state.y);
-      },
-      onComplete: () => {
-        isAnimating = false;
-        scheduleUnlock();
-      },
-    });
-
-    return true;
-  };
-
-  const blockGesture = () => {
-    isGestureLocked = true;
-    scheduleUnlock();
-  };
 
   const stopGestureEvent = (event) => {
     event.preventDefault();
     event.stopImmediatePropagation?.();
   };
 
-  const onWheel = (event) => {
-    const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-    const direction = delta > 0 ? 1 : -1;
-    if (!shouldHandleGesture(direction, delta)) return;
+  const orderedTargets = () =>
+    Array.from(storyStepScroll.entries)
+      .flatMap(({ trigger, stops }) =>
+        stops.map((stop) => {
+          const rawY = trigger.start + (trigger.end - trigger.start) * stop;
+          const boundaryInset = Math.min(56, Math.max(36, (trigger.end - trigger.start) * 0.03));
+          const y =
+            stop <= 0
+              ? trigger.start + boundaryInset
+              : stop >= 1
+                ? trigger.end - boundaryInset
+                : rawY;
 
-    if (Math.abs(delta) < 6) {
-      stopGestureEvent(event);
-      if (direction !== wheelDirection) {
-        wheelDeltaTotal = 0;
-        wheelDirection = direction;
-      }
-      wheelDeltaTotal += Math.abs(delta);
-      scheduleWheelIntentReset();
-      if (!isAnimating && !isGestureLocked && wheelDeltaTotal >= wheelCommitThreshold) {
-        clearWheelIntent();
-        if (moveOneStep(direction)) {
-          blockGesture();
-        } else if (isLeavingBoundary(direction)) {
-          return;
-        }
-      }
-      if (isGestureLocked) scheduleUnlock();
-      return;
-    }
+          return { y, trigger };
+        }),
+      )
+      .filter((target) => Number.isFinite(target.y))
+      .sort((left, right) => left.y - right.y);
 
-    if (isAnimating || isGestureLocked) {
-      stopGestureEvent(event);
-      clearWheelIntent();
-      blockGesture();
-      return;
-    }
+  const nearestTargetIndex = (targets, scrollY) =>
+    targets.reduce(
+      (nearest, target, index) =>
+        Math.abs(target.y - scrollY) < Math.abs(targets[nearest].y - scrollY) ? index : nearest,
+      0,
+    );
 
-    if (direction !== wheelDirection) {
-      wheelDeltaTotal = 0;
-      wheelDirection = direction;
-    }
-    wheelDeltaTotal += Math.abs(delta);
-    scheduleWheelIntentReset();
+  const isInsideControlledRange = (scrollY, buffer = 3) =>
+    Array.from(storyStepScroll.entries).some(
+      ({ trigger }) => scrollY >= trigger.start - buffer && scrollY <= trigger.end + buffer,
+    );
 
-    if (wheelDeltaTotal >= wheelCommitThreshold) {
-      clearWheelIntent();
-      if (moveOneStep(direction)) {
-        stopGestureEvent(event);
-        blockGesture();
-      }
-      return;
-    }
-
-    stopGestureEvent(event);
+  const willEnterControlledRange = (scrollY, direction, magnitude) => {
+    if (!direction || !magnitude) return false;
+    const projectedY = scrollY + direction * Math.max(Math.abs(magnitude), 140);
+    return Array.from(storyStepScroll.entries).some(({ trigger }) =>
+      direction > 0
+        ? scrollY < trigger.start && projectedY >= trigger.start
+        : scrollY > trigger.end && projectedY <= trigger.end,
+    );
   };
 
-  const onKeyDown = (event) => {
+  const getTargetY = (direction, magnitude) => {
+    const targets = orderedTargets();
+    if (targets.length < 2) return null;
+
+    const scrollY = getScrollY();
+    const isInside = isInsideControlledRange(scrollY, 8);
+    const isEntering = !isInside && willEnterControlledRange(scrollY, direction, magnitude);
+    if (!isInside && !isEntering) return null;
+
+    if (isEntering) {
+      const projectedY = scrollY + direction * Math.max(Math.abs(magnitude), 140);
+      const entryTarget = direction > 0
+        ? targets.find((target) => scrollY < target.y && projectedY >= target.y)
+        : [...targets].reverse().find((target) => scrollY > target.y && projectedY <= target.y);
+      return entryTarget?.y ?? null;
+    }
+
+    const currentIndex = nearestTargetIndex(targets, scrollY);
+    const snapTolerance = 12;
+    const targetIndex =
+      direction > 0
+        ? Math.abs(scrollY - targets[currentIndex].y) <= snapTolerance
+          ? currentIndex + 1
+          : targets.findIndex((target) => target.y > scrollY + snapTolerance)
+        : Math.abs(scrollY - targets[currentIndex].y) <= snapTolerance
+          ? currentIndex - 1
+          : targets.reduce(
+              (foundIndex, target, index) =>
+                target.y < scrollY - snapTolerance ? index : foundIndex,
+              -1,
+            );
+
+    return targets[targetIndex]?.y ?? null;
+  };
+
+  const clearWheelIntent = () => {
+    if (storyStepScroll.wheelResetTimer) window.clearTimeout(storyStepScroll.wheelResetTimer);
+    storyStepScroll.wheelResetTimer = null;
+    storyStepScroll.wheelDeltaTotal = 0;
+    storyStepScroll.wheelDirection = 0;
+  };
+
+  const scheduleWheelIntentReset = () => {
+    if (storyStepScroll.wheelResetTimer) window.clearTimeout(storyStepScroll.wheelResetTimer);
+    storyStepScroll.wheelResetTimer = window.setTimeout(clearWheelIntent, wheelResetMs);
+  };
+
+  const clearUnlock = () => {
+    if (storyStepScroll.unlockTimer) window.clearTimeout(storyStepScroll.unlockTimer);
+    storyStepScroll.unlockTimer = null;
+  };
+
+  const scheduleUnlock = (delay = gestureQuietMs) => {
+    clearUnlock();
+    storyStepScroll.unlockTimer = window.setTimeout(() => {
+      if (!storyStepScroll.isAnimating) storyStepScroll.isGestureLocked = false;
+      storyStepScroll.unlockTimer = null;
+    }, delay);
+  };
+
+  const moveToTarget = (targetY, unlockDelay = gestureQuietMs) => {
+    const startY = getScrollY();
+    if (!Number.isFinite(targetY) || Math.abs(targetY - startY) < 2) return false;
+
+    storyStepScroll.tween?.kill();
+    storyStepScroll.isAnimating = true;
+    storyStepScroll.isGestureLocked = true;
+    storyStepScroll.currentUnlockDelay = unlockDelay;
+    clearUnlock();
+
+    const state = { y: startY };
+    storyStepScroll.tween = gsap.to(state, {
+      y: targetY,
+      duration: 0.32,
+      ease: "power2.out",
+      overwrite: true,
+      onUpdate: () => {
+        window.scrollTo(0, state.y);
+      },
+      onComplete: () => {
+        window.scrollTo(0, targetY);
+        storyStepScroll.isAnimating = false;
+        scheduleUnlock(storyStepScroll.currentUnlockDelay);
+      },
+    });
+
+    return true;
+  };
+
+  const commitGesture = (direction, magnitude, unlockDelay = gestureQuietMs) => {
+    const targetY = getTargetY(direction, magnitude);
+    if (targetY === null) return false;
+    return moveToTarget(targetY, unlockDelay);
+  };
+
+  storyStepScroll.onWheel = (event) => {
+    const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+    if (!delta) return;
+
+    const direction = delta > 0 ? 1 : -1;
+    const targetY = getTargetY(direction, delta);
+    if (targetY === null) return;
+
+    stopGestureEvent(event);
+
+    if (storyStepScroll.isAnimating || storyStepScroll.isGestureLocked) {
+      clearWheelIntent();
+      scheduleUnlock(wheelGestureQuietMs);
+      return;
+    }
+
+    if (direction !== storyStepScroll.wheelDirection) {
+      storyStepScroll.wheelDeltaTotal = 0;
+      storyStepScroll.wheelDirection = direction;
+    }
+    storyStepScroll.wheelDeltaTotal += Math.abs(delta);
+    scheduleWheelIntentReset();
+
+    if (Math.abs(delta) >= wheelCommitThreshold || storyStepScroll.wheelDeltaTotal >= wheelCommitThreshold) {
+      clearWheelIntent();
+      commitGesture(direction, delta, wheelGestureQuietMs);
+    }
+  };
+
+  storyStepScroll.onKeyDown = (event) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
 
     const forwardKeys = ["ArrowDown", "PageDown", " "];
@@ -273,70 +257,81 @@ function createOneStepScrollController(trigger, stops, options = {}) {
     if (!forwardKeys.includes(event.key) && !backKeys.includes(event.key)) return;
 
     const direction = forwardKeys.includes(event.key) ? 1 : -1;
-    if (!shouldHandleGesture(direction, window.innerHeight * 0.72)) return;
+    const targetY = getTargetY(direction, window.innerHeight * 0.72);
+    if (targetY === null) return;
 
-    if (isAnimating || isGestureLocked || moveOneStep(direction)) {
-      stopGestureEvent(event);
-      blockGesture();
+    stopGestureEvent(event);
+    if (storyStepScroll.isAnimating || storyStepScroll.isGestureLocked) {
+      scheduleUnlock();
+      return;
     }
+    moveToTarget(targetY);
   };
 
-  const onTouchStart = (event) => {
+  storyStepScroll.onTouchStart = (event) => {
     if (event.touches.length !== 1) return;
-    touchStartY = event.touches[0].clientY;
-    touchCommitted = false;
+    storyStepScroll.touchStartY = event.touches[0].clientY;
+    storyStepScroll.touchCommitted = false;
   };
 
-  const onTouchMove = (event) => {
+  storyStepScroll.onTouchMove = (event) => {
     if (event.touches.length !== 1) return;
 
-    const nextY = event.touches[0].clientY;
-    const delta = touchStartY - nextY;
+    const delta = storyStepScroll.touchStartY - event.touches[0].clientY;
     const direction = delta > 0 ? 1 : -1;
-    if (!shouldHandleGesture(direction, Math.abs(delta))) return;
+    const targetY = getTargetY(direction, Math.abs(delta));
+    if (targetY === null) return;
 
-    if (isAnimating || isGestureLocked || touchCommitted) {
-      stopGestureEvent(event);
-      blockGesture();
+    stopGestureEvent(event);
+    if (
+      storyStepScroll.isAnimating ||
+      storyStepScroll.isGestureLocked ||
+      storyStepScroll.touchCommitted ||
+      Math.abs(delta) < touchCommitThreshold
+    ) {
+      scheduleUnlock();
       return;
     }
 
-    if (Math.abs(delta) < touchCommitThreshold) {
-      stopGestureEvent(event);
-      return;
-    }
-
-    touchCommitted = true;
-    if (moveOneStep(direction)) {
-      stopGestureEvent(event);
-      blockGesture();
-    }
+    storyStepScroll.touchCommitted = true;
+    moveToTarget(targetY);
   };
 
-  const onTouchEnd = () => {
-    touchStartY = 0;
-    touchCommitted = false;
-    if (isGestureLocked) scheduleUnlock();
+  storyStepScroll.onTouchEnd = () => {
+    storyStepScroll.touchStartY = 0;
+    storyStepScroll.touchCommitted = false;
+    if (storyStepScroll.isGestureLocked) scheduleUnlock();
   };
 
-  window.addEventListener("wheel", onWheel, { passive: false, capture: true });
-  window.addEventListener("keydown", onKeyDown, { capture: true });
-  window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
-  window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
-  window.addEventListener("touchend", onTouchEnd, { capture: true });
-  window.addEventListener("touchcancel", onTouchEnd, { capture: true });
+  window.addEventListener("wheel", storyStepScroll.onWheel, { passive: false, capture: true });
+  window.addEventListener("keydown", storyStepScroll.onKeyDown, { capture: true });
+  window.addEventListener("touchstart", storyStepScroll.onTouchStart, { passive: true, capture: true });
+  window.addEventListener("touchmove", storyStepScroll.onTouchMove, { passive: false, capture: true });
+  window.addEventListener("touchend", storyStepScroll.onTouchEnd, { capture: true });
+  window.addEventListener("touchcancel", storyStepScroll.onTouchEnd, { capture: true });
+}
 
-  return () => {
-    window.removeEventListener("wheel", onWheel, { capture: true });
-    window.removeEventListener("keydown", onKeyDown, { capture: true });
-    window.removeEventListener("touchstart", onTouchStart, { capture: true });
-    window.removeEventListener("touchmove", onTouchMove, { capture: true });
-    window.removeEventListener("touchend", onTouchEnd, { capture: true });
-    window.removeEventListener("touchcancel", onTouchEnd, { capture: true });
-    clearUnlock();
-    clearWheelIntent();
-    tween?.kill();
-  };
+function destroyStoryStepScrollController() {
+  if (!storyStepScroll.installed) return;
+
+  window.removeEventListener("wheel", storyStepScroll.onWheel, { capture: true });
+  window.removeEventListener("keydown", storyStepScroll.onKeyDown, { capture: true });
+  window.removeEventListener("touchstart", storyStepScroll.onTouchStart, { capture: true });
+  window.removeEventListener("touchmove", storyStepScroll.onTouchMove, { capture: true });
+  window.removeEventListener("touchend", storyStepScroll.onTouchEnd, { capture: true });
+  window.removeEventListener("touchcancel", storyStepScroll.onTouchEnd, { capture: true });
+
+  if (storyStepScroll.unlockTimer) window.clearTimeout(storyStepScroll.unlockTimer);
+  if (storyStepScroll.wheelResetTimer) window.clearTimeout(storyStepScroll.wheelResetTimer);
+  storyStepScroll.tween?.kill();
+  storyStepScroll.installed = false;
+  storyStepScroll.isAnimating = false;
+  storyStepScroll.isGestureLocked = false;
+  storyStepScroll.unlockTimer = null;
+  storyStepScroll.wheelResetTimer = null;
+  storyStepScroll.wheelDeltaTotal = 0;
+  storyStepScroll.wheelDirection = 0;
+  storyStepScroll.currentUnlockDelay = 120;
 }
 
 function buildPanelTimeline({
@@ -1625,17 +1620,13 @@ export default function ProductStoryStack({
 
       if (productSnapStops.length > 1) {
         destroyStepScrollControllers.push(
-          createOneStepScrollController(productTrigger, productSnapStops, {
-            nextTrigger: overlayTrigger,
-          }),
+          createOneStepScrollController(productTrigger, productSnapStops),
         );
       }
 
       if (overlayTrigger && overlaySnapStops.length > 1) {
         destroyStepScrollControllers.push(
-          createOneStepScrollController(overlayTrigger, overlaySnapStops, {
-            previousTrigger: productTrigger,
-          }),
+          createOneStepScrollController(overlayTrigger, overlaySnapStops),
         );
       }
 

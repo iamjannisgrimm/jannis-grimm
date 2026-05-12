@@ -38,11 +38,54 @@ export function Home() {
     let gestureBaseTarget = null;
     const previousSafeAreaBarsAllowed = window.__portfolioTimelineSafeAreaBarsAllowed;
     const previousTimelineBackgroundSetter = window.__PORTFOLIO_SET_TIMELINE_BACKGROUND;
+    const previousMobileChromeSetter = window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR;
+    const previousMobileChromeSync = window.__PORTFOLIO_SYNC_MOBILE_CHROME;
     const previousThemeColorContent =
       document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff";
 
+    const ensureMobileChromeFills = () => {
+      ["top", "bottom"].forEach((placement) => {
+        if (document.querySelector(`.portfolio-mobile-chrome-fill--${placement}`)) {
+          return;
+        }
+
+        const fill = document.createElement("div");
+        fill.className = `portfolio-mobile-chrome-fill portfolio-mobile-chrome-fill--${placement}`;
+        fill.setAttribute("aria-hidden", "true");
+        document.body.appendChild(fill);
+      });
+    };
+
+    const getMobileChromeSpec = (value) => {
+      if (value && typeof value === "object") {
+        const theme = value.theme || value.color || value.top || "#ffffff";
+        const top = value.top || theme;
+        const bottom = value.bottom || theme;
+        return { theme, top, bottom };
+      }
+
+      const theme = value || "#ffffff";
+      return { theme, top: theme, bottom: theme };
+    };
+
+    const readMobileChromeSpec = (element) => {
+      if (!(element instanceof HTMLElement)) {
+        return getMobileChromeSpec("#ffffff");
+      }
+
+      const theme = element.getAttribute("data-mobile-chrome-color") || "#ffffff";
+      return getMobileChromeSpec({
+        theme,
+        top: element.getAttribute("data-mobile-chrome-top") || theme,
+        bottom: element.getAttribute("data-mobile-chrome-bottom") || theme,
+      });
+    };
+
+    const getMobileChromeKey = (spec) => `${spec.theme}|${spec.top}|${spec.bottom}`;
+
     const applyMobileChromeColor = (color) => {
-      const nextColor = color || "#ffffff";
+      const chromeSpec = getMobileChromeSpec(color);
+      const nextColor = chromeSpec.top;
       const themeColor = document.querySelector("meta[name='theme-color']");
       if (themeColor) {
         if (themeColor.getAttribute("content") !== nextColor) {
@@ -55,6 +98,12 @@ export function Home() {
       document.body.style.setProperty("--timeline-app-background", nextColor);
       document.documentElement.style.setProperty("--app-top-chrome", nextColor);
       document.body.style.setProperty("--app-top-chrome", nextColor);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome", nextColor);
+      document.body.style.setProperty("--portfolio-mobile-chrome", nextColor);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-top", chromeSpec.top);
+      document.body.style.setProperty("--portfolio-mobile-chrome-top", chromeSpec.top);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-bottom", chromeSpec.bottom);
+      document.body.style.setProperty("--portfolio-mobile-chrome-bottom", chromeSpec.bottom);
       document.documentElement.classList.remove("timeline-app-background-active");
       document.body.classList.remove("timeline-app-background-active");
       document.documentElement.style.backgroundColor = nextColor;
@@ -73,38 +122,97 @@ export function Home() {
         element.style.opacity = "0";
         element.style.background = nextColor;
       });
+
+      ensureMobileChromeFills();
+      document.querySelectorAll(".portfolio-mobile-chrome-fill").forEach((element) => {
+        if (element instanceof HTMLElement) {
+          element.style.background = element.classList.contains("portfolio-mobile-chrome-fill--bottom")
+            ? chromeSpec.bottom
+            : chromeSpec.top;
+        }
+      });
     };
-    let activeMobileChromeColor = "#ffffff";
+    let activeMobileChromeColor = getMobileChromeSpec("#ffffff");
     let mobileChromeFrame = 0;
 
-    const syncMobileChromeColor = () => {
-      const maxScroll = Math.max(
-        0,
-        document.documentElement.scrollHeight - window.innerHeight,
-      );
-      const halfwayPoint = maxScroll * 0.5;
-      const pageCanvasColor = window.scrollY >= halfwayPoint ? "#0d1117" : "#ffffff";
-
-      if (pageCanvasColor !== activeMobileChromeColor) {
-        activeMobileChromeColor = pageCanvasColor;
+    const getActiveSectionChromeColor = () => {
+      if (!window.matchMedia("(max-width: 768px)").matches) {
+        return getMobileChromeSpec("#ffffff");
       }
-      applyMobileChromeColor(activeMobileChromeColor);
+
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+      const visibleTop = 0;
+      const visibleHeight = viewportHeight;
+      const visibleBottom = viewportHeight;
+      const visibleCenter = viewportHeight * 0.5;
+      const probeX = viewportWidth * 0.5;
+      const topProbeY = 1;
+      const centerProbeY = Math.max(1, Math.min(viewportHeight - 1, visibleCenter));
+      const bottomProbeY = Math.max(1, Math.min(viewportHeight - 1, visibleBottom - 1));
+      const specAtPoint = (x, y) =>
+        document
+          .elementsFromPoint(x, y)
+          .map((element) => element.closest?.("[data-mobile-chrome-color]"))
+          .find((element) => element instanceof HTMLElement);
+      const topSection = specAtPoint(probeX, topProbeY);
+      const centerSection = specAtPoint(probeX, centerProbeY);
+      const bottomSection = specAtPoint(probeX, bottomProbeY);
+      const pointColor = centerSection;
+
+      if (topSection || bottomSection) {
+        const topSpec = readMobileChromeSpec(topSection || pointColor || bottomSection);
+        const bottomSpec = readMobileChromeSpec(bottomSection || pointColor || topSection);
+
+        return getMobileChromeSpec({
+          theme: topSpec.top,
+          top: topSpec.top,
+          bottom: bottomSpec.bottom,
+        });
+      }
+
+      const centerColor = document
+        .elementsFromPoint(probeX, centerProbeY)
+        .map((element) => element.closest?.("[data-mobile-chrome-color]"))
+        .find((element) => element instanceof HTMLElement);
+
+      if (centerColor) {
+        return readMobileChromeSpec(centerColor);
+      }
 
       const sections = Array.from(
         document.querySelectorAll("[data-mobile-chrome-color]"),
       ).filter((element) => element instanceof HTMLElement);
 
-      if (sections.length === 0) {
-        return;
-      }
+      let bestColor = getMobileChromeSpec("#ffffff");
+      let bestScore = -1;
 
-      const footerSection = document.getElementById("contact");
-      if (footerSection instanceof HTMLElement) {
-        const footerRect = footerSection.getBoundingClientRect();
-        if (footerRect.top <= window.innerHeight) {
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const visibleY = Math.max(0, Math.min(rect.bottom, visibleBottom) - Math.max(rect.top, visibleTop));
+        const visibleX = Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
+        if (visibleY <= 0 || visibleX <= 0) {
           return;
         }
+
+        const centerBonus = rect.top <= visibleCenter && rect.bottom >= visibleCenter ? visibleHeight : 0;
+        const score = visibleY * visibleX + centerBonus;
+        if (score > bestScore) {
+          bestScore = score;
+          bestColor = readMobileChromeSpec(section);
+        }
+      });
+
+      return bestColor;
+    };
+
+    const syncMobileChromeColor = () => {
+      const pageCanvasColor = getActiveSectionChromeColor();
+
+      if (getMobileChromeKey(pageCanvasColor) !== getMobileChromeKey(activeMobileChromeColor)) {
+        activeMobileChromeColor = pageCanvasColor;
       }
+      applyMobileChromeColor(activeMobileChromeColor);
     };
 
     const requestMobileChromeSync = () => {
@@ -122,6 +230,8 @@ export function Home() {
     window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = () => {
       applyMobileChromeColor(activeMobileChromeColor);
     };
+    window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR = applyMobileChromeColor;
+    window.__PORTFOLIO_SYNC_MOBILE_CHROME = requestMobileChromeSync;
 
     const getSections = () =>
       SNAP_SECTION_IDS
@@ -383,6 +493,7 @@ export function Home() {
 
     const handleWheel = (event) => {
       lastInputAt = Date.now();
+      requestMobileChromeSync();
       if (!gestureActive) {
         gestureActive = true;
         gestureBaseTarget = null;
@@ -400,6 +511,7 @@ export function Home() {
 
     const handleTouchStart = (event) => {
       lastInputAt = Date.now();
+      requestMobileChromeSync();
       touchStartY = event.touches?.[0]?.clientY || 0;
       touchLastY = touchStartY;
       gestureActive = true;
@@ -412,6 +524,7 @@ export function Home() {
 
     const handleTouchMove = (event) => {
       lastInputAt = Date.now();
+      requestMobileChromeSync();
       const nextY = event.touches?.[0]?.clientY || touchLastY;
       const delta = touchLastY - nextY;
       gestureTravel += delta;
@@ -425,6 +538,7 @@ export function Home() {
 
     const handleTouchEnd = () => {
       lastInputAt = Date.now();
+      requestMobileChromeSync();
       const totalDelta = touchStartY - touchLastY;
       if (Math.abs(totalDelta) >= SNAP_DIRECTION_THRESHOLD) {
         lastInputDirection = totalDelta > 0 ? 1 : -1;
@@ -439,6 +553,8 @@ export function Home() {
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("resize", requestMobileChromeSync);
+    window.visualViewport?.addEventListener("resize", requestMobileChromeSync);
+    window.visualViewport?.addEventListener("scroll", requestMobileChromeSync);
 
     return () => {
       if (mobileChromeFrame) {
@@ -451,10 +567,23 @@ export function Home() {
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", requestMobileChromeSync);
+      window.visualViewport?.removeEventListener("resize", requestMobileChromeSync);
+      window.visualViewport?.removeEventListener("scroll", requestMobileChromeSync);
       window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = previousTimelineBackgroundSetter;
+      window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR = previousMobileChromeSetter;
+      window.__PORTFOLIO_SYNC_MOBILE_CHROME = previousMobileChromeSync;
       window.__portfolioTimelineSafeAreaBarsAllowed = previousSafeAreaBarsAllowed;
       document.documentElement.style.removeProperty("--app-top-chrome");
+      document.documentElement.style.removeProperty("--portfolio-mobile-chrome");
+      document.documentElement.style.removeProperty("--portfolio-mobile-chrome-top");
+      document.documentElement.style.removeProperty("--portfolio-mobile-chrome-bottom");
       document.body.style.removeProperty("--app-top-chrome");
+      document.body.style.removeProperty("--portfolio-mobile-chrome");
+      document.body.style.removeProperty("--portfolio-mobile-chrome-top");
+      document.body.style.removeProperty("--portfolio-mobile-chrome-bottom");
+      document.querySelectorAll(".portfolio-mobile-chrome-fill").forEach((element) => {
+        element.remove();
+      });
       const themeColorMeta = document.querySelector("meta[name='theme-color']");
       if (themeColorMeta) {
         themeColorMeta.setAttribute("content", previousThemeColorContent);
