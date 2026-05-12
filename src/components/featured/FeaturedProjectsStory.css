@@ -904,22 +904,7 @@
   }
 
   .highlights-stack--light .highlights-stack__teamCard--support::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: calc(100% - 1px);
-    width: 2px;
-    height: clamp(72px, 9vh, 118px);
-    transform: translateX(-50%);
-    border-radius: 999px;
-    background: linear-gradient(
-      180deg,
-      rgba(107, 117, 137, 0.72) 0%,
-      rgba(107, 117, 137, 0.56) 58%,
-      rgba(107, 117, 137, 0.12) 100%
-    );
-    box-shadow: 0 8px 18px rgba(107, 117, 137, 0.16);
-    pointer-events: none;
+    display: none;
   }
 
   .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
@@ -1567,8 +1552,7 @@
   pointer-events: none;
 }
 
-.highlights-stack--light .highlights-stack__teamCards:has(.highlights-stack__teamLeadSlot[style*="opacity: 1"])::before,
-.highlights-stack--light .highlights-stack__teamCards:has(.highlights-stack__teamCard--lead[style*="opacity: 1"])::before {
+.highlights-stack--light .highlights-stack__teamCards:has(.highlights-stack__teamBridge[style*="opacity: 1"])::before {
   opacity: 1;
 }
 
@@ -1735,18 +1719,19 @@
     bottom: auto;
     left: 50%;
     width: 100%;
-    height: calc(clamp(150px, 16vh, 210px) + 4px);
+    height: calc(clamp(150px, 16vh, 210px) + 10px);
     transform: translateX(-50%);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 224' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.6' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C492 78 168 112 91 224'/%3E%3Cpath d='M500 0 C496 82 350 122 296 224'/%3E%3Cpath d='M500 0 C500 82 500 138 500 224'/%3E%3Cpath d='M500 0 C504 82 650 122 704 224'/%3E%3Cpath d='M500 0 C508 78 832 112 909 224'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     background-position: center top;
     filter: drop-shadow(0 7px 14px rgba(107, 117, 137, 0.12));
-    z-index: 0;
+    z-index: 1;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
     background: #ffffff;
+    z-index: 2;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::after,

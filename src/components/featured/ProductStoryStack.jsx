@@ -6,6 +6,11 @@ import "./FeaturedProjectsStory.css";
 gsap.registerPlugin(ScrollTrigger);
 
 function setThemeColor(color) {
+  if (window.matchMedia?.("(max-width: 768px)").matches && window.__PORTFOLIO_SYNC_MOBILE_CHROME) {
+    window.__PORTFOLIO_SYNC_MOBILE_CHROME();
+    return;
+  }
+
   const meta = document.querySelector("meta[name='theme-color']");
   if (meta) meta.setAttribute("content", color);
 }
@@ -18,43 +23,136 @@ const TEAM_INFO_EXIT_GAP = 0.64;
 function makeTeamMediaSnapStops(infoCount, timelineDuration) {
   if (!timelineDuration) return [0, 1];
 
-  const stops = [0, 1.1];
+  const stops = [0, 1.02];
   Array.from({ length: infoCount }).forEach((_, index) => {
     const imageStart = TEAM_INFO_START + index * TEAM_INFO_STEP;
     const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
-    stops.push(imageStart + 0.18, textStart + 0.2);
+    const isLast = index === infoCount - 1;
+    stops.push(imageStart + 0.18, isLast ? timelineDuration : textStart + 0.18);
   });
-  stops.push(timelineDuration);
 
   return stops.map((stop) => Math.max(0, Math.min(1, stop / timelineDuration)));
 }
 
-function createOneStepScrollController(trigger, stops) {
+function createOneStepScrollController(trigger, stops, options = {}) {
   if (!trigger || stops.length < 2) return () => {};
 
+  const { previousTrigger = null, nextTrigger = null } = options;
+  const orderedStops = [...new Set(stops)]
+    .map((stop) => Math.max(0, Math.min(1, stop)))
+    .sort((left, right) => left - right);
   let isAnimating = false;
   let isGestureLocked = false;
   let unlockTimer = null;
   let tween = null;
-  const gestureQuietMs = 280;
+  let touchStartY = 0;
+  let touchCommitted = false;
+  let wheelDeltaTotal = 0;
+  let wheelDirection = 0;
+  let wheelResetTimer = null;
+  const gestureQuietMs = 240;
+  const wheelCommitThreshold = 28;
+  const wheelResetMs = 120;
+  const touchCommitThreshold = 24;
 
   const nearestIndex = () =>
-    stops.reduce(
+    orderedStops.reduce(
       (nearest, stop, index) =>
-        Math.abs(stop - trigger.progress) < Math.abs(stops[nearest] - trigger.progress)
+        Math.abs(stop - trigger.progress) < Math.abs(orderedStops[nearest] - trigger.progress)
           ? index
           : nearest,
       0,
     );
 
-  const isInsideTrigger = () => {
+  const getScrollY = () => window.scrollY || window.pageYOffset || 0;
+
+  const isInsideTrigger = (buffer = 2) => {
+    const scrollY = getScrollY();
+    return scrollY >= trigger.start - buffer && scrollY <= trigger.end + buffer;
+  };
+
+  const willEnterTrigger = (direction, magnitude) => {
+    if (!direction || !magnitude) return false;
+    const scrollY = getScrollY();
+    const projectedY = scrollY + direction * Math.max(Math.abs(magnitude), 140);
+
+    if (direction > 0) {
+      return scrollY < trigger.start && projectedY >= trigger.start;
+    }
+
+    return scrollY > trigger.end && projectedY <= trigger.end;
+  };
+
+  const isLeavingBoundary = (direction) => {
+    if (!isInsideTrigger(8)) return false;
+
+    const currentIndex = nearestIndex();
+    const boundaryTolerance = 0.06;
+    const isAtFirstStop =
+      currentIndex === 0 && trigger.progress <= orderedStops[0] + boundaryTolerance;
+    const isAtLastStop =
+      currentIndex === orderedStops.length - 1 &&
+      trigger.progress >= orderedStops[orderedStops.length - 1] - boundaryTolerance;
+
+    return (direction < 0 && isAtFirstStop) || (direction > 0 && isAtLastStop);
+  };
+
+  const getLinkedBoundaryY = (direction) => {
+    if (direction > 0 && nextTrigger) return nextTrigger.start;
+    if (direction < 0 && previousTrigger) return previousTrigger.end;
+
+    const snapTriggers = ScrollTrigger.getAll().filter((candidate) => {
+      const id = candidate.vars?.id || "";
+      return candidate !== trigger && /-(product|overlay)$/.test(id);
+    });
+
+    if (direction > 0) {
+      const next = snapTriggers
+        .filter((candidate) => candidate.start > trigger.end + 2)
+        .sort((left, right) => left.start - right.start)[0];
+      return next?.start ?? null;
+    }
+
+    const previous = snapTriggers
+      .filter((candidate) => candidate.end < trigger.start - 2)
+      .sort((left, right) => right.end - left.end)[0];
+    return previous?.end ?? null;
+  };
+
+  const shouldHandleGesture = (direction, magnitude) => {
+    if (isInsideTrigger()) {
+      return !isLeavingBoundary(direction) || getLinkedBoundaryY(direction) !== null;
+    }
+
+    return willEnterTrigger(direction, magnitude);
+  };
+
+  const getTargetIndex = (direction) => {
     const scrollY = window.scrollY || window.pageYOffset;
-    return scrollY >= trigger.start - 2 && scrollY <= trigger.end + 2;
+    if (direction > 0 && scrollY < trigger.start - 2) return 0;
+    if (direction < 0 && scrollY > trigger.end + 2) return orderedStops.length - 1;
+
+    const currentIndex = nearestIndex();
+    return Math.max(0, Math.min(orderedStops.length - 1, currentIndex + direction));
   };
 
   const clearUnlock = () => {
     if (unlockTimer) window.clearTimeout(unlockTimer);
     unlockTimer = null;
+  };
+
+  const clearWheelIntent = () => {
+    if (wheelResetTimer) window.clearTimeout(wheelResetTimer);
+    wheelResetTimer = null;
+    wheelDeltaTotal = 0;
+    wheelDirection = 0;
+  };
+
+  const scheduleWheelIntentReset = () => {
+    if (wheelResetTimer) window.clearTimeout(wheelResetTimer);
+    wheelResetTimer = window.setTimeout(() => {
+      clearWheelIntent();
+    }, wheelResetMs);
   };
 
   const scheduleUnlock = () => {
@@ -66,21 +164,33 @@ function createOneStepScrollController(trigger, stops) {
   };
 
   const moveOneStep = (direction) => {
+    const boundaryTargetY = isLeavingBoundary(direction) ? getLinkedBoundaryY(direction) : null;
+    const targetIndex = getTargetIndex(direction);
     const currentIndex = nearestIndex();
-    const targetIndex = Math.max(0, Math.min(stops.length - 1, currentIndex + direction));
-    if (targetIndex === currentIndex) return false;
+    const isOutsideBefore = getScrollY() < trigger.start - 2;
+    const isOutsideAfter = getScrollY() > trigger.end + 2;
+    if (
+      boundaryTargetY === null &&
+      targetIndex === currentIndex &&
+      !isOutsideBefore &&
+      !isOutsideAfter
+    ) {
+      return false;
+    }
 
-    const startY = window.scrollY || window.pageYOffset;
-    const targetY = trigger.start + (trigger.end - trigger.start) * stops[targetIndex];
+    const startY = getScrollY();
+    const targetY =
+      boundaryTargetY ?? trigger.start + (trigger.end - trigger.start) * orderedStops[targetIndex];
     const state = { y: startY };
 
     tween?.kill();
     isAnimating = true;
     isGestureLocked = true;
+    const isEnteringFromOutside = isOutsideBefore || isOutsideAfter || boundaryTargetY !== null;
     tween = gsap.to(state, {
       y: targetY,
-      duration: targetIndex === 1 ? 0.96 : 0.56,
-      ease: "power3.inOut",
+      duration: isEnteringFromOutside ? 0.34 : 0.28,
+      ease: "power2.out",
       overwrite: true,
       onUpdate: () => {
         window.scrollTo(0, state.y);
@@ -99,50 +209,132 @@ function createOneStepScrollController(trigger, stops) {
     scheduleUnlock();
   };
 
-  const onWheel = (event) => {
-    if (!isInsideTrigger()) return;
+  const stopGestureEvent = (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation?.();
+  };
 
+  const onWheel = (event) => {
     const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+    const direction = delta > 0 ? 1 : -1;
+    if (!shouldHandleGesture(direction, delta)) return;
+
     if (Math.abs(delta) < 6) {
-      event.preventDefault();
+      stopGestureEvent(event);
+      if (direction !== wheelDirection) {
+        wheelDeltaTotal = 0;
+        wheelDirection = direction;
+      }
+      wheelDeltaTotal += Math.abs(delta);
+      scheduleWheelIntentReset();
+      if (!isAnimating && !isGestureLocked && wheelDeltaTotal >= wheelCommitThreshold) {
+        clearWheelIntent();
+        if (moveOneStep(direction)) {
+          blockGesture();
+        } else if (isLeavingBoundary(direction)) {
+          return;
+        }
+      }
       if (isGestureLocked) scheduleUnlock();
       return;
     }
 
     if (isAnimating || isGestureLocked) {
-      event.preventDefault();
+      stopGestureEvent(event);
+      clearWheelIntent();
       blockGesture();
       return;
     }
 
-    const direction = delta > 0 ? 1 : -1;
-    if (moveOneStep(direction)) {
-      event.preventDefault();
-      blockGesture();
+    if (direction !== wheelDirection) {
+      wheelDeltaTotal = 0;
+      wheelDirection = direction;
     }
+    wheelDeltaTotal += Math.abs(delta);
+    scheduleWheelIntentReset();
+
+    if (wheelDeltaTotal >= wheelCommitThreshold) {
+      clearWheelIntent();
+      if (moveOneStep(direction)) {
+        stopGestureEvent(event);
+        blockGesture();
+      }
+      return;
+    }
+
+    stopGestureEvent(event);
   };
 
   const onKeyDown = (event) => {
-    if (!isInsideTrigger() || event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
 
     const forwardKeys = ["ArrowDown", "PageDown", " "];
     const backKeys = ["ArrowUp", "PageUp"];
     if (!forwardKeys.includes(event.key) && !backKeys.includes(event.key)) return;
 
     const direction = forwardKeys.includes(event.key) ? 1 : -1;
+    if (!shouldHandleGesture(direction, window.innerHeight * 0.72)) return;
+
     if (isAnimating || isGestureLocked || moveOneStep(direction)) {
-      event.preventDefault();
+      stopGestureEvent(event);
       blockGesture();
     }
   };
 
+  const onTouchStart = (event) => {
+    if (event.touches.length !== 1) return;
+    touchStartY = event.touches[0].clientY;
+    touchCommitted = false;
+  };
+
+  const onTouchMove = (event) => {
+    if (event.touches.length !== 1) return;
+
+    const nextY = event.touches[0].clientY;
+    const delta = touchStartY - nextY;
+    const direction = delta > 0 ? 1 : -1;
+    if (!shouldHandleGesture(direction, Math.abs(delta))) return;
+
+    if (isAnimating || isGestureLocked || touchCommitted) {
+      stopGestureEvent(event);
+      blockGesture();
+      return;
+    }
+
+    if (Math.abs(delta) < touchCommitThreshold) {
+      stopGestureEvent(event);
+      return;
+    }
+
+    touchCommitted = true;
+    if (moveOneStep(direction)) {
+      stopGestureEvent(event);
+      blockGesture();
+    }
+  };
+
+  const onTouchEnd = () => {
+    touchStartY = 0;
+    touchCommitted = false;
+    if (isGestureLocked) scheduleUnlock();
+  };
+
   window.addEventListener("wheel", onWheel, { passive: false, capture: true });
   window.addEventListener("keydown", onKeyDown, { capture: true });
+  window.addEventListener("touchstart", onTouchStart, { passive: true, capture: true });
+  window.addEventListener("touchmove", onTouchMove, { passive: false, capture: true });
+  window.addEventListener("touchend", onTouchEnd, { capture: true });
+  window.addEventListener("touchcancel", onTouchEnd, { capture: true });
 
   return () => {
     window.removeEventListener("wheel", onWheel, { capture: true });
     window.removeEventListener("keydown", onKeyDown, { capture: true });
+    window.removeEventListener("touchstart", onTouchStart, { capture: true });
+    window.removeEventListener("touchmove", onTouchMove, { capture: true });
+    window.removeEventListener("touchend", onTouchEnd, { capture: true });
+    window.removeEventListener("touchcancel", onTouchEnd, { capture: true });
     clearUnlock();
+    clearWheelIntent();
     tween?.kill();
   };
 }
@@ -162,9 +354,11 @@ function buildPanelTimeline({
 }) {
   const headerH = header ? header.offsetHeight + 16 : 0;
   const hasCompanion = !!companion;
-  const useStackedDesktopInfo = isDesktop && !hasCompanion;
   const introHold = hasCompanion ? 0.18 : 0.2;
   const hasInlineTitles = inlineTitles.length > 0;
+  const verticalTravel = isDesktop
+    ? Math.max(180, Math.round(window.innerHeight * 0.28))
+    : 56;
 
   if (hasInlineTitles) {
     if (teamIntro?.introDescription) {
@@ -224,8 +418,8 @@ function buildPanelTimeline({
               return window.innerWidth / 2 - (rightRect.left + rightRect.width / 2);
             })()
           : 0;
-      const hasDesktopTeamMediaSequence =
-        isDesktop && !isMobileTeamScene && teamInfoItems.some((item) => item.media);
+      const hasTeamMediaSequence =
+        teamInfoItems.some((item) => item.media);
 
       if (isMobileTeamScene) {
         gsap.set(teamIntro.leftSlot, {
@@ -245,7 +439,7 @@ function buildPanelTimeline({
         if (teamIntro.bridge) gsap.set(teamIntro.bridge, { opacity: 0, y: 10 });
         if (teamIntro.rightCard) gsap.set(teamIntro.rightCard, { opacity: 0, y: 18 });
         if (teamIntro.infoWindow) gsap.set(teamIntro.infoWindow, { opacity: 0, y: 24 });
-        if (hasDesktopTeamMediaSequence) {
+        if (hasTeamMediaSequence) {
           teamInfoItems.forEach(({ root, media, content }) => {
             if (root) gsap.set(root, { opacity: 0, y: 0 });
             if (media) gsap.set(media, { opacity: 0, y: 58, scale: 0.98 });
@@ -383,7 +577,7 @@ function buildPanelTimeline({
           }, teamCardsExitStart);
         }
         tl.to(teamIntro.rightCard, {
-          x: hasDesktopTeamMediaSequence ? desktopCardCenterX : desktopCardShiftX - 140,
+          x: hasTeamMediaSequence ? desktopCardCenterX : desktopCardShiftX - 140,
           y: 0,
           duration: 0.32,
           ease: "power2.inOut",
@@ -399,7 +593,7 @@ function buildPanelTimeline({
         }, TEAM_INFO_START);
       }
 
-      if (hasDesktopTeamMediaSequence) {
+      if (hasTeamMediaSequence) {
         teamInfoItems.forEach(({ root, media, content }, index) => {
           const imageStart = TEAM_INFO_START + index * TEAM_INFO_STEP;
           const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
@@ -527,11 +721,11 @@ function buildPanelTimeline({
     return tl;
   }
 
-  if (infos[0]) gsap.set(infos[0], { opacity: 0, x: useStackedDesktopInfo ? 0 : -travel, y: useStackedDesktopInfo ? 34 : 12 });
+  if (infos[0]) gsap.set(infos[0], { opacity: 0, x: -travel, y: isDesktop ? 0 : 12 });
   if (infos[1]) {
-    gsap.set(infos[1], { opacity: 0, x: 0, y: useStackedDesktopInfo ? 42 : 56 });
+    gsap.set(infos[1], { opacity: 0, x: 0, y: verticalTravel });
   }
-  if (infos[2]) gsap.set(infos[2], { opacity: 0, x: useStackedDesktopInfo ? 0 : travel, y: useStackedDesktopInfo ? 50 : 12 });
+  if (infos[2]) gsap.set(infos[2], { opacity: 0, x: travel, y: isDesktop ? 0 : 12 });
   if (companion) gsap.set(companion, { opacity: 0 });
 
   const tl = gsap.timeline({ paused: true });
@@ -553,76 +747,69 @@ function buildPanelTimeline({
     // Phase 3–5: info blocks (shifted to make room for companion phase)
     if (infos[0]) {
       tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.58);
-      tl.to(infos[0], { x: -Math.round(travel * 0.6), y: -8, opacity: 0, duration: 0.11, ease: "power1.in" }, 0.7);
+      tl.to(infos[0], { x: -travel, y: 0, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.76);
     }
     if (infos[1]) {
-      tl.to(infos[1], { y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.78);
-      tl.to(infos[1], { y: -36, opacity: 0, duration: 0.11, ease: "power1.in" }, 0.88);
+      tl.to(infos[1], { y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.82);
+      tl.to(infos[1], { y: verticalTravel, opacity: 0, duration: 0.12, ease: "power1.in" }, 1);
     }
     if (infos[2]) {
-      tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 0.94);
+      tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.14, ease: "power2.out" }, 1.06);
     }
   } else {
-    if (useStackedDesktopInfo) {
-      if (infos[0]) {
-        tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.42);
-        tl.to(infos[0], { x: 0, y: -24, opacity: 0, duration: 0.16, ease: "power1.inOut" }, 0.58);
-      }
-      if (infos[1]) {
-        tl.to(infos[1], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.68);
-        tl.to(infos[1], { x: 0, y: -24, opacity: 0, duration: 0.16, ease: "power1.inOut" }, 0.84);
-      }
-      if (infos[2]) {
-        tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, 0.92);
-      }
-    } else {
-      // Original info block positions (no companion — unchanged)
-      if (infos[0]) {
-        tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.42);
-        tl.to(infos[0], { x: -Math.round(travel * 0.6), y: -8, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.58);
-      }
-      if (infos[1]) {
-        tl.to(infos[1], { y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.68);
-        tl.to(infos[1], { y: -36, opacity: 0, duration: 0.12, ease: "power1.in" }, 0.84);
-      }
-      if (infos[2]) {
-        tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.16, ease: "power2.out" }, 0.92);
-      }
+    if (infos[0]) {
+      tl.to(infos[0], { x: 0, y: 0, opacity: 1, duration: 0.18, ease: "power2.out" }, 0.36);
+      tl.to(infos[0], { x: -travel, y: 0, opacity: 0, duration: 0.14, ease: "power1.in" }, 0.64);
+    }
+    if (infos[1]) {
+      tl.to(infos[1], { y: 0, opacity: 1, duration: 0.18, ease: "power2.out" }, 0.68);
+      tl.to(infos[1], { y: verticalTravel, opacity: 0, duration: 0.14, ease: "power1.in" }, 0.96);
+    }
+    if (infos[2]) {
+      tl.to(infos[2], { x: 0, y: 0, opacity: 1, duration: 0.18, ease: "power2.out" }, 1);
     }
   }
 
   return tl;
 }
 
+function getPanelSnapStops(hasCompanion = false) {
+  return hasCompanion
+    ? [0, 0.62, 0.82, 1.0]
+    : [0, 0.47, 0.74, 1.0];
+}
+
 function makeSnapConfig(hasCompanion = false) {
-  const stops = hasCompanion
-    ? [0, 0.58, 0.78, 0.94, 1.0]
-    : [0, 0.42, 0.68, 0.92, 1.0];
+  const stops = getPanelSnapStops(hasCompanion);
   return {
     snapTo: (value) => stops.reduce((a, b) =>
       Math.abs(b - value) < Math.abs(a - value) ? b : a
     ),
-    duration: { min: 0.08, max: 0.16 },
+    duration: { min: 0.04, max: 0.08 },
     delay: 0,
     inertia: false,
     ease: "power3.out",
   };
 }
 
-function makeInlineTitleSnapConfig(count, isTeamInlineSequence = false, hasTeamMediaSequence = false) {
+function getInlineTitleSnapStops(count, isTeamInlineSequence = false, hasTeamMediaSequence = false) {
   const baseStops = isTeamInlineSequence
     ? hasTeamMediaSequence
       ? [0, 0.18, 0.43, 0.54, 0.62, 0.7, 0.78, 0.86, 0.94, 1]
       : [0, 0.18, 0.43, 0.66, 0.8, 0.92, 1]
     : [0, 0.18, 0.5, 0.82, 1];
-  const stops = isTeamInlineSequence
+  return isTeamInlineSequence
     ? baseStops
     : baseStops.slice(0, Math.max(3, count + 2));
+}
+
+function makeInlineTitleSnapConfig(count, isTeamInlineSequence = false, hasTeamMediaSequence = false) {
+  const stops = getInlineTitleSnapStops(count, isTeamInlineSequence, hasTeamMediaSequence);
   return {
     snapTo: (value) => stops.reduce((a, b) =>
       Math.abs(b - value) < Math.abs(a - value) ? b : a
     ),
-    duration: { min: 0.08, max: 0.16 },
+    duration: { min: 0.04, max: 0.08 },
     delay: 0,
     inertia: false,
     ease: "power3.out",
@@ -653,7 +840,7 @@ function makeOneStepSnapConfig(stops) {
       );
       return stops[activeIndex];
     },
-    duration: { min: 0.1, max: 0.18 },
+    duration: { min: 0.04, max: 0.08 },
     delay: 0,
     inertia: false,
     ease: "power3.out",
@@ -1187,6 +1374,25 @@ export default function ProductStoryStack({
     return [];
   }, [content]);
 
+  const mobileHeroChromeColor =
+    content.hero.themeColor || content.hero.backgroundColor || "#ffffff";
+  const mobileHeroChromeTopColor =
+    content.hero.mobileChromeTopColor || content.hero.mobileChrome?.top || mobileHeroChromeColor;
+  const mobileHeroChromeBottomColor =
+    content.hero.mobileChromeBottomColor || content.hero.mobileChrome?.bottom || mobileHeroChromeColor;
+  const mobileOverlayChromeColor =
+    content.overlay?.hero?.themeColor ||
+    content.overlay?.hero?.backgroundColor ||
+    mobileHeroChromeColor;
+  const mobileOverlayChromeTopColor =
+    content.overlay?.hero?.mobileChromeTopColor ||
+    content.overlay?.hero?.mobileChrome?.top ||
+    mobileOverlayChromeColor;
+  const mobileOverlayChromeBottomColor =
+    content.overlay?.hero?.mobileChromeBottomColor ||
+    content.overlay?.hero?.mobileChrome?.bottom ||
+    mobileOverlayChromeColor;
+
   useLayoutEffect(() => {
     const heroCard = heroCardRef.current;
     const productCard = productCardRef.current;
@@ -1294,7 +1500,7 @@ export default function ProductStoryStack({
 
     const heroThemeColor = content.hero.themeColor || content.hero.backgroundColor || "#ffffff";
     const overlayThemeColor = content.overlay?.hero?.themeColor || content.overlay?.hero?.backgroundColor || "#ffffff";
-    let destroyProductStepScroll = null;
+    const destroyStepScrollControllers = [];
 
     const ctx = gsap.context(() => {
       ScrollTrigger.getAll().forEach((t) => {
@@ -1310,7 +1516,6 @@ export default function ProductStoryStack({
         !!productTeamRightCircle;
       const hasTeamInfoSequence = isTeamInlineSequence && infos.length > 0;
       const hasTeamMediaSequence =
-        isDesktop &&
         isTeamInlineSequence &&
         infos.some((info) => info.querySelector(".highlights-stack__infoMedia"));
 
@@ -1347,6 +1552,15 @@ export default function ProductStoryStack({
       const teamMediaSnapStops = hasTeamMediaSequence
         ? makeTeamMediaSnapStops(infos.length, tl.totalDuration())
         : [];
+      const productSnapStops = productInlineTitles.length
+        ? hasTeamMediaSequence
+          ? teamMediaSnapStops
+          : getInlineTitleSnapStops(
+              productInlineTitles.length,
+              isTeamInlineSequence,
+              hasTeamMediaSequence,
+            )
+        : getPanelSnapStops(!!productCompanion);
 
       const productTrigger = ScrollTrigger.create({
         id: `${stackId}-product`,
@@ -1357,34 +1571,21 @@ export default function ProductStoryStack({
           : hasTeamInfoSequence ? "+=240%" : isTeamInlineSequence ? "+=155%" : "+=220%",
         pin: true,
         pinSpacing: true,
-        scrub: isDesktop ? 0.08 : 0.04,
-        fastScrollEnd: isDesktop && !hasTeamMediaSequence,
+        scrub: true,
+        fastScrollEnd: false,
         preventOverlaps: stackId,
         animation: tl,
         invalidateOnRefresh: true,
-        snap: isDesktop || isTeamInlineSequence
-          ? (productInlineTitles.length
-              ? hasTeamMediaSequence
-                ? makeOneStepSnapConfig(teamMediaSnapStops)
-                : makeInlineTitleSnapConfig(
-                    productInlineTitles.length,
-                    isTeamInlineSequence,
-                    hasTeamMediaSequence,
-                  )
-              : makeSnapConfig(!!productCompanion))
-          : false,
+        snap: false,
         onUpdate: (self) => {
           if (productCarouselRef.current) {
             productCarouselRef.current(self.progress);
           }
         },
       });
-      if (hasTeamMediaSequence) {
-        destroyProductStepScroll = createOneStepScrollController(productTrigger, teamMediaSnapStops);
-      }
-
       // ── Overlay panel ──────────────────────────────────────────────────────
       let overlayTrigger = null;
+      let overlaySnapStops = [];
 
       if (overlayCard && oInfos.length) {
         const contentTl = buildPanelTimeline({
@@ -1399,6 +1600,9 @@ export default function ProductStoryStack({
           travel,
           extraY: isPlanner ? 20 : 0,
         });
+        overlaySnapStops = overlayInlineTitles.length
+          ? getInlineTitleSnapStops(overlayInlineTitles.length)
+          : getPanelSnapStops(!!overlayCompanion);
         overlayTrigger = ScrollTrigger.create({
           id: `${stackId}-overlay`,
           trigger: overlayCard,
@@ -1406,17 +1610,33 @@ export default function ProductStoryStack({
           end: isDesktop ? "+=180%" : "+=220%",
           pin: true,
           pinSpacing: true,
-          scrub: isDesktop ? 0.06 : 0.04,
-          fastScrollEnd: isDesktop,
+          scrub: true,
+          fastScrollEnd: false,
           preventOverlaps: stackId,
           animation: contentTl,
           invalidateOnRefresh: true,
-          snap: isDesktop ? makeSnapConfig(!!overlayCompanion) : false,
+          snap: false,
           onEnter: () => setThemeColor(overlayThemeColor),
           onEnterBack: () => setThemeColor(overlayThemeColor),
           onLeaveBack: () => setThemeColor(heroThemeColor),
           onLeave: () => setThemeColor("#ffffff"),
         });
+      }
+
+      if (productSnapStops.length > 1) {
+        destroyStepScrollControllers.push(
+          createOneStepScrollController(productTrigger, productSnapStops, {
+            nextTrigger: overlayTrigger,
+          }),
+        );
+      }
+
+      if (overlayTrigger && overlaySnapStops.length > 1) {
+        destroyStepScrollControllers.push(
+          createOneStepScrollController(overlayTrigger, overlaySnapStops, {
+            previousTrigger: productTrigger,
+          }),
+        );
       }
 
       // ── Hero backdrop pin — stays through both panels ───────────────────────
@@ -1445,17 +1665,27 @@ export default function ProductStoryStack({
       window.removeEventListener("resize", applyVh);
       window.visualViewport?.removeEventListener("resize", applyVh);
       ScrollTrigger.removeEventListener("refresh", applyVh);
-      destroyProductStepScroll?.();
+      destroyStepScrollControllers.forEach((destroy) => destroy());
       ctx.revert();
     };
   }, [stackId]);
 
   return (
-    <section className={rootClassName} ref={sectionRef} style={backgroundStyle}>
+    <section
+      className={rootClassName}
+      ref={sectionRef}
+      style={backgroundStyle}
+      data-mobile-chrome-color={mobileHeroChromeColor}
+      data-mobile-chrome-top={mobileHeroChromeTopColor}
+      data-mobile-chrome-bottom={mobileHeroChromeBottomColor}
+    >
       {/* Static hero backdrop */}
       <article
         ref={heroCardRef}
         className="highlights-stack__card highlights-stack__card--hero"
+        data-mobile-chrome-color={mobileHeroChromeColor}
+        data-mobile-chrome-top={mobileHeroChromeTopColor}
+        data-mobile-chrome-bottom={mobileHeroChromeBottomColor}
       >
         <div
           className="highlights-stack__heroSnapTarget"
@@ -1478,6 +1708,9 @@ export default function ProductStoryStack({
       <article
         ref={productCardRef}
         className="highlights-stack__card highlights-stack__card--product"
+        data-mobile-chrome-color={mobileHeroChromeColor}
+        data-mobile-chrome-top={mobileHeroChromeTopColor}
+        data-mobile-chrome-bottom={mobileHeroChromeBottomColor}
       >
         <div
           className="highlights-stack__panelSnapTarget"
@@ -1514,6 +1747,9 @@ export default function ProductStoryStack({
         <article
           ref={overlayCardRef}
           className="highlights-stack__card highlights-stack__card--overlay"
+          data-mobile-chrome-color={mobileOverlayChromeColor}
+          data-mobile-chrome-top={mobileOverlayChromeTopColor}
+          data-mobile-chrome-bottom={mobileOverlayChromeBottomColor}
           style={{
             backgroundColor:
               content.overlay.hero.backgroundColor || "#0d1117",
