@@ -189,7 +189,7 @@ function createOneStepScrollController(trigger, stops, options = {}) {
     const isEnteringFromOutside = isOutsideBefore || isOutsideAfter || boundaryTargetY !== null;
     tween = gsap.to(state, {
       y: targetY,
-      duration: isEnteringFromOutside ? 0.34 : 0.28,
+      duration: isEnteringFromOutside ? 0.46 : 0.4,
       ease: "power2.out",
       overwrite: true,
       onUpdate: () => {
