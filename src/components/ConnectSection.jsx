@@ -105,6 +105,9 @@ export default function ConnectSection() {
                   onChange={(event) => setEmail(event.target.value)}
                   required
                 />
+                <button className="connect-section__submit" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending" : "Opt in"}
+                </button>
                 <button
                   className="connect-section__back"
                   type="button"
@@ -113,9 +116,6 @@ export default function ConnectSection() {
                   aria-label="Close updates form"
                 >
                   ×
-                </button>
-                <button className="connect-section__submit" type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Sending" : "Opt in"}
                 </button>
               </form>
             </div>
