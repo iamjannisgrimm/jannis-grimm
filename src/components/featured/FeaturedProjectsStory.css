@@ -1750,7 +1750,7 @@
   }
 
   .highlights-stack__infoWindow.highlights-stack__infoWindow--team {
-    top: clamp(144px, 12vh, 184px);
+    top: clamp(112px, 10vh, 148px);
     left: 0;
     right: 0;
     transform: none;
