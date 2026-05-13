@@ -1595,6 +1595,27 @@
   opacity: 1;
 }
 
+.highlights-stack--light .highlights-stack__teamCard--lead,
+.highlights-stack--light .highlights-stack__teamCard--support {
+  width: min(33vw, 420px);
+  min-height: clamp(420px, 47vh, 500px);
+  padding: clamp(22px, 2.2vw, 28px);
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.highlights-stack--light .highlights-stack__teamCircle {
+  width: clamp(188px, 18vw, 270px);
+  height: clamp(188px, 18vw, 270px);
+  min-width: 0;
+  min-height: 0;
+  flex: 0 0 auto;
+}
+
+.highlights-stack--light .highlights-stack__teamName {
+  margin-top: clamp(22px, 2.2vh, 28px);
+}
+
 .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
   content: "Specialist Agents";
   display: block;
@@ -1678,11 +1699,13 @@
   .highlights-stack--light .highlights-stack__teamCard--lead,
   .highlights-stack--light .highlights-stack__teamCard--support {
     width: min(37vw, 142px);
+    min-height: 174px;
     padding: 12px 8px 10px;
+    justify-content: center;
   }
 
   .highlights-stack--light .highlights-stack__teamCard--lead {
-    padding-top: 16px;
+    padding-top: 12px;
   }
 
   .highlights-stack--light .highlights-stack__teamCard--support {
@@ -1693,6 +1716,8 @@
   .highlights-stack--light .highlights-stack__teamCircle {
     width: min(28vw, 104px);
     height: min(28vw, 104px);
+    min-width: 0;
+    min-height: 0;
   }
 
   .highlights-stack--light .highlights-stack__teamName {
