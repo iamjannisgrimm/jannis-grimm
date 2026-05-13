@@ -118,12 +118,26 @@ function buildPanelTimeline({
       } else {
         if (teamIntro.leftCard) gsap.set(teamIntro.leftCard, { opacity: 0, y: 18 });
         if (teamIntro.bridge) gsap.set(teamIntro.bridge, { opacity: 0, y: 10 });
-        if (teamIntro.rightCard) gsap.set(teamIntro.rightCard, { opacity: 0, y: 18 });
+        if (teamIntro.rightCard) {
+          gsap.set(teamIntro.rightCard, {
+            opacity: 0,
+            y: 18,
+            scale: 1,
+            transformOrigin: "center center",
+          });
+        }
         if (teamIntro.infoWindow) gsap.set(teamIntro.infoWindow, { opacity: 0, y: 24 });
         if (hasTeamMediaSequence) {
           teamInfoItems.forEach(({ root, media, content }) => {
             if (root) gsap.set(root, { opacity: 0, y: 0 });
-            if (media) gsap.set(media, { opacity: 0, y: 58, scale: 0.98 });
+            if (media) {
+              gsap.set(media, {
+                opacity: 0,
+                y: 58,
+                scale: 0.98,
+                "--agent-lines-opacity": 0,
+              });
+            }
             if (content) gsap.set(content, { opacity: 0, y: 22 });
           });
         }
@@ -260,6 +274,7 @@ function buildPanelTimeline({
         tl.to(teamIntro.rightCard, {
           x: hasTeamMediaSequence ? desktopCardCenterX : desktopCardShiftX - 140,
           y: 0,
+          scale: hasTeamMediaSequence ? 0.94 : 1,
           duration: 0.32,
           ease: "power2.inOut",
         }, teamSoloStart);
@@ -297,9 +312,15 @@ function buildPanelTimeline({
               ease: "power3.out",
             }, imageStart);
             tl.to(media, {
+              "--agent-lines-opacity": 1,
+              duration: 0.18,
+              ease: "power1.out",
+            }, imageStart + 0.2);
+            tl.to(media, {
               opacity: 0,
               y: -22,
               scale: 0.98,
+              "--agent-lines-opacity": 0,
               duration: 0.14,
               ease: "power1.inOut",
             }, textStart);

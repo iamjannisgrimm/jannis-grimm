@@ -1257,7 +1257,8 @@
   width: clamp(42px, 4vw, 64px);
   height: clamp(250px, 26vh, 320px);
   transform: translateX(-50%);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 320' preserveAspectRatio='none'%3E%3Cpath d='M40 0 C40 82 25 112 40 160 C55 208 40 240 40 320' fill='none' stroke='%236b7589' stroke-width='2.2' stroke-linecap='round' opacity='0.2'/%3E%3C/svg%3E");
+  opacity: var(--agent-lines-opacity, 1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 320' preserveAspectRatio='none'%3E%3Cpath d='M40 0 C40 82 25 112 40 160 C55 208 40 240 40 320' fill='none' stroke='%236b7589' stroke-width='2.2' opacity='0.2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   pointer-events: none;
@@ -1272,6 +1273,7 @@
   height: 6px;
   border-radius: 999px;
   background: rgba(107, 117, 137, 0.14);
+  opacity: var(--agent-lines-opacity, 1);
   transform: translateX(-50%);
 }
 
@@ -1768,14 +1770,14 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
-    margin-bottom: clamp(360px, 42vh, 500px);
+    margin-bottom: clamp(300px, 35vh, 400px);
     font-size: clamp(2.5rem, 4.9vw, 5rem);
     line-height: 0.94;
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
     gap: clamp(20px, 2.1vw, 32px);
-    padding-top: clamp(150px, 16vh, 210px);
+    padding-top: clamp(112px, 12vh, 160px);
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::before {
@@ -1783,7 +1785,7 @@
     bottom: auto;
     left: 50%;
     width: 100%;
-    height: calc(clamp(150px, 16vh, 210px) + 10px);
+    height: calc(clamp(112px, 12vh, 160px) + 10px);
     transform: translateX(-50%);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 224' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.6' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C492 78 168 112 91 224'/%3E%3Cpath d='M500 0 C496 82 350 122 296 224'/%3E%3Cpath d='M500 0 C500 82 500 138 500 224'/%3E%3Cpath d='M500 0 C504 82 650 122 704 224'/%3E%3Cpath d='M500 0 C508 78 832 112 909 224'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
