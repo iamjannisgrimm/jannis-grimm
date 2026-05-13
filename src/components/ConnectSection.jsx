@@ -68,6 +68,8 @@ export default function ConnectSection() {
     setIsFormVisible(false);
   };
 
+  const showActions = !isFormVisible && !isComplete;
+
   return (
     <section className="connect-section" aria-labelledby="connect-title" data-mobile-chrome-color="#ffffff">
       <div className="connect-section__inner">
@@ -77,63 +79,65 @@ export default function ConnectSection() {
         <p className="connect-section__description">{CONNECT_DESCRIPTION}</p>
 
         <div className="connect-section__control-stage">
-          {!isFormVisible && !isComplete ? (
-            <div className="connect-section__actions">
-              <button
-                className="connect-section__button"
-                type="button"
-                onClick={() => setIsFormVisible(true)}
-              >
-                Receive updates
-              </button>
-              <button className="connect-section__button" type="button" onClick={openInquireEmail}>
-                Inquire
-              </button>
-            </div>
-          ) : null}
+          <div className={`connect-section__actions ${showActions ? "is-visible" : ""}`} aria-hidden={!showActions}>
+            <button
+              className="connect-section__button"
+              type="button"
+              onClick={() => setIsFormVisible(true)}
+              tabIndex={showActions ? 0 : -1}
+            >
+              Receive updates
+            </button>
+            <button
+              className="connect-section__button"
+              type="button"
+              onClick={openInquireEmail}
+              tabIndex={showActions ? 0 : -1}
+            >
+              Inquire
+            </button>
+          </div>
 
-          {isFormVisible ? (
-            <div className="connect-section__form-wrap">
-              <form className="connect-section__form" onSubmit={handleSubmit}>
-                <input
-                  className="connect-section__input"
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                />
-                <button className="connect-section__submit" type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Sending" : "Opt in"}
-                </button>
-                <button
-                  className="connect-section__back"
-                  type="button"
-                  onClick={closeUpdateForm}
-                  disabled={isSubmitting}
-                  aria-label="Close updates form"
-                >
-                  ×
-                </button>
-              </form>
-            </div>
-          ) : null}
+          <div className={`connect-section__form-wrap ${isFormVisible ? "is-visible" : ""}`} aria-hidden={!isFormVisible}>
+            <form className="connect-section__form" onSubmit={handleSubmit}>
+              <input
+                className="connect-section__input"
+                type="email"
+                name="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                tabIndex={isFormVisible ? 0 : -1}
+              />
+              <button className="connect-section__submit" type="submit" disabled={isSubmitting} tabIndex={isFormVisible ? 0 : -1}>
+                {isSubmitting ? "Sending" : "Opt in"}
+              </button>
+              <button
+                className="connect-section__back"
+                type="button"
+                onClick={closeUpdateForm}
+                disabled={isSubmitting}
+                aria-label="Close updates form"
+                tabIndex={isFormVisible ? 0 : -1}
+              >
+                ×
+              </button>
+            </form>
+          </div>
         </div>
 
-        <p className="connect-section__status" aria-live="polite">
+        <p className={`connect-section__status ${status ? "is-visible" : ""}`} aria-live="polite">
           {status}
         </p>
 
-        {isComplete ? (
-          <div className="connect-section__success" aria-live="polite">
-            <span className="connect-section__success-mark" aria-hidden="true">
-              ✓
-            </span>
-            <span>You are in. I will keep it short and worthwhile.</span>
-          </div>
-        ) : null}
+        <div className={`connect-section__success ${isComplete ? "is-visible" : ""}`} aria-live="polite">
+          <span className="connect-section__success-mark" aria-hidden="true">
+            ✓
+          </span>
+          <span>You are in. I will keep it short and worthwhile.</span>
+        </div>
       </div>
     </section>
   );
