@@ -908,13 +908,46 @@
   }
 
   .highlights-stack--light .highlights-stack__productHeader--inlineRotator {
-    padding-bottom: clamp(14px, 2.5vh, 28px);
+    padding-bottom: clamp(6px, 1.2dvh, 14px);
   }
 
   .highlights-stack--light .highlights-stack__productShell {
     justify-content: flex-start;
-    padding-top: clamp(92px, 12vh, 128px);
-    padding-bottom: clamp(90px, 12vh, 130px);
+    min-height: 100dvh;
+    padding-top: clamp(76px, 8dvh, 106px);
+    padding-bottom: clamp(44px, 5dvh, 72px);
+    gap: clamp(8px, 1.4dvh, 18px);
+  }
+
+  .highlights-stack--light .highlights-stack__titleRotator--standalone {
+    min-height: 1.86em;
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntroVisualWrap {
+    gap: clamp(14px, 2dvh, 24px);
+    transform: none;
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntroVisual {
+    width: auto;
+    min-width: 0;
+    height: clamp(340px, 50dvh, 620px);
+    max-width: min(48vw, 640px);
+    overflow: visible;
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntroImage {
+    width: auto;
+    height: 100%;
+    max-width: min(48vw, 640px);
+    transform: scale(1.02);
+    object-fit: contain;
+  }
+
+  .highlights-stack--light .highlights-stack__teamIntroDescription {
+    width: min(760px, calc(100vw - 64px));
+    max-width: 56ch;
+    padding-bottom: clamp(24px, 3.8dvh, 48px);
   }
 
   .highlights-stack__productShell {
@@ -1044,11 +1077,16 @@
   }
 
   .highlights-stack--light .highlights-stack__teamIntroVisual {
-    width: min(34vw, 420px);
+    width: auto;
+    min-width: 0;
+    height: clamp(340px, 50dvh, 620px);
+    max-width: min(48vw, 640px);
+    overflow: visible;
   }
 
   .highlights-stack--light .highlights-stack__teamIntroVisualWrap {
-    gap: 14px;
+    gap: clamp(14px, 2dvh, 24px);
+    transform: none;
   }
 
   .highlights-stack__teamCardsDescription {
