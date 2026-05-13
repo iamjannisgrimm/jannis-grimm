@@ -945,6 +945,7 @@
   }
 
   .highlights-stack--light .highlights-stack__teamIntroDescription {
+    margin-top: clamp(-42px, -3dvh, -22px);
     width: min(760px, calc(100vw - 64px));
     max-width: 56ch;
     padding-bottom: clamp(38px, 5.2dvh, 72px);
