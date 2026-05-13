@@ -1597,23 +1597,23 @@
 
 .highlights-stack--light .highlights-stack__teamCard--lead,
 .highlights-stack--light .highlights-stack__teamCard--support {
-  width: min(33vw, 420px);
-  min-height: clamp(420px, 47vh, 500px);
-  padding: clamp(22px, 2.2vw, 28px);
+  width: min(29vw, 360px);
+  min-height: clamp(350px, 40vh, 420px);
+  padding: clamp(18px, 1.9vw, 24px);
   justify-content: center;
   box-sizing: border-box;
 }
 
 .highlights-stack--light .highlights-stack__teamCircle {
-  width: clamp(188px, 18vw, 270px);
-  height: clamp(188px, 18vw, 270px);
+  width: clamp(164px, 15vw, 224px);
+  height: clamp(164px, 15vw, 224px);
   min-width: 0;
   min-height: 0;
   flex: 0 0 auto;
 }
 
 .highlights-stack--light .highlights-stack__teamName {
-  margin-top: clamp(22px, 2.2vh, 28px);
+  margin-top: clamp(18px, 1.9vh, 24px);
 }
 
 .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
@@ -1698,8 +1698,8 @@
 
   .highlights-stack--light .highlights-stack__teamCard--lead,
   .highlights-stack--light .highlights-stack__teamCard--support {
-    width: min(37vw, 142px);
-    min-height: 174px;
+    width: min(34vw, 128px);
+    min-height: 156px;
     padding: 12px 8px 10px;
     justify-content: center;
   }
@@ -1714,8 +1714,8 @@
   }
 
   .highlights-stack--light .highlights-stack__teamCircle {
-    width: min(28vw, 104px);
-    height: min(28vw, 104px);
+    width: min(25vw, 92px);
+    height: min(25vw, 92px);
     min-width: 0;
     min-height: 0;
   }
