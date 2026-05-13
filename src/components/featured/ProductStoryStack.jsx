@@ -274,9 +274,9 @@ function buildPanelTimeline({
         tl.to(teamIntro.rightCard, {
           x: hasTeamMediaSequence ? desktopCardCenterX : desktopCardShiftX - 140,
           y: 0,
-          scale: hasTeamMediaSequence ? 0.94 : 1,
-          duration: 0.32,
-          ease: "power2.inOut",
+          scale: hasTeamMediaSequence ? 0.86 : 1,
+          duration: 0.38,
+          ease: "power3.inOut",
         }, teamSoloStart);
       }
 
