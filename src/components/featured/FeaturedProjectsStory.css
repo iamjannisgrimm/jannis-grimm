@@ -931,7 +931,7 @@
   .highlights-stack--light .highlights-stack__teamIntroVisual {
     width: auto;
     min-width: 0;
-    height: clamp(340px, 50dvh, 620px);
+    height: clamp(320px, 47dvh, 580px);
     max-width: min(48vw, 640px);
     overflow: visible;
   }
@@ -948,7 +948,7 @@
     margin-top: clamp(-42px, -3dvh, -22px);
     width: min(760px, calc(100vw - 64px));
     max-width: 56ch;
-    padding-bottom: clamp(38px, 5.2dvh, 72px);
+    padding-bottom: clamp(54px, 6.6dvh, 92px);
   }
 
   .highlights-stack__productShell {
@@ -1080,7 +1080,7 @@
   .highlights-stack--light .highlights-stack__teamIntroVisual {
     width: auto;
     min-width: 0;
-    height: clamp(340px, 50dvh, 620px);
+    height: clamp(320px, 47dvh, 580px);
     max-width: min(48vw, 640px);
     overflow: visible;
   }
