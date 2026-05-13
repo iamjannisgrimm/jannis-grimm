@@ -925,7 +925,7 @@
 
   .highlights-stack--light .highlights-stack__teamIntroVisualWrap {
     gap: clamp(14px, 2dvh, 24px);
-    transform: none;
+    transform: translateY(clamp(-28px, -2.2dvh, -16px));
   }
 
   .highlights-stack--light .highlights-stack__teamIntroVisual {
@@ -1087,7 +1087,7 @@
 
   .highlights-stack--light .highlights-stack__teamIntroVisualWrap {
     gap: clamp(14px, 2dvh, 24px);
-    transform: none;
+    transform: translateY(clamp(-28px, -2.2dvh, -16px));
   }
 
   .highlights-stack__teamCardsDescription {
