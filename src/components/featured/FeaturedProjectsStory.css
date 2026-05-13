@@ -1619,7 +1619,7 @@
 }
 
 .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
-  content: "Specialist Agents";
+  content: "Domain Specific Agents";
   display: block;
   margin: 0 auto clamp(12px, 1.7vh, 20px);
   color: #111111;
@@ -1750,7 +1750,7 @@
   }
 
   .highlights-stack__infoWindow.highlights-stack__infoWindow--team {
-    top: clamp(82px, 8vh, 118px);
+    top: clamp(144px, 12vh, 184px);
     left: 0;
     right: 0;
     transform: none;
