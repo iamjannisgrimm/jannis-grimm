@@ -2,7 +2,7 @@ import { navigateTo } from '../lib/navigation';
 
 const Footer = () => {
   return (
-    <footer data-mobile-chrome-color="#0d1117" style={{
+    <footer className="portfolio-footer" data-mobile-chrome-color="#0d1117" style={{
       width: "100vw",
       backgroundColor: "#0d1117",
       padding: "44px 0 calc(52px + env(safe-area-inset-bottom, 0px))",

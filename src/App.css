@@ -445,6 +445,10 @@ body.home-scroll-snap .timeline-safe-area-fill {
   font-weight: 800;
 }
 
+.portfolio-footer {
+  box-shadow: 0 100vh 0 100vh #0d1117;
+}
+
 @media (max-width: 760px) {
   .connect-section {
     padding: 180px 22px 204px;
