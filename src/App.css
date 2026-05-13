@@ -35,6 +35,15 @@ body.home-scroll-snap .timeline-safe-area-fill {
   opacity: 0 !important;
 }
 
+html.portfolio-footer-background-active,
+body.portfolio-footer-background-active,
+html.portfolio-footer-background-active body,
+html.portfolio-footer-background-active #root {
+  --portfolio-overscroll-background: #0d1117;
+  background: #0d1117 !important;
+  background-color: #0d1117 !important;
+}
+
 #root {
   width: 100%;
   display: flex;
@@ -443,10 +452,6 @@ body.home-scroll-snap .timeline-safe-area-fill {
   flex: 0 0 auto;
   font-size: 1rem;
   font-weight: 800;
-}
-
-.portfolio-footer {
-  box-shadow: 0 100vh 0 100vh #0d1117;
 }
 
 @media (max-width: 760px) {

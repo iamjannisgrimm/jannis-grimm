@@ -84,6 +84,45 @@ export function Home() {
 
     const getMobileChromeKey = (spec) => `${spec.theme}|${spec.top}|${spec.bottom}`;
 
+    const isFooterBackgroundActive = () => {
+      const footer = document.querySelector(".portfolio-footer");
+      if (!(footer instanceof HTMLElement)) {
+        return false;
+      }
+
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+      const footerRect = footer.getBoundingClientRect();
+      const documentHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+      );
+      const isNearDocumentEnd = window.scrollY + viewportHeight >= documentHeight - 2;
+
+      return footerRect.top <= viewportHeight || isNearDocumentEnd;
+    };
+
+    const applyFooterBackgroundState = () => {
+      const isActive = isFooterBackgroundActive();
+      document.documentElement.classList.toggle("portfolio-footer-background-active", isActive);
+      document.body.classList.toggle("portfolio-footer-background-active", isActive);
+
+      if (!isActive) {
+        return false;
+      }
+
+      document.documentElement.style.setProperty("--portfolio-overscroll-background", "#0d1117");
+      document.body.style.setProperty("--portfolio-overscroll-background", "#0d1117");
+      document.documentElement.style.backgroundColor = "#0d1117";
+      document.body.style.backgroundColor = "#0d1117";
+
+      const root = document.getElementById("root");
+      if (root instanceof HTMLElement) {
+        root.style.backgroundColor = "#0d1117";
+      }
+
+      return true;
+    };
+
     const applyMobileChromeColor = (color) => {
       const chromeSpec = getMobileChromeSpec(color);
       const nextColor = chromeSpec.top;
@@ -117,6 +156,8 @@ export function Home() {
       if (root instanceof HTMLElement) {
         root.style.backgroundColor = pageCanvasColor;
       }
+
+      applyFooterBackgroundState();
 
       document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
         if (!(element instanceof HTMLElement)) {
@@ -227,6 +268,7 @@ export function Home() {
     };
 
     syncMobileChromeColor();
+    applyFooterBackgroundState();
     window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = () => {
       applyMobileChromeColor(activeMobileChromeColor);
     };
@@ -484,6 +526,7 @@ export function Home() {
     };
 
     const handleScroll = () => {
+      applyFooterBackgroundState();
       requestMobileChromeSync();
       if (isProgrammaticSnap || !gestureActive) {
         return;
@@ -553,8 +596,11 @@ export function Home() {
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("resize", requestMobileChromeSync);
+    window.addEventListener("resize", applyFooterBackgroundState);
     window.visualViewport?.addEventListener("resize", requestMobileChromeSync);
+    window.visualViewport?.addEventListener("resize", applyFooterBackgroundState);
     window.visualViewport?.addEventListener("scroll", requestMobileChromeSync);
+    window.visualViewport?.addEventListener("scroll", applyFooterBackgroundState);
 
     return () => {
       if (mobileChromeFrame) {
@@ -567,8 +613,11 @@ export function Home() {
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("resize", requestMobileChromeSync);
+      window.removeEventListener("resize", applyFooterBackgroundState);
       window.visualViewport?.removeEventListener("resize", requestMobileChromeSync);
+      window.visualViewport?.removeEventListener("resize", applyFooterBackgroundState);
       window.visualViewport?.removeEventListener("scroll", requestMobileChromeSync);
+      window.visualViewport?.removeEventListener("scroll", applyFooterBackgroundState);
       window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = previousTimelineBackgroundSetter;
       window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR = previousMobileChromeSetter;
       window.__PORTFOLIO_SYNC_MOBILE_CHROME = previousMobileChromeSync;
@@ -591,7 +640,9 @@ export function Home() {
         themeColorMeta.setAttribute("content", previousThemeColorContent);
       }
       document.documentElement.classList.remove("home-scroll-snap");
+      document.documentElement.classList.remove("portfolio-footer-background-active");
       document.body.classList.remove("home-scroll-snap");
+      document.body.classList.remove("portfolio-footer-background-active");
     };
   }, []);
 
