@@ -318,12 +318,12 @@
 }
 
 .highlights-stack__teamCards {
-  width: min(1040px, calc(100% - 56px));
+  width: min(940px, calc(100% - 56px));
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(72px, 9vw, 136px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) clamp(52px, 6vw, 88px) minmax(0, 1fr);
   align-items: center;
-  gap: clamp(18px, 2.2vw, 30px);
+  gap: clamp(12px, 1.4vw, 22px);
 }
 
 .highlights-stack__teamIntro {
@@ -355,7 +355,7 @@
 .highlights-stack__teamBridge {
   position: relative;
   display: block;
-  width: 72px;
+  width: 56px;
   min-height: 96px;
   margin: 0 auto;
 }
@@ -1781,11 +1781,11 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::before {
-    top: 0;
+    top: calc(clamp(58px, 5.8vh, 78px) * -1);
     bottom: auto;
     left: 50%;
     width: 100%;
-    height: clamp(90px, 9vh, 116px);
+    height: calc(clamp(90px, 9vh, 116px) + clamp(58px, 5.8vh, 78px));
     transform: translateX(-50%);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.4' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C480 42 160 52 91 100'/%3E%3Cpath d='M500 0 C494 44 355 58 296 100'/%3E%3Cpath d='M500 0 C500 44 500 62 500 100'/%3E%3Cpath d='M500 0 C506 44 645 58 704 100'/%3E%3Cpath d='M500 0 C520 42 840 52 909 100'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
