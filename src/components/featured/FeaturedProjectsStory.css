@@ -1572,7 +1572,7 @@
 
 /* Team sequence polish: title the visual states and keep the mobile cards compact. */
 .highlights-stack--light .highlights-stack__teamCards::before {
-  content: "Meet My Assistants";
+  content: "Always Available";
   position: absolute;
   top: clamp(18px, 3vh, 40px);
   left: 50%;
