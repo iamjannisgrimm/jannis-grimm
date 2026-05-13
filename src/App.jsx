@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Home } from "./pages/Home";
 import TimelinePage from "./pages/TimelinePage";
 import TopSegmentedNav from "./components/TopSegmentedNav";
@@ -33,10 +33,10 @@ function App() {
       <div className="app-background-top-scrim" aria-hidden="true" />
       <div className="app-bottom-safe-scrim" aria-hidden="true" />
       <div
+        className="app-page-shell"
         style={{
           position: "relative",
           zIndex: 1,
-          backgroundColor: "white",
           width: "100%",
           minHeight: "100vh",
           boxSizing: "border-box",

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import GitHubContributions from "../components/GitHubContributions";
 import ProfileHeader from "../components/ProfileHeader";
 import Achievements from "../components/Achievements";
 import Quotes from "../components/Quotes";
+import ConnectSection from "../components/ConnectSection";
 import Footer from "../components/Footer";
 import FeaturedProjectsStory from "../components/featured/FeaturedProjectsStory";
 import EventPlannerStory from "../components/featured/EventPlannerStory";
@@ -86,6 +87,7 @@ export function Home() {
     const applyMobileChromeColor = (color) => {
       const chromeSpec = getMobileChromeSpec(color);
       const nextColor = chromeSpec.top;
+      const pageCanvasColor = chromeSpec.bottom;
       const themeColor = document.querySelector("meta[name='theme-color']");
       if (themeColor) {
         if (themeColor.getAttribute("content") !== nextColor) {
@@ -94,8 +96,10 @@ export function Home() {
       }
 
       window.__portfolioTimelineSafeAreaBarsAllowed = false;
-      document.documentElement.style.setProperty("--timeline-app-background", nextColor);
-      document.body.style.setProperty("--timeline-app-background", nextColor);
+      document.documentElement.style.setProperty("--timeline-app-background", pageCanvasColor);
+      document.body.style.setProperty("--timeline-app-background", pageCanvasColor);
+      document.documentElement.style.setProperty("--portfolio-overscroll-background", pageCanvasColor);
+      document.body.style.setProperty("--portfolio-overscroll-background", pageCanvasColor);
       document.documentElement.style.setProperty("--app-top-chrome", nextColor);
       document.body.style.setProperty("--app-top-chrome", nextColor);
       document.documentElement.style.setProperty("--portfolio-mobile-chrome", nextColor);
@@ -106,12 +110,12 @@ export function Home() {
       document.body.style.setProperty("--portfolio-mobile-chrome-bottom", chromeSpec.bottom);
       document.documentElement.classList.remove("timeline-app-background-active");
       document.body.classList.remove("timeline-app-background-active");
-      document.documentElement.style.backgroundColor = nextColor;
-      document.body.style.backgroundColor = nextColor;
+      document.documentElement.style.backgroundColor = pageCanvasColor;
+      document.body.style.backgroundColor = pageCanvasColor;
 
       const root = document.getElementById("root");
       if (root instanceof HTMLElement) {
-        root.style.backgroundColor = nextColor;
+        root.style.backgroundColor = pageCanvasColor;
       }
 
       document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
@@ -120,7 +124,7 @@ export function Home() {
         }
 
         element.style.opacity = "0";
-        element.style.background = nextColor;
+        element.style.background = pageCanvasColor;
       });
 
       ensureMobileChromeFills();
@@ -136,10 +140,6 @@ export function Home() {
     let mobileChromeFrame = 0;
 
     const getActiveSectionChromeColor = () => {
-      if (!window.matchMedia("(max-width: 768px)").matches) {
-        return getMobileChromeSpec("#ffffff");
-      }
-
       const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
       const visibleTop = 0;
@@ -577,10 +577,12 @@ export function Home() {
       document.documentElement.style.removeProperty("--portfolio-mobile-chrome");
       document.documentElement.style.removeProperty("--portfolio-mobile-chrome-top");
       document.documentElement.style.removeProperty("--portfolio-mobile-chrome-bottom");
+      document.documentElement.style.removeProperty("--portfolio-overscroll-background");
       document.body.style.removeProperty("--app-top-chrome");
       document.body.style.removeProperty("--portfolio-mobile-chrome");
       document.body.style.removeProperty("--portfolio-mobile-chrome-top");
       document.body.style.removeProperty("--portfolio-mobile-chrome-bottom");
+      document.body.style.removeProperty("--portfolio-overscroll-background");
       document.querySelectorAll(".portfolio-mobile-chrome-fill").forEach((element) => {
         element.remove();
       });
@@ -717,9 +719,10 @@ export function Home() {
         id="contact"
         className="center-container home-snap-section"
         data-mobile-chrome-color="#0d1117"
-        style={{ width: "100%" }}
+        style={{ width: "100%", backgroundColor: "#0d1117" }}
       >
         <div className="content-container">
+          <ConnectSection />
           <Footer />
         </div>
       </div>

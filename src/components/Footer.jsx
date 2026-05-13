@@ -1,13 +1,14 @@
-import React from 'react';
 import { navigateTo } from '../lib/navigation';
 
 const Footer = () => {
   return (
-    <footer style={{
+    <footer data-mobile-chrome-color="#0d1117" style={{
       width: "100vw",
       backgroundColor: "#0d1117",
-      padding: "28px 0",
+      padding: "44px 0 calc(52px + env(safe-area-inset-bottom, 0px))",
       marginTop: "0px",
+      marginLeft: "calc(50% - 50vw)",
+      marginRight: "calc(50% - 50vw)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center"

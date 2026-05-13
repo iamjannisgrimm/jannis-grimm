@@ -10,7 +10,10 @@ body, html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-color: #ffffff;
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
+  background: var(--portfolio-overscroll-background, #ffffff) !important;
+  background-color: var(--portfolio-overscroll-background, #ffffff) !important;
 }
 
 html.home-scroll-snap,
@@ -22,8 +25,8 @@ body.home-scroll-snap.timeline-app-background-active,
 html.home-scroll-snap.timeline-app-background-active body,
 html.home-scroll-snap.timeline-app-background-active #root,
 html.home-scroll-snap.timeline-app-background-active #root {
-  background: var(--timeline-app-background, #ffffff) !important;
-  background-color: var(--timeline-app-background, #ffffff) !important;
+  background: var(--portfolio-overscroll-background, var(--timeline-app-background, #ffffff)) !important;
+  background-color: var(--portfolio-overscroll-background, var(--timeline-app-background, #ffffff)) !important;
 }
 
 html.home-scroll-snap .timeline-safe-area-fill,
@@ -39,6 +42,19 @@ body.home-scroll-snap .timeline-safe-area-fill {
   align-items: center;
   margin: 0;
   padding: 0;
+  background: var(--portfolio-overscroll-background, #ffffff) !important;
+  background-color: var(--portfolio-overscroll-background, #ffffff) !important;
+}
+
+.app-page-shell {
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffffff calc(100% - max(76vh, 680px)),
+      #0d1117 calc(100% - max(76vh, 680px)),
+      #0d1117 100%
+    );
 }
 
 .app-top-safe-scrim {
@@ -72,7 +88,7 @@ body.home-scroll-snap .timeline-safe-area-fill {
   height: max(28vh, 180px);
   pointer-events: none;
   z-index: 0;
-  background: #2a2a2a;
+  background: var(--portfolio-mobile-chrome-bottom, #0d1117);
 }
 
 .portfolio-mobile-chrome-fill {
@@ -223,6 +239,240 @@ body.home-scroll-snap .timeline-safe-area-fill {
 .home-highlights-section {
   position: relative;
   width: 100%;
+}
+
+.connect-section {
+  width: 100vw;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  align-self: stretch;
+  margin: 0 calc(50% - 50vw);
+  padding: clamp(180px, 24vh, 300px) 32px clamp(188px, 26vh, 320px);
+  background: #ffffff;
+  color: #111111;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.connect-section__inner {
+  width: min(640px, 100%);
+  max-width: 100%;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 18px;
+  box-sizing: border-box;
+}
+
+.connect-section__title {
+  margin: 0;
+  color: #111111;
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 850;
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+.connect-section__description {
+  max-width: 600px;
+  margin: 0 0 8px;
+  color: #22223b;
+  font-size: clamp(1.08rem, 2vw, 1.28rem);
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+.connect-section__control-stage {
+  width: min(460px, 100%);
+  max-width: 100%;
+  min-height: 42px;
+  display: grid;
+  align-items: start;
+  box-sizing: border-box;
+}
+
+.connect-section__actions,
+.connect-section__form,
+.connect-section__form-wrap {
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.connect-section__actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.connect-section__form {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+}
+
+.connect-section__form-wrap {
+  gap: 8px;
+  justify-items: center;
+}
+
+.connect-section__button,
+.connect-section__submit {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #111111;
+  border-radius: 8px;
+  padding: 0 16px;
+  background: #111111;
+  color: #ffffff;
+  font-family: SF Pro, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-sizing: border-box;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.connect-section__button:hover,
+.connect-section__button:focus,
+.connect-section__button:focus-visible,
+.connect-section__submit:hover,
+.connect-section__submit:focus,
+.connect-section__submit:focus-visible {
+  background: #111111;
+  border-color: #111111;
+  color: #ffffff;
+  outline: none;
+}
+
+.connect-section__submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.connect-section__back {
+  min-height: 28px;
+  border: 0;
+  border-radius: 0;
+  padding: 0 8px;
+  background: transparent;
+  color: #111111;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1;
+  opacity: 0.46;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.connect-section__back:hover,
+.connect-section__back:focus,
+.connect-section__back:focus-visible {
+  background: transparent;
+  color: #111111;
+  border-color: transparent;
+  outline: none;
+  opacity: 0.78;
+}
+
+.connect-section__back:disabled {
+  cursor: wait;
+  opacity: 0.28;
+}
+
+.connect-section__input {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  padding: 0 14px;
+  color: #111111;
+  background: #ffffff;
+  font-family: SF Pro, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px !important;
+  line-height: 1.25;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  touch-action: manipulation;
+  box-sizing: border-box;
+}
+
+.connect-section__input:focus {
+  border-color: #111111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.14);
+}
+
+.connect-section__input::placeholder {
+  color: #7a7a89;
+}
+
+.connect-section__status {
+  min-height: 20px;
+  margin: 0;
+  color: #616161;
+  font-size: 0.92rem;
+}
+
+.connect-section__success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #111111;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.connect-section__success-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #19a463;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .connect-section {
+    padding: 180px 22px 204px;
+  }
+
+  .connect-section__inner {
+    max-width: 100%;
+  }
+
+  .connect-section__form {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .connect-section__control-stage,
+  .connect-section__actions {
+    width: 100%;
+  }
+
+  .connect-section__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .connect-section__actions .connect-section__button {
+    padding: 0 10px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
 }
 
 
