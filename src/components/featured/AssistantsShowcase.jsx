@@ -36,9 +36,9 @@ function buildAssistantsContent() {
       themeColor: "#ffffff",
       inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
-        "My personal AI — built to orchestrate a team of specialists, hold full context across every conversation, and eliminate the overhead of running my own life.",
+        "TARS is my personal AI operating system: a phone-accessible control plane that understands my priorities, routes work to the right specialist, and turns ideas into verified action.",
       teamCardsDescription:
-        "My personal AI — built to orchestrate a team of specialists, hold full context across every conversation, and eliminate the overhead of running my own life.",
+        "It is not a chatbot bolted onto my life. It is the interface between my messages, projects, tools, memory, automations, and a team of purpose-built agents.",
       teamCards: {
         left: {
           name: "Jannis",
@@ -63,11 +63,35 @@ function buildAssistantsContent() {
     infoBlocks: [
       {
         mediaImages: tarsAgentCells,
-        body: "TARS routes every request to the right specialist, keeping the whole team synchronized around my context, priorities, and active work.",
+        eyebrow: "Routing layer",
+        title: "The right agent for the job",
+        body: "TARS receives the request first, keeps the context intact, and routes it to the specialist that owns the outcome — coding, systems, news, personal ops, career, or product work.",
       },
       {
         mediaImages: tarsExtendedAgentCells,
-        body: "When the work shifts, TARS brings in the next specialist layer for research, marketing, and product context without losing the thread.",
+        eyebrow: "Specialist layer",
+        title: "A small team, always on call",
+        body: "Research can investigate, Developer can ship, Marketer can shape messaging, News can monitor signal, and SeeMe context can guide product judgment — without starting from zero every time.",
+      },
+      {
+        mediaImages: [
+          { image: MessagesIcon, alt: "Messages", title: "iMessage" },
+          { image: PhoneIcon, alt: "Phone", title: "Phone" },
+          { image: ClawAgentIcon, alt: "Tools", title: "Tools" },
+        ],
+        eyebrow: "Execution loop",
+        title: "From text to verified work",
+        body: "A morning report, a portfolio deploy, a Kanban card, a news scan, or a repo change can move from iMessage into tools, tests, commits, dashboards, and memory — with boundaries around external actions.",
+      },
+      {
+        mediaImages: [
+          { image: PaAgentIcon, alt: "Memory", title: "Memory" },
+          { image: NewsAgentIcon, alt: "Signals", title: "Signals" },
+          { image: DevAgentIcon, alt: "Verification", title: "Verify" },
+        ],
+        eyebrow: "Why it matters",
+        title: "Less overhead, more leverage",
+        body: "The point is not novelty. The point is compounding: fewer dropped threads, faster shipping, calmer context switching, and a system that keeps getting more useful every time it runs.",
       },
     ],
   };

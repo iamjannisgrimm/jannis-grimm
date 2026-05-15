@@ -6,7 +6,6 @@ import seeme2026AppStoreBadge from "../assets/seeme-2026-appstorebadge.png";
 import seeme2026ProductMobile from "../assets/seeme-2026-product-mobile.png";
 import seeme2026Product from "../assets/seeme-2026-product.png";
 import synechronImage from "../assets/synechron.jpg";
-import tarsOpenClawSystem from "../assets/tars-openclaw-system.svg";
 
 const timelineData = [
   {
@@ -27,33 +26,6 @@ const timelineData = [
     linkColor: "#FFFFFF",
     isHero: true,
     //-------------------------------------------
-    topSpacing: 0,
-    bottomSpacing: 0,
-  },
-  {
-    date: "2026",
-    title: "TARS / OpenClaw",
-    subtitle: "Personal AI Operating System",
-    description: "Built a local-first AI control plane that turns everyday messages into routed, tool-using, verified work across code, research, memory, dashboards, and automations.",
-    descriptionBlocks: [
-      {
-        body: "Built a **local-first AI control plane** that turns everyday messages into routed, tool-using, verified work across code, research, memory, dashboards, and automations.",
-        style: "default",
-      },
-      {
-        body: "Designed canonical agents — **TARS, Claw, Developer, Marketer, Research, and News Retriever** — with clear ownership, safe delegation, and persistent memory.",
-        style: "default",
-      },
-      {
-        body: "Runs from iMessage on my Mac, reads live Kanban state, executes approved cards, monitors AI/news signals, and closes the loop with tests, commits, and audit trails.",
-        style: "light",
-      },
-    ],
-    image: tarsOpenClawSystem,
-    background: "#080A10",
-    techStack: [],
-    link: "https://github.com/openclaw/openclaw",
-    linkColor: "#7DD3FC",
     topSpacing: 0,
     bottomSpacing: 0,
   },
