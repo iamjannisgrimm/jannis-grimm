@@ -1864,6 +1864,15 @@
     line-height: 0.94;
   }
 
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock--connectionMap::before,
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock[data-block-index="2"]::before {
+    margin-bottom: clamp(44px, 6vh, 78px);
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock--connectionMap .highlights-stack__agentConnectionMap {
+    margin-top: 0;
+  }
+
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
     --agent-connector-lane: clamp(90px, 9vh, 116px);
     --agent-connector-overlap: clamp(20px, 2.6vh, 34px);

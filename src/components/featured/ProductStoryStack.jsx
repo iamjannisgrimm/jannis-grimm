@@ -308,14 +308,6 @@ function buildPanelTimeline({
       }
 
       if (teamIntro.infoWindow) {
-        if (teamIntro.rightCard) {
-          tl.to(teamIntro.rightCard, {
-            opacity: 0,
-            scale: hasTeamMediaSequence ? 0.8 : 0.94,
-            duration: 0.14,
-            ease: "power1.inOut",
-          }, TEAM_INFO_START - 0.1);
-        }
         tl.to(teamIntro.infoWindow, {
           opacity: 1,
           y: 0,
@@ -331,6 +323,14 @@ function buildPanelTimeline({
           const exitStart = imageStart + TEAM_INFO_EXIT_GAP;
           const mediaExitStart = content ? textStart : exitStart;
 
+          if (index === 1 && teamIntro.rightCard) {
+            tl.to(teamIntro.rightCard, {
+              opacity: 0,
+              scale: hasTeamMediaSequence ? 0.8 : 0.94,
+              duration: 0.14,
+              ease: "power1.inOut",
+            }, imageStart - 0.1);
+          }
           if (root) {
             tl.to(root, {
               opacity: 1,
