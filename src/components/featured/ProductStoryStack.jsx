@@ -321,6 +321,7 @@ function buildPanelTimeline({
           const imageStart = TEAM_INFO_START + index * TEAM_INFO_STEP;
           const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
           const exitStart = imageStart + TEAM_INFO_EXIT_GAP;
+          const mediaExitStart = content ? textStart : exitStart;
 
           if (root) {
             tl.to(root, {
@@ -351,9 +352,9 @@ function buildPanelTimeline({
               "--agent-lines-opacity": 0,
               duration: 0.14,
               ease: "power1.inOut",
-            }, textStart);
+            }, mediaExitStart);
           }
-          if (root) {
+          if (root && content) {
             tl.to(root, {
               "--team-info-title-opacity": 0,
               duration: 0.12,
@@ -545,6 +546,80 @@ function MobileCarousel({ images, title, carouselRef, startIndex = 0 }) {
           decoding="async"
         />
       ))}
+    </div>
+  );
+}
+
+function AgentConnectionMap({ rows, prioritizeMedia }) {
+  const top = Array.isArray(rows?.top) ? rows.top : [];
+  const bottom = Array.isArray(rows?.bottom) ? rows.bottom : [];
+  const topXs = top.map((_, index) => ((index + 0.5) / Math.max(top.length, 1)) * 100);
+  const bottomXs = bottom.map((_, index) => ((index + 0.5) / Math.max(bottom.length, 1)) * 100);
+
+  return (
+    <div className="highlights-stack__infoMedia highlights-stack__agentConnectionMap" aria-hidden="true">
+      <div className="highlights-stack__agentConnectionRow highlights-stack__agentConnectionRow--top">
+        {top.map((media, mediaIndex) => (
+          <div
+            className="highlights-stack__infoMediaCell highlights-stack__agentConnectionCell"
+            key={`source-${media.alt || "agent"}-${mediaIndex}`}
+          >
+            <img
+              className="highlights-stack__infoMediaImage"
+              src={media.image}
+              alt={media.alt || ""}
+              loading={prioritizeMedia ? "eager" : "lazy"}
+              decoding="async"
+            />
+            {media.title ? (
+              <span className="highlights-stack__infoMediaTitle">
+                {media.title}
+              </span>
+            ) : null}
+          </div>
+        ))}
+      </div>
+      <div className="highlights-stack__agentConnectionLane">
+        <svg
+          className="highlights-stack__agentConnectionLines"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          focusable="false"
+        >
+          {topXs.flatMap((fromX, topIndex) =>
+            bottomXs.map((toX, bottomIndex) => (
+              <line
+                key={`${topIndex}-${bottomIndex}`}
+                x1={fromX}
+                y1="0"
+                x2={toX}
+                y2="100"
+              />
+            )),
+          )}
+        </svg>
+      </div>
+      <div className="highlights-stack__agentConnectionRow highlights-stack__agentConnectionRow--bottom">
+        {bottom.map((media, mediaIndex) => (
+          <div
+            className="highlights-stack__infoMediaCell highlights-stack__agentConnectionCell"
+            key={`target-${media.alt || "agent"}-${mediaIndex}`}
+          >
+            <img
+              className="highlights-stack__infoMediaImage"
+              src={media.image}
+              alt={media.alt || ""}
+              loading={prioritizeMedia ? "eager" : "lazy"}
+              decoding="async"
+            />
+            {media.title ? (
+              <span className="highlights-stack__infoMediaTitle">
+                {media.title}
+              </span>
+            ) : null}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -908,14 +983,22 @@ function PanelShell({
           {panelInfoBlocks.map((block, i) => (
             <div
               key={i}
-              className="highlights-stack__infoBlock"
+              className={`highlights-stack__infoBlock ${
+                block.connectionRows ? "highlights-stack__infoBlock--connectionMap" : ""
+              }`}
               data-block-index={i}
               data-team-title={block.sectionTitle || "Domain-Specific Agents"}
+              data-hide-section-title={block.hideSectionTitle ? "true" : undefined}
               ref={(node) => {
                 infoRefsObj.current[i] = node;
               }}
             >
-              {Array.isArray(block.mediaImages) && block.mediaImages.length ? (
+              {block.connectionRows ? (
+                <AgentConnectionMap
+                  rows={block.connectionRows}
+                  prioritizeMedia={prioritizeMedia}
+                />
+              ) : Array.isArray(block.mediaImages) && block.mediaImages.length ? (
                 <div
                   className="highlights-stack__infoMedia highlights-stack__infoMedia--agents"
                   data-agent-count={block.mediaImages.length}
@@ -954,7 +1037,8 @@ function PanelShell({
                   </div>
                 </div>
               ) : null}
-              <div className="highlights-stack__infoContent">
+              {block.title || block.body ? (
+                <div className="highlights-stack__infoContent">
                 {block.title ? (
                   <div className="highlights-stack__infoTitleSide">
                     {block.eyebrow ? (
@@ -966,7 +1050,8 @@ function PanelShell({
                 <div className="highlights-stack__infoBodySide">
                   <p className="highlights-stack__infoBody">{block.body}</p>
                 </div>
-              </div>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

@@ -69,6 +69,13 @@ function buildAssistantsContent() {
         body: "TARS receives the request first, keeps the context intact, and routes it to the specialist that owns the outcome: coding, systems, news, personal ops, career, or product work.",
       },
       {
+        hideSectionTitle: true,
+        connectionRows: {
+          top: tarsAgentCells,
+          bottom: tarsExtendedAgentCells,
+        },
+      },
+      {
         sectionTitle: "Reusable Specialists",
         mediaImages: tarsExtendedAgentCells,
         eyebrow: "Reusable layer",
