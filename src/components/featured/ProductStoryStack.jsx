@@ -53,10 +53,16 @@ function buildPanelTimeline({
       media: info?.querySelector(".highlights-stack__infoMedia") || null,
       content: info?.querySelector(".highlights-stack__infoContent") || null,
     }));
+    if (teamIntro?.cards) {
+      gsap.set(teamIntro.cards, { "--team-title-opacity": 0 });
+    }
 
     if (infos[0]) gsap.set(infos[0], { opacity: 0, y: 28 });
     if (infos[1]) gsap.set(infos[1], { opacity: 0, y: 36 });
     if (infos[2]) gsap.set(infos[2], { opacity: 0, y: 44 });
+    teamInfoItems.forEach(({ root }) => {
+      if (root) gsap.set(root, { "--team-info-title-opacity": 0 });
+    });
 
     inlineTitles.forEach((title, index) => {
       gsap.set(title, {
@@ -235,8 +241,22 @@ function buildPanelTimeline({
           ease: "power2.out",
         }, 0.86);
       }
+      if (teamIntro.cards) {
+        tl.to(teamIntro.cards, {
+          "--team-title-opacity": 1,
+          duration: 0.14,
+          ease: "power1.out",
+        }, 0.82);
+      }
 
       if (isMobileTeamScene) {
+        if (teamIntro.cards) {
+          tl.to(teamIntro.cards, {
+            "--team-title-opacity": 0,
+            duration: 0.12,
+            ease: "power1.inOut",
+          }, teamCardsExitStart);
+        }
         tl.to([teamIntro.leftSlot, teamIntro.bridge], {
           opacity: 0,
           y: -18,
@@ -257,6 +277,13 @@ function buildPanelTimeline({
           ease: "power2.inOut",
         }, teamSoloStart);
       } else {
+        if (teamIntro.cards) {
+          tl.to(teamIntro.cards, {
+            "--team-title-opacity": 0,
+            duration: 0.12,
+            ease: "power1.inOut",
+          }, teamCardsExitStart);
+        }
         tl.to([teamIntro.leftCard, teamIntro.bridge], {
           opacity: 0,
           x: -220,
@@ -299,6 +326,7 @@ function buildPanelTimeline({
             tl.to(root, {
               opacity: 1,
               y: 0,
+              "--team-info-title-opacity": 1,
               duration: 0.12,
               ease: "power2.out",
             }, imageStart);
@@ -322,6 +350,13 @@ function buildPanelTimeline({
               scale: 0.98,
               "--agent-lines-opacity": 0,
               duration: 0.14,
+              ease: "power1.inOut",
+            }, textStart);
+          }
+          if (root) {
+            tl.to(root, {
+              "--team-info-title-opacity": 0,
+              duration: 0.12,
               ease: "power1.inOut",
             }, textStart);
           }

@@ -1588,13 +1588,13 @@
   line-height: 0.94;
   letter-spacing: -0.065em;
   text-align: center;
-  opacity: 1;
+  opacity: var(--team-title-opacity, 0);
   transition: opacity 180ms ease;
   pointer-events: none;
 }
 
 .highlights-stack--light .highlights-stack__teamCards:has(.highlights-stack__teamBridge[style*="opacity: 1"])::before {
-  opacity: 1;
+  opacity: var(--team-title-opacity, 0);
 }
 
 .highlights-stack--light .highlights-stack__teamCard--lead,
@@ -1628,6 +1628,8 @@
   line-height: 0.96;
   letter-spacing: -0.06em;
   text-align: center;
+  opacity: var(--team-info-title-opacity, 0);
+  transition: opacity 140ms ease;
 }
 
 @media (max-width: 768px) {
