@@ -880,7 +880,11 @@ function PanelShell({
               }}
             >
               {Array.isArray(block.mediaImages) && block.mediaImages.length ? (
-                <div className="highlights-stack__infoMedia highlights-stack__infoMedia--agents" aria-hidden="true">
+                <div
+                  className="highlights-stack__infoMedia highlights-stack__infoMedia--agents"
+                  data-agent-count={block.mediaImages.length}
+                  aria-hidden="true"
+                >
                   {block.mediaImages.map((media, mediaIndex) => (
                     <div
                       className="highlights-stack__infoMediaCell"

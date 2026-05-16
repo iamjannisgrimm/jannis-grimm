@@ -1776,16 +1776,18 @@
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
+    --agent-connector-lane: clamp(90px, 9vh, 116px);
+    --agent-connector-overlap: clamp(20px, 2.6vh, 34px);
     gap: clamp(20px, 2.1vw, 32px);
-    padding-top: clamp(90px, 9vh, 116px);
+    padding-top: var(--agent-connector-lane);
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents::before {
-    top: calc(clamp(58px, 5.8vh, 78px) * -1);
+    top: calc(var(--agent-connector-overlap) * -1);
     bottom: auto;
     left: 50%;
     width: 100%;
-    height: calc(clamp(90px, 9vh, 116px) + clamp(58px, 5.8vh, 78px));
+    height: calc(var(--agent-connector-lane) + var(--agent-connector-overlap));
     transform: translateX(-50%);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.4' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C480 42 160 52 91 100'/%3E%3Cpath d='M500 0 C494 44 355 58 296 100'/%3E%3Cpath d='M500 0 C500 44 500 62 500 100'/%3E%3Cpath d='M500 0 C506 44 645 58 704 100'/%3E%3Cpath d='M500 0 C520 42 840 52 909 100'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -1793,6 +1795,14 @@
     background-position: center top;
     filter: drop-shadow(0 7px 14px rgba(107, 117, 137, 0.12));
     z-index: 1;
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents[data-agent-count="3"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.4' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C480 42 232 58 167 100'/%3E%3Cpath d='M500 0 C500 44 500 62 500 100'/%3E%3Cpath d='M500 0 C520 42 768 58 833 100'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents[data-agent-count="4"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 100' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%236b7589' stroke-width='2.4' stroke-linecap='round' opacity='0.48'%3E%3Cpath d='M500 0 C480 42 190 56 125 100'/%3E%3Cpath d='M500 0 C494 44 424 62 375 100'/%3E%3Cpath d='M500 0 C506 44 576 62 625 100'/%3E%3Cpath d='M500 0 C520 42 810 56 875 100'/%3E%3C/g%3E%3C/svg%3E");
   }
 
   .highlights-stack__infoWindow--team .highlights-stack__infoMediaCell {
