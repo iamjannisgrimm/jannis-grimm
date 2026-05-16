@@ -64,12 +64,10 @@ function buildAssistantsContent() {
       {
         sectionTitle: "Domain-Specific Agents",
         mediaImages: tarsAgentCells,
-        eyebrow: "Routing layer",
-        title: "The right specialist for the job",
         body: "TARS receives the request first, keeps the context intact, and routes it to the specialist that owns the outcome: coding, systems, news, personal ops, career, or product work.",
       },
       {
-        hideSectionTitle: true,
+        sectionTitle: "Reusable Specialists",
         connectionRows: {
           top: tarsAgentCells,
           bottom: tarsExtendedAgentCells,
@@ -78,8 +76,6 @@ function buildAssistantsContent() {
       {
         sectionTitle: "Reusable Specialists",
         mediaImages: tarsExtendedAgentCells,
-        eyebrow: "Reusable layer",
-        title: "A toolkit that compounds",
         body: "Research, marketing, and product-context specialists can be reused across projects without starting from zero. They keep their purpose, inherit the right context, and turn repeated work into leverage.",
       },
     ],

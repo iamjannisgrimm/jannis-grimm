@@ -308,6 +308,14 @@ function buildPanelTimeline({
       }
 
       if (teamIntro.infoWindow) {
+        if (teamIntro.rightCard) {
+          tl.to(teamIntro.rightCard, {
+            opacity: 0,
+            scale: hasTeamMediaSequence ? 0.8 : 0.94,
+            duration: 0.14,
+            ease: "power1.inOut",
+          }, TEAM_INFO_START - 0.1);
+        }
         tl.to(teamIntro.infoWindow, {
           opacity: 1,
           y: 0,
@@ -353,13 +361,6 @@ function buildPanelTimeline({
               duration: 0.14,
               ease: "power1.inOut",
             }, mediaExitStart);
-          }
-          if (root && content) {
-            tl.to(root, {
-              "--team-info-title-opacity": 0,
-              duration: 0.12,
-              ease: "power1.inOut",
-            }, textStart);
           }
           if (content) {
             tl.to(content, {
