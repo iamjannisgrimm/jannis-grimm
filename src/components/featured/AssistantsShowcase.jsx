@@ -62,36 +62,18 @@ function buildAssistantsContent() {
     },
     infoBlocks: [
       {
+        sectionTitle: "Domain-Specific Agents",
         mediaImages: tarsAgentCells,
         eyebrow: "Routing layer",
-        title: "The right agent for the job",
-        body: "TARS receives the request first, keeps the context intact, and routes it to the specialist that owns the outcome — coding, systems, news, personal ops, career, or product work.",
+        title: "The right specialist for the job",
+        body: "TARS receives the request first, keeps the context intact, and routes it to the specialist that owns the outcome: coding, systems, news, personal ops, career, or product work.",
       },
       {
+        sectionTitle: "Reusable Specialists",
         mediaImages: tarsExtendedAgentCells,
-        eyebrow: "Specialist layer",
-        title: "A small team, always on call",
-        body: "Research can investigate, Developer can ship, Marketer can shape messaging, News can monitor signal, and SeeMe context can guide product judgment — without starting from zero every time.",
-      },
-      {
-        mediaImages: [
-          { image: MessagesIcon, alt: "Messages", title: "iMessage" },
-          { image: PhoneIcon, alt: "Phone", title: "Phone" },
-          { image: ClawAgentIcon, alt: "Tools", title: "Tools" },
-        ],
-        eyebrow: "Execution loop",
-        title: "From text to verified work",
-        body: "A morning report, a portfolio deploy, a Kanban card, a news scan, or a repo change can move from iMessage into tools, tests, commits, dashboards, and memory — with boundaries around external actions.",
-      },
-      {
-        mediaImages: [
-          { image: PaAgentIcon, alt: "Memory", title: "Memory" },
-          { image: NewsAgentIcon, alt: "Signals", title: "Signals" },
-          { image: DevAgentIcon, alt: "Verification", title: "Verify" },
-        ],
-        eyebrow: "Why it matters",
-        title: "Less overhead, more leverage",
-        body: "The point is not novelty. The point is compounding: fewer dropped threads, faster shipping, calmer context switching, and a system that keeps getting more useful every time it runs.",
+        eyebrow: "Reusable layer",
+        title: "A toolkit that compounds",
+        body: "Research, marketing, and product-context specialists can be reused across projects without starting from zero. They keep their purpose, inherit the right context, and turn repeated work into leverage.",
       },
     ],
   };

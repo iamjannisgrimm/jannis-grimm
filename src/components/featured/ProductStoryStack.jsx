@@ -875,6 +875,7 @@ function PanelShell({
               key={i}
               className="highlights-stack__infoBlock"
               data-block-index={i}
+              data-team-title={block.sectionTitle || "Domain-Specific Agents"}
               ref={(node) => {
                 infoRefsObj.current[i] = node;
               }}

@@ -496,7 +496,7 @@
 }
 
 .highlights-stack__teamConnector {
-  width: 100%;
+  width: calc(100% + clamp(56px, 6vw, 92px));
   height: 2px;
   background: rgba(110, 117, 132, 0.7);
   border-radius: 999px;
@@ -1588,7 +1588,7 @@
   line-height: 0.94;
   letter-spacing: -0.065em;
   text-align: center;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 180ms ease;
   pointer-events: none;
 }
@@ -1619,7 +1619,7 @@
 }
 
 .highlights-stack__infoWindow--team .highlights-stack__infoBlock::before {
-  content: "Domain Specific Agents";
+  content: attr(data-team-title);
   display: block;
   margin: 0 auto clamp(12px, 1.7vh, 20px);
   color: #111111;
