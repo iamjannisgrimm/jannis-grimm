@@ -393,12 +393,6 @@ function buildPanelTimeline({
           duration: 0.36,
           ease: "none",
         }, TEAM_INFO_START + teamInfoItems.length * TEAM_INFO_STEP + 0.18);
-        tl.to(teamIntro.infoWindow, {
-          y: Math.round(window.innerHeight * 0.7),
-          opacity: 0,
-          duration: 0.34,
-          ease: "power2.inOut",
-        }, TEAM_INFO_START + teamInfoItems.length * TEAM_INFO_STEP + 0.5);
       } else {
         if (infos[0]) {
           tl.to(infos[0], {
@@ -1316,8 +1310,8 @@ export default function ProductStoryStack({
         trigger: productCard,
         start: "top top",
         end: isDesktop
-          ? hasTeamMediaSequence ? "+=360%" : "+=180%"
-          : hasTeamInfoSequence ? "+=280%" : isTeamInlineSequence ? "+=155%" : "+=220%",
+          ? hasTeamMediaSequence ? "+=320%" : "+=180%"
+          : hasTeamInfoSequence ? "+=240%" : isTeamInlineSequence ? "+=155%" : "+=220%",
         pin: true,
         pinSpacing: true,
         scrub: true,
