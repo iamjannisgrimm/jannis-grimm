@@ -321,7 +321,9 @@ function buildPanelTimeline({
           const imageStart = TEAM_INFO_START + index * TEAM_INFO_STEP;
           const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
           const exitStart = imageStart + TEAM_INFO_EXIT_GAP;
-          const mediaExitStart = content ? textStart : exitStart;
+          const isConnectionMap = root?.classList.contains("highlights-stack__infoBlock--connectionMap");
+          const mediaExitStart = content && !isConnectionMap ? textStart : exitStart;
+          const contentStart = isConnectionMap ? imageStart + 0.22 : textStart + 0.03;
 
           if (index === 1 && teamIntro.rightCard) {
             tl.to(teamIntro.rightCard, {
@@ -368,7 +370,7 @@ function buildPanelTimeline({
               y: 0,
               duration: 0.18,
               ease: "power2.out",
-            }, textStart + 0.03);
+            }, contentStart);
             if (index < teamInfoItems.length - 1) {
               tl.to(content, {
                 opacity: 0,

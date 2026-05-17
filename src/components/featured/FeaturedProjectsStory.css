@@ -1873,6 +1873,10 @@
     margin-top: 0;
   }
 
+  .highlights-stack__infoWindow--team .highlights-stack__infoBlock--connectionMap .highlights-stack__infoContent {
+    margin-top: clamp(22px, 3.2vh, 40px);
+  }
+
   .highlights-stack__infoWindow--team .highlights-stack__infoMedia--agents {
     --agent-connector-lane: clamp(90px, 9vh, 116px);
     --agent-connector-overlap: clamp(20px, 2.6vh, 34px);

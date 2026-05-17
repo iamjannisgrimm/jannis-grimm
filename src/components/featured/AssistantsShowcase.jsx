@@ -72,9 +72,6 @@ function buildAssistantsContent() {
           top: tarsAgentCells,
           bottom: tarsExtendedAgentCells,
         },
-      },
-      {
-        sectionTitle: "Reusable Specialists",
         body: "Research, marketing, and product-context specialists can be reused across projects without starting from zero. They keep their purpose, inherit the right context, and turn repeated work into leverage.",
       },
     ],
