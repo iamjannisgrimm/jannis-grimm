@@ -322,6 +322,7 @@ function buildPanelTimeline({
           const textStart = imageStart + TEAM_MEDIA_TEXT_GAP;
           const exitStart = imageStart + TEAM_INFO_EXIT_GAP;
           const isConnectionMap = root?.classList.contains("highlights-stack__infoBlock--connectionMap");
+          const isFinalInfoItem = index === teamInfoItems.length - 1;
           const mediaExitStart = content && !isConnectionMap ? textStart : exitStart;
           const contentStart = isConnectionMap ? imageStart + 0.22 : textStart + 0.03;
 
@@ -355,14 +356,16 @@ function buildPanelTimeline({
               duration: 0.18,
               ease: "power1.out",
             }, imageStart + 0.2);
-            tl.to(media, {
-              opacity: 0,
-              y: -22,
-              scale: 0.98,
-              "--agent-lines-opacity": 0,
-              duration: 0.14,
-              ease: "power1.inOut",
-            }, mediaExitStart);
+            if (!isFinalInfoItem) {
+              tl.to(media, {
+                opacity: 0,
+                y: -22,
+                scale: 0.98,
+                "--agent-lines-opacity": 0,
+                duration: 0.14,
+                ease: "power1.inOut",
+              }, mediaExitStart);
+            }
           }
           if (content) {
             tl.to(content, {
