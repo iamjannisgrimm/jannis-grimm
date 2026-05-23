@@ -16,9 +16,9 @@ function setThemeColor(color) {
 }
 
 const TEAM_INFO_START = 1.18;
-const TEAM_INFO_STEP = 0.72;
-const TEAM_MEDIA_TEXT_GAP = 0.36;
-const TEAM_INFO_EXIT_GAP = 0.64;
+const TEAM_INFO_STEP = 0.45;
+const TEAM_MEDIA_TEXT_GAP = 0.22;
+const TEAM_INFO_EXIT_GAP = 0.38;
 
 function buildPanelTimeline({
   header,
@@ -50,16 +50,16 @@ function buildPanelTimeline({
     }
     const teamInfoItems = infos.map((info) => ({
       root: info,
-      media: info?.querySelector(".highlights-stack__infoMedia") || null,
+      media: info?.querySelector(".highlights-stack__infoMedia, .tars-product-slice") || null,
       content: info?.querySelector(".highlights-stack__infoContent") || null,
     }));
     if (teamIntro?.cards) {
       gsap.set(teamIntro.cards, { "--team-title-opacity": 0 });
     }
 
-    if (infos[0]) gsap.set(infos[0], { opacity: 0, y: 28 });
-    if (infos[1]) gsap.set(infos[1], { opacity: 0, y: 36 });
-    if (infos[2]) gsap.set(infos[2], { opacity: 0, y: 44 });
+    infos.forEach((info, index) => {
+      if (info) gsap.set(info, { opacity: 0, y: 28 + index * 8, zIndex: 1 });
+    });
     teamInfoItems.forEach(({ root }) => {
       if (root) gsap.set(root, { "--team-info-title-opacity": 0 });
     });
@@ -135,7 +135,7 @@ function buildPanelTimeline({
         if (teamIntro.infoWindow) gsap.set(teamIntro.infoWindow, { opacity: 0, y: 24 });
         if (hasTeamMediaSequence) {
           teamInfoItems.forEach(({ root, media, content }) => {
-            if (root) gsap.set(root, { opacity: 0, y: 0 });
+            if (root) gsap.set(root, { opacity: 0, y: 0, zIndex: 1 });
             if (media) {
               gsap.set(media, {
                 opacity: 0,
@@ -338,6 +338,7 @@ function buildPanelTimeline({
             tl.to(root, {
               opacity: 1,
               y: 0,
+              zIndex: 3,
               "--team-info-title-opacity": 1,
               duration: 0.12,
               ease: "power2.out",
@@ -386,6 +387,7 @@ function buildPanelTimeline({
           if (root && index < teamInfoItems.length - 1) {
             tl.to(root, {
               opacity: 0,
+              zIndex: 1,
               duration: 0.1,
               ease: "power1.inOut",
             }, exitStart + 0.04);
@@ -731,17 +733,17 @@ const tarsBoardColumns = [
 ];
 
 const tarsAgents = [
-  { id: "tars", name: "TARS", headline: "Entrypoint", role: "Routes intent, context, and approvals", tier: "tars", tone: "110, 110, 115", live: true },
-  { id: "seeme", name: "SeeMe", headline: "Domain owner", role: "Product, app, launch, coach growth", tier: "domain", tone: "255, 77, 112" },
-  { id: "personal", name: "Personal", headline: "Domain owner", role: "Calendar, finance, wedding, life ops", tier: "domain", tone: "0, 113, 227" },
-  { id: "career", name: "Career", headline: "Domain owner", role: "Applications, positioning, leverage", tier: "domain", tone: "255, 214, 10" },
-  { id: "claw", name: "Claw", headline: "Domain owner", role: "OpenClaw control plane", tier: "domain", tone: "255, 149, 0" },
-  { id: "developer", name: "Developer", headline: "Specialist", role: "Code, debug, refactor, verify", tier: "specialist", tone: "63, 70, 80", live: true },
-  { id: "marketer", name: "Marketer", headline: "Specialist", role: "Narrative, launch, customer voice", tier: "specialist", tone: "255, 45, 85" },
-  { id: "research", name: "Research", headline: "Specialist", role: "Evidence, sources, synthesis", tier: "specialist", tone: "175, 82, 222" },
-  { id: "news", name: "News", headline: "Specialist", role: "Market signal retrieval", tier: "specialist", tone: "90, 200, 250" },
-  { id: "legal", name: "Legal", headline: "Specialist", role: "Risk triage and policies", tier: "specialist", tone: "88, 86, 214" },
-  { id: "security", name: "Security", headline: "Specialist", role: "Secrets and auth review", tier: "specialist", tone: "255, 179, 64" },
+  { id: "tars", name: "TARS", headline: "Entrypoint / router", role: "Receives work, reads orchestration metrics, and routes instead of absorbing every domain.", tier: "tars", tone: "110, 110, 115", image: "/images/TARSAgents/TARS.png", live: true },
+  { id: "seeme", name: "SeeMe", headline: "Domain owner", role: "Owns SeeMe product truth, roadmap, launch readiness, coach strategy, and growth priorities.", tier: "domain", tone: "255, 77, 112", image: "/images/TARSAgents/seeme-default-256.png" },
+  { id: "personal", name: "Personal Assistant", headline: "Domain owner", role: "Handles life admin, calendar, email, wedding, portfolio, travel, and reminders.", tier: "domain", tone: "0, 113, 227", image: "/images/TARSAgents/personal-default-256.png" },
+  { id: "career", name: "Career", headline: "Domain owner", role: "Owns career, resume, job-search, applications, and interview work under TARS.", tier: "domain", tone: "255, 214, 10", image: "/images/TARSAgents/career-default-256.png" },
+  { id: "claw", name: "Claw / OpenClaw Systems", headline: "Domain owner", role: "Keeps OpenClaw runtime, tools, docs, and dashboards wired safely.", tier: "domain", tone: "255, 149, 0", image: "/images/TARSAgents/ClawLight.png" },
+  { id: "developer", name: "Developer", headline: "Reusable specialist", role: "Builds, debugs, verifies, commits, and ships scoped code changes.", tier: "specialist", tone: "63, 70, 80", image: "/images/TARSAgents/DevLight.png", live: true },
+  { id: "marketer", name: "Marketer", headline: "Reusable specialist", role: "Shapes positioning, campaigns, launch assets, and public-facing voice.", tier: "specialist", tone: "255, 45, 85", image: "/images/TARSAgents/MarketerLight.png" },
+  { id: "research", name: "Research", headline: "Reusable specialist", role: "Finds evidence, compares sources, and compresses signal for decisions.", tier: "specialist", tone: "175, 82, 222", image: "/images/TARSAgents/ResearcherLight.png" },
+  { id: "news-retriever", name: "News Retriever", headline: "Reusable specialist", role: "Tracks approved AI/tech sources and turns signal into memory without doomscrolling.", tier: "specialist", tone: "139, 94, 52", image: "/images/TARSAgents/news-retriever-default-256.png" },
+  { id: "legal", name: "Legal Specialist", headline: "Reusable specialist", role: "Spots legal risk and prepares counsel-ready drafts without pretending to be counsel.", tier: "specialist", tone: "36, 40, 46", image: "/images/TARSAgents/law-light.png" },
+  { id: "security", name: "Security Specialist", headline: "Reusable specialist", role: "Reviews sensitive surfaces, threat models, and safe remediation.", tier: "specialist", tone: "255, 179, 64", image: "/images/TARSAgents/security-light.png" },
 ];
 
 const tarsRawEvents = [
@@ -786,7 +788,9 @@ function TarsAgentNode({ agent }) {
       style={{ "--agent-rgb": agent.tone }}
     >
       <span className="tars-agent-tab-kicker">{agent.headline}</span>
-      <span className="tars-agent-tab-orb"><b>{agent.name.slice(0, 2).toUpperCase()}</b></span>
+      <span className="tars-agent-tab-orb">
+        <img src={agent.image} alt="" loading="lazy" decoding="async" />
+      </span>
       <strong>{agent.name}</strong>
       {agent.live ? <em><i />Live</em> : null}
       <small>{agent.role}</small>
@@ -862,6 +866,9 @@ function TarsVisionSlice() {
 function TarsAutomationCalendarSlice() {
   return (
     <div className="tars-product-slice tars-product-slice--automation-calendar" aria-hidden="true">
+      <header className="tars-automation-header">
+        <h3>Automations</h3>
+      </header>
       <section className="automation-calendar-shell" aria-label="Weekly automation schedule">
         <div className="automation-calendar-header">
           <div className="automation-calendar-header-spacer" />
@@ -924,6 +931,10 @@ function TarsBoardProductSlice({ kind }) {
     return <TarsAutomationCalendarSlice />;
   }
 
+  if (kind === "architecture-privacy") {
+    return <TarsArchitecturePrivacySlice />;
+  }
+
   return (
     <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
       <div className="tars-architecture-hero">
@@ -938,6 +949,25 @@ function TarsBoardProductSlice({ kind }) {
         <article><span>04</span><strong>Proof trail</strong><small>Cards, artifacts, verification, commits, and logs close the loop without exposing secrets.</small></article>
       </div>
       <div className="tars-privacy-rails"><span>Credential refs only</span><span>Approval-gated external actions</span><span>Synthetic portfolio data</span><span>No private live logs</span></div>
+    </div>
+  );
+}
+
+function TarsArchitecturePrivacySlice() {
+  return (
+    <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
+      <div className="tars-architecture-hero">
+        <span>Architecture & Privacy</span>
+        <h3>Autonomy with hard edges.</h3>
+        <p>Every handoff is scoped: local intent, explicit context, credential references instead of raw secrets, and approval gates before anything leaves the machine.</p>
+      </div>
+      <div className="tars-architecture-flow" aria-label="TARS privacy architecture">
+        <article><span>01</span><strong>Operator surface</strong><small>Messages and browser input become sanitized intent packets.</small></article>
+        <article><span>02</span><strong>Router + memory</strong><small>Open/private model paths and durable memory are selected before work fans out.</small></article>
+        <article><span>03</span><strong>Scoped agents</strong><small>Specialists inherit only the slice, files, and tools needed for the job.</small></article>
+        <article><span>04</span><strong>Verification trail</strong><small>Artifacts, browser QA, builds, commits, and concise result packets close the loop.</small></article>
+      </div>
+      <div className="tars-privacy-rails"><span>Credential refs only</span><span>Approval-gated external actions</span><span>No private live logs</span><span>Synthetic portfolio data</span></div>
     </div>
   );
 }
@@ -1592,7 +1622,9 @@ export default function ProductStoryStack({
       const hasTeamInfoSequence = isTeamInlineSequence && infos.length > 0;
       const hasTeamMediaSequence =
         isTeamInlineSequence &&
-        infos.some((info) => info.querySelector(".highlights-stack__infoMedia"));
+        infos.some((info) => info.querySelector(".highlights-stack__infoMedia, .tars-product-slice"));
+      const teamMediaScrollLength = `+=${320 + Math.max(0, infos.length - 3) * 72}%`;
+      const teamMobileScrollLength = `+=${240 + Math.max(0, infos.length - 3) * 58}%`;
 
       // ── Product panel ──────────────────────────────────────────────────────
       const isPlanner = className.includes("highlights-stack--planner");
@@ -1629,8 +1661,8 @@ export default function ProductStoryStack({
         trigger: productCard,
         start: "top top",
         end: isDesktop
-          ? hasTeamMediaSequence ? "+=320%" : "+=180%"
-          : hasTeamInfoSequence ? "+=240%" : isTeamInlineSequence ? "+=155%" : "+=220%",
+          ? hasTeamMediaSequence ? teamMediaScrollLength : "+=180%"
+          : hasTeamInfoSequence ? teamMobileScrollLength : isTeamInlineSequence ? "+=155%" : "+=220%",
         pin: true,
         pinSpacing: true,
         scrub: true,

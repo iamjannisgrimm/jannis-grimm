@@ -42,17 +42,18 @@ function buildAssistantsContent() {
       {
         sectionTitle: "Agents",
         tarsBoardSlice: "agents-tab",
-        body: "This mirrors the board's actual Agents tab: a single OpenClaw network lane, live handoff lights, trace overlays, and a sanitized Session Tail instead of private logs.",
       },
       {
         sectionTitle: "Vision",
         tarsBoardSlice: "vision",
-        body: "On scroll, the agents disappear and the operating principle appears: turn intent into verified execution while preserving privacy, approval gates, and long-term leverage.",
       },
       {
         sectionTitle: "Automations",
         tarsBoardSlice: "automation-cleaner",
-        body: "Further down, Vision gives way to the calendar view from the board's Automations tab: sanitized scheduled runs, synthetic cadence, and no sidebar chrome.",
+      },
+      {
+        sectionTitle: "Architecture & Privacy",
+        tarsBoardSlice: "architecture-privacy",
       },
     ],
   };
