@@ -709,35 +709,54 @@ function OpsDashboardPreview({ dashboard }) {
 const tarsBoardColumns = [
   {
     title: "todo",
+    description: "Raw captures waiting for shape",
     count: 22,
     cards: [
-      { epic: "TARS", title: "Weekly TARS synthesis report", summary: "Summarize the week into one calm operator report with open questions and what is coming next.", priority: "high", assignee: "TARS" },
-      { epic: "Personal", title: "Private extraction planning model", summary: "Portfolio-safe title; source card contains personal finance planning details and stays private.", priority: "high", assignee: "Jannis" },
-      { epic: "TARS", title: "Async task handoff mode", summary: "Call an agent with a scoped task, disconnect, and let the work continue to completion.", priority: "high", assignee: "TARS" },
+      { epic: "TARS Improvements", title: "Weekly TARS synthesis report", summary: "Summarize the week into one calm operator report with open questions and what is coming next.", priority: "high", assignee: "TARS", dependencies: "Ready" },
+      { epic: "Operator Planning", title: "Private extraction planning model", summary: "Portfolio-safe card based on the live board; sensitive finance details stay private.", priority: "high", assignee: "Jannis", dependencies: "Blocked by 1" },
+      { epic: "TARS Improvements", title: "Async task handoff mode", summary: "Call an agent with a scoped task, disconnect, and let work continue to completion.", priority: "high", assignee: "TARS", dependencies: "Ready" },
     ],
   },
   {
     title: "ready",
+    description: "Approved work that can run",
     count: 0,
     cards: [],
   },
   {
     title: "in progress",
+    description: "Active work in motion",
     count: 8,
     cards: [
-      { epic: "TARS", title: "Voice/phone integration lane", summary: "Use a dedicated number as the operator-facing path into TARS.", priority: "high", assignee: "TARS", live: true },
-      { epic: "TARS", title: "Private vs open model routing guide", summary: "Document when work should stay local/private versus use the open model path.", priority: "high", assignee: "TARS" },
-      { epic: "Security", title: "Credential surface cleanup", summary: "Harden password/key/payment references without exposing raw secrets in UI or logs.", priority: "high", assignee: "Security" },
+      { epic: "TARS Improvements", title: "Voice/phone integration lane", summary: "Use a dedicated number as the operator-facing path into TARS.", priority: "high", assignee: "TARS", dependencies: "Ready", live: true },
+      { epic: "OpenClaw Systems", title: "Private vs open model routing guide", summary: "Document when work should stay local/private versus use the open model path.", priority: "high", assignee: "TARS", dependencies: "Ready" },
+      { epic: "Security Hygiene", title: "Credential surface cleanup", summary: "Harden password/key/payment references without exposing raw secrets in UI or logs.", priority: "high", assignee: "Security", dependencies: "Ready" },
     ],
   },
   {
-    title: "done yesterday",
+    title: "done review",
+    description: "Completed in the last day",
     count: 7,
     cards: [
-      { epic: "TARS", title: "Stop-working control", summary: "Added an operator command path for halting work cleanly.", priority: "high", assignee: "TARS" },
-      { epic: "TARS", title: "Full-context request flow", summary: "Improved how large-context requests are captured and routed.", priority: "high", assignee: "TARS" },
-      { epic: "TARS", title: "Automation instance model", summary: "Split reusable workflows from scheduled automation instances.", priority: "high", assignee: "TARS" },
+      { epic: "TARS Improvements", title: "Stop-working control", summary: "Added an operator command path for halting work cleanly.", priority: "high", assignee: "TARS", dependencies: "Ready" },
+      { epic: "OpenClaw Systems", title: "Full-context request flow", summary: "Improved how large-context requests are captured and routed.", priority: "high", assignee: "TARS", dependencies: "Ready" },
+      { epic: "Automations", title: "Automation instance model", summary: "Split reusable workflows from scheduled automation instances.", priority: "high", assignee: "TARS", dependencies: "Ready" },
     ],
+  },
+  {
+    title: "done",
+    description: "Completed and archived",
+    count: 50,
+    cards: [
+      { epic: "OpenClaw Systems", title: "Board bridge reliability pass", summary: "Made the control plane more durable without exposing private runtime details.", priority: "medium", assignee: "TARS", dependencies: "Ready" },
+      { epic: "Portfolio", title: "TARS product story polish", summary: "Converted system capabilities into portfolio-safe visual proof.", priority: "medium", assignee: "TARS", dependencies: "Ready" },
+    ],
+  },
+  {
+    title: "blocked",
+    description: "Waiting on a decision or dependency",
+    count: 0,
+    cards: [],
   },
 ];
 
@@ -776,13 +795,14 @@ const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (
 function BoardCard({ card }) {
   const epicClass = String(card.epic || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
   return (
-    <article className={`tars-board-card tars-board-card--${epicClass}${card.live ? " is-live" : ""}`}>
-      <span className="tars-board-epic">{card.epic}</span>
-      <h4>{card.title}</h4>
-      <p>{card.summary}</p>
-      <div className="tars-board-card-meta">
-        <span className={`tars-priority-${card.priority}`}>{card.priority}</span>
-        <span>{card.assignee}</span>
+    <article className={`card tars-board-card tars-board-card--${epicClass}${card.live ? " is-live" : ""}`} role="listitem">
+      <div className="card-epic-tag tars-board-epic">{card.epic}</div>
+      <h4 className="card-title">{card.title}</h4>
+      <p className="card-summary">{card.summary}</p>
+      <div className="card-meta-row">
+        <div className={`card-assignee-avatar assignee-${String(card.assignee).toLowerCase()}`}><span>{String(card.assignee || "T").charAt(0)}</span></div>
+        <div className={`card-priority-tag priority-${card.priority}`}>{card.priority}</div>
+        <div className={`card-dependency-tag ${card.dependencies?.startsWith("Blocked") ? "is-blocked" : "is-ready"}`}>{card.dependencies}</div>
       </div>
     </article>
   );
@@ -802,11 +822,11 @@ function TarsAgentsTabSlice() {
             <svg className="tars-agent-connectors" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
               <path d="M500 82 C250 112 180 150 128 208" />
               <path d="M500 82 C382 116 352 150 330 208" />
-              <path className="is-live-active" d="M500 82 C500 132 500 164 500 208" />
+              <path className="is-live-active" d="M500 82 C470 120 470 168 500 208" />
               <path d="M500 82 C630 116 662 150 670 208" />
               <path d="M128 282 C180 342 220 370 250 426" />
               <path d="M330 282 C330 340 340 374 365 426" />
-              <path className="is-live-active" d="M500 282 C500 340 500 374 500 426" />
+              <path className="is-live-active" d="M500 282 C470 334 470 382 500 426" />
               <path d="M670 282 C628 340 610 374 635 426" />
               <path d="M670 282 C730 338 756 374 770 426" />
               <path d="M128 282 C78 338 96 374 95 426" />
@@ -904,17 +924,17 @@ function TarsBoardProductSlice({ kind }) {
       <div className="tars-product-slice tars-product-slice--board" aria-hidden="true">
         <aside className="tars-product-sidebar">
           <div className="tars-product-brand"><span><img src="/images/me/JannisGrimm.png" alt="" /></span><strong>Jannis</strong><small>CEO</small></div>
-          {[["◆", "Manage"], ["▦", "Sprint", true], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
+          {[["◆", "Manage", true], ["▦", "Sprint"], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
             <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
           ))}
         </aside>
         <section className="tars-product-main">
-          <header className="tars-product-section-header"><h3>Sprint</h3><button>+</button></header>
-          <div className="tars-board-columns">
+          <header className="tars-product-section-header section-header"><h3>Manage</h3><button className="universal-create-trigger">+</button></header>
+          <div className="board tars-board-columns" role="list">
             {tarsBoardColumns.map((column) => (
-              <section className="tars-board-column" key={column.title}>
-                <header><strong>{column.title}</strong><span>{column.count}</span></header>
-                <div>{column.cards.map((card) => <BoardCard card={card} key={card.title} />)}</div>
+              <section className="column tars-board-column" key={column.title}>
+                <div className="column-head"><div><h3>{column.title}</h3><p>{column.description}</p></div><span className="count">{column.count}</span></div>
+                <div className="cards">{column.cards.length ? column.cards.map((card) => <BoardCard card={card} key={card.title} />) : <div className="empty-state">No cards in this column yet.</div>}</div>
               </section>
             ))}
           </div>
