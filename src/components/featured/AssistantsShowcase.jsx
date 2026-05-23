@@ -36,9 +36,9 @@ function buildAssistantsContent() {
       themeColor: "#ffffff",
       inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
-        "TARS is my personal AI operating system: a phone-accessible control plane that understands my priorities, routes work to the right specialist, and turns ideas into verified action.",
+        "TARS is the AI operating system I built around my life and work: a phone-accessible orchestrator that understands priorities, keeps memory, and turns intent into verified execution.",
       teamCardsDescription:
-        "It is not a chatbot bolted onto my life. It is the interface between my messages, projects, tools, memory, automations, and a team of purpose-built agents.",
+        "It is not one chatbot pretending to do everything. It is a command layer between my messages, tools, projects, memory, automations, and a team of purpose-built agents.",
       teamCards: {
         left: {
           name: "Jannis",
@@ -62,17 +62,21 @@ function buildAssistantsContent() {
     },
     infoBlocks: [
       {
-        sectionTitle: "Domain-Specific Agents",
+        sectionTitle: "Orchestrator",
         mediaImages: tarsAgentCells,
-        body: "TARS receives the request first, keeps the context intact, and routes it to the specialist that owns the outcome: coding, systems, news, personal ops, career, or product work.",
+        body: "Every request lands with TARS first. It decides what matters, preserves the context, and routes the work to the execution surface that should actually own the outcome.",
       },
       {
-        sectionTitle: "Reusable Specialists",
+        sectionTitle: "Specialist Team",
         connectionRows: {
           top: tarsAgentCells,
           bottom: tarsExtendedAgentCells,
         },
-        body: "Research, marketing, and product-context specialists can be reused across projects without starting from zero. They keep their purpose, inherit the right context, and turn repeated work into leverage.",
+        body: "Developer, research, marketing, personal ops, systems, and product agents are not feature badges. They are focused work surfaces that inherit direction, execute their slice, and report back cleanly.",
+      },
+      {
+        sectionTitle: "Command Center",
+        body: "The Kanban Board is the proof layer: a private operating room where ideas become scoped cards, approved cards become agent runs, and completed work leaves artifacts, verification, and leverage behind.",
       },
     ],
   };
