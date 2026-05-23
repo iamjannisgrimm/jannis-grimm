@@ -630,6 +630,80 @@ function AgentConnectionMap({ rows, prioritizeMedia }) {
   );
 }
 
+function OpsDashboardPreview({ dashboard }) {
+  const columns = Array.isArray(dashboard?.columns) ? dashboard.columns : [];
+  const graph = Array.isArray(dashboard?.graph) ? dashboard.graph : [];
+  const metrics = Array.isArray(dashboard?.metrics) ? dashboard.metrics : [];
+  const graphPoints = graph.length
+    ? graph
+        .map((value, index) => {
+          const x = graph.length === 1 ? 50 : (index / (graph.length - 1)) * 100;
+          const y = 92 - Math.max(0, Math.min(100, value));
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        })
+        .join(" ")
+    : "0,78 18,62 35,70 54,42 72,52 100,24";
+
+  return (
+    <div className="highlights-stack__opsDashboard" aria-hidden="true">
+      <div className="highlights-stack__opsDashboardGlow" />
+      <div className="highlights-stack__opsDashboardTopbar">
+        <div>
+          <span className="highlights-stack__opsKicker">{dashboard?.pulse || "Command center"}</span>
+          <strong>Ops board</strong>
+        </div>
+        <span className="highlights-stack__opsCadence">{dashboard?.cadence || "Synthetic sample data"}</span>
+      </div>
+
+      <div className="highlights-stack__opsBoard" role="presentation">
+        {columns.map((column) => (
+          <section className="highlights-stack__opsColumn" data-tone={column.tone} key={column.title}>
+            <header className="highlights-stack__opsColumnHead">
+              <span>{column.title}</span>
+              <i>{column.count}</i>
+            </header>
+            <div className="highlights-stack__opsCards">
+              {(column.cards || []).map((card) => (
+                <article className="highlights-stack__opsCard" key={`${column.title}-${card.title}`}>
+                  <div className="highlights-stack__opsCardMeta">
+                    <span className="highlights-stack__opsAgent">{card.agent}</span>
+                    <span className="highlights-stack__opsStatus">{card.status}</span>
+                  </div>
+                  <p>{card.title}</p>
+                  <div className="highlights-stack__opsCardFooter">
+                    <span>{card.age}</span>
+                    <b style={{ "--ops-progress": `${card.progress || 0}%` }} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <div className="highlights-stack__opsProofRow">
+        <div className="highlights-stack__opsGraph">
+          <div className="highlights-stack__opsGraphHeader">
+            <span>Aging / flow pulse</span>
+            <strong>healthy</strong>
+          </div>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false">
+            <polyline points={graphPoints} />
+          </svg>
+        </div>
+        <div className="highlights-stack__opsMetrics">
+          {metrics.map((metric) => (
+            <div key={metric.label}>
+              <span>{metric.label}</span>
+              <strong>{metric.value}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PanelShell({
   panelContent,
   panelInfoBlocks,
@@ -1004,6 +1078,8 @@ function PanelShell({
                   rows={block.connectionRows}
                   prioritizeMedia={prioritizeMedia}
                 />
+              ) : block.opsDashboard ? (
+                <OpsDashboardPreview dashboard={block.opsDashboard} />
               ) : Array.isArray(block.mediaImages) && block.mediaImages.length ? (
                 <div
                   className="highlights-stack__infoMedia highlights-stack__infoMedia--agents"
