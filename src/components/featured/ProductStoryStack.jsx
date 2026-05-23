@@ -731,15 +731,17 @@ const tarsBoardColumns = [
 ];
 
 const tarsAgents = [
-  { id: "tars", name: "TARS", headline: "Entrypoint", role: "Routes intent, context, and approvals", tier: "tars", tone: "82, 92, 105", live: true },
-  { id: "claw", name: "Claw", headline: "Systems", role: "OpenClaw control plane", tier: "domain", tone: "255, 149, 0" },
-  { id: "developer", name: "Developer", headline: "Build", role: "Code · debug · verify", tier: "domain", tone: "63, 70, 80", live: true },
-  { id: "marketer", name: "Marketer", headline: "Launch", role: "Positioning and growth", tier: "domain", tone: "255, 45, 85" },
-  { id: "research", name: "Research", headline: "Evidence", role: "Source-backed investigation", tier: "domain", tone: "175, 82, 222" },
-  { id: "security", name: "Security", headline: "Safety", role: "Secrets and auth review", tier: "specialist", tone: "255, 179, 64" },
-  { id: "frontend-developer", name: "Frontend", headline: "Specialist", role: "Motion and interface polish", tier: "specialist", tone: "0, 113, 227", live: true },
-  { id: "backend-developer", name: "Backend", headline: "Specialist", role: "APIs and integrations", tier: "specialist", tone: "52, 199, 89" },
+  { id: "tars", name: "TARS", headline: "Entrypoint", role: "Routes intent, context, and approvals", tier: "tars", tone: "110, 110, 115", live: true },
+  { id: "seeme", name: "SeeMe", headline: "Domain owner", role: "Product, app, launch, coach growth", tier: "domain", tone: "255, 77, 112" },
+  { id: "personal", name: "Personal", headline: "Domain owner", role: "Calendar, finance, wedding, life ops", tier: "domain", tone: "0, 113, 227" },
+  { id: "career", name: "Career", headline: "Domain owner", role: "Applications, positioning, leverage", tier: "domain", tone: "255, 214, 10" },
+  { id: "claw", name: "Claw", headline: "Domain owner", role: "OpenClaw control plane", tier: "domain", tone: "255, 149, 0" },
+  { id: "developer", name: "Developer", headline: "Specialist", role: "Code, debug, refactor, verify", tier: "specialist", tone: "63, 70, 80", live: true },
+  { id: "marketer", name: "Marketer", headline: "Specialist", role: "Narrative, launch, customer voice", tier: "specialist", tone: "255, 45, 85" },
+  { id: "research", name: "Research", headline: "Specialist", role: "Evidence, sources, synthesis", tier: "specialist", tone: "175, 82, 222" },
+  { id: "news", name: "News", headline: "Specialist", role: "Market signal retrieval", tier: "specialist", tone: "90, 200, 250" },
   { id: "legal", name: "Legal", headline: "Specialist", role: "Risk triage and policies", tier: "specialist", tone: "88, 86, 214" },
+  { id: "security", name: "Security", headline: "Specialist", role: "Secrets and auth review", tier: "specialist", tone: "255, 179, 64" },
 ];
 
 const tarsRawEvents = [
@@ -750,10 +752,17 @@ const tarsRawEvents = [
   { time: "09:42:38", type: "Response", agent: "Developer", action: "final response sent", status: "Completed" },
 ];
 
-const tarsCleanerRows = [
-  { title: "Runtime bridge health", owner: "claw", cadence: "Every 30m", status: "Runtime synced", next: "12:00", color: "blue" },
-  { title: "Memory + stale artifact cleanup", owner: "personal-assistant", cadence: "Daily", status: "Metadata synced", next: "03:00", color: "green" },
-  { title: "Kanban refinement sweep", owner: "TARS", cadence: "Weekdays", status: "Scheduled", next: "07:00", color: "purple" },
+const tarsAutomationDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const tarsAutomationHours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
+const tarsAutomationEvents = [
+  { title: "Morning refinement", day: 0, start: 7, duration: 1.35, recurrence: "Weekdays", lane: "main" },
+  { title: "Inbox triage", day: 0, start: 9.5, duration: 0.75, recurrence: "Daily", lane: "main" },
+  { title: "SeeMe nightly execution", day: 0, start: 23, duration: 1.2, recurrence: "Daily", lane: "dw" },
+  { title: "Personal ops run", day: 1, start: 3, duration: 1.0, recurrence: "Daily", lane: "private" },
+  { title: "TARS cleanup", day: 1, start: 5, duration: 0.9, recurrence: "Daily", lane: "main" },
+  { title: "Bridge health check", day: 2, start: 12, duration: 0.5, recurrence: "Every 30m", lane: "main" },
+  { title: "Memory review", day: 3, start: 16, duration: 1.5, recurrence: "Weekly", lane: "private" },
+  { title: "Weekend planning", day: 5, start: 10, duration: 1.25, recurrence: "Weekly", lane: "dw" },
 ];
 
 function BoardCard({ card }) {
@@ -792,20 +801,27 @@ function TarsAgentsTabSlice() {
 
   return (
     <div className="tars-product-slice tars-product-slice--agents-tab" aria-hidden="true">
-      <aside className="tars-product-sidebar">
-        <div className="tars-product-brand"><span>J</span><strong>Jannis</strong><small>CEO</small></div>
-        {[ ["◆", "Vision"], ["▦", "Sprint"], ["⌁", "Backlog"], ["⌘", "Agents", true], ["◎", "Automations"] ].map(([icon, label, active]) => (
-          <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
-        ))}
-      </aside>
       <section className="tars-agents-tab-main">
         <header className="tars-agents-tab-header">
-          <div><h3>Agents</h3><p>OpenClaw network · synthetic demo session · Live from Session Tail</p></div>
+          <div><h3>Agents</h3></div>
           <div className="tars-agent-lane-segmented"><span className="is-current">MAIN<i /></span><span>DW</span><span>AUTO</span><span>Active only</span></div>
         </header>
-        <label className="tars-agents-search"><span>Search agents</span><strong>Ship the portfolio TARS section using the actual board surfaces.</strong></label>
         <div className="tars-agent-lane-board">
+          <div className="tars-agent-invocation-panel"><strong>Ship the portfolio TARS section</strong><small>Synthetic request · /new and /compact controls hidden</small></div>
+          <div className="tars-agent-trace-panel"><section><h4>Current</h4><p>Developer</p><small>Browser QA running</small></section><section><h4>Trace</h4><p>handoff → verify</p><small>sanitized</small></section></div>
           <div className="tars-agent-network">
+            <svg className="tars-agent-connectors" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M500 88 C500 132 500 146 500 172" />
+              <path d="M500 172 C190 172 150 214 150 258" />
+              <path d="M500 172 C380 172 360 214 360 258" />
+              <path d="M500 172 C620 172 640 214 640 258" />
+              <path d="M500 172 C810 172 850 214 850 258" />
+              <path className="is-live-active" d="M500 92 C500 330 130 350 130 426" />
+              <path d="M150 332 C150 386 300 392 300 426" />
+              <path d="M360 332 C360 392 470 392 470 426" />
+              <path d="M640 332 C640 392 640 392 640 426" />
+              <path d="M850 332 C850 386 810 392 810 426" />
+            </svg>
             <div className="tars-agent-tier tars-agent-tier--top">{tars ? <TarsAgentNode agent={tars} /> : null}</div>
             <div className="tars-agent-tier-label">Domain owners</div>
             <div className="tars-agent-row tars-agent-row--domains">{domainAgents.map((agent) => <TarsAgentNode agent={agent} key={agent.id} />)}</div>
@@ -825,9 +841,59 @@ function TarsAgentsTabSlice() {
   );
 }
 
+function TarsVisionSlice() {
+  return (
+    <div className="tars-product-slice tars-product-slice--vision" aria-hidden="true">
+      <div className="tars-vision-topbar"><h3>Vision</h3><div><span className="is-active">North star</span><span>Operating rule</span></div></div>
+      <div className="tars-why-markdown">
+        <h3>Every run compounds toward operator freedom.</h3>
+        <p>TARS turns vague intent into scoped cards, routes the work to the right agent, verifies output, and leaves an artifact trail that can be resumed later.</p>
+        <blockquote>Bias toward action, privacy boundaries intact, no raw secrets in UI, and no public action without approval.</blockquote>
+      </div>
+      <div className="tars-epic-list">
+        {["SeeMe leverage", "Personal peace", "Runtime reliability"].map((title, index) => (
+          <article className="tars-epic-row" key={title}><i style={{ background: ["#ff4d70", "#0071e3", "#ff9500"][index] }} /><strong>{title}</strong><span>Synthetic operating lane</span><b>ready</b></article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TarsAutomationCalendarSlice() {
+  return (
+    <div className="tars-product-slice tars-product-slice--automation-calendar" aria-hidden="true">
+      <section className="automation-calendar-shell" aria-label="Weekly automation schedule">
+        <div className="automation-calendar-header">
+          <div className="automation-calendar-header-spacer" />
+          {tarsAutomationDays.map((day, index) => <div className="automation-calendar-day-head" key={day} style={{ gridColumn: index + 2 }}><strong>{day}</strong></div>)}
+        </div>
+        <div className="automation-calendar-body" role="list">
+          <div className="automation-calendar-time-rail"><div className="automation-calendar-time-track">{tarsAutomationHours.map((hour) => <span key={hour} style={{ "--time-top": `${(hour / 24) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}</div></div>
+          {tarsAutomationDays.map((day, index) => (
+            <div className="automation-calendar-day" key={day} style={{ gridColumn: index + 2 }}>
+              <div className="automation-calendar-day-track">
+                {index === 1 ? <div className="automation-calendar-current-time" style={{ "--automation-now-top": "54%" }} data-current-time-label="12:58" /> : null}
+                {tarsAutomationEvents.filter((event) => event.day === index).map((event) => (
+                  <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration < 0.75 ? " automation-calendar-block-compact" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.title} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration }}>
+                    <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function TarsBoardProductSlice({ kind }) {
   if (kind === "agents-tab") {
     return <TarsAgentsTabSlice />;
+  }
+
+  if (kind === "vision") {
+    return <TarsVisionSlice />;
   }
 
   if (kind === "command-center") {
@@ -855,25 +921,7 @@ function TarsBoardProductSlice({ kind }) {
   }
 
   if (kind === "automation-cleaner") {
-    return (
-      <div className="tars-product-slice tars-product-slice--cleaner" aria-hidden="true">
-        <div className="tars-cleaner-head">
-          <div><span>Automations</span><h3>Cleaner runs keep the system quiet, current, and safe.</h3></div>
-          <strong>Checking bridge</strong>
-        </div>
-        <div className="tars-cleaner-grid">
-          {tarsCleanerRows.map((row) => (
-            <article className="tars-cleaner-card" data-tone={row.color} key={row.title}>
-              <header><span>{row.owner}</span><strong>{row.status}</strong></header>
-              <h4>{row.title}</h4>
-              <p>Schedule: {row.cadence} · next run {row.next} · local scheduler boundary respected.</p>
-              <div><span>Owner</span><b>{row.owner}</b><span>Mode</span><b>synthetic</b></div>
-            </article>
-          ))}
-        </div>
-        <div className="tars-cleaner-note"><strong>Maintenance boundary:</strong> no public actions, no raw secrets, no private logs — only status, owner, cadence, and sanitized run summaries.</div>
-      </div>
-    );
+    return <TarsAutomationCalendarSlice />;
   }
 
   return (

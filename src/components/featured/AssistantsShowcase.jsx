@@ -42,22 +42,17 @@ function buildAssistantsContent() {
       {
         sectionTitle: "Agents",
         tarsBoardSlice: "agents-tab",
-        body: "This mirrors the board's actual Agents tab: one OpenClaw network lane, a real-looking demo query, live handoff lights, and a sanitized Session Tail instead of private logs.",
+        body: "This mirrors the board's actual Agents tab: a single OpenClaw network lane, live handoff lights, trace overlays, and a sanitized Session Tail instead of private logs.",
       },
       {
-        sectionTitle: "Command Center",
-        tarsBoardSlice: "command-center",
-        body: "On scroll, the same operating system resolves into Sprint: ideas become scoped cards, ready work becomes execution, and every completed slice leaves artifacts and verification behind.",
+        sectionTitle: "Vision",
+        tarsBoardSlice: "vision",
+        body: "On scroll, the agents disappear and the operating principle appears: turn intent into verified execution while preserving privacy, approval gates, and long-term leverage.",
       },
       {
         sectionTitle: "Automations",
         tarsBoardSlice: "automation-cleaner",
-        body: "After the command center comes the maintenance layer: scheduled workflows, cleanup runs, bridge health, and runtime hygiene surfaced as calm, operator-readable cards.",
-      },
-      {
-        sectionTitle: "Privacy & Architecture",
-        tarsBoardSlice: "architecture",
-        body: "The architecture is intentionally boring where it should be: local bridges, scoped agents, credential references, approval gates, and portfolio demos that never expose private cards, logs, tokens, or live personal data.",
+        body: "Further down, Vision gives way to the calendar view from the board's Automations tab: sanitized scheduled runs, synthetic cadence, and no sidebar chrome.",
       },
     ],
   };
