@@ -712,7 +712,7 @@ const tarsBoardColumns = [
     count: 22,
     cards: [
       { epic: "TARS", title: "Weekly TARS synthesis report", summary: "Summarize the week into one calm operator report with open questions and what is coming next.", priority: "high", assignee: "TARS" },
-      { epic: "Personal", title: "Private extraction planning model", summary: "Portfolio-safe title; source card contains personal finance planning details and stays private.", priority: "high", assignee: "TARS" },
+      { epic: "Personal", title: "Private extraction planning model", summary: "Portfolio-safe title; source card contains personal finance planning details and stays private.", priority: "high", assignee: "Jannis" },
       { epic: "TARS", title: "Async task handoff mode", summary: "Call an agent with a scoped task, disconnect, and let the work continue to completion.", priority: "high", assignee: "TARS" },
     ],
   },
@@ -727,7 +727,7 @@ const tarsBoardColumns = [
     cards: [
       { epic: "TARS", title: "Voice/phone integration lane", summary: "Use a dedicated number as the operator-facing path into TARS.", priority: "high", assignee: "TARS", live: true },
       { epic: "TARS", title: "Private vs open model routing guide", summary: "Document when work should stay local/private versus use the open model path.", priority: "high", assignee: "TARS" },
-      { epic: "Security", title: "Credential surface cleanup", summary: "Harden password/key/payment references without exposing raw secrets in UI or logs.", priority: "high", assignee: "TARS" },
+      { epic: "Security", title: "Credential surface cleanup", summary: "Harden password/key/payment references without exposing raw secrets in UI or logs.", priority: "high", assignee: "Security" },
     ],
   },
   {
@@ -758,7 +758,7 @@ const tarsAgents = [
 const tarsAutomationDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const tarsAutomationHours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
 const tarsAutomationEvents = [
-  { title: "Nightly Ready Card Executor", days: "daily", start: 0, duration: 1, recurrence: "Daily · 12:00 AM", lane: "dw", color: "#5856d6" },
+  { title: "Card Executor", days: "daily", start: 0, duration: 3, recurrence: "Daily · 12:00–3:00 AM", lane: "dw", color: "#5856d6" },
   { title: "Career Job Discovery", days: "daily", start: 4, duration: 1, recurrence: "Daily · 4:00 AM", lane: "dw", color: "#ffd60a" },
   { title: "News", days: "daily", start: 5, duration: 1, recurrence: "Daily · 5:00 AM", lane: "main", color: "#0071e3" },
   { title: "Morning GUI Window Cleanup", days: "daily", start: 5.5, duration: 0.75, recurrence: "Daily · 5:30 AM", lane: "main", color: "#ff9500" },
@@ -774,8 +774,9 @@ const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (
 ));
 
 function BoardCard({ card }) {
+  const epicClass = String(card.epic || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
   return (
-    <article className={`tars-board-card${card.live ? " is-live" : ""}`}>
+    <article className={`tars-board-card tars-board-card--${epicClass}${card.live ? " is-live" : ""}`}>
       <span className="tars-board-epic">{card.epic}</span>
       <h4>{card.title}</h4>
       <p>{card.summary}</p>
@@ -844,7 +845,6 @@ function TarsAgentsTabSlice() {
               ))}
             </div>
           </div>
-          <p className="tars-agent-focus-caption">The full graph stays visible; only the current execution path is illuminated: TARS → Career → Developer.</p>
         </div>
       </section>
     </div>
@@ -903,8 +903,8 @@ function TarsBoardProductSlice({ kind }) {
     return (
       <div className="tars-product-slice tars-product-slice--board" aria-hidden="true">
         <aside className="tars-product-sidebar">
-          <div className="tars-product-brand"><span>J</span><strong>Jannis</strong><small>CEO</small></div>
-          {[["◆", "Vision"], ["▦", "Sprint", true], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
+          <div className="tars-product-brand"><span><img src="/images/me/JannisGrimm.png" alt="" /></span><strong>Jannis</strong><small>CEO</small></div>
+          {[["◆", "Manage"], ["▦", "Sprint", true], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
             <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
           ))}
         </aside>
@@ -954,18 +954,18 @@ function TarsArchitecturePrivacySlice() {
     <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
       <div className="tars-architecture-hero">
         <span>Architecture & Privacy</span>
-        <h3>Useful autonomy, boxed by design.</h3>
-        <p>One local control plane routes intent into scoped agents, separates private runtime paths, and keeps every external action behind explicit approval.</p>
+        <h3>A local agent OS, not a demo chatbot.</h3>
+        <p>TARS turns phone/browser intent into scoped work packets, routes them through domain owners, and uses the Kanban board as the approval and verification control plane.</p>
       </div>
       <div className="tars-architecture-map" aria-label="TARS technical architecture map">
-        <div className="tars-architecture-core"><span>Local Mac runtime</span><strong>TARS</strong><small>Phone + browser entrypoint</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--route"><span>Domain routing</span><strong>Career · SeeMe · Personal · Claw</strong><small>Only the right owner gets the packet.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--board"><span>Control plane</span><strong>Kanban board</strong><small>Status, definition of done, verification, artifacts.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--scheduler"><span>Automation scheduler</span><strong>Time-boxed workflows</strong><small>Nightly runs prepare work without surprise external mutation.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--secrets"><span>Secrets isolation</span><strong>Credential refs only</strong><small>Tokens stay out of prompts, screenshots, logs, and commits.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--approval"><span>Approval boundary</span><strong>External actions stop here</strong><small>Posting, messaging, purchases, uploads, and submissions require approval.</small></div>
+        <div className="tars-architecture-core"><span>Local runtime bridge</span><strong>TARS</strong><small>Mac-hosted gateway with phone and browser entrypoints.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--route"><span>Routing graph</span><strong>TARS → domain → specialist</strong><small>Career, SeeMe, Personal, and Claw own judgment before Developer or Research execute.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--board"><span>Control plane</span><strong>Kanban approvals</strong><small>Ready cards carry prompts, boundaries, definition of done, artifacts, and verification gates.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--scheduler"><span>Automation scheduler</span><strong>Local timed workflows</strong><small>Daily and weekly runs reconcile hosted specs into local runtime artifacts without opening broad inbound access.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--secrets"><span>Privacy rails</span><strong>Credential references</strong><small>Tokens stay in local env/Keychain references, not prompts, screenshots, commits, or portfolio data.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--approval"><span>Operator tooling</span><strong>Browser with brakes</strong><small>It can inspect, draft, and verify; external sends, uploads, purchases, and submissions remain approval-gated.</small></div>
       </div>
-      <div className="tars-privacy-rails"><span>Credential refs only</span><span>Approval-gated external actions</span><span>No private live logs</span><span>Synthetic portfolio data</span></div>
+      <div className="tars-privacy-rails"><span>Scoped task packets</span><span>Local bridge constraints</span><span>Approval-gated external actions</span><span>Synthetic portfolio data</span></div>
     </div>
   );
 }

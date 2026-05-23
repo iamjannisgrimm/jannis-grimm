@@ -45,7 +45,7 @@ function buildAssistantsContent() {
         tarsBoardSlice: "agents-tab",
       },
       {
-        sectionTitle: "Vision",
+        sectionTitle: "Manage",
         tarsBoardSlice: "vision",
       },
       {

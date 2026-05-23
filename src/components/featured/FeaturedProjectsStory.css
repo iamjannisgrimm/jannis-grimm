@@ -2320,6 +2320,14 @@
   color: white;
   background: linear-gradient(180deg, #303238, #07080a);
   font-weight: 760;
+  overflow: hidden;
+}
+
+.tars-product-brand span img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .tars-product-brand strong { font-size: 0.92rem; letter-spacing: -0.02em; }
@@ -2436,6 +2444,24 @@
 .tars-board-card-meta span { padding: 2px 7px; border-radius: 999px; background: rgba(60,60,67,.07); color: var(--tars-muted); font-size: .68rem; font-weight: 650; text-transform: capitalize; }
 .tars-board-card-meta .tars-priority-high { background: rgba(255,59,48,.1); color: #9f2f24; }
 .tars-board-card-meta .tars-priority-medium { background: rgba(255,149,0,.12); color: #8a5a12; }
+
+.tars-board-card--tars { --board-card-rgb: 100, 168, 255; }
+.tars-board-card--personal { --board-card-rgb: 52, 199, 89; }
+.tars-board-card--security { --board-card-rgb: 255, 149, 0; }
+
+.tars-board-card--tars,
+.tars-board-card--personal,
+.tars-board-card--security {
+  border-color: rgba(var(--board-card-rgb), 0.28);
+  background: rgba(var(--board-card-rgb), 0.08);
+}
+
+.tars-board-card--tars .tars-board-epic,
+.tars-board-card--personal .tars-board-epic,
+.tars-board-card--security .tars-board-epic {
+  background: rgba(var(--board-card-rgb), 0.16);
+  color: rgb(var(--board-card-rgb));
+}
 
 .tars-product-slice--agents,
 .tars-product-slice--vision,
@@ -3518,11 +3544,16 @@
     gap: clamp(18px, 2.4vh, 28px);
   }
 
-  .highlights-stack--tars .highlights-stack__infoWindow--team .highlights-stack__infoBlock:has(.tars-product-slice)::before {
+.highlights-stack--tars .highlights-stack__infoWindow--team .highlights-stack__infoBlock:has(.tars-product-slice)::before {
     margin-bottom: 0;
-    font-size: clamp(3rem, 7.5vw, 6rem);
-    line-height: 0.9;
+    font-size: clamp(2.5rem, 4.9vw, 5rem);
+    line-height: 0.94;
   }
+}
+
+.highlights-stack--tars .tars-scroll-section__copy h2 {
+  font-size: clamp(2.5rem, 4.9vw, 5rem);
+  line-height: 0.94;
 }
 
 .highlights-stack--tars .tars-product-slice {
@@ -3553,6 +3584,29 @@
   background: #151d28 !important;
   border-color: rgba(226, 232, 245, 0.13) !important;
   box-shadow: none !important;
+}
+
+.highlights-stack--tars .tars-scroll-section .tars-product-slice--board,
+.highlights-stack--tars .tars-scroll-section .tars-product-slice--agents-tab,
+.highlights-stack--tars .tars-scroll-section .tars-product-slice--automation-calendar,
+.highlights-stack--tars .tars-scroll-section .tars-product-slice--architecture,
+.highlights-stack--tars .tars-agent-lane-board,
+.highlights-stack--tars .tars-agent-tab-node,
+.highlights-stack--tars .tars-board-card,
+.highlights-stack--tars .tars-architecture-core,
+.highlights-stack--tars .tars-architecture-lane {
+  background-image: none !important;
+}
+
+.highlights-stack--tars .tars-product-brand {
+  gap: 7px;
+  align-items: center;
+  padding-bottom: 14px;
+}
+
+.highlights-stack--tars .tars-product-brand strong,
+.highlights-stack--tars .tars-product-brand small {
+  line-height: 1.05;
 }
 
 .highlights-stack--tars .tars-board-card,
@@ -3598,7 +3652,7 @@
 }
 
 .highlights-stack--tars .tars-product-section-header {
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .highlights-stack--tars .tars-product-section-header button {
@@ -3710,7 +3764,16 @@
   --automation-instance-meta: rgba(245, 248, 255, 0.74);
   min-height: 30px;
   padding: 3px 6px 3px 9px !important;
-  border-left: 4px solid var(--automation-display-color, #64a8ff) !important;
+  background: color-mix(in srgb, var(--automation-display-color, #64a8ff) 54%, #151d28) !important;
+  border-color: color-mix(in srgb, var(--automation-display-color, #64a8ff) 48%, transparent) !important;
+}
+
+.highlights-stack--tars .automation-calendar-block[style*="--automation-duration-hours: 0."] {
+  min-height: 18px;
+  height: 18px !important;
+  border-radius: 9px !important;
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
 }
 
 .highlights-stack--tars .automation-calendar-block::before {
@@ -3841,4 +3904,19 @@
     grid-column: auto;
     grid-row: auto;
   }
+}
+
+/* Keep Sprint cards visually distinct after the flat dark override layer. */
+.highlights-stack--tars .tars-board-card--tars,
+.highlights-stack--tars .tars-board-card--personal,
+.highlights-stack--tars .tars-board-card--security {
+  background: rgba(var(--board-card-rgb), 0.12) !important;
+  border-color: rgba(var(--board-card-rgb), 0.32) !important;
+}
+
+.highlights-stack--tars .tars-board-card--tars .tars-board-epic,
+.highlights-stack--tars .tars-board-card--personal .tars-board-epic,
+.highlights-stack--tars .tars-board-card--security .tars-board-epic {
+  background: rgba(var(--board-card-rgb), 0.18) !important;
+  color: rgb(var(--board-card-rgb)) !important;
 }
