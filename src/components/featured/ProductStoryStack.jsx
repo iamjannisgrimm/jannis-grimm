@@ -704,6 +704,137 @@ function OpsDashboardPreview({ dashboard }) {
   );
 }
 
+const tarsBoardColumns = [
+  {
+    title: "todo",
+    count: 3,
+    cards: [
+      { epic: "TARS", title: "Shape a safe portfolio product slice", summary: "Inspect the real board surface, preserve private data boundaries, and turn the idea into an execution card.", priority: "medium", assignee: "TARS" },
+      { epic: "Personal", title: "Morning refinement packet", summary: "Convert rough ideas into approved, scoped work without asking for mechanical input.", priority: "low", assignee: "TARS" },
+    ],
+  },
+  {
+    title: "ready",
+    count: 2,
+    cards: [
+      { epic: "SeeMe", title: "Coach onboarding proof artifact", summary: "Definition of done, deliverables, approval boundary, and execution log are ready for an agent handoff.", priority: "high", assignee: "TARS" },
+      { epic: "TARS", title: "Verify runtime bridge health", summary: "Local checks only; no secrets, tokens, or private logs leave the machine.", priority: "medium", assignee: "Developer" },
+    ],
+  },
+  {
+    title: "doing",
+    count: 1,
+    cards: [
+      { epic: "TARS", title: "Browser QA and build verification", summary: "Run the project, inspect the rendered slice, and commit only the scoped diff.", priority: "high", assignee: "Developer", live: true },
+    ],
+  },
+];
+
+const tarsAgents = [
+  { id: "tars", name: "TARS", role: "Entrypoint / router", tone: "110, 110, 115", live: true },
+  { id: "claw", name: "Claw", role: "OpenClaw systems", tone: "255, 149, 0" },
+  { id: "developer", name: "Developer", role: "Build · debug · verify", tone: "63, 70, 80", live: true },
+  { id: "marketer", name: "Marketer", role: "Messaging and launch", tone: "255, 45, 85" },
+  { id: "research", name: "Research", role: "Evidence loops", tone: "175, 82, 222" },
+  { id: "security", name: "Security", role: "Secrets and auth safety", tone: "255, 179, 64" },
+];
+
+const tarsRawEvents = [
+  { time: "14:08", type: "tool", agent: "developer", action: "Read scoped portfolio files", status: "completed" },
+  { time: "14:10", type: "reasoning", agent: "tars", action: "Route UI work to implementation", status: "completed" },
+  { time: "14:12", type: "tool", agent: "developer", action: "Recreate board shell with synthetic data", status: "started" },
+  { time: "14:14", type: "response", agent: "developer", action: "Return verification and artifact refs", status: "queued" },
+];
+
+function BoardCard({ card }) {
+  return (
+    <article className={`tars-board-card${card.live ? " is-live" : ""}`}>
+      <span className="tars-board-epic">{card.epic}</span>
+      <h4>{card.title}</h4>
+      <p>{card.summary}</p>
+      <div className="tars-board-card-meta">
+        <span className={`tars-priority-${card.priority}`}>{card.priority}</span>
+        <span>{card.assignee}</span>
+      </div>
+    </article>
+  );
+}
+
+function TarsBoardProductSlice({ kind }) {
+  if (kind === "command-center") {
+    return (
+      <div className="tars-product-slice tars-product-slice--board" aria-hidden="true">
+        <aside className="tars-product-sidebar">
+          <div className="tars-product-brand"><span>J</span><strong>Jannis</strong><small>CEO</small></div>
+          {[["◆", "Vision"], ["▦", "Sprint", true], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
+            <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
+          ))}
+        </aside>
+        <section className="tars-product-main">
+          <header className="tars-product-section-header"><h3>Sprint</h3><button>+</button></header>
+          <div className="tars-board-columns">
+            {tarsBoardColumns.map((column) => (
+              <section className="tars-board-column" key={column.title}>
+                <header><strong>{column.title}</strong><span>{column.count}</span></header>
+                <div>{column.cards.map((card) => <BoardCard card={card} key={card.title} />)}</div>
+              </section>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (kind === "watch-agents") {
+    return (
+      <div className="tars-product-slice tars-product-slice--agents" aria-hidden="true">
+        <div className="tars-agent-routing-hero">
+          <div><span>Canonical agents</span><h3>TARS routes work to specialists instead of pretending one chat is the whole company.</h3></div>
+          <div className="tars-agent-legend"><strong>Live session tail</strong><small>synthetic activity · sanitized</small></div>
+        </div>
+        <div className="tars-agent-network">
+          {tarsAgents.map((agent) => (
+            <article className={`tars-agent-node${agent.live ? " is-live" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+              <span className="tars-agent-orb"><b>{agent.name.slice(0, 2).toUpperCase()}</b></span>
+              <strong>{agent.name}</strong><small>{agent.role}</small>
+              {agent.live ? <em><i />Live</em> : null}
+            </article>
+          ))}
+        </div>
+        <ol className="tars-agent-raw-list">
+          {tarsRawEvents.map((event) => <li key={`${event.time}-${event.action}`} className={event.status === "started" ? "is-active" : ""}><time>{event.time}</time><span><b>{event.action}</b><small>{event.agent} · {event.type} · {event.status}</small></span></li>)}
+        </ol>
+      </div>
+    );
+  }
+
+  if (kind === "vision") {
+    return (
+      <div className="tars-product-slice tars-product-slice--vision" aria-hidden="true">
+        <div className="tars-vision-topbar"><h3>Vision</h3><div><span className="is-active">Epics</span><span>Articulate</span></div></div>
+        <div className="tars-epic-list">
+          {["SeeMe launch readiness", "Private assistant architecture", "Operator freedom systems"].map((title, index) => (
+            <article className="tars-epic-row" key={title}><i style={{ background: ["#ff4d70", "#0071e3", "#34c759"][index] }} /><strong>{title}</strong><span>{["Product truth + coach proof", "Local-first runtime + tools", "Compounding leverage loops"][index]}</span><b>{["High", "Medium", "High"][index]}</b></article>
+          ))}
+        </div>
+        <article className="tars-why-markdown"><h3>The north star</h3><p>Every proposal, card, and agent handoff is filtered through leverage: durable work, verified outputs, and privacy-preserving autonomy.</p><blockquote>Approved work moves forward; external actions stay gated.</blockquote></article>
+      </div>
+    );
+  }
+
+  return (
+    <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
+      <div className="tars-architecture-grid">
+        <article><span>Device</span><strong>Messages / Browser</strong><small>Human intent enters through private operator surfaces.</small></article>
+        <article><span>Gateway</span><strong>OpenClaw router</strong><small>Routes open vs local/private model paths without exposing secrets.</small></article>
+        <article><span>Runtime</span><strong>Agents + tools</strong><small>Scoped specialists execute with credential references only.</small></article>
+        <article><span>Proof</span><strong>Board + artifacts</strong><small>Cards, verification, commits, and outputs become the audit trail.</small></article>
+      </div>
+      <pre>{`external actions: approval-gated\nsecrets: credential refs only\nlive data: never shown in portfolio\nportfolio data: synthetic, sanitized shell`}</pre>
+    </div>
+  );
+}
+
 function PanelShell({
   panelContent,
   panelInfoBlocks,
@@ -1078,6 +1209,8 @@ function PanelShell({
                   rows={block.connectionRows}
                   prioritizeMedia={prioritizeMedia}
                 />
+              ) : block.tarsBoardSlice ? (
+                <TarsBoardProductSlice kind={block.tarsBoardSlice} />
               ) : block.opsDashboard ? (
                 <OpsDashboardPreview dashboard={block.opsDashboard} />
               ) : Array.isArray(block.mediaImages) && block.mediaImages.length ? (

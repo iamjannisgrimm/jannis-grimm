@@ -76,82 +76,23 @@ function buildAssistantsContent() {
       },
       {
         sectionTitle: "Command Center",
-        opsDashboard: {
-          pulse: "Private proof layer",
-          cadence: "Nightly execution loop",
-          columns: [
-            {
-              title: "Shaped",
-              count: 3,
-              tone: "blue",
-              cards: [
-                {
-                  title: "Turn rough idea into launch task",
-                  agent: "TARS",
-                  status: "Scoped",
-                  age: "4h",
-                  progress: 34,
-                },
-                {
-                  title: "Portfolio proof artifact pass",
-                  agent: "Developer",
-                  status: "Ready",
-                  age: "1d",
-                  progress: 58,
-                },
-              ],
-            },
-            {
-              title: "Running",
-              count: 2,
-              tone: "purple",
-              cards: [
-                {
-                  title: "Coach workflow synthesis",
-                  agent: "Research",
-                  status: "Active",
-                  age: "27m",
-                  progress: 72,
-                },
-                {
-                  title: "SeeMe launch narrative draft",
-                  agent: "Marketer",
-                  status: "Reviewing",
-                  age: "51m",
-                  progress: 64,
-                },
-              ],
-            },
-            {
-              title: "Verified",
-              count: 5,
-              tone: "green",
-              cards: [
-                {
-                  title: "Build passed + browser smoke check",
-                  agent: "Developer",
-                  status: "Done",
-                  age: "12m",
-                  progress: 100,
-                },
-                {
-                  title: "Artifacts logged back to memory",
-                  agent: "Personal Ops",
-                  status: "Logged",
-                  age: "2h",
-                  progress: 100,
-                },
-              ],
-            },
-          ],
-          graph: [22, 38, 31, 54, 44, 72, 66, 86],
-          metrics: [
-            { label: "Approval gate", value: "human-in-loop" },
-            { label: "Aging risk", value: "1 warm" },
-            { label: "Proof trail", value: "artifacts + checks" },
-          ],
-        },
+        tarsBoardSlice: "command-center",
         body: "The Kanban Board is the proof layer: a private operating room where ideas become scoped cards, approved cards become agent runs, and completed work leaves artifacts, verification, and leverage behind.",
+      },
+      {
+        sectionTitle: "Watch Agents",
+        tarsBoardSlice: "watch-agents",
+        body: "The Agents surface shows the real operating model: TARS as entrypoint, canonical domain owners, reusable specialists, and a live session tail. The portfolio version keeps the shell and uses sanitized activity only.",
+      },
+      {
+        sectionTitle: "Vision",
+        tarsBoardSlice: "vision",
+        body: "The Vision tab connects strategy to execution. Epics group long-running outcomes, while the VISION.md editor keeps the north star visible beside the board instead of buried in a document folder.",
+      },
+      {
+        sectionTitle: "Privacy & Architecture",
+        tarsBoardSlice: "architecture",
+        body: "The product is useful because it is constrained: local bridges, credential references, approval-gated external actions, and synthetic portfolio examples instead of private cards, logs, tokens, or live personal data.",
       },
     ],
   };
