@@ -2871,7 +2871,8 @@
   --calendar-header-height: 36px;
   --automation-hour-row-height: calc(var(--calendar-height) / 24);
   display: grid;
-  grid-template-rows: var(--calendar-header-height) var(--calendar-height);
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.28fr);
+  gap: 12px;
   width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -2879,6 +2880,13 @@
   border: 0;
   border-radius: 0;
   background: transparent;
+}
+
+.automation-calendar-grid {
+  display: grid;
+  grid-template-rows: var(--calendar-header-height) var(--calendar-height);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .automation-calendar-header,
@@ -3100,4 +3108,350 @@
   .tars-product-slice--automation-calendar { padding: 14px; }
   .tars-architecture-flow { grid-template-columns: 1fr; }
   .tars-architecture-grid { grid-template-columns: 1fr; }
+}
+
+/* Portfolio TARS correction pass: normal-scroll dark sections after Always Available. */
+.tars-scroll-sections {
+  position: relative;
+  z-index: 8;
+  margin-top: 0;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(84, 96, 120, 0.18), transparent 30%),
+    linear-gradient(180deg, #121720 0%, #0c1017 34%, #090c12 100%);
+  color: #f5f7fb;
+  overflow: visible;
+}
+
+.tars-scroll-section {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  padding: clamp(72px, 9vh, 118px) clamp(18px, 4vw, 54px);
+  overflow: visible;
+}
+
+.tars-scroll-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.035), transparent 20%, transparent 80%, rgba(0,0,0,0.16)),
+    radial-gradient(circle at 12% 18%, rgba(0,113,227,0.12), transparent 28%);
+}
+
+.tars-scroll-section__inner {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: clamp(18px, 2.8vh, 34px);
+}
+
+.tars-scroll-section__copy {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.tars-scroll-section__copy span {
+  color: rgba(210, 218, 234, 0.42);
+  font: 800 clamp(0.72rem, 1vw, 0.86rem)/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.12em;
+}
+
+.tars-scroll-section__copy h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.6rem, 6vw, 6rem);
+  line-height: 0.9;
+  letter-spacing: -0.075em;
+}
+
+.tars-scroll-section .tars-product-slice {
+  --tars-bg: #101722;
+  --tars-surface: rgba(20, 27, 39, 0.86);
+  --tars-muted: rgba(221, 228, 240, 0.66);
+  --tars-faint: rgba(221, 228, 240, 0.42);
+  --tars-line: rgba(226, 232, 245, 0.12);
+  --tars-blue: #64a8ff;
+  width: min(1120px, 100%);
+  color: #f7f9ff;
+}
+
+.tars-scroll-section .tars-product-slice--board,
+.tars-scroll-section .tars-product-slice--agents-tab,
+.tars-scroll-section .tars-product-slice--automation-calendar,
+.tars-scroll-section .tars-product-slice--architecture {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(100, 168, 255, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(20,27,39,0.96), rgba(12,16,24,0.94));
+  border-color: rgba(230, 236, 250, 0.13);
+  box-shadow: 0 34px 100px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.tars-scroll-section .tars-product-sidebar,
+.tars-scroll-section .tars-board-column,
+.tars-scroll-section .tars-board-column header,
+.tars-scroll-section .tars-agent-lane-board,
+.tars-scroll-section .automation-calendar-day,
+.tars-scroll-section .automation-calendar-day-track,
+.tars-scroll-section .tars-architecture-flow article,
+.tars-scroll-section .tars-privacy-rails span {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(230, 236, 250, 0.11);
+}
+
+.tars-scroll-section .tars-board-card,
+.tars-scroll-section .tars-product-tab i {
+  background: rgba(255,255,255,0.075);
+  border-color: rgba(230,236,250,0.11);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.tars-scroll-section .tars-product-section-header h3,
+.tars-scroll-section .tars-board-card h4,
+.tars-scroll-section .tars-board-column header strong,
+.tars-scroll-section .tars-product-brand strong,
+.tars-scroll-section .tars-agents-tab-header h3,
+.tars-scroll-section .tars-automation-header h3,
+.tars-scroll-section .tars-architecture-hero h3,
+.tars-scroll-section .tars-architecture-flow strong {
+  color: #ffffff;
+}
+
+.tars-scroll-section .tars-board-card p,
+.tars-scroll-section .tars-product-brand small,
+.tars-scroll-section .tars-product-tab,
+.tars-scroll-section .tars-board-column header span,
+.tars-scroll-section .tars-agents-tab-header p,
+.tars-scroll-section .tars-architecture-flow small,
+.tars-scroll-section .tars-architecture-hero p,
+.tars-architecture-summary {
+  color: rgba(221, 228, 240, 0.66);
+}
+
+.tars-scroll-section .tars-product-tab.is-active,
+.tars-scroll-section .tars-product-section-header button {
+  background: rgba(100,168,255,0.16);
+  border-color: rgba(100,168,255,0.26);
+  color: #ffffff;
+}
+
+.tars-scroll-section .tars-board-columns {
+  grid-template-columns: repeat(4, minmax(190px, 1fr));
+}
+
+.tars-scroll-section .tars-board-column {
+  min-height: 430px;
+}
+
+.tars-product-slice--agents-focus {
+  min-height: min(650px, 74dvh);
+}
+
+.tars-product-slice--agents-focus .tars-agents-tab-main {
+  min-height: inherit;
+}
+
+.tars-product-slice--agents-focus .tars-agent-lane-segmented {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: rgba(255,255,255,0.055);
+  border-color: rgba(230,236,250,0.12);
+}
+
+.tars-product-slice--agents-focus .tars-agent-lane-segmented span {
+  color: rgba(221,228,240,0.56);
+}
+
+.tars-product-slice--agents-focus .tars-agent-lane-segmented .is-current {
+  background: rgba(100,168,255,0.16);
+  color: #fff;
+}
+
+.tars-agent-lane-board--focus {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: clamp(18px, 2vw, 28px);
+}
+
+.tars-agent-network--focus {
+  min-height: 500px;
+  align-content: stretch;
+  padding: 0;
+}
+
+.tars-agent-connectors--focus path.is-muted-edge {
+  stroke: rgba(130, 146, 170, 0.12);
+  stroke-dasharray: 2 14;
+}
+
+.tars-agent-focus-node {
+  position: absolute;
+  z-index: 2;
+  width: clamp(132px, 12vw, 170px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  border-radius: 999px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,0.24), transparent 32%),
+    linear-gradient(145deg, rgba(var(--agent-rgb),0.52), rgba(18,24,34,0.92));
+  border: 1px solid rgba(var(--agent-rgb),0.48);
+  box-shadow: 0 0 0 7px rgba(var(--agent-rgb),0.10), 0 24px 70px rgba(0,0,0,0.34);
+}
+
+.tars-agent-focus-node span {
+  color: #fff;
+  font-size: clamp(1.1rem, 1.8vw, 1.72rem);
+  font-weight: 850;
+  letter-spacing: -0.06em;
+}
+
+.tars-agent-focus-node strong {
+  max-width: 14ch;
+  color: rgba(245,248,255,0.72);
+  font-size: 0.72rem;
+  line-height: 1.22;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tars-agent-focus-node--tars { left: 50%; top: 6%; transform: translateX(-50%); }
+.tars-agent-focus-node--career { left: 50%; top: 38%; transform: translateX(-50%); }
+.tars-agent-focus-node--developer { left: 50%; bottom: 6%; transform: translateX(-50%); }
+
+.tars-agent-focus-caption {
+  margin: 0 auto;
+  max-width: 62ch;
+  color: rgba(221,228,240,0.64);
+  font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+  line-height: 1.55;
+  text-align: center;
+}
+
+.tars-product-slice--automation-calendar .automation-calendar-shell {
+  --calendar-height: min(604px, 62dvh);
+}
+
+.tars-scroll-section .automation-calendar-header-spacer,
+.tars-scroll-section .automation-calendar-time-rail,
+.tars-scroll-section .automation-calendar-day,
+.tars-scroll-section .automation-calendar-day-head {
+  border-color: rgba(230,236,250,0.105);
+}
+
+.tars-scroll-section .automation-calendar-day-head strong,
+.tars-scroll-section .automation-calendar-time-rail span {
+  color: rgba(221,228,240,0.72);
+}
+
+.tars-scroll-section .automation-calendar-day-track {
+  background-image: linear-gradient(to bottom, rgba(230,236,250,0.07) 1px, transparent 1px);
+}
+
+.tars-scroll-section .automation-calendar-block {
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2) !important;
+}
+
+.tars-automation-snapshot {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(230,236,250,0.11);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.045);
+}
+
+.tars-automation-snapshot > strong {
+  color: #fff;
+  font-size: 0.82rem;
+  letter-spacing: -0.02em;
+}
+
+.automation-snapshot-item {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px 9px 12px;
+  border: 1px solid var(--automation-instance-border, rgba(0,113,227,.16));
+  border-radius: 15px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.075), rgba(255,255,255,0.045)),
+    rgba(10,14,22,0.72);
+  border-left: 4px solid var(--automation-instance-accent, rgba(0,113,227,.52));
+}
+
+.automation-snapshot-item span {
+  color: #f8fbff !important;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.14;
+}
+
+.automation-snapshot-item small {
+  color: rgba(221,228,240,0.66) !important;
+  font-size: 0.64rem;
+  font-weight: 720;
+}
+
+.tars-architecture-summary {
+  margin: 2px 0 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(230,236,250,0.12);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.055);
+  font-size: clamp(0.9rem, 1.12vw, 1.02rem);
+  line-height: 1.55;
+}
+
+.tars-scroll-section .tars-privacy-rails span {
+  background: rgba(100,168,255,0.10);
+  border-color: rgba(100,168,255,0.18);
+  color: rgba(235,242,255,0.78);
+}
+
+@media (max-width: 900px) {
+  .tars-scroll-section {
+    min-height: auto;
+    padding: 72px 16px;
+  }
+
+  .tars-scroll-section__copy {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .tars-scroll-section .tars-board-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .tars-scroll-section .tars-board-column:nth-child(n + 3) {
+    display: grid;
+  }
+
+  .tars-agent-network--focus {
+    min-height: 440px;
+  }
+
+  .tars-agent-focus-node {
+    width: clamp(124px, 38vw, 158px);
+  }
+
+  .automation-calendar-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .tars-product-slice--agents-focus,
+  .tars-product-slice--automation-calendar {
+    min-height: auto;
+  }
 }

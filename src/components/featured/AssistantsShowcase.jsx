@@ -12,6 +12,7 @@ function buildAssistantsContent() {
       headline: "",
       backgroundColor: "#ffffff",
       themeColor: "#ffffff",
+      scrollInfoBlocks: true,
       inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
         "TARS is the AI operating system I built around my life and work: a phone-accessible orchestrator that understands priorities, keeps memory, and turns intent into verified execution.",
