@@ -731,19 +731,29 @@ const tarsBoardColumns = [
 ];
 
 const tarsAgents = [
-  { id: "tars", name: "TARS", role: "Entrypoint / router", tone: "110, 110, 115", live: true },
-  { id: "claw", name: "Claw", role: "OpenClaw systems", tone: "255, 149, 0" },
-  { id: "developer", name: "Developer", role: "Build · debug · verify", tone: "63, 70, 80", live: true },
-  { id: "marketer", name: "Marketer", role: "Messaging and launch", tone: "255, 45, 85" },
-  { id: "research", name: "Research", role: "Evidence loops", tone: "175, 82, 222" },
-  { id: "security", name: "Security", role: "Secrets and auth safety", tone: "255, 179, 64" },
+  { id: "tars", name: "TARS", headline: "Entrypoint", role: "Routes intent, context, and approvals", tier: "tars", tone: "82, 92, 105", live: true },
+  { id: "claw", name: "Claw", headline: "Systems", role: "OpenClaw control plane", tier: "domain", tone: "255, 149, 0" },
+  { id: "developer", name: "Developer", headline: "Build", role: "Code · debug · verify", tier: "domain", tone: "63, 70, 80", live: true },
+  { id: "marketer", name: "Marketer", headline: "Launch", role: "Positioning and growth", tier: "domain", tone: "255, 45, 85" },
+  { id: "research", name: "Research", headline: "Evidence", role: "Source-backed investigation", tier: "domain", tone: "175, 82, 222" },
+  { id: "security", name: "Security", headline: "Safety", role: "Secrets and auth review", tier: "specialist", tone: "255, 179, 64" },
+  { id: "frontend-developer", name: "Frontend", headline: "Specialist", role: "Motion and interface polish", tier: "specialist", tone: "0, 113, 227", live: true },
+  { id: "backend-developer", name: "Backend", headline: "Specialist", role: "APIs and integrations", tier: "specialist", tone: "52, 199, 89" },
+  { id: "legal", name: "Legal", headline: "Specialist", role: "Risk triage and policies", tier: "specialist", tone: "88, 86, 214" },
 ];
 
 const tarsRawEvents = [
-  { time: "14:08", type: "tool", agent: "developer", action: "Read scoped portfolio files", status: "completed" },
-  { time: "14:10", type: "reasoning", agent: "tars", action: "Route UI work to implementation", status: "completed" },
-  { time: "14:12", type: "tool", agent: "developer", action: "Recreate board shell with synthetic data", status: "started" },
-  { time: "14:14", type: "response", agent: "developer", action: "Return verification and artifact refs", status: "queued" },
+  { time: "09:41:08", type: "Request", agent: "TARS", action: "request received", status: "Started" },
+  { time: "09:41:12", type: "Reasoning", agent: "TARS", action: "handoff: TARS → Developer", status: "Started" },
+  { time: "09:41:24", type: "Tool", agent: "Developer", action: "using tool: browser QA", status: "Started" },
+  { time: "09:42:03", type: "Document", agent: "Frontend", action: "reading context: ProductStoryStack.jsx", status: "Completed" },
+  { time: "09:42:38", type: "Response", agent: "Developer", action: "final response sent", status: "Completed" },
+];
+
+const tarsCleanerRows = [
+  { title: "Runtime bridge health", owner: "claw", cadence: "Every 30m", status: "Runtime synced", next: "12:00", color: "blue" },
+  { title: "Memory + stale artifact cleanup", owner: "personal-assistant", cadence: "Daily", status: "Metadata synced", next: "03:00", color: "green" },
+  { title: "Kanban refinement sweep", owner: "TARS", cadence: "Weekdays", status: "Scheduled", next: "07:00", color: "purple" },
 ];
 
 function BoardCard({ card }) {
@@ -760,7 +770,66 @@ function BoardCard({ card }) {
   );
 }
 
+function TarsAgentNode({ agent }) {
+  return (
+    <article
+      className={`tars-agent-tab-node tars-agent-tab-node--${agent.tier}${agent.live ? " is-live-active" : ""}`}
+      style={{ "--agent-rgb": agent.tone }}
+    >
+      <span className="tars-agent-tab-kicker">{agent.headline}</span>
+      <span className="tars-agent-tab-orb"><b>{agent.name.slice(0, 2).toUpperCase()}</b></span>
+      <strong>{agent.name}</strong>
+      {agent.live ? <em><i />Live</em> : null}
+      <small>{agent.role}</small>
+    </article>
+  );
+}
+
+function TarsAgentsTabSlice() {
+  const domainAgents = tarsAgents.filter((agent) => agent.tier === "domain");
+  const specialistAgents = tarsAgents.filter((agent) => agent.tier === "specialist");
+  const tars = tarsAgents.find((agent) => agent.tier === "tars");
+
+  return (
+    <div className="tars-product-slice tars-product-slice--agents-tab" aria-hidden="true">
+      <aside className="tars-product-sidebar">
+        <div className="tars-product-brand"><span>J</span><strong>Jannis</strong><small>CEO</small></div>
+        {[ ["◆", "Vision"], ["▦", "Sprint"], ["⌁", "Backlog"], ["⌘", "Agents", true], ["◎", "Automations"] ].map(([icon, label, active]) => (
+          <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
+        ))}
+      </aside>
+      <section className="tars-agents-tab-main">
+        <header className="tars-agents-tab-header">
+          <div><h3>Agents</h3><p>OpenClaw network · synthetic demo session · Live from Session Tail</p></div>
+          <div className="tars-agent-lane-segmented"><span className="is-current">MAIN<i /></span><span>DW</span><span>AUTO</span><span>Active only</span></div>
+        </header>
+        <label className="tars-agents-search"><span>Search agents</span><strong>Ship the portfolio TARS section using the actual board surfaces.</strong></label>
+        <div className="tars-agent-lane-board">
+          <div className="tars-agent-network">
+            <div className="tars-agent-tier tars-agent-tier--top">{tars ? <TarsAgentNode agent={tars} /> : null}</div>
+            <div className="tars-agent-tier-label">Domain owners</div>
+            <div className="tars-agent-row tars-agent-row--domains">{domainAgents.map((agent) => <TarsAgentNode agent={agent} key={agent.id} />)}</div>
+            <div className="tars-agent-tier-label">Reusable specialists</div>
+            <div className="tars-agent-row tars-agent-row--specialists">{specialistAgents.map((agent) => <TarsAgentNode agent={agent} key={agent.id} />)}</div>
+          </div>
+          <ol className="tars-agent-raw-list tars-agent-raw-list--tab">
+            {tarsRawEvents.map((event) => (
+              <li key={`${event.time}-${event.action}`} className={event.status === "Started" ? "is-active" : "is-terminal"}>
+                <time>{event.time}</time><span><b>{event.action}</b><small>{event.agent} · {event.type} · {event.status}</small></span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function TarsBoardProductSlice({ kind }) {
+  if (kind === "agents-tab") {
+    return <TarsAgentsTabSlice />;
+  }
+
   if (kind === "command-center") {
     return (
       <div className="tars-product-slice tars-product-slice--board" aria-hidden="true">
@@ -785,52 +854,42 @@ function TarsBoardProductSlice({ kind }) {
     );
   }
 
-  if (kind === "watch-agents") {
+  if (kind === "automation-cleaner") {
     return (
-      <div className="tars-product-slice tars-product-slice--agents" aria-hidden="true">
-        <div className="tars-agent-routing-hero">
-          <div><span>Canonical agents</span><h3>TARS routes work to specialists instead of pretending one chat is the whole company.</h3></div>
-          <div className="tars-agent-legend"><strong>Live session tail</strong><small>synthetic activity · sanitized</small></div>
+      <div className="tars-product-slice tars-product-slice--cleaner" aria-hidden="true">
+        <div className="tars-cleaner-head">
+          <div><span>Automations</span><h3>Cleaner runs keep the system quiet, current, and safe.</h3></div>
+          <strong>Checking bridge</strong>
         </div>
-        <div className="tars-agent-network">
-          {tarsAgents.map((agent) => (
-            <article className={`tars-agent-node${agent.live ? " is-live" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
-              <span className="tars-agent-orb"><b>{agent.name.slice(0, 2).toUpperCase()}</b></span>
-              <strong>{agent.name}</strong><small>{agent.role}</small>
-              {agent.live ? <em><i />Live</em> : null}
+        <div className="tars-cleaner-grid">
+          {tarsCleanerRows.map((row) => (
+            <article className="tars-cleaner-card" data-tone={row.color} key={row.title}>
+              <header><span>{row.owner}</span><strong>{row.status}</strong></header>
+              <h4>{row.title}</h4>
+              <p>Schedule: {row.cadence} · next run {row.next} · local scheduler boundary respected.</p>
+              <div><span>Owner</span><b>{row.owner}</b><span>Mode</span><b>synthetic</b></div>
             </article>
           ))}
         </div>
-        <ol className="tars-agent-raw-list">
-          {tarsRawEvents.map((event) => <li key={`${event.time}-${event.action}`} className={event.status === "started" ? "is-active" : ""}><time>{event.time}</time><span><b>{event.action}</b><small>{event.agent} · {event.type} · {event.status}</small></span></li>)}
-        </ol>
-      </div>
-    );
-  }
-
-  if (kind === "vision") {
-    return (
-      <div className="tars-product-slice tars-product-slice--vision" aria-hidden="true">
-        <div className="tars-vision-topbar"><h3>Vision</h3><div><span className="is-active">Epics</span><span>Articulate</span></div></div>
-        <div className="tars-epic-list">
-          {["SeeMe launch readiness", "Private assistant architecture", "Operator freedom systems"].map((title, index) => (
-            <article className="tars-epic-row" key={title}><i style={{ background: ["#ff4d70", "#0071e3", "#34c759"][index] }} /><strong>{title}</strong><span>{["Product truth + coach proof", "Local-first runtime + tools", "Compounding leverage loops"][index]}</span><b>{["High", "Medium", "High"][index]}</b></article>
-          ))}
-        </div>
-        <article className="tars-why-markdown"><h3>The north star</h3><p>Every proposal, card, and agent handoff is filtered through leverage: durable work, verified outputs, and privacy-preserving autonomy.</p><blockquote>Approved work moves forward; external actions stay gated.</blockquote></article>
+        <div className="tars-cleaner-note"><strong>Maintenance boundary:</strong> no public actions, no raw secrets, no private logs — only status, owner, cadence, and sanitized run summaries.</div>
       </div>
     );
   }
 
   return (
     <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
-      <div className="tars-architecture-grid">
-        <article><span>Device</span><strong>Messages / Browser</strong><small>Human intent enters through private operator surfaces.</small></article>
-        <article><span>Gateway</span><strong>OpenClaw router</strong><small>Routes open vs local/private model paths without exposing secrets.</small></article>
-        <article><span>Runtime</span><strong>Agents + tools</strong><small>Scoped specialists execute with credential references only.</small></article>
-        <article><span>Proof</span><strong>Board + artifacts</strong><small>Cards, verification, commits, and outputs become the audit trail.</small></article>
+      <div className="tars-architecture-hero">
+        <span>Privacy & Architecture</span>
+        <h3>Useful autonomy, boxed by design.</h3>
+        <p>Private intent enters locally, agents receive scoped packets, tools use credential references, and anything external stays approval-gated.</p>
       </div>
-      <pre>{`external actions: approval-gated\nsecrets: credential refs only\nlive data: never shown in portfolio\nportfolio data: synthetic, sanitized shell`}</pre>
+      <div className="tars-architecture-grid">
+        <article><span>01</span><strong>Operator surface</strong><small>Messages and browser inputs become sanitized intent, not public telemetry.</small></article>
+        <article><span>02</span><strong>Router + memory</strong><small>Open/private model paths, memory, and context are selected before work fans out.</small></article>
+        <article><span>03</span><strong>Scoped agents</strong><small>Specialists inherit only the task packet, relevant files, and allowed tools.</small></article>
+        <article><span>04</span><strong>Proof trail</strong><small>Cards, artifacts, verification, commits, and logs close the loop without exposing secrets.</small></article>
+      </div>
+      <div className="tars-privacy-rails"><span>Credential refs only</span><span>Approval-gated external actions</span><span>Synthetic portfolio data</span><span>No private live logs</span></div>
     </div>
   );
 }

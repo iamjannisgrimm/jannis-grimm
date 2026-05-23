@@ -4,28 +4,6 @@ import JannisPortrait from "../../../me/JannisGrimm.png";
 import TarsPortrait from "../../../me/TARS.png";
 import PhoneIcon from "../../../me/phone.png";
 import MessagesIcon from "../../../me/messages.png";
-import CareerAgentIcon from "../../../me/agents/careerlight.png";
-import ClawAgentIcon from "../../../me/agents/clawlight.png";
-import DevAgentIcon from "../../../me/agents/devlight.png";
-import NewsAgentIcon from "../../../me/agents/newslight.png";
-import PaAgentIcon from "../../../me/agents/palight.png";
-import MarketerAgentIcon from "../../../me/agents/marketerlight.png";
-import ResearchAgentIcon from "../../../me/agents/researchlight.png";
-import SeeMeAgentIcon from "../../../me/agents/seemelight.png";
-
-const tarsAgentCells = [
-  { image: CareerAgentIcon, alt: "Career", title: "Career" },
-  { image: ClawAgentIcon, alt: "Claw", title: "Claw" },
-  { image: DevAgentIcon, alt: "Dev", title: "Dev" },
-  { image: NewsAgentIcon, alt: "News", title: "News" },
-  { image: PaAgentIcon, alt: "Assistant", title: "Assistant" },
-];
-
-const tarsExtendedAgentCells = [
-  { image: ResearchAgentIcon, alt: "Research", title: "Research" },
-  { image: MarketerAgentIcon, alt: "Marketing", title: "Marketing" },
-  { image: SeeMeAgentIcon, alt: "SeeMe", title: "SeeMe" },
-];
 
 function buildAssistantsContent() {
   return {
@@ -62,37 +40,24 @@ function buildAssistantsContent() {
     },
     infoBlocks: [
       {
-        sectionTitle: "Orchestrator",
-        mediaImages: tarsAgentCells,
-        body: "Every request lands with TARS first. It decides what matters, preserves the context, and routes the work to the execution surface that should actually own the outcome.",
-      },
-      {
-        sectionTitle: "Specialist Team",
-        connectionRows: {
-          top: tarsAgentCells,
-          bottom: tarsExtendedAgentCells,
-        },
-        body: "Developer, research, marketing, personal ops, systems, and product agents are not feature badges. They are focused work surfaces that inherit direction, execute their slice, and report back cleanly.",
+        sectionTitle: "Agents",
+        tarsBoardSlice: "agents-tab",
+        body: "This mirrors the board's actual Agents tab: one OpenClaw network lane, a real-looking demo query, live handoff lights, and a sanitized Session Tail instead of private logs.",
       },
       {
         sectionTitle: "Command Center",
         tarsBoardSlice: "command-center",
-        body: "The Kanban Board is the proof layer: a private operating room where ideas become scoped cards, approved cards become agent runs, and completed work leaves artifacts, verification, and leverage behind.",
+        body: "On scroll, the same operating system resolves into Sprint: ideas become scoped cards, ready work becomes execution, and every completed slice leaves artifacts and verification behind.",
       },
       {
-        sectionTitle: "Watch Agents",
-        tarsBoardSlice: "watch-agents",
-        body: "The Agents surface shows the real operating model: TARS as entrypoint, canonical domain owners, reusable specialists, and a live session tail. The portfolio version keeps the shell and uses sanitized activity only.",
-      },
-      {
-        sectionTitle: "Vision",
-        tarsBoardSlice: "vision",
-        body: "The Vision tab connects strategy to execution. Epics group long-running outcomes, while the VISION.md editor keeps the north star visible beside the board instead of buried in a document folder.",
+        sectionTitle: "Automations",
+        tarsBoardSlice: "automation-cleaner",
+        body: "After the command center comes the maintenance layer: scheduled workflows, cleanup runs, bridge health, and runtime hygiene surfaced as calm, operator-readable cards.",
       },
       {
         sectionTitle: "Privacy & Architecture",
         tarsBoardSlice: "architecture",
-        body: "The product is useful because it is constrained: local bridges, credential references, approval-gated external actions, and synthetic portfolio examples instead of private cards, logs, tokens, or live personal data.",
+        body: "The architecture is intentionally boring where it should be: local bridges, scoped agents, credential references, approval gates, and portfolio demos that never expose private cards, logs, tokens, or live personal data.",
       },
     ],
   };
