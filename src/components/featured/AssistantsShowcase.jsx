@@ -10,9 +10,9 @@ function buildAssistantsContent() {
     hero: {
       title: "",
       headline: "",
-      backgroundColor: "#ffffff",
-      themeColor: "#ffffff",
-      scrollInfoBlocks: true,
+      backgroundColor: "#10161f",
+      themeColor: "#10161f",
+      scrollInfoBlocks: false,
       inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
         "TARS is the AI operating system I built around my life and work: a phone-accessible orchestrator that understands priorities, keeps memory, and turns intent into verified execution.",
@@ -67,7 +67,7 @@ export default function AssistantsShowcase() {
     <ProductStoryStack
       content={content}
       stackId="assistants-stack"
-      className="highlights-stack--light"
+      className="highlights-stack--light highlights-stack--tars"
     />
   );
 }

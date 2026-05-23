@@ -326,7 +326,7 @@ function buildPanelTimeline({
           const mediaExitStart = content && !isConnectionMap ? textStart : exitStart;
           const contentStart = isConnectionMap ? imageStart + 0.22 : textStart + 0.03;
 
-          if (index === 1 && teamIntro.rightCard) {
+          if (index === 0 && teamIntro.rightCard) {
             tl.to(teamIntro.rightCard, {
               opacity: 0,
               scale: hasTeamMediaSequence ? 0.8 : 0.94,
@@ -758,14 +758,20 @@ const tarsAgents = [
 const tarsAutomationDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const tarsAutomationHours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
 const tarsAutomationEvents = [
-  { title: "News", day: 0, start: 5, duration: 1, recurrence: "Daily · 5:00 AM", lane: "main" },
-  { title: "Career Job Discovery", day: 0, start: 4, duration: 1, recurrence: "Daily · 4:00 AM", lane: "dw" },
-  { title: "Daily Morning", day: 0, start: 6, duration: 1, recurrence: "Daily · 6:00 AM", lane: "main" },
-  { title: "Morning GUI Window Cleanup", day: 0, start: 5.5, duration: 0.75, recurrence: "Daily · 5:30 AM", lane: "main" },
-  { title: "Nightly Ready Card Executor", day: 0, start: 0, duration: 1, recurrence: "Daily · 12:00 AM", lane: "dw" },
-  { title: "Evening report", day: 0, start: 20, duration: 1, recurrence: "Daily · 8:00 PM", lane: "main" },
-  { title: "Sprint Closing Workflow", day: 6, start: 19.5, duration: 1, recurrence: "Weekly · Sunday 7:30 PM", lane: "main" },
+  { title: "Nightly Ready Card Executor", days: "daily", start: 0, duration: 1, recurrence: "Daily · 12:00 AM", lane: "dw", color: "#5856d6" },
+  { title: "Career Job Discovery", days: "daily", start: 4, duration: 1, recurrence: "Daily · 4:00 AM", lane: "dw", color: "#ffd60a" },
+  { title: "News", days: "daily", start: 5, duration: 1, recurrence: "Daily · 5:00 AM", lane: "main", color: "#0071e3" },
+  { title: "Morning GUI Window Cleanup", days: "daily", start: 5.5, duration: 0.75, recurrence: "Daily · 5:30 AM", lane: "main", color: "#ff9500" },
+  { title: "Daily Morning", days: "daily", start: 6, duration: 1, recurrence: "Daily · 6:00 AM", lane: "main", color: "#34c759" },
+  { title: "Evening Report", days: "daily", start: 20, duration: 1, recurrence: "Daily · 8:00 PM", lane: "main", color: "#af52de" },
+  { title: "Sprint Closing Workflow", day: 6, start: 19.5, duration: 1, recurrence: "Weekly · Sunday 7:30 PM", lane: "main", color: "#ff2d55" },
 ];
+
+const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (
+  event.days === "daily"
+    ? tarsAutomationDays.map((_, day) => ({ ...event, day, key: `${event.title}-${day}` }))
+    : [{ ...event, key: event.title }]
+));
 
 function BoardCard({ card }) {
   return (
@@ -783,29 +789,62 @@ function BoardCard({ card }) {
 
 function TarsAgentsTabSlice() {
   const tars = tarsAgents.find((agent) => agent.tier === "tars");
-  const career = tarsAgents.find((agent) => agent.id === "career");
-  const developer = tarsAgents.find((agent) => agent.id === "developer");
+  const domainAgents = tarsAgents.filter((agent) => agent.tier === "domain");
+  const specialistAgents = tarsAgents.filter((agent) => agent.tier === "specialist");
+  const activeNodeIds = new Set(["tars", "career", "developer"]);
 
   return (
-    <div className="tars-product-slice tars-product-slice--agents-tab tars-product-slice--agents-focus" aria-hidden="true">
+    <div className="tars-product-slice tars-product-slice--agents-tab" aria-hidden="true">
       <section className="tars-agents-tab-main">
-        <header className="tars-agents-tab-header">
-          <div><h3>Agents</h3><p>TARS routes to domain owners first, then specialists only when the scoped slice needs them.</p></div>
-          <div className="tars-agent-lane-segmented"><span className="is-current">MAIN<i /></span><span>Scoped</span><span>Safe</span></div>
-        </header>
-        <div className="tars-agent-lane-board tars-agent-lane-board--focus">
-          <div className="tars-agent-network tars-agent-network--focus">
-            <svg className="tars-agent-connectors tars-agent-connectors--focus" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
-              <path className="is-muted-edge" d="M500 112 C260 170 170 250 128 392" />
-              <path className="is-muted-edge" d="M500 112 C730 172 820 250 870 392" />
-              <path className="is-live-active" d="M500 112 C500 190 500 245 500 300" />
-              <path className="is-live-active" d="M500 300 C500 360 500 384 500 426" />
+        <div className="tars-agent-lane-board">
+          <div className="tars-agent-network">
+            <svg className="tars-agent-connectors" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M500 82 C250 112 180 150 128 208" />
+              <path d="M500 82 C382 116 352 150 330 208" />
+              <path className="is-live-active" d="M500 82 C500 132 500 164 500 208" />
+              <path d="M500 82 C630 116 662 150 670 208" />
+              <path d="M128 282 C180 342 220 370 250 426" />
+              <path d="M330 282 C330 340 340 374 365 426" />
+              <path className="is-live-active" d="M500 282 C500 340 500 374 500 426" />
+              <path d="M670 282 C628 340 610 374 635 426" />
+              <path d="M670 282 C730 338 756 374 770 426" />
+              <path d="M128 282 C78 338 96 374 95 426" />
             </svg>
-            <div className="tars-agent-focus-node tars-agent-focus-node--tars" style={{ "--agent-rgb": tars?.tone }}>{tars ? <><span>TARS</span><strong>orchestrates</strong></> : null}</div>
-            <div className="tars-agent-focus-node tars-agent-focus-node--career" style={{ "--agent-rgb": career?.tone }}>{career ? <><span>Career</span><strong>owns the domain</strong></> : null}</div>
-            <div className="tars-agent-focus-node tars-agent-focus-node--developer" style={{ "--agent-rgb": developer?.tone }}>{developer ? <><span>Developer</span><strong>implements + verifies</strong></> : null}</div>
+            <div className="tars-agent-tier tars-agent-tier--tars">
+              <div className={`tars-agent-tab-node tars-agent-tab-node--tars${activeNodeIds.has("tars") ? " is-live-active" : ""}`} style={{ "--agent-rgb": tars?.tone }}>
+                <div className="tars-agent-tab-orb"><img src={tars?.image} alt="" /></div>
+                <span className="tars-agent-tab-kicker">Entrypoint</span>
+                <strong>{tars?.name}</strong>
+                <small>{tars?.headline}</small>
+                <em><i />Active</em>
+              </div>
+            </div>
+            <div className="tars-agent-tier-label">Domain owners</div>
+            <div className="tars-agent-row tars-agent-row--domains">
+              {domainAgents.map((agent) => (
+                <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+                  <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
+                  <span className="tars-agent-tab-kicker">{agent.tier}</span>
+                  <strong>{agent.name}</strong>
+                  <small>{agent.headline}</small>
+                  {activeNodeIds.has(agent.id) ? <em><i />Active</em> : null}
+                </div>
+              ))}
+            </div>
+            <div className="tars-agent-tier-label">Reusable specialists</div>
+            <div className="tars-agent-row tars-agent-row--specialists">
+              {specialistAgents.map((agent) => (
+                <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+                  <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
+                  <span className="tars-agent-tab-kicker">{agent.tier}</span>
+                  <strong>{agent.name}</strong>
+                  <small>{agent.headline}</small>
+                  {activeNodeIds.has(agent.id) ? <em><i />Active</em> : null}
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="tars-agent-focus-caption">Only the active path is illuminated here: TARS → Career → Developer. Other owners and specialists exist, but stay visually quiet unless the task needs them.</p>
+          <p className="tars-agent-focus-caption">The full graph stays visible; only the current execution path is illuminated: TARS → Career → Developer.</p>
         </div>
       </section>
     </div>
@@ -836,8 +875,8 @@ function TarsAutomationCalendarSlice() {
               <div className="automation-calendar-day" key={day} style={{ gridColumn: index + 2 }}>
                 <div className="automation-calendar-day-track">
                   {index === 1 ? <div className="automation-calendar-current-time" style={{ "--automation-now-top": "54%" }} data-current-time-label="12:58" /> : null}
-                  {tarsAutomationEvents.filter((event) => event.day === index).map((event) => (
-                    <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration < 0.75 ? " automation-calendar-block-compact" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.title} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration }}>
+                  {tarsAutomationCalendarEvents.filter((event) => event.day === index).map((event) => (
+                    <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration < 0.75 ? " automation-calendar-block-compact" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color }}>
                       <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
                     </article>
                   ))}
@@ -846,15 +885,6 @@ function TarsAutomationCalendarSlice() {
             ))}
           </div>
         </div>
-        <aside className="tars-automation-snapshot" aria-label="Current automation event names">
-          <strong>Current snapshot</strong>
-          {tarsAutomationEvents.map((event) => (
-            <article className={`automation-snapshot-item automation-instance-${event.lane}`} key={`${event.title}-snapshot`}>
-              <span>{event.title}</span>
-              <small>{event.recurrence}</small>
-            </article>
-          ))}
-        </aside>
       </section>
     </div>
   );
@@ -924,16 +954,17 @@ function TarsArchitecturePrivacySlice() {
     <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
       <div className="tars-architecture-hero">
         <span>Architecture & Privacy</span>
-        <h3>Autonomy with hard edges.</h3>
-        <p>Local/runtime routing decides the execution lane, then TARS hands scoped packets to domain owners and specialists instead of leaking whole-context access.</p>
+        <h3>Useful autonomy, boxed by design.</h3>
+        <p>One local control plane routes intent into scoped agents, separates private runtime paths, and keeps every external action behind explicit approval.</p>
       </div>
-      <div className="tars-architecture-flow" aria-label="TARS privacy architecture">
-        <article><span>01</span><strong>Runtime route</strong><small>Open or private/local model lanes are selected before work starts.</small></article>
-        <article><span>02</span><strong>Domain owners</strong><small>TARS delegates to Career, SeeMe, Personal, Claw, or specialists by scope.</small></article>
-        <article><span>03</span><strong>Kanban boundary</strong><small>Cards hold approval status, required inputs, external-action limits, and done criteria.</small></article>
-        <article><span>04</span><strong>Automation guardrails</strong><small>Schedules run local workflows while secrets stay as credential references.</small></article>
+      <div className="tars-architecture-map" aria-label="TARS technical architecture map">
+        <div className="tars-architecture-core"><span>Local Mac runtime</span><strong>TARS</strong><small>Phone + browser entrypoint</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--route"><span>Domain routing</span><strong>Career · SeeMe · Personal · Claw</strong><small>Only the right owner gets the packet.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--board"><span>Control plane</span><strong>Kanban board</strong><small>Status, definition of done, verification, artifacts.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--scheduler"><span>Automation scheduler</span><strong>Time-boxed workflows</strong><small>Nightly runs prepare work without surprise external mutation.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--secrets"><span>Secrets isolation</span><strong>Credential refs only</strong><small>Tokens stay out of prompts, screenshots, logs, and commits.</small></div>
+        <div className="tars-architecture-lane tars-architecture-lane--approval"><span>Approval boundary</span><strong>External actions stop here</strong><small>Posting, messaging, purchases, uploads, and submissions require approval.</small></div>
       </div>
-      <p className="tars-architecture-summary">The system is built for useful autonomy without surprise external actions: automations can prepare, research, write, and verify, but posting, messaging, purchases, submissions, and sensitive credential use remain approval-gated and portfolio-safe.</p>
       <div className="tars-privacy-rails"><span>Credential refs only</span><span>Approval-gated external actions</span><span>No private live logs</span><span>Synthetic portfolio data</span></div>
     </div>
   );
