@@ -4646,3 +4646,288 @@
     grid-row: auto;
   }
 }
+
+/* Final dark-mode lock for the TARS portfolio slices: keep Manage/Sprint and Automations
+   on the Kanban board's dark token system instead of the earlier light reference pass. */
+.highlights-stack--tars .tars-product-slice--board {
+  --tars-kanban-canvas: #0b0d10;
+  --tars-kanban-surface: #151820;
+  --tars-kanban-surface-soft: #101319;
+  --tars-kanban-surface-elevated: rgba(22, 25, 33, 0.96);
+  --tars-kanban-border: rgba(245, 245, 247, 0.11);
+  --tars-kanban-border-strong: rgba(245, 245, 247, 0.2);
+  --tars-kanban-text: #f5f5f7;
+  --tars-kanban-muted: rgba(245, 245, 247, 0.68);
+  --tars-kanban-faint: rgba(245, 245, 247, 0.42);
+  --tars-kanban-accent: #2997ff;
+  --tars-kanban-accent-soft: rgba(41, 151, 255, 0.16);
+  background: var(--tars-kanban-canvas) !important;
+  border-color: var(--tars-kanban-border) !important;
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+
+.highlights-stack--tars .tars-product-sidebar,
+.highlights-stack--tars .tars-product-main {
+  background: var(--tars-kanban-canvas) !important;
+  color: var(--tars-kanban-text) !important;
+}
+
+.highlights-stack--tars .tars-board-column.column {
+  padding: 0 12px 12px;
+  border: 1px solid var(--tars-kanban-border) !important;
+  border-radius: 28px !important;
+  background: var(--tars-kanban-surface-soft) !important;
+  color: var(--tars-kanban-text) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.035), 0 14px 34px rgba(0,0,0,0.28) !important;
+}
+
+.highlights-stack--tars .tars-board-column .column-head {
+  --kanban-header-bg-themed: color-mix(in srgb, var(--tars-kanban-surface-elevated) 82%, transparent);
+  --kanban-header-fade-themed: color-mix(in srgb, var(--tars-kanban-surface-soft) 58%, transparent);
+  min-height: 78px;
+  margin: 0 -12px 14px;
+  padding: 22px 16px 20px;
+  border: 0 !important;
+  border-radius: 28px 28px 0 0 !important;
+  background: linear-gradient(
+    180deg,
+    var(--kanban-header-bg-themed) 0%,
+    var(--kanban-header-bg-themed) 48%,
+    var(--kanban-header-fade-themed) 76%,
+    var(--tars-kanban-surface-soft) 100%
+  ) !important;
+  box-shadow: none !important;
+}
+
+.highlights-stack--tars .tars-board-column .column-head h3 {
+  color: rgba(245, 245, 247, 0.9) !important;
+}
+
+.highlights-stack--tars .tars-board-column .count {
+  color: var(--tars-kanban-faint) !important;
+}
+
+.highlights-stack--tars .tars-board-card.card,
+.highlights-stack--tars .tars-board-column .empty-state {
+  border-color: var(--tars-kanban-border) !important;
+  background: var(--tars-kanban-surface-elevated) !important;
+  color: var(--tars-kanban-text) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 14px 34px rgba(0,0,0,0.22) !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-title {
+  color: var(--tars-kanban-text) !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-summary {
+  color: var(--tars-kanban-muted) !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-epic-tag {
+  border: 1px solid rgba(41,151,255,0.2) !important;
+  background: var(--tars-kanban-accent-soft) !important;
+  color: rgba(126,192,255,0.98) !important;
+}
+
+.highlights-stack--tars .tars-board-column .empty-state {
+  border-style: dashed !important;
+  background: rgba(245, 245, 247, 0.035) !important;
+  color: var(--tars-kanban-faint) !important;
+}
+
+.highlights-stack--tars .tars-product-slice--automation-calendar {
+  background: #0b0d10 !important;
+  border-color: rgba(245,245,247,0.12) !important;
+}
+
+.highlights-stack--tars .highlights-stack__infoWindow.highlights-stack__infoWindow--team {
+  z-index: 8;
+  pointer-events: auto;
+}
+
+.highlights-stack--tars .highlights-stack__productImageGroup:has(.highlights-stack__teamCards) {
+  display: none;
+}
+
+.highlights-stack--tars .highlights-stack__infoWindow--team .highlights-stack__infoBlock:has(.tars-product-slice) {
+  z-index: 9;
+  pointer-events: auto;
+}
+
+.highlights-stack--tars .highlights-stack__infoWindow--team .tars-product-slice,
+.highlights-stack--tars .highlights-stack__infoWindow--team .tars-product-slice * {
+  pointer-events: auto;
+}
+
+.highlights-stack--tars .tars-product-slice--automation-calendar .automation-calendar-shell {
+  --calendar-time-rail-width: clamp(64px, 5.6vw, 78px);
+  --calendar-height: min(632px, 62dvh);
+  position: relative;
+  isolation: isolate;
+  background: #101319 !important;
+  border-color: rgba(245,245,247,0.14) !important;
+}
+
+.highlights-stack--tars .automation-calendar-grid,
+.highlights-stack--tars .automation-calendar-header,
+.highlights-stack--tars .automation-calendar-body {
+  position: relative;
+  z-index: 1;
+}
+
+.highlights-stack--tars .automation-calendar-header-spacer,
+.highlights-stack--tars .automation-calendar-day-head {
+  background: linear-gradient(180deg, rgba(22,25,33,0.96) 0%, rgba(22,25,33,0.82) 62%, rgba(16,19,25,0.64) 100%) !important;
+}
+
+.highlights-stack--tars .automation-calendar-day,
+.highlights-stack--tars .automation-calendar-time-rail {
+  position: relative;
+  z-index: 2;
+  background: rgba(245,245,247,0.026) !important;
+}
+
+.highlights-stack--tars .automation-calendar-day-track {
+  position: relative;
+  z-index: 3 !important;
+}
+
+.highlights-stack--tars .automation-calendar-body .automation-calendar-day {
+  grid-row: 1 !important;
+}
+
+.highlights-stack--tars .automation-calendar-block {
+  z-index: 999 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  border-color: rgba(126, 192, 255, 0.42) !important;
+  background: linear-gradient(180deg, #223044 0%, #151f2d 100%) !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+.highlights-stack--tars .automation-calendar-block.automation-instance-dw {
+  border-color: rgba(170, 155, 255, 0.52) !important;
+  background: linear-gradient(180deg, #2f2a5f 0%, #1b1a3d 100%) !important;
+}
+
+.highlights-stack--tars .automation-calendar-block.automation-instance-main {
+  border-color: rgba(100, 168, 255, 0.52) !important;
+  background: linear-gradient(180deg, #173a61 0%, #10233a 100%) !important;
+}
+
+.highlights-stack--tars .automation-calendar-block.automation-instance-private {
+  border-color: rgba(82, 220, 126, 0.48) !important;
+  background: linear-gradient(180deg, #1f5132 0%, #142b20 100%) !important;
+}
+
+.highlights-stack--tars .automation-calendar-block h3,
+.highlights-stack--tars .automation-calendar-meta span {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.highlights-stack--tars .tars-automation-visibility-layer {
+  position: absolute;
+  inset: var(--calendar-header-height) 0 0 0;
+  z-index: 30;
+  height: var(--calendar-height);
+  pointer-events: none;
+}
+
+.highlights-stack--tars .tars-automation-visibility-time-rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--calendar-time-rail-width);
+  height: var(--calendar-height);
+}
+
+.highlights-stack--tars .tars-automation-visibility-time-rail span {
+  position: absolute;
+  top: var(--time-top);
+  right: 12px;
+  transform: translateY(-50%);
+  color: rgba(245, 248, 255, 0.92);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0,0,0,.32);
+}
+
+.highlights-stack--tars .tars-automation-visibility-time-rail span:first-child { transform: translateY(0); }
+.highlights-stack--tars .tars-automation-visibility-time-rail span:last-child { transform: translateY(-100%); }
+
+.highlights-stack--tars .tars-automation-visibility-event {
+  position: absolute;
+  top: var(--automation-top);
+  left: calc(var(--calendar-time-rail-width) + ((100% - var(--calendar-time-rail-width)) / 7 * var(--automation-day)) + 7px);
+  width: calc((100% - var(--calendar-time-rail-width)) / 7 - 14px);
+  min-height: 38px;
+  height: max(18px, calc(var(--calendar-height) / 24 * var(--automation-duration-hours, 1)));
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  overflow: hidden;
+  padding: 7px 8px 7px 12px;
+  border: 1px solid rgba(100, 168, 255, 0.52);
+  border-radius: 15px;
+  background: linear-gradient(180deg, #173a61 0%, #10233a 100%);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.highlights-stack--tars .tars-automation-visibility-event::before {
+  content: "";
+  position: absolute;
+  inset: 7px auto 7px 6px;
+  width: 3px;
+  border-radius: 999px;
+  background: rgba(100, 168, 255, 0.88);
+}
+
+.highlights-stack--tars .tars-automation-visibility-event--dw {
+  border-color: rgba(170, 155, 255, 0.52);
+  background: linear-gradient(180deg, #2f2a5f 0%, #1b1a3d 100%);
+}
+
+.highlights-stack--tars .tars-automation-visibility-event--dw::before { background: rgba(170, 155, 255, 0.9); }
+
+.highlights-stack--tars .tars-automation-visibility-event--private {
+  border-color: rgba(82, 220, 126, 0.48);
+  background: linear-gradient(180deg, #1f5132 0%, #142b20 100%);
+}
+
+.highlights-stack--tars .tars-automation-visibility-event--private::before { background: rgba(82, 220, 126, 0.9); }
+
+.highlights-stack--tars .tars-automation-visibility-event strong,
+.highlights-stack--tars .tars-automation-visibility-event span {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding-left: 7px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.highlights-stack--tars .tars-automation-visibility-event strong {
+  color: rgba(245, 248, 255, 0.98);
+  font-size: clamp(0.64rem, 0.76vw, 0.78rem);
+  font-weight: 780;
+  line-height: 1.08;
+}
+
+.highlights-stack--tars .tars-automation-visibility-event span {
+  width: fit-content;
+  max-width: calc(100% - 7px);
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-right: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.11);
+  color: rgba(235, 242, 255, 0.88);
+  font-size: 0.58rem;
+  font-weight: 750;
+  line-height: 1.1;
+}

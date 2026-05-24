@@ -916,6 +916,15 @@ function TarsAutomationCalendarSlice() {
             ))}
           </div>
         </div>
+        <div className="tars-automation-visibility-layer" aria-hidden="true">
+          <div className="tars-automation-visibility-time-rail">{tarsAutomationHours.map((hour) => <span key={hour} style={{ "--time-top": `${(hour / 24) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}</div>
+          {tarsAutomationCalendarEvents.map((event) => (
+            <article className={`tars-automation-visibility-event tars-automation-visibility-event--${event.lane}`} key={`${event.key}-visibility`} style={{ "--automation-day": event.day, "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration }}>
+              <strong>{event.title}</strong>
+              <span>{event.recurrence}</span>
+            </article>
+          ))}
+        </div>
       </section>
     </div>
   );
