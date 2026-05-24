@@ -809,11 +809,29 @@ function BoardCard({ card }) {
 }
 
 const tarsMemoryTypes = [
-  { id: "working", label: "Working memory", detail: "Conversation state, current task packet, open files, and verification targets that expire after the run.", tone: "100, 168, 255" },
-  { id: "episodic", label: "Episodic memory", detail: "Daily notes and event logs compressed into dated summaries for continuity without replaying raw history.", tone: "175, 82, 222" },
-  { id: "semantic", label: "Semantic memory", detail: "Stable facts about the operator, projects, routes, tools, and preferences loaded only where appropriate.", tone: "52, 199, 89" },
-  { id: "procedural", label: "Procedural memory", detail: "Agent playbooks, skills, checklists, and verification habits that make repeated work safer and faster.", tone: "255, 149, 0" },
-  { id: "artifact", label: "Artifact memory", detail: "Commits, screenshots, QA notes, and board cards provide auditable proof instead of private transcript dumps.", tone: "255, 45, 85" },
+  { id: "short", label: "Short-term", horizon: "minutes → hours", detail: "Active task packet, open files, safety boundaries, and verification targets. It is fast, scoped, and discarded after the run.", examples: ["current brief", "repo state", "QA targets"], tone: "100, 168, 255" },
+  { id: "medium", label: "Medium-term", horizon: "days → weeks", detail: "Daily notes, recent decisions, sprint context, and issue traces compressed into retrieval-friendly summaries.", examples: ["daily notes", "sprint deltas", "decision logs"], tone: "175, 82, 222" },
+  { id: "long", label: "Long-term", horizon: "months+", detail: "Stable preferences, product truths, tool registries, playbooks, and durable operating patterns loaded only when relevant.", examples: ["preferences", "tool registry", "playbooks"], tone: "52, 199, 89" },
+];
+
+const tarsMemPalaceNodes = [
+  { id: "operator", label: "Operator profile", x: 14, y: 28, tone: "100,168,255" },
+  { id: "projects", label: "Project truths", x: 33, y: 16, tone: "52,199,89" },
+  { id: "tools", label: "Tool registry", x: 66, y: 18, tone: "255,149,0" },
+  { id: "agents", label: "Agent playbooks", x: 84, y: 34, tone: "175,82,222" },
+  { id: "artifacts", label: "Proof artifacts", x: 70, y: 76, tone: "255,45,85" },
+  { id: "tasks", label: "Task context", x: 27, y: 74, tone: "90,200,250" },
+];
+
+const tarsMemPalaceEdges = [
+  ["operator", "projects"],
+  ["projects", "tools"],
+  ["tools", "agents"],
+  ["agents", "artifacts"],
+  ["artifacts", "tasks"],
+  ["tasks", "operator"],
+  ["tasks", "tools"],
+  ["projects", "artifacts"],
 ];
 
 function TarsAgentsTabSlice() {
@@ -907,7 +925,7 @@ function TarsAutomationCalendarSlice() {
                 <div className="automation-calendar-day-track">
                   {index === 1 ? <div className="automation-calendar-current-time" style={{ "--automation-now-top": "54%" }} data-current-time-label="12:58" /> : null}
                   {tarsAutomationCalendarEvents.filter((event) => event.day === index).map((event) => (
-                    <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration < 0.75 ? " automation-calendar-block-compact" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color }}>
+                    <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration <= 1 ? " automation-calendar-block-short" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color }}>
                       <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
                     </article>
                   ))}
@@ -919,7 +937,7 @@ function TarsAutomationCalendarSlice() {
         <div className="tars-automation-visibility-layer" aria-hidden="true">
           <div className="tars-automation-visibility-time-rail">{tarsAutomationHours.map((hour) => <span key={hour} style={{ "--time-top": `${(hour / 24) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}</div>
           {tarsAutomationCalendarEvents.map((event) => (
-            <article className={`tars-automation-visibility-event tars-automation-visibility-event--${event.lane}`} key={`${event.key}-visibility`} style={{ "--automation-day": event.day, "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration }}>
+            <article className={`tars-automation-visibility-event tars-automation-visibility-event--${event.lane}${event.duration <= 1 ? " tars-automation-visibility-event--short" : ""}`} key={`${event.key}-visibility`} style={{ "--automation-day": event.day, "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration }}>
               <strong>{event.title}</strong>
               <span>{event.recurrence}</span>
             </article>
@@ -998,23 +1016,46 @@ function TarsArchitecturePrivacySlice() {
         <p>Private contents are not rendered here. The portfolio-safe version shows the architecture: how TARS decides what context to keep, what to compress, what to retrieve, and what never leaves local control.</p>
       </div>
       <div className="tars-memory-system" aria-label="TARS memory system diagram">
-        <div className="tars-memory-core">
-          <span>Context compiler</span>
-          <strong>Task packet</strong>
-          <small>Loads only relevant memory labels, repo state, boundaries, and verification criteria before an agent runs.</small>
-        </div>
-        {tarsMemoryTypes.map((memory, index) => (
-          <article className={`tars-memory-node tars-memory-node--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{memory.label}</strong>
-            <small>{memory.detail}</small>
-          </article>
-        ))}
+        <section className="tars-memory-types-panel" aria-label="Conceptual memory layers">
+          <div className="tars-memory-panel-label"><span>Layered memory</span><strong>Retention by horizon</strong></div>
+          <div className="tars-memory-type-stack">
+            {tarsMemoryTypes.map((memory, index) => (
+              <article className={`tars-memory-node tars-memory-node--${memory.id}`} style={{ "--memory-rgb": memory.tone, "--memory-index": index }} key={memory.id}>
+                <div className="tars-memory-node-orb"><span>{String(index + 1).padStart(2, "0")}</span></div>
+                <div>
+                  <strong>{memory.label}</strong>
+                  <em>{memory.horizon}</em>
+                  <small>{memory.detail}</small>
+                  <ul>{memory.examples.map((example) => <li key={example}>{example}</li>)}</ul>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section className="tars-mempalace-panel" aria-label="Conceptual memPalace graph">
+          <div className="tars-memory-panel-label"><span>memPalace graph</span><strong>Retrieval map</strong></div>
+          <div className="tars-mempalace-graph">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              {tarsMemPalaceEdges.map(([fromId, toId]) => {
+                const from = tarsMemPalaceNodes.find((node) => node.id === fromId);
+                const to = tarsMemPalaceNodes.find((node) => node.id === toId);
+                return <line key={`${fromId}-${toId}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />;
+              })}
+            </svg>
+            <div className="tars-mempalace-core"><span>Context compiler</span><strong>Task packet</strong><small>Only relevant labels, boundaries, and proof paths are hydrated.</small></div>
+            {tarsMemPalaceNodes.map((node) => (
+              <div className="tars-mempalace-node" style={{ "--node-x": `${node.x}%`, "--node-y": `${node.y}%`, "--node-rgb": node.tone }} key={node.id}>
+                <i />
+                <span>{node.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
         <div className="tars-memory-pipeline">
           <span>Capture</span><i />
           <span>Compress</span><i />
+          <span>Index</span><i />
           <span>Retrieve</span><i />
-          <span>Execute</span><i />
           <span>Verify</span>
         </div>
       </div>
