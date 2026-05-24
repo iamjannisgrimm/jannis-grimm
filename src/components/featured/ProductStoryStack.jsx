@@ -811,7 +811,10 @@ function BoardCard({ card }) {
 function TarsAgentsTabSlice() {
   const tars = tarsAgents.find((agent) => agent.tier === "tars");
   const domainAgents = tarsAgents.filter((agent) => agent.tier === "domain");
-  const specialistAgents = tarsAgents.filter((agent) => agent.tier === "specialist");
+  const specialistOrder = ["marketer", "research", "news-retriever", "developer", "legal", "security"];
+  const specialistAgents = tarsAgents
+    .filter((agent) => agent.tier === "specialist")
+    .sort((a, b) => specialistOrder.indexOf(a.id) - specialistOrder.indexOf(b.id));
   const activeNodeIds = new Set(["tars", "career", "developer"]);
 
   return (
@@ -822,11 +825,11 @@ function TarsAgentsTabSlice() {
             <svg className="tars-agent-connectors" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
               <path d="M500 82 C250 112 180 150 128 208" />
               <path d="M500 82 C382 116 352 150 330 208" />
-              <path className="is-live-active" d="M500 82 C470 120 470 168 500 208" />
+              <path className="is-live-active" d="M500 144 L628 193" />
               <path d="M500 82 C630 116 662 150 670 208" />
               <path d="M128 282 C180 342 220 370 250 426" />
               <path d="M330 282 C330 340 340 374 365 426" />
-              <path className="is-live-active" d="M500 282 C470 334 470 382 500 426" />
+              <path className="is-live-active" d="M628 332 L586 382" />
               <path d="M670 282 C628 340 610 374 635 426" />
               <path d="M670 282 C730 338 756 374 770 426" />
               <path d="M128 282 C78 338 96 374 95 426" />

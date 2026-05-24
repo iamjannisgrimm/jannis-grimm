@@ -3960,3 +3960,260 @@
   background: rgba(var(--board-card-rgb), 0.18) !important;
   color: rgb(var(--board-card-rgb)) !important;
 }
+
+/* Exactness pass: match the current Kanban Manage board and make dark-mode slices legible. */
+.highlights-stack--tars .tars-product-slice--board {
+  grid-template-columns: 168px minmax(0, 1fr);
+  min-height: min(650px, 74dvh);
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.highlights-stack--tars .tars-product-main {
+  gap: 12px;
+  padding: 18px 18px 18px;
+}
+
+.highlights-stack--tars .tars-board-columns.board {
+  grid-template-columns: repeat(6, minmax(186px, 1fr));
+  gap: 10px;
+  padding: 0 0 12px;
+  align-items: stretch;
+}
+
+.highlights-stack--tars .tars-board-column.column {
+  min-height: 500px;
+  padding: 0 8px 8px;
+  border: 0 !important;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.highlights-stack--tars .tars-board-column .column-head {
+  align-items: center;
+  min-height: 44px;
+  margin: 0 -8px 8px;
+  padding: 10px 10px 8px;
+  border: 0 !important;
+  border-radius: 8px 8px 0 0;
+  background: rgba(255, 255, 255, 0.052) !important;
+  box-shadow: none !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.highlights-stack--tars .tars-board-column .column-head h3 {
+  color: rgba(245, 248, 255, 0.82) !important;
+  font-size: 0.86rem;
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.highlights-stack--tars .tars-board-column .column-head p {
+  display: none;
+}
+
+.highlights-stack--tars .tars-board-column .count {
+  min-width: 22px;
+  height: 22px;
+  background: transparent !important;
+  color: rgba(221, 228, 240, 0.45) !important;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.highlights-stack--tars .tars-board-column .cards {
+  gap: 6px;
+  align-content: start;
+  align-items: start;
+  grid-auto-rows: max-content;
+}
+
+.highlights-stack--tars .tars-board-card.card {
+  gap: 4px;
+  padding: 9px 10px !important;
+  border: 1px solid rgba(226, 232, 245, 0.10) !important;
+  border-radius: 7px !important;
+  background: rgba(255, 255, 255, 0.075) !important;
+  box-shadow: none !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-epic-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(100, 168, 255, 0.12) !important;
+  color: rgba(160, 202, 255, 0.88) !important;
+  border: 1px solid rgba(100, 168, 255, 0.14);
+  font-size: 0.72rem;
+  font-weight: 560;
+  line-height: 1.35;
+}
+
+.highlights-stack--tars .tars-board-card .card-title {
+  margin: 0 0 4px;
+  color: rgba(255, 255, 255, 0.92) !important;
+  font-size: 0.92rem;
+  font-weight: 560;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.highlights-stack--tars .tars-board-card .card-summary {
+  color: rgba(221, 228, 240, 0.62) !important;
+  font-size: 0.82rem;
+  line-height: 1.38;
+  -webkit-line-clamp: 3;
+}
+
+.highlights-stack--tars .tars-board-card .card-meta-row {
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.highlights-stack--tars .tars-board-card .card-assignee-avatar {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  background: #202b3a;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.highlights-stack--tars .tars-board-card .card-priority-tag,
+.highlights-stack--tars .tars-board-card .card-dependency-tag {
+  min-height: 20px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.highlights-stack--tars .tars-board-card .card-priority-tag.priority-high {
+  background: rgba(255, 92, 82, 0.16) !important;
+  color: #ffaaa3 !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-priority-tag.priority-medium {
+  background: rgba(255, 184, 77, 0.14) !important;
+  color: #ffd18a !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-dependency-tag.is-ready {
+  background: rgba(52, 199, 89, 0.15) !important;
+  color: #8ee5a5 !important;
+}
+
+.highlights-stack--tars .tars-board-card .card-dependency-tag.is-blocked {
+  background: rgba(255, 149, 0, 0.18) !important;
+  color: #ffd18a !important;
+}
+
+.highlights-stack--tars .tars-board-column .empty-state {
+  min-height: 180px;
+  border: 1px dashed rgba(226, 232, 245, 0.13);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.028);
+  color: rgba(221, 228, 240, 0.42);
+  font-size: 0.78rem;
+}
+
+.highlights-stack--tars .tars-agent-connectors path:not(.is-live-active) {
+  stroke: rgba(165, 177, 198, 0.10);
+  stroke-dasharray: 2 14;
+  filter: none;
+}
+
+.highlights-stack--tars .tars-agent-connectors path.is-live-active {
+  stroke: rgba(52, 199, 89, 0.94);
+  stroke-width: 3.4;
+  stroke-dasharray: 8 10;
+  filter: drop-shadow(0 0 9px rgba(52, 199, 89, 0.32));
+}
+
+.highlights-stack--tars .tars-product-slice--automation-calendar {
+  min-height: min(690px, 78dvh);
+  padding: 18px;
+  background: #151d28 !important;
+}
+
+.highlights-stack--tars .tars-product-slice--automation-calendar .automation-calendar-shell {
+  --calendar-height: min(632px, 62dvh);
+  border: 1px solid rgba(226, 232, 245, 0.12);
+  border-radius: 18px;
+  background: rgba(10, 14, 22, 0.52);
+  overflow: hidden;
+}
+
+.highlights-stack--tars .automation-calendar-header-spacer,
+.highlights-stack--tars .automation-calendar-day-head {
+  background: rgba(255, 255, 255, 0.045) !important;
+}
+
+.highlights-stack--tars .automation-calendar-day {
+  background: rgba(255, 255, 255, 0.024) !important;
+}
+
+.highlights-stack--tars .automation-calendar-day-track {
+  background-color: rgba(255, 255, 255, 0.018) !important;
+  background-image: linear-gradient(to bottom, rgba(226, 232, 245, 0.085) 1px, transparent 1px) !important;
+}
+
+.highlights-stack--tars .automation-calendar-current-time {
+  z-index: 30;
+  height: 4px;
+  box-shadow: 0 0 0 1px rgba(255, 59, 48, 0.42), 0 0 18px rgba(255, 59, 48, 0.48);
+}
+
+.highlights-stack--tars .automation-calendar-block {
+  --automation-instance-accent: var(--automation-display-color, #64a8ff);
+  --automation-instance-border: color-mix(in srgb, var(--automation-display-color, #64a8ff) 58%, rgba(255,255,255,0.18));
+  --automation-instance-text: #ffffff;
+  --automation-instance-meta: rgba(245, 248, 255, 0.78);
+  z-index: 20;
+  min-height: 34px;
+  padding: 7px 8px 7px 12px !important;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--automation-display-color, #64a8ff) 62%, #223044),
+    color-mix(in srgb, var(--automation-display-color, #64a8ff) 42%, #121a26)
+  ) !important;
+  border-color: var(--automation-instance-border) !important;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--automation-display-color, #64a8ff) 26%, transparent) !important;
+}
+
+.highlights-stack--tars .automation-calendar-block::before {
+  display: block;
+  inset: 7px auto 7px 6px;
+  width: 3px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.highlights-stack--tars .automation-calendar-block-visible {
+  gap: 4px;
+  height: 100%;
+  padding-left: 7px;
+}
+
+.highlights-stack--tars .automation-calendar-block h3 {
+  color: #ffffff !important;
+  font-size: clamp(0.62rem, 0.74vw, 0.78rem) !important;
+  line-height: 1.08 !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.26);
+}
+
+.highlights-stack--tars .automation-calendar-meta span {
+  padding: 2px 5px;
+  background: rgba(255,255,255,0.16) !important;
+  color: rgba(255,255,255,0.78) !important;
+  font-size: 0.56rem;
+}
