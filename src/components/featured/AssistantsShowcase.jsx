@@ -12,7 +12,7 @@ function buildAssistantsContent() {
       headline: "",
       backgroundColor: "#10161f",
       themeColor: "#10161f",
-      scrollInfoBlocks: false,
+      scrollInfoBlocks: true,
       inlineTitles: ["Meet\nTARS", ""],
       teamIntroDescription:
         "TARS is the AI operating system I built around my life and work: a phone-accessible orchestrator that understands priorities, keeps memory, and turns intent into verified execution.",
@@ -45,7 +45,7 @@ function buildAssistantsContent() {
         tarsBoardSlice: "agents-tab",
       },
       {
-        sectionTitle: "Manage",
+        sectionTitle: "Vision",
         tarsBoardSlice: "vision",
       },
       {
@@ -55,6 +55,10 @@ function buildAssistantsContent() {
       {
         sectionTitle: "Memory",
         tarsBoardSlice: "architecture-privacy",
+      },
+      {
+        sectionTitle: "Early Access",
+        tarsBoardSlice: "early-access",
       },
     ],
   };

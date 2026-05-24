@@ -906,6 +906,28 @@ function TarsVisionSlice() {
   );
 }
 
+function TarsEarlyAccessSlice() {
+  return (
+    <div className="tars-product-slice tars-product-slice--early-access">
+      <div className="tars-early-access-copy">
+        <span>Private operating system</span>
+        <h3>Want a TARS-style layer for your work?</h3>
+        <p>
+          I am opening a small early-access lane for people and organizations who want a private AI operating system around their tools, memory, automations, and execution workflows.
+        </p>
+      </div>
+      <form className="tars-early-access-form" action="mailto:iamjannisgrimm@gmail.com" method="post" encType="text/plain">
+        <label htmlFor="tars-early-access-email">Email</label>
+        <div>
+          <input id="tars-early-access-email" name="email" type="email" placeholder="you@company.com" autoComplete="email" />
+          <a href="mailto:iamjannisgrimm@gmail.com?subject=TARS%20early%20access&body=I%27m%20interested%20in%20a%20TARS%2FOpenClaw-style%20operating%20system.%0A%0AEmail%3A%20" aria-label="Email Jannis about TARS early access">Request access</a>
+        </div>
+        <small>No spam, no public launch list theatrics — just a direct early-access conversation.</small>
+      </form>
+    </div>
+  );
+}
+
 function TarsAutomationCalendarSlice() {
   return (
     <div className="tars-product-slice tars-product-slice--automation-calendar" aria-hidden="true">
@@ -962,7 +984,7 @@ function TarsBoardProductSlice({ kind }) {
       <div className="tars-product-slice tars-product-slice--board" aria-hidden="true">
         <aside className="tars-product-sidebar">
           <div className="tars-product-brand"><span><img src="/images/me/JannisGrimm.png" alt="" /></span><strong>Jannis</strong><small>CEO</small></div>
-          {[["◆", "Manage", true], ["▦", "Sprint"], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
+          {[["◆", "Vision"], ["▦", "Sprint", true], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
             <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
           ))}
         </aside>
@@ -987,6 +1009,10 @@ function TarsBoardProductSlice({ kind }) {
 
   if (kind === "architecture-privacy") {
     return <TarsArchitecturePrivacySlice />;
+  }
+
+  if (kind === "early-access") {
+    return <TarsEarlyAccessSlice />;
   }
 
   return (
@@ -1016,24 +1042,22 @@ function TarsArchitecturePrivacySlice() {
         <p>Private contents are not rendered here. The portfolio-safe version shows the architecture: how TARS decides what context to keep, what to compress, what to retrieve, and what never leaves local control.</p>
       </div>
       <div className="tars-memory-system" aria-label="TARS memory system diagram">
-        <section className="tars-memory-types-panel" aria-label="Conceptual memory layers">
-          <div className="tars-memory-panel-label"><span>Layered memory</span><strong>Retention by horizon</strong></div>
-          <div className="tars-memory-type-stack">
+        <section className="tars-memory-card tars-memory-card--layers" aria-label="Conceptual memory layers">
+          <div className="tars-memory-layer-visual">
             {tarsMemoryTypes.map((memory, index) => (
-              <article className={`tars-memory-node tars-memory-node--${memory.id}`} style={{ "--memory-rgb": memory.tone, "--memory-index": index }} key={memory.id}>
-                <div className="tars-memory-node-orb"><span>{String(index + 1).padStart(2, "0")}</span></div>
-                <div>
-                  <strong>{memory.label}</strong>
-                  <em>{memory.horizon}</em>
-                  <small>{memory.detail}</small>
-                  <ul>{memory.examples.map((example) => <li key={example}>{example}</li>)}</ul>
-                </div>
+              <article className={`tars-memory-layer tars-memory-layer--${memory.id}`} style={{ "--memory-rgb": memory.tone, "--memory-index": index }} key={memory.id}>
+                <span>{memory.label}</span>
+                <strong>{memory.horizon}</strong>
               </article>
             ))}
           </div>
+          <div className="tars-memory-card-copy">
+            <span>Layered memory</span>
+            <h4>Short, medium, and long-term context stay separated.</h4>
+            <p>TARS keeps live task context lightweight, compresses recent decisions, and retrieves durable preferences or playbooks only when they are relevant.</p>
+          </div>
         </section>
-        <section className="tars-mempalace-panel" aria-label="Conceptual memPalace graph">
-          <div className="tars-memory-panel-label"><span>memPalace graph</span><strong>Retrieval map</strong></div>
+        <section className="tars-memory-card tars-memory-card--palace" aria-label="Conceptual memPalace graph">
           <div className="tars-mempalace-graph">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               {tarsMemPalaceEdges.map(([fromId, toId]) => {
@@ -1050,14 +1074,12 @@ function TarsArchitecturePrivacySlice() {
               </div>
             ))}
           </div>
+          <div className="tars-memory-card-copy">
+            <span>memPalace graph</span>
+            <h4>A retrieval map, not a diary on display.</h4>
+            <p>The graph shows how task packets can assemble the right labels, boundaries, and proof paths without exposing private memory contents.</p>
+          </div>
         </section>
-        <div className="tars-memory-pipeline">
-          <span>Capture</span><i />
-          <span>Compress</span><i />
-          <span>Index</span><i />
-          <span>Retrieve</span><i />
-          <span>Verify</span>
-        </div>
       </div>
       <div className="tars-privacy-rails tars-memory-rails"><span>No private memory contents</span><span>Scoped retrieval</span><span>Daily → long-term compression</span><span>Credential refs only</span></div>
     </div>

@@ -5251,3 +5251,260 @@
     grid-template-rows: auto auto auto;
   }
 }
+
+/* Portfolio TARS polish pass: centering, optical spacing, simplified Memory, and CTA. */
+.highlights-stack--tars .highlights-stack__productImageGroup:has(.highlights-stack__teamCards) {
+  justify-items: center;
+  align-items: center;
+  margin-inline: auto;
+}
+
+.highlights-stack--tars .highlights-stack__teamCards {
+  justify-self: center;
+  margin-inline: auto;
+}
+
+.highlights-stack--tars .highlights-stack__teamIntroDescription,
+.highlights-stack--tars .highlights-stack__teamCardsDescription {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.highlights-stack--tars .tars-product-brand span {
+  border-radius: 999px;
+}
+
+.highlights-stack--tars .tars-product-section-header h3 {
+  font-size: clamp(1.45rem, 2.45vw, 2.1rem);
+}
+
+.highlights-stack--tars .tars-product-section-header button::before {
+  transform: translateY(1.5px);
+}
+
+.highlights-stack--tars .tars-board-column .column-head {
+  min-height: 68px;
+  padding: 14px 16px 15px;
+}
+
+.highlights-stack--tars .tars-board-column .column-head h3,
+.highlights-stack--tars .tars-board-column .count {
+  top: 2px;
+}
+
+.highlights-stack--tars .automation-calendar-block.automation-calendar-block-short,
+.highlights-stack--tars .tars-automation-visibility-event--short {
+  min-height: 16px;
+  height: max(16px, calc(var(--calendar-height) / 24 * var(--automation-duration-hours, 1))) !important;
+  padding: 0 6px !important;
+  border-radius: 999px !important;
+}
+
+.highlights-stack--tars .automation-calendar-block-short::before,
+.highlights-stack--tars .tars-automation-visibility-event--short::before {
+  width: 4px;
+  height: 4px;
+  inset: 50% auto auto 7px;
+  transform: translateY(-50%);
+}
+
+.highlights-stack--tars .automation-calendar-block-short .automation-calendar-block-visible,
+.highlights-stack--tars .tars-automation-visibility-event--short strong {
+  padding-left: 15px;
+}
+
+.highlights-stack--tars .automation-calendar-block-short h3,
+.highlights-stack--tars .tars-automation-visibility-event--short strong {
+  font-size: clamp(0.5rem, 0.62vw, 0.62rem) !important;
+  line-height: 0.9 !important;
+}
+
+.highlights-stack--tars .tars-product-slice--memory {
+  min-height: auto;
+}
+
+.highlights-stack--tars .tars-memory-system {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto;
+  gap: 16px;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.tars-memory-card {
+  display: grid;
+  grid-template-rows: minmax(250px, 1fr) auto;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(226,232,245,0.14);
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(27,38,53,0.92), rgba(15,22,32,0.88));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.045);
+}
+
+.tars-memory-layer-visual {
+  position: relative;
+  min-height: 250px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(100,168,255,0.16), transparent 34%),
+    rgba(6,10,16,0.72);
+}
+
+.tars-memory-layer {
+  position: absolute;
+  width: min(82%, 320px);
+  min-height: 78px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid rgba(var(--memory-rgb),0.34);
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(var(--memory-rgb),0.18), rgba(255,255,255,0.035));
+  box-shadow: 0 18px 42px rgba(0,0,0,0.26), 0 0 28px rgba(var(--memory-rgb),0.10);
+  transform: translateY(calc((var(--memory-index) - 1) * 38px)) scale(calc(1 - (2 - var(--memory-index)) * 0.045));
+}
+
+.tars-memory-layer span,
+.tars-memory-card-copy span {
+  color: rgba(100,168,255,0.88);
+  font-size: 0.64rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tars-memory-layer strong {
+  color: #fff;
+  font-size: clamp(1.15rem, 1.8vw, 1.65rem);
+  letter-spacing: -0.05em;
+}
+
+.tars-memory-card-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.tars-memory-card-copy h4 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+}
+
+.tars-memory-card-copy p {
+  margin: 0;
+  color: rgba(221,228,240,0.68);
+  font-size: 0.84rem;
+  line-height: 1.52;
+}
+
+.tars-memory-card .tars-mempalace-graph {
+  min-height: 250px;
+}
+
+.tars-product-slice--early-access {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+  gap: clamp(20px, 4vw, 56px);
+  align-items: center;
+  padding: clamp(26px, 4vw, 54px);
+  border: 1px solid rgba(226,232,245,0.14);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(100,168,255,0.18), transparent 34%),
+    linear-gradient(180deg, rgba(27,38,53,0.92), rgba(9,12,18,0.96));
+  box-shadow: 0 34px 100px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.tars-early-access-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.tars-early-access-copy span,
+.tars-early-access-form label,
+.tars-early-access-form small {
+  color: rgba(221,228,240,0.56);
+  font-size: 0.72rem;
+  font-weight: 780;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tars-early-access-copy h3 {
+  max-width: 12ch;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2.4rem, 5.4vw, 5rem);
+  line-height: 0.92;
+  letter-spacing: -0.075em;
+}
+
+.tars-early-access-copy p {
+  max-width: 58ch;
+  margin: 0;
+  color: rgba(221,228,240,0.72);
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  line-height: 1.58;
+}
+
+.tars-early-access-form {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(226,232,245,0.13);
+  border-radius: 24px;
+  background: rgba(255,255,255,0.055);
+}
+
+.tars-early-access-form div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.tars-early-access-form input {
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(226,232,245,0.14);
+  border-radius: 16px;
+  background: rgba(8,12,18,0.72);
+  color: #fff;
+  font: inherit;
+}
+
+.tars-early-access-form a {
+  min-height: 48px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 16px;
+  border-radius: 16px;
+  background: #f5f5f7;
+  color: #10161f;
+  font-weight: 780;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tars-early-access-form small {
+  line-height: 1.42;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+@media (max-width: 900px) {
+  .highlights-stack--tars .tars-memory-system,
+  .tars-product-slice--early-access,
+  .tars-early-access-form div {
+    grid-template-columns: 1fr;
+  }
+}
