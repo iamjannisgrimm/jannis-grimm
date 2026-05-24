@@ -808,6 +808,14 @@ function BoardCard({ card }) {
   );
 }
 
+const tarsMemoryTypes = [
+  { id: "working", label: "Working memory", detail: "Conversation state, current task packet, open files, and verification targets that expire after the run.", tone: "100, 168, 255" },
+  { id: "episodic", label: "Episodic memory", detail: "Daily notes and event logs compressed into dated summaries for continuity without replaying raw history.", tone: "175, 82, 222" },
+  { id: "semantic", label: "Semantic memory", detail: "Stable facts about the operator, projects, routes, tools, and preferences loaded only where appropriate.", tone: "52, 199, 89" },
+  { id: "procedural", label: "Procedural memory", detail: "Agent playbooks, skills, checklists, and verification habits that make repeated work safer and faster.", tone: "255, 149, 0" },
+  { id: "artifact", label: "Artifact memory", detail: "Commits, screenshots, QA notes, and board cards provide auditable proof instead of private transcript dumps.", tone: "255, 45, 85" },
+];
+
 function TarsAgentsTabSlice() {
   const tars = tarsAgents.find((agent) => agent.tier === "tars");
   const domainAgents = tarsAgents.filter((agent) => agent.tier === "domain");
@@ -932,7 +940,7 @@ function TarsBoardProductSlice({ kind }) {
           ))}
         </aside>
         <section className="tars-product-main">
-          <header className="tars-product-section-header section-header"><h3>Manage</h3><button className="universal-create-trigger">+</button></header>
+          <header className="tars-product-section-header section-header"><h3>Sprint</h3><button className="universal-create-trigger">+</button></header>
           <div className="board tars-board-columns" role="list">
             {tarsBoardColumns.map((column) => (
               <section className="column tars-board-column" key={column.title}>
@@ -974,21 +982,34 @@ function TarsBoardProductSlice({ kind }) {
 
 function TarsArchitecturePrivacySlice() {
   return (
-    <div className="tars-product-slice tars-product-slice--architecture" aria-hidden="true">
-      <div className="tars-architecture-hero">
-        <span>Architecture & Privacy</span>
-        <h3>A local agent OS, not a demo chatbot.</h3>
-        <p>TARS turns phone/browser intent into scoped work packets, routes them through domain owners, and uses the Kanban board as the approval and verification control plane.</p>
+    <div className="tars-product-slice tars-product-slice--memory" aria-hidden="true">
+      <div className="tars-memory-hero">
+        <span>Technical memory model</span>
+        <h3>Memory is layered, scoped, and deliberately forgetful.</h3>
+        <p>Private contents are not rendered here. The portfolio-safe version shows the architecture: how TARS decides what context to keep, what to compress, what to retrieve, and what never leaves local control.</p>
       </div>
-      <div className="tars-architecture-map" aria-label="TARS technical architecture map">
-        <div className="tars-architecture-core"><span>Local runtime bridge</span><strong>TARS</strong><small>Mac-hosted gateway with phone and browser entrypoints.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--route"><span>Routing graph</span><strong>TARS → domain → specialist</strong><small>Career, SeeMe, Personal, and Claw own judgment before Developer or Research execute.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--board"><span>Control plane</span><strong>Kanban approvals</strong><small>Ready cards carry prompts, boundaries, definition of done, artifacts, and verification gates.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--scheduler"><span>Automation scheduler</span><strong>Local timed workflows</strong><small>Daily and weekly runs reconcile hosted specs into local runtime artifacts without opening broad inbound access.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--secrets"><span>Privacy rails</span><strong>Credential references</strong><small>Tokens stay in local env/Keychain references, not prompts, screenshots, commits, or portfolio data.</small></div>
-        <div className="tars-architecture-lane tars-architecture-lane--approval"><span>Operator tooling</span><strong>Browser with brakes</strong><small>It can inspect, draft, and verify; external sends, uploads, purchases, and submissions remain approval-gated.</small></div>
+      <div className="tars-memory-system" aria-label="TARS memory system diagram">
+        <div className="tars-memory-core">
+          <span>Context compiler</span>
+          <strong>Task packet</strong>
+          <small>Loads only relevant memory labels, repo state, boundaries, and verification criteria before an agent runs.</small>
+        </div>
+        {tarsMemoryTypes.map((memory, index) => (
+          <article className={`tars-memory-node tars-memory-node--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{memory.label}</strong>
+            <small>{memory.detail}</small>
+          </article>
+        ))}
+        <div className="tars-memory-pipeline">
+          <span>Capture</span><i />
+          <span>Compress</span><i />
+          <span>Retrieve</span><i />
+          <span>Execute</span><i />
+          <span>Verify</span>
+        </div>
       </div>
-      <div className="tars-privacy-rails"><span>Scoped task packets</span><span>Local bridge constraints</span><span>Approval-gated external actions</span><span>Synthetic portfolio data</span></div>
+      <div className="tars-privacy-rails tars-memory-rails"><span>No private memory contents</span><span>Scoped retrieval</span><span>Daily → long-term compression</span><span>Credential refs only</span></div>
     </div>
   );
 }

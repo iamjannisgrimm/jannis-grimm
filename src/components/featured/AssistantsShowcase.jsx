@@ -53,7 +53,7 @@ function buildAssistantsContent() {
         tarsBoardSlice: "automation-cleaner",
       },
       {
-        sectionTitle: "Architecture & Privacy",
+        sectionTitle: "Memory",
         tarsBoardSlice: "architecture-privacy",
       },
     ],
