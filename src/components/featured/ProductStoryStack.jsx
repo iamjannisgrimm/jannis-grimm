@@ -826,13 +826,13 @@ const tarsAgents = [
 const tarsAutomationDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const tarsAutomationHours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
 const tarsAutomationEvents = [
-  { title: "Card Executor", days: "daily", start: 0, duration: 3, recurrence: "Daily · 12:00–3:00 AM", lane: "dw", color: "#5856d6" },
-  { title: "Career Job Discovery", days: "daily", start: 4, duration: 1, recurrence: "Daily · 4:00 AM", lane: "dw", color: "#ffd60a" },
-  { title: "News", days: "daily", start: 5, duration: 1, recurrence: "Daily · 5:00 AM", lane: "main", color: "#0071e3" },
-  { title: "Morning GUI Window Cleanup", days: "daily", start: 5.5, duration: 0.75, recurrence: "Daily · 5:30 AM", lane: "main", color: "#ff9500" },
-  { title: "Daily Morning", days: "daily", start: 6, duration: 1, recurrence: "Daily · 6:00 AM", lane: "main", color: "#34c759" },
-  { title: "Evening Report", days: "daily", start: 20, duration: 1, recurrence: "Daily · 8:00 PM", lane: "main", color: "#af52de" },
-  { title: "Sprint Closing Workflow", day: 6, start: 19.5, duration: 1, recurrence: "Weekly · Sunday 7:30 PM", lane: "main", color: "#ff2d55" },
+  { title: "Card Executor", days: "daily", start: 0, duration: 3, recurrence: "12:00–3:00 AM", lane: "dw", color: "#7c6dff" },
+  { title: "Career Job Discovery", days: "daily", start: 4, duration: 1, recurrence: "4:00 AM", lane: "dw", color: "#ffd166" },
+  { title: "News", days: "daily", start: 5, duration: 1, recurrence: "5:00 AM", lane: "main", color: "#5ac8fa" },
+  { title: "Morning GUI Window Cleanup", days: "daily", start: 5.5, duration: 0.75, recurrence: "5:30 AM", lane: "main", color: "#ff9f0a" },
+  { title: "Daily Morning", days: "daily", start: 6, duration: 1, recurrence: "6:00 AM", lane: "main", color: "#30d158" },
+  { title: "Evening Report", days: "daily", start: 20, duration: 1, recurrence: "8:00 PM", lane: "main", color: "#bf5af2" },
+  { title: "Sprint Closing Workflow", day: 6, start: 19.5, duration: 1, recurrence: "Sunday 7:30 PM", lane: "main", color: "#ff375f" },
 ];
 
 const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (
@@ -840,6 +840,8 @@ const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (
     ? tarsAutomationDays.map((_, day) => ({ ...event, day, key: `${event.title}-${day}` }))
     : [{ ...event, key: event.title }]
 ));
+
+const tarsAutomationMondayEvents = tarsAutomationCalendarEvents.filter((event) => event.day === 0);
 
 function BoardCard({ card }) {
   const epicClass = String(card.epic || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
@@ -1001,39 +1003,35 @@ function TarsEarlyAccessSlice() {
 function TarsAutomationCalendarSlice() {
   return (
     <div className="tars-product-slice tars-product-slice--automation-calendar" aria-hidden="true">
-      <header className="tars-automation-header">
-        <h3>Automation</h3>
-      </header>
-      <section className="automation-calendar-shell" aria-label="Weekly automation schedule">
+      <section className="tars-automation-copy">
+        <h3>Automation.</h3>
+        <p>
+          TARS keeps the repeatable parts of my work moving on schedule: night execution, career scans,
+          news retrieval, morning cleanup, and the daily operator brief — without turning my calendar into
+          a wall of noise.
+        </p>
+      </section>
+      <section className="automation-calendar-shell" aria-label="Monday automation schedule">
         <div className="automation-calendar-grid">
           <div className="automation-calendar-header">
             <div className="automation-calendar-header-spacer" />
-            {tarsAutomationDays.map((day, index) => <div className="automation-calendar-day-head" key={day} style={{ gridColumn: index + 2 }}><strong>{day}</strong></div>)}
+            <div className="automation-calendar-day-head automation-calendar-day-head--monday" style={{ gridColumn: 2 }}>
+              <span>Monday</span>
+              <strong>Operating rhythm</strong>
+            </div>
           </div>
           <div className="automation-calendar-body" role="list">
             <div className="automation-calendar-time-rail"><div className="automation-calendar-time-track">{tarsAutomationHours.map((hour) => <span key={hour} style={{ "--time-top": `${(hour / 24) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}</div></div>
-            {tarsAutomationDays.map((day, index) => (
-              <div className="automation-calendar-day" key={day} style={{ gridColumn: index + 2 }}>
-                <div className="automation-calendar-day-track">
-                  {index === 1 ? <div className="automation-calendar-current-time" style={{ "--automation-now-top": "54%" }} data-current-time-label="12:58" /> : null}
-                  {tarsAutomationCalendarEvents.filter((event) => event.day === index).map((event) => (
-                    <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration <= 1 ? " automation-calendar-block-short" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color }}>
-                      <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
-                    </article>
-                  ))}
-                </div>
+            <div className="automation-calendar-day automation-calendar-day--monday" style={{ gridColumn: 2 }}>
+              <div className="automation-calendar-day-track">
+                {tarsAutomationMondayEvents.map((event) => (
+                  <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration <= 1 ? " automation-calendar-block-short" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color }}>
+                    <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
+                  </article>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-        <div className="tars-automation-visibility-layer" aria-hidden="true">
-          <div className="tars-automation-visibility-time-rail">{tarsAutomationHours.map((hour) => <span key={hour} style={{ "--time-top": `${(hour / 24) * 100}%` }}>{String(hour).padStart(2, "0")}:00</span>)}</div>
-          {tarsAutomationCalendarEvents.map((event) => (
-            <article className={`tars-automation-visibility-event tars-automation-visibility-event--${event.lane}${event.duration <= 1 ? " tars-automation-visibility-event--short" : ""}`} key={`${event.key}-visibility`} style={{ "--automation-day": event.day, "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration }}>
-              <strong>{event.title}</strong>
-              <span>{event.recurrence}</span>
-            </article>
-          ))}
         </div>
       </section>
     </div>

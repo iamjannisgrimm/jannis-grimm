@@ -51,6 +51,7 @@ function buildAssistantsContent() {
       },
       {
         sectionTitle: "Automation",
+        hideSectionTitle: true,
         tarsBoardSlice: "automation-cleaner",
       },
       {
