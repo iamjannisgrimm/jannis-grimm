@@ -41,15 +41,16 @@ function buildAssistantsContent() {
     },
     infoBlocks: [
       {
-        sectionTitle: "Agents",
+        sectionTitle: "",
         tarsBoardSlice: "agents-tab",
       },
       {
         sectionTitle: "Vision",
+        hideSectionTitle: true,
         tarsBoardSlice: "vision",
       },
       {
-        sectionTitle: "Automations",
+        sectionTitle: "Automation",
         tarsBoardSlice: "automation-cleaner",
       },
       {

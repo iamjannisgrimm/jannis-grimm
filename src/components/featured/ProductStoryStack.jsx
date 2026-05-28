@@ -20,6 +20,45 @@ const TEAM_INFO_STEP = 0.45;
 const TEAM_MEDIA_TEXT_GAP = 0.22;
 const TEAM_INFO_EXIT_GAP = 0.38;
 
+const TARS_TRANSITION_PROMPTS = [
+  ["ship the card", 8, 14, "blue", "sm"],
+  ["read the repo", 23, 9, "slate", "md"],
+  ["route to Developer", 48, 11, "orange", "lg"],
+  ["summarize signal", 74, 12, "purple", "md"],
+  ["check memory", 91, 18, "blue", "sm"],
+  ["verify locally", 14, 29, "green", "md"],
+  ["draft the brief", 34, 24, "slate", "sm"],
+  ["protect secrets", 62, 25, "orange", "md"],
+  ["open the dashboard", 84, 31, "blue", "lg"],
+  ["wake the agent", 6, 46, "purple", "md"],
+  ["compress context", 25, 43, "blue", "lg"],
+  ["plan the sprint", 45, 39, "green", "md"],
+  ["run the build", 67, 42, "slate", "sm"],
+  ["capture proof", 92, 47, "orange", "md"],
+  ["ask only when needed", 16, 62, "purple", "lg"],
+  ["move the work", 38, 58, "blue", "md"],
+  ["keep context scoped", 61, 60, "green", "lg"],
+  ["close the loop", 82, 64, "slate", "md"],
+  ["triage inbox", 10, 78, "orange", "sm"],
+  ["scan calendar", 30, 83, "blue", "md"],
+  ["prepare handoff", 53, 79, "purple", "md"],
+  ["update memory", 73, 84, "green", "sm"],
+  ["spawn researcher", 89, 77, "purple", "md"],
+  ["shape launch copy", 19, 18, "orange", "md"],
+  ["review security", 40, 17, "green", "sm"],
+  ["file the proof", 57, 17, "slate", "sm"],
+  ["compare sources", 79, 22, "purple", "md"],
+  ["debug the flow", 18, 38, "blue", "sm"],
+  ["sync the board", 52, 31, "green", "md"],
+  ["write the PR", 73, 36, "orange", "sm"],
+  ["hold the boundary", 28, 52, "slate", "md"],
+  ["call the right specialist", 50, 51, "blue", "xl"],
+  ["turn intent into tasks", 72, 53, "purple", "lg"],
+  ["ship, verify, remember", 47, 70, "orange", "xl"],
+  ["keep the human out of loops", 68, 72, "blue", "lg"],
+  ["surface the next move", 12, 88, "green", "md"],
+];
+
 function buildPanelTimeline({
   header,
   image,
@@ -272,9 +311,9 @@ function buildPanelTimeline({
           }, teamCardsExitStart);
         }
         tl.to(teamIntro.rightCard, {
-          y: -320,
-          duration: 0.32,
-          ease: "power2.inOut",
+          opacity: 0,
+          duration: 0.22,
+          ease: "power1.inOut",
         }, teamSoloStart);
       } else {
         if (teamIntro.cards) {
@@ -298,13 +337,21 @@ function buildPanelTimeline({
             ease: "power1.inOut",
           }, teamCardsExitStart);
         }
-        tl.to(teamIntro.rightCard, {
-          x: hasTeamMediaSequence ? desktopCardCenterX : desktopCardShiftX - 140,
-          y: 0,
-          scale: hasTeamMediaSequence ? 0.86 : 1,
-          duration: 0.38,
-          ease: "power3.inOut",
-        }, teamSoloStart);
+        if (hasTeamMediaSequence) {
+          tl.to(teamIntro.rightCard, {
+            x: desktopCardCenterX,
+            y: 0,
+            scale: 0.86,
+            duration: 0.38,
+            ease: "power3.inOut",
+          }, teamSoloStart);
+        } else {
+          tl.to(teamIntro.rightCard, {
+            opacity: 0,
+            duration: 0.22,
+            ease: "power1.inOut",
+          }, teamSoloStart);
+        }
       }
 
       if (teamIntro.infoWindow) {
@@ -761,17 +808,19 @@ const tarsBoardColumns = [
 ];
 
 const tarsAgents = [
-  { id: "tars", name: "TARS", headline: "Entrypoint / router", role: "Receives work, reads orchestration metrics, and routes instead of absorbing every domain.", tier: "tars", tone: "110, 110, 115", image: "/images/TARSAgents/TARS.png", live: true },
-  { id: "seeme", name: "SeeMe", headline: "Domain owner", role: "Owns SeeMe product truth, roadmap, launch readiness, coach strategy, and growth priorities.", tier: "domain", tone: "255, 77, 112", image: "/images/TARSAgents/seeme-default-256.png" },
-  { id: "personal", name: "Personal Assistant", headline: "Domain owner", role: "Handles life admin, calendar, email, wedding, portfolio, travel, and reminders.", tier: "domain", tone: "0, 113, 227", image: "/images/TARSAgents/personal-default-256.png" },
-  { id: "career", name: "Career", headline: "Domain owner", role: "Owns career, resume, job-search, applications, and interview work under TARS.", tier: "domain", tone: "255, 214, 10", image: "/images/TARSAgents/career-default-256.png" },
-  { id: "claw", name: "Claw / OpenClaw Systems", headline: "Domain owner", role: "Keeps OpenClaw runtime, tools, docs, and dashboards wired safely.", tier: "domain", tone: "255, 149, 0", image: "/images/TARSAgents/ClawLight.png" },
-  { id: "developer", name: "Developer", headline: "Reusable specialist", role: "Builds, debugs, verifies, commits, and ships scoped code changes.", tier: "specialist", tone: "63, 70, 80", image: "/images/TARSAgents/DevLight.png", live: true },
-  { id: "marketer", name: "Marketer", headline: "Reusable specialist", role: "Shapes positioning, campaigns, launch assets, and public-facing voice.", tier: "specialist", tone: "255, 45, 85", image: "/images/TARSAgents/MarketerLight.png" },
-  { id: "research", name: "Research", headline: "Reusable specialist", role: "Finds evidence, compares sources, and compresses signal for decisions.", tier: "specialist", tone: "175, 82, 222", image: "/images/TARSAgents/ResearcherLight.png" },
-  { id: "news-retriever", name: "News Retriever", headline: "Reusable specialist", role: "Tracks approved AI/tech sources and turns signal into memory without doomscrolling.", tier: "specialist", tone: "139, 94, 52", image: "/images/TARSAgents/news-retriever-default-256.png" },
-  { id: "legal", name: "Legal Specialist", headline: "Reusable specialist", role: "Spots legal risk and prepares counsel-ready drafts without pretending to be counsel.", tier: "specialist", tone: "36, 40, 46", image: "/images/TARSAgents/law-light.png" },
-  { id: "security", name: "Security Specialist", headline: "Reusable specialist", role: "Reviews sensitive surfaces, threat models, and safe remediation.", tier: "specialist", tone: "255, 179, 64", image: "/images/TARSAgents/security-light.png" },
+  { id: "tars", name: "TARS", headline: "Entrypoint / router / orchestrator", role: "Runtime compatibility still enters through personal-assistant, but the visible identity is TARS: it loads context, chooses a domain owner, then synthesizes verified results.", tier: "tars", tone: "110, 110, 115", image: "/images/TARSAgents/TARS.png", live: true },
+  { id: "seeme", name: "SeeMe", headline: "Domain owner", role: "Owns SeeMe product truth, roadmap, launch readiness, coach strategy, user-growth priorities, and product/brand judgment before specialists execute.", tier: "domain", tone: "255, 77, 112", image: "/images/TARSAgents/seeme-default-256.png" },
+  { id: "personal", name: "Personal Assistant / Personal", headline: "Domain owner", role: "Owns life admin, calendar, email, wedding, portfolio admin, reminders, travel, finance coordination, personal projects, and daily logistics.", tier: "domain", tone: "0, 113, 227", image: "/images/TARSAgents/personal-default-256.png" },
+  { id: "career", name: "Career", headline: "Domain owner", role: "Owns resume automation, job search, applications, interview prep, portfolio positioning, LinkedIn/profile maintenance, and career documents.", tier: "domain", tone: "255, 214, 10", image: "/images/TARSAgents/career-default-256.png" },
+  { id: "claw", name: "Claw / OpenClaw Systems", headline: "Domain owner", role: "Owns OpenClaw runtime, agents, skills, tools, workflows, automations, routing, dashboards, memory, A2A, and control-plane work.", tier: "domain", tone: "255, 149, 0", image: "/images/TARSAgents/ClawLight.png" },
+  { id: "developer", name: "Developer", headline: "Reusable specialist", role: "Owns implementation/build/refactor/debug/test/code-change slices for any domain owner, then returns proof upward.", tier: "specialist", tone: "63, 70, 80", image: "/images/TARSAgents/DevLight.png", live: true },
+  { id: "marketer", name: "Marketer", headline: "Reusable specialist", role: "Shapes messaging, launch, content, brand, positioning, campaigns, founder voice, and communications strategy.", tier: "specialist", tone: "255, 45, 85", image: "/images/TARSAgents/MarketerLight.png" },
+  { id: "research", name: "Research", headline: "Reusable specialist", role: "Runs deep investigation, evidence gathering, source comparison, and synthesis for domain-owner decisions.", tier: "specialist", tone: "175, 82, 222", image: "/images/TARSAgents/ResearcherLight.png" },
+  { id: "news-retriever", name: "News Retriever", headline: "Reusable source provider", role: "Retrieves approved world-news and AI/technology signals, transcripts, source-quality notes, digests, and artifacts.", tier: "specialist", tone: "139, 94, 52", image: "/images/TARSAgents/news-retriever-default-256.png" },
+  { id: "legal", name: "Legal", headline: "Reusable support provider", role: "Spots legal risk and prepares policy, contract, privacy, compliance, and counsel-ready legal-ops artifacts without acting as counsel.", tier: "specialist", tone: "36, 40, 46", image: "/images/TARSAgents/law-light.png" },
+  { id: "security", name: "Security", headline: "Reusable support provider", role: "Reviews credentials/secrets hygiene, auth/session safety, threat models, hardening, privacy/security, supply chain, and incident triage.", tier: "specialist", tone: "255, 179, 64", image: "/images/TARSAgents/security-light.png" },
+  { id: "frontend-developer", name: "frontend-developer", headline: "Developer-owned subagent", role: "Implements polished browser-visible UI from scoped packets and existing design systems; not a top-level route.", tier: "developer-subagent", tone: "10, 132, 255" },
+  { id: "backend-developer", name: "backend-developer", headline: "Developer-owned subagent", role: "Handles APIs, databases, migrations, integrations, MCP/server tooling, and backend verification under Developer.", tier: "developer-subagent", tone: "94, 106, 210" },
 ];
 
 const tarsAutomationDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -836,60 +885,69 @@ const tarsMemPalaceEdges = [
 
 function TarsAgentsTabSlice() {
   const tars = tarsAgents.find((agent) => agent.tier === "tars");
-  const domainAgents = tarsAgents.filter((agent) => agent.tier === "domain");
-  const specialistOrder = ["marketer", "research", "news-retriever", "developer", "legal", "security"];
+  const domainOrder = ["career", "seeme", "personal", "claw"];
+  const domainAgents = tarsAgents
+    .filter((agent) => agent.tier === "domain")
+    .sort((a, b) => domainOrder.indexOf(a.id) - domainOrder.indexOf(b.id));
+  const specialistOrder = ["marketer", "developer", "research", "news-retriever", "legal", "security"];
   const specialistAgents = tarsAgents
     .filter((agent) => agent.tier === "specialist")
     .sort((a, b) => specialistOrder.indexOf(a.id) - specialistOrder.indexOf(b.id));
-  const activeNodeIds = new Set(["tars", "career", "developer"]);
+  const developerSubagents = tarsAgents.filter((agent) => agent.tier === "developer-subagent");
+  const activeNodeIds = new Set(["tars", "career", "developer", "frontend-developer"]);
 
   return (
     <div className="tars-product-slice tars-product-slice--agents-tab" aria-hidden="true">
       <section className="tars-agents-tab-main">
         <div className="tars-agent-lane-board">
-          <div className="tars-agent-network">
-            <svg className="tars-agent-connectors" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
-              <path d="M500 82 C250 112 180 150 128 208" />
-              <path d="M500 82 C382 116 352 150 330 208" />
-              <path className="is-live-active" d="M500 144 L628 193" />
-              <path d="M500 82 C630 116 662 150 670 208" />
-              <path d="M128 282 C180 342 220 370 250 426" />
-              <path d="M330 282 C330 340 340 374 365 426" />
-              <path className="is-live-active" d="M628 332 L586 382" />
-              <path d="M670 282 C628 340 610 374 635 426" />
-              <path d="M670 282 C730 338 756 374 770 426" />
-              <path d="M128 282 C78 338 96 374 95 426" />
+          <header className="tars-agents-tab-header" data-agent-section-title="agents">
+            <div>
+              <h3>Agent graph.</h3>
+              <p>The left side is the explanation; the right side is the operating model. TARS starts at the top, checks domain ownership first, then hands bounded work to reusable specialists. Developer owns the implementation subagents underneath it.</p>
+            </div>
+          </header>
+          <div className="tars-agent-network tars-agent-network--dark-cell" data-agent-graph="openclaw-agents">
+            <svg className="tars-agent-connectors" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+              <path className="is-live-active" data-edge="tars-career" d="M500 122 C305 132 176 144 125 166" />
+              <path data-edge="tars-seeme" d="M500 122 C420 136 392 148 375 166" />
+              <path data-edge="tars-personal" d="M500 122 C580 136 608 148 625 166" />
+              <path data-edge="tars-claw" d="M500 122 C695 132 824 144 875 166" />
+              <path data-edge="career-marketer" d="M125 250 C112 274 96 282 84 292" />
+              <path className="is-live-active" data-edge="career-developer" d="M125 250 C150 272 206 282 250 292" />
+              <path data-edge="seeme-research" d="M375 250 C392 274 408 282 417 292" />
+              <path data-edge="personal-news-retriever" d="M625 250 C608 274 592 282 583 292" />
+              <path data-edge="claw-security" d="M875 250 C850 272 794 282 750 292" />
+              <path data-edge="claw-legal" d="M875 250 C900 272 916 282 917 292" />
+              <path className="is-live-active" data-edge="developer-frontend-developer" d="M250 376 C226 396 196 408 170 418" />
+              <path data-edge="developer-backend-developer" d="M250 376 C274 396 304 408 330 418" />
             </svg>
             <div className="tars-agent-tier tars-agent-tier--tars">
               <div className={`tars-agent-tab-node tars-agent-tab-node--tars${activeNodeIds.has("tars") ? " is-live-active" : ""}`} style={{ "--agent-rgb": tars?.tone }}>
                 <div className="tars-agent-tab-orb"><img src={tars?.image} alt="" /></div>
-                <span className="tars-agent-tab-kicker">Entrypoint</span>
                 <strong>{tars?.name}</strong>
-                <small>{tars?.headline}</small>
-                <em><i />Active</em>
               </div>
             </div>
-            <div className="tars-agent-tier-label">Domain owners</div>
             <div className="tars-agent-row tars-agent-row--domains">
               {domainAgents.map((agent) => (
                 <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
                   <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
-                  <span className="tars-agent-tab-kicker">{agent.tier}</span>
                   <strong>{agent.name}</strong>
-                  <small>{agent.headline}</small>
-                  {activeNodeIds.has(agent.id) ? <em><i />Active</em> : null}
                 </div>
               ))}
             </div>
-            <div className="tars-agent-tier-label">Reusable specialists</div>
             <div className="tars-agent-row tars-agent-row--specialists">
               {specialistAgents.map((agent) => (
                 <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
                   <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
-                  <span className="tars-agent-tab-kicker">{agent.tier}</span>
                   <strong>{agent.name}</strong>
-                  <small>{agent.headline}</small>
-                  {activeNodeIds.has(agent.id) ? <em><i />Active</em> : null}
+                </div>
+              ))}
+            </div>
+            <div className="tars-agent-row tars-agent-row--developer-subagents">
+              {developerSubagents.map((agent) => (
+                <div className={`tars-agent-tab-node tars-agent-tab-node--subagent${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+                  <div className="tars-agent-tab-orb"><span>{agent.name.slice(0, 2).toUpperCase()}</span></div>
+                  <strong>{agent.name}</strong>
                 </div>
               ))}
             </div>
@@ -902,7 +960,19 @@ function TarsAgentsTabSlice() {
 
 function TarsVisionSlice() {
   return (
-    <TarsBoardProductSlice kind="command-center" />
+    <div className="tars-product-slice tars-product-slice--vision" aria-hidden="true">
+      <div className="tars-vision-visualEdge" data-vision-visual-edge="command-center">
+        <div className="tars-vision-visualCrop">
+          <TarsBoardProductSlice kind="command-center" />
+        </div>
+      </div>
+      <section className="tars-vision-copy" data-vision-copy="primary">
+        <h3 className="tars-vision-title">Private execution graph.</h3>
+        <p className="tars-vision-description">
+          TARS turns intent into scoped work: OpenClaw routes to the right agent, keeps context and tools bounded, then returns verified proof to the operator.
+        </p>
+      </section>
+    </div>
   );
 }
 
@@ -932,7 +1002,7 @@ function TarsAutomationCalendarSlice() {
   return (
     <div className="tars-product-slice tars-product-slice--automation-calendar" aria-hidden="true">
       <header className="tars-automation-header">
-        <h3>Automations</h3>
+        <h3>Automation</h3>
       </header>
       <section className="automation-calendar-shell" aria-label="Weekly automation schedule">
         <div className="automation-calendar-grid">
@@ -1086,18 +1156,150 @@ function TarsArchitecturePrivacySlice() {
   );
 }
 
+function TarsTransitionStorm() {
+  const sectionRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!sectionRef.current) return undefined;
+
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const ctx = gsap.context(() => {
+      const stage = sectionRef.current.querySelector(".tars-prompt-storm__stage");
+      const headline = sectionRef.current.querySelector(".tars-prompt-storm__headline");
+      const prompts = gsap.utils.toArray(".tars-prompt-storm__prompt", sectionRef.current);
+
+      if (prefersReducedMotion) {
+        sectionRef.current.classList.add("is-visible");
+        gsap.set(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" });
+        gsap.set(headline, { opacity: 1, y: 0, scale: 1 });
+        gsap.set(prompts, { opacity: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)" });
+        return;
+      }
+
+      gsap.set(sectionRef.current, { opacity: 1 });
+      gsap.set(stage, { opacity: 0, y: 34, scale: 0.96, filter: "blur(8px)" });
+      gsap.set(headline, { opacity: 0, y: 36, scale: 0.94 });
+      gsap.set(prompts, {
+        opacity: 0,
+        xPercent: -50,
+        yPercent: -50,
+        x: (index) => ((index % 7) - 3) * 7,
+        y: 74,
+        rotation: (index) => (index % 7 - 3) * 7,
+        scale: 0.68,
+        filter: "blur(12px)",
+        transformOrigin: "center center",
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      tl.to(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 0)
+        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.24, ease: "power3.out" }, 0.04)
+        .to(prompts, {
+          opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
+          y: 0,
+          x: 0,
+          rotation: (index) => (index % 7 - 3) * 3,
+          scale: (index) => (index % 6 === 0 ? 1.08 : 1),
+          filter: "blur(0px)",
+          duration: 0.32,
+          ease: "power3.out",
+        }, 0.08)
+        .to(prompts, {
+          x: (index) => ((index % 9) - 4) * 18,
+          y: (index) => ((index % 8) - 3.5) * 16,
+          rotation: (index) => (index % 7 - 3) * -6,
+          scale: (index) => 1.04 + (index % 4) * 0.045,
+          duration: 0.32,
+          ease: "none",
+        }, 0.38)
+        .to(headline, { y: -18, scale: 0.98, opacity: 0.72, duration: 0.22, ease: "none" }, 0.5)
+        .to(stage, { opacity: 0, y: -42, scale: 1.08, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, 0.82)
+        .to(headline, { opacity: 0, y: -58, scale: 0.92, duration: 0.18, ease: "power2.in" }, 0.8)
+        .to(prompts, {
+          opacity: 0,
+          y: (index) => -76 + ((index % 5) - 2) * 14,
+          scale: 1.22,
+          filter: "blur(14px)",
+          duration: 0.2,
+          ease: "power2.in",
+        }, 0.8);
+
+      const renderFromScroll = () => {
+        if (!sectionRef.current) return;
+        const rect = sectionRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+        const start = viewportHeight * 0.8;
+        const end = viewportHeight * 0.2 - rect.height;
+        const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
+        tl.progress(progress);
+
+        if (progress > 0.02 && progress < 0.98) {
+          sectionRef.current.classList.add("is-visible");
+        } else {
+          sectionRef.current.classList.remove("is-visible");
+        }
+      };
+
+      renderFromScroll();
+      window.addEventListener("scroll", renderFromScroll, { passive: true });
+      window.addEventListener("resize", renderFromScroll);
+
+      return () => {
+        window.removeEventListener("scroll", renderFromScroll);
+        window.removeEventListener("resize", renderFromScroll);
+      };
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section className="tars-prompt-storm" aria-label="TARS prompt routing transition" ref={sectionRef}>
+      <div className="tars-prompt-storm__stage">
+        <div className="tars-prompt-storm__field">
+          {TARS_TRANSITION_PROMPTS.map(([prompt, x, y, tone, size], index) => (
+            <span
+              className={`tars-prompt-storm__prompt tars-prompt-storm__prompt--${tone} tars-prompt-storm__prompt--${size}`}
+              style={{
+                "--prompt-x": `${x}%`,
+                "--prompt-y": `${y}%`,
+                "--prompt-rotate": `${(index % 7 - 3) * 3}deg`,
+                "--prompt-float-x": `${((index % 5) - 2) * 9}px`,
+                "--prompt-float-y": `${((index % 7) - 3) * 7}px`,
+                "--prompt-float-scale": 1 + (index % 4) * 0.025,
+                "--prompt-float-duration": `${3.4 + (index % 6) * 0.42}s`,
+                "--prompt-float-delay": `${index * -0.17}s`,
+              }}
+              key={prompt}
+            >
+              {prompt}
+            </span>
+          ))}
+        </div>
+        <div className="tars-prompt-storm__headline">
+          <span>handoff beat</span>
+          <strong>Every prompt finds its agent.</strong>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function TarsScrollSections({ blocks }) {
   if (!Array.isArray(blocks) || blocks.length === 0) return null;
 
   return (
     <div className="tars-scroll-sections" aria-label="TARS product sections">
+      <TarsTransitionStorm />
       {blocks.map((block, index) => (
         <section className={`tars-scroll-section tars-scroll-section--${block.tarsBoardSlice || "text"}`} key={`${block.sectionTitle || "section"}-${index}`}>
           <div className="tars-scroll-section__inner">
-            <div className="tars-scroll-section__copy">
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h2>{block.sectionTitle}</h2>
-            </div>
+            {block.sectionTitle && !block.hideSectionTitle ? (
+              <div className="tars-scroll-section__copy">
+                <h2>{block.sectionTitle}</h2>
+              </div>
+            ) : null}
             {block.tarsBoardSlice ? (
               <TarsBoardProductSlice kind={block.tarsBoardSlice} />
             ) : null}
