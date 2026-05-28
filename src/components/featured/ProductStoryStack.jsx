@@ -841,7 +841,70 @@ const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (
     : [{ ...event, key: event.title }]
 ));
 
-const tarsAutomationMondayEvents = tarsAutomationCalendarEvents.filter((event) => event.day === 0);
+function doAutomationEventsOverlap(a, b) {
+  return a.start < b.start + b.duration && b.start < a.start + a.duration;
+}
+
+function layoutAutomationCalendarEvents(events) {
+  const sortedEvents = events
+    .map((event, index) => ({ ...event, originalIndex: index }))
+    .sort((a, b) => a.start - b.start || (b.duration - a.duration));
+
+  const laidOutEvents = [];
+  let group = [];
+  let groupEnd = -Infinity;
+
+  const flushGroup = () => {
+    if (!group.length) return;
+
+    const columns = [];
+    const assigned = group.map((event) => {
+      const end = event.start + event.duration;
+      const columnIndex = columns.findIndex((columnEnd) => columnEnd <= event.start);
+      const nextColumnIndex = columnIndex === -1 ? columns.length : columnIndex;
+      columns[nextColumnIndex] = end;
+      return { ...event, automationColumnIndex: nextColumnIndex };
+    });
+    const columnCount = Math.max(columns.length, 1);
+
+    laidOutEvents.push(...assigned.map((event) => ({
+      ...event,
+      automationColumnCount: columnCount,
+      automationColumnLeft: columnCount > 1 ? `${(event.automationColumnIndex / columnCount) * 100}%` : "0%",
+      automationColumnWidth: columnCount > 1 ? `${100 / columnCount}%` : "100%",
+    })));
+
+    group = [];
+    groupEnd = -Infinity;
+  };
+
+  sortedEvents.forEach((event) => {
+    const eventEnd = event.start + event.duration;
+    if (!group.length || group.some((groupEvent) => doAutomationEventsOverlap(groupEvent, event))) {
+      group.push(event);
+      groupEnd = Math.max(groupEnd, eventEnd);
+      return;
+    }
+
+    if (event.start < groupEnd) {
+      group.push(event);
+      groupEnd = Math.max(groupEnd, eventEnd);
+      return;
+    }
+
+    flushGroup();
+    group.push(event);
+    groupEnd = eventEnd;
+  });
+
+  flushGroup();
+
+  return laidOutEvents.sort((a, b) => a.originalIndex - b.originalIndex);
+}
+
+const tarsAutomationMondayEvents = layoutAutomationCalendarEvents(
+  tarsAutomationCalendarEvents.filter((event) => event.day === 0)
+);
 
 function BoardCard({ card }) {
   const epicClass = String(card.epic || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
@@ -1025,7 +1088,7 @@ function TarsAutomationCalendarSlice() {
             <div className="automation-calendar-day automation-calendar-day--monday" style={{ gridColumn: 2 }}>
               <div className="automation-calendar-day-track">
                 {tarsAutomationMondayEvents.map((event) => (
-                  <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration <= 1 ? " automation-calendar-block-short" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color }}>
+                  <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration <= 1 ? " automation-calendar-block-short" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color, "--automation-column-left": event.automationColumnLeft, "--automation-column-width": event.automationColumnWidth }}>
                     <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
                   </article>
                 ))}
