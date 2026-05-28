@@ -826,13 +826,13 @@ const tarsAgents = [
 const tarsAutomationDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const tarsAutomationHours = [0, 3, 6, 9, 12, 15, 18, 21, 24];
 const tarsAutomationEvents = [
-  { title: "Card Executor", days: "daily", start: 0, duration: 3, recurrence: "12:00–3:00 AM", lane: "dw", color: "#7c6dff" },
-  { title: "Career Job Discovery", days: "daily", start: 4, duration: 1, recurrence: "4:00 AM", lane: "dw", color: "#ffd166" },
-  { title: "News", days: "daily", start: 5, duration: 1, recurrence: "5:00 AM", lane: "main", color: "#5ac8fa" },
-  { title: "Morning GUI Window Cleanup", days: "daily", start: 5.5, duration: 0.75, recurrence: "5:30 AM", lane: "main", color: "#ff9f0a" },
-  { title: "Daily Morning", days: "daily", start: 6, duration: 1, recurrence: "6:00 AM", lane: "main", color: "#30d158" },
-  { title: "Evening Report", days: "daily", start: 20, duration: 1, recurrence: "8:00 PM", lane: "main", color: "#bf5af2" },
-  { title: "Sprint Closing Workflow", day: 6, start: 19.5, duration: 1, recurrence: "Sunday 7:30 PM", lane: "main", color: "#ff375f" },
+  { title: "Card Executor", days: "daily", start: 0, duration: 3, recurrence: "12:00–3:00 AM", lane: "dw", color: "#8b7cff" },
+  { title: "Career Job Discovery", days: "daily", start: 4, duration: 1, recurrence: "4:00 AM", lane: "dw", color: "#ffd36a" },
+  { title: "News", days: "daily", start: 5, duration: 1, recurrence: "5:00 AM", lane: "main", color: "#64d2ff" },
+  { title: "Morning GUI Window Cleanup", days: "daily", start: 5.5, duration: 0.75, recurrence: "5:30 AM", lane: "main", color: "#ffb340" },
+  { title: "Daily Morning", days: "daily", start: 6, duration: 1, recurrence: "6:00 AM", lane: "main", color: "#4be37d" },
+  { title: "Evening Report", days: "daily", start: 20, duration: 1, recurrence: "8:00 PM", lane: "main", color: "#d78cff" },
+  { title: "Sprint Closing Workflow", day: 6, start: 19.5, duration: 1, recurrence: "Sunday 7:30 PM", lane: "main", color: "#ff5f7a" },
 ];
 
 const tarsAutomationCalendarEvents = tarsAutomationEvents.flatMap((event) => (

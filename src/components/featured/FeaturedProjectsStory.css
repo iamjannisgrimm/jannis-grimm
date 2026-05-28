@@ -6475,6 +6475,13 @@
     0 22px 54px rgba(0, 0, 0, 0.34) !important;
 }
 
+.highlights-stack--tars .tars-product-slice--automation-calendar .automation-calendar-grid {
+  grid-row: 1 / -1;
+  grid-template-rows: var(--calendar-header-height) var(--calendar-height) !important;
+  min-height: calc(var(--calendar-header-height) + var(--calendar-height));
+  overflow: visible;
+}
+
 .highlights-stack--tars .automation-calendar-grid,
 .highlights-stack--tars .automation-calendar-header,
 .highlights-stack--tars .automation-calendar-body {
@@ -6484,6 +6491,22 @@
 .highlights-stack--tars .automation-calendar-header,
 .highlights-stack--tars .automation-calendar-body {
   grid-template-columns: var(--calendar-time-rail-width) minmax(0, 1fr) !important;
+}
+
+.highlights-stack--tars .automation-calendar-body {
+  position: relative;
+  overflow: visible;
+}
+
+.highlights-stack--tars .automation-calendar-time-rail {
+  z-index: 6;
+  overflow: visible !important;
+  background: linear-gradient(180deg, rgba(245, 248, 255, 0.046), rgba(245, 248, 255, 0.022)) !important;
+}
+
+.highlights-stack--tars .automation-calendar-time-track {
+  height: var(--calendar-height);
+  overflow: visible !important;
 }
 
 .highlights-stack--tars .automation-calendar-day-head--monday {
@@ -6509,9 +6532,24 @@
   text-shadow: none;
 }
 
+.highlights-stack--tars .tars-product-slice--automation-calendar .automation-calendar-time-rail span {
+  right: clamp(10px, 1.15vw, 14px);
+  z-index: 7;
+  color: rgba(247, 250, 255, 0.96) !important;
+  font-size: clamp(0.7rem, 0.78vw, 0.78rem);
+  font-weight: 820;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 .highlights-stack--tars .automation-calendar-day--monday,
 .highlights-stack--tars .automation-calendar-day--monday .automation-calendar-day-track {
   background-color: rgba(245, 248, 255, 0.026) !important;
+}
+
+.highlights-stack--tars .automation-calendar-day--monday {
+  z-index: 4;
+  overflow: visible !important;
 }
 
 .highlights-stack--tars .automation-calendar-day--monday .automation-calendar-day-track {
