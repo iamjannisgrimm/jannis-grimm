@@ -1090,7 +1090,7 @@ function TarsAutomationCalendarSlice() {
               <div className="automation-calendar-day-track">
                 {tarsAutomationMondayEvents.map((event) => (
                   <article className={`automation-calendar-block automation-instance-${event.lane}${event.duration <= 1 ? " automation-calendar-block-short" : event.duration >= 1.25 ? " automation-calendar-block-roomy" : ""}`} key={event.key} style={{ "--automation-top": `${(event.start / 24) * 100}%`, "--automation-duration-hours": event.duration, "--automation-display-color": event.color, "--automation-column-left": event.automationColumnLeft, "--automation-column-width": event.automationColumnWidth }}>
-                    <div className="automation-calendar-block-visible"><h3>{event.title}</h3><div className="automation-calendar-meta"><span>{event.recurrence}</span></div></div>
+                    <div className="automation-calendar-block-visible"><h3>{event.title}</h3></div>
                   </article>
                 ))}
               </div>
