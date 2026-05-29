@@ -21,42 +21,43 @@ const TEAM_MEDIA_TEXT_GAP = 0.22;
 const TEAM_INFO_EXIT_GAP = 0.38;
 
 const TARS_TRANSITION_PROMPTS = [
-  ["ship the card", 8, 14, "blue", "sm"],
-  ["read the repo", 23, 9, "slate", "md"],
+  ["evening report", 8, 14, "blue", "sm"],
+  ["daily morning", 23, 9, "slate", "md"],
   ["route to Developer", 48, 11, "orange", "lg"],
-  ["summarize signal", 74, 12, "purple", "md"],
-  ["check memory", 91, 18, "blue", "sm"],
+  ["AI digest", 74, 12, "purple", "md"],
+  ["memory lookup", 91, 18, "blue", "sm"],
   ["verify locally", 14, 29, "green", "md"],
-  ["draft the brief", 34, 24, "slate", "sm"],
+  ["resume tailor", 34, 24, "slate", "sm"],
   ["protect secrets", 62, 25, "orange", "md"],
-  ["open the dashboard", 84, 31, "blue", "lg"],
-  ["wake the agent", 6, 46, "purple", "md"],
-  ["compress context", 25, 43, "blue", "lg"],
-  ["plan the sprint", 45, 39, "green", "md"],
+  ["dashboard metrics", 84, 31, "blue", "lg"],
+  ["event bus digest", 6, 46, "purple", "md"],
+  ["context snapshot", 25, 43, "blue", "lg"],
+  ["sprint close", 45, 39, "green", "md"],
   ["run the build", 67, 42, "slate", "sm"],
-  ["capture proof", 92, 47, "orange", "md"],
-  ["ask only when needed", 16, 62, "purple", "lg"],
-  ["move the work", 38, 58, "blue", "md"],
-  ["keep context scoped", 61, 60, "green", "lg"],
-  ["close the loop", 82, 64, "slate", "md"],
-  ["triage inbox", 10, 78, "orange", "sm"],
-  ["scan calendar", 30, 83, "blue", "md"],
-  ["prepare handoff", 53, 79, "purple", "md"],
+  ["proof artifact", 92, 47, "orange", "md"],
+  ["approval queue", 16, 62, "purple", "lg"],
+  ["kanban move", 38, 58, "blue", "md"],
+  ["ready-card executor", 61, 60, "green", "lg"],
+  ["sprint snapshot", 82, 64, "slate", "md"],
+  ["Google overview", 10, 78, "orange", "sm"],
+  ["calendar scan", 30, 83, "blue", "md"],
+  ["document delivery", 53, 79, "purple", "md"],
   ["update memory", 73, 84, "green", "sm"],
-  ["spawn researcher", 89, 77, "purple", "md"],
-  ["shape launch copy", 19, 18, "orange", "md"],
-  ["review security", 40, 17, "green", "sm"],
-  ["file the proof", 57, 17, "slate", "sm"],
+  ["news retrieval", 89, 77, "purple", "md"],
+  ["SeeMe growth loop", 19, 18, "orange", "md"],
+  ["security review", 40, 17, "green", "sm"],
+  ["credential refs", 57, 17, "slate", "sm"],
   ["compare sources", 79, 22, "purple", "md"],
-  ["debug the flow", 18, 38, "blue", "sm"],
-  ["sync the board", 52, 31, "green", "md"],
-  ["write the PR", 73, 36, "orange", "sm"],
-  ["hold the boundary", 28, 52, "slate", "md"],
-  ["call the right specialist", 50, 51, "blue", "xl"],
-  ["turn intent into tasks", 72, 53, "purple", "lg"],
-  ["ship, verify, remember", 47, 70, "orange", "xl"],
-  ["keep the human out of loops", 68, 72, "blue", "lg"],
-  ["surface the next move", 12, 88, "green", "md"],
+  ["automation doctor", 18, 38, "blue", "sm"],
+  ["board sync", 52, 31, "green", "md"],
+  ["browser QA", 73, 36, "orange", "sm"],
+  ["Google reauth", 28, 52, "slate", "md"],
+  ["agent control plane", 50, 51, "blue", "xl"],
+  ["workflow scheduler", 72, 53, "purple", "lg"],
+  ["Claw health check", 47, 70, "orange", "xl"],
+  ["mac cleanup dry run", 68, 72, "blue", "lg"],
+  ["LinkedIn scan", 12, 88, "green", "md"],
+  ["career draft packet", 88, 89, "purple", "sm"],
 ];
 
 function buildPanelTimeline({
@@ -1341,7 +1342,7 @@ function TarsTransitionStorm() {
         </div>
         <div className="tars-prompt-storm__headline">
           <span>handoff beat</span>
-          <strong>Every prompt finds its agent.</strong>
+          <strong>Every task finds its agent.</strong>
         </div>
       </div>
     </section>
