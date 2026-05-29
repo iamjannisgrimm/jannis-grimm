@@ -1449,7 +1449,7 @@ function TarsTransitionStorm() {
               }}
               key={prompt}
             >
-              {prompt}
+              <span className="tars-prompt-storm__promptText">{prompt}</span>
             </span>
           ))}
         </div>

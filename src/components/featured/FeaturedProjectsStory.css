@@ -5807,6 +5807,16 @@
   will-change: transform, opacity, filter;
 }
 
+.highlights-stack--tars .tars-prompt-storm__promptText {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+  animation: tarsPromptStormFloat var(--prompt-float-duration, 4s) ease-in-out var(--prompt-float-delay, 0s) infinite alternate;
+  animation-play-state: paused;
+}
+
 .highlights-stack--tars .tars-prompt-storm__prompt--blue { --prompt-rgb: 100,168,255; }
 .highlights-stack--tars .tars-prompt-storm__prompt--purple { --prompt-rgb: 175,82,222; }
 .highlights-stack--tars .tars-prompt-storm__prompt--orange { --prompt-rgb: 255,149,0; }
@@ -5856,19 +5866,19 @@
 }
 
 .highlights-stack--tars .tars-prompt-storm.is-visible .tars-prompt-storm__headline,
-.highlights-stack--tars .tars-prompt-storm.is-visible .tars-prompt-storm__prompt {
+.highlights-stack--tars .tars-prompt-storm.is-visible .tars-prompt-storm__promptText {
   animation-play-state: running;
 }
 
 @keyframes tarsPromptStormFloat {
   from {
-    transform: translate3d(-50%, -50%, 0) rotate(var(--prompt-rotate)) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
   }
 
   to {
     transform: translate3d(
-        calc(-50% + var(--prompt-float-x, 0px)),
-        calc(-50% + var(--prompt-float-y, 0px)),
+        var(--prompt-float-x, 0px),
+        var(--prompt-float-y, 0px),
         0
       )
       rotate(calc(var(--prompt-rotate) * -0.35))
@@ -5924,6 +5934,9 @@
     opacity: 1;
     transform: translate(-50%, -50%);
     filter: none;
+  }
+
+  .highlights-stack--tars .tars-prompt-storm__promptText {
     animation: none;
   }
 
