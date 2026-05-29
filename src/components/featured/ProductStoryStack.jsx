@@ -823,6 +823,17 @@ const tarsPlanApproveNavItems = [
 
 const tarsPlanApproveColumns = [
   {
+    title: "review",
+    description: "Approval-gated actions waiting on Jannis",
+    count: 3,
+    tone: "review",
+    cards: [
+      { epic: "Career", title: "Founding AI Engineer — applied intelligence platform", summary: "Final application packet is ready after form discovery, tailored resume, and answer population.", priority: "high", assignee: "Career", dependencies: "Ready", actions: ["Submit"] },
+      { epic: "TARS Dev", title: "TARS dev task: Plan & Approve visual update", summary: "Portfolio-safe implementation is complete; verify the Kanban-like review state before closing.", priority: "high", assignee: "Developer", dependencies: "Ready", actions: ["Revise", "Done"] },
+      { epic: "Email", title: "Overnight inbound: partnership intro draft", summary: "Draft reply prepared from the message that arrived overnight; needs approval before sending.", priority: "medium", assignee: "Personal", dependencies: "Ready", actions: ["Send", "Revise"] },
+    ],
+  },
+  {
     title: "ready",
     description: "Approved work that can run",
     count: 2,
@@ -838,17 +849,6 @@ const tarsPlanApproveColumns = [
     cards: [
       { epic: "OpenClaw Systems", title: "Agent session tail polish", summary: "Surface live agent progress, tool use, and handoffs in a compact dashboard trace.", priority: "high", assignee: "TARS", dependencies: "Ready", live: true },
       { epic: "Security Hygiene", title: "Credential reference audit", summary: "Verify sensitive automation paths use references instead of raw secrets.", priority: "high", assignee: "Security", dependencies: "Ready" },
-    ],
-  },
-  {
-    title: "review",
-    description: "Approval-gated actions waiting on Jannis",
-    count: 3,
-    tone: "review",
-    cards: [
-      { epic: "Career", title: "Founding AI Engineer — applied intelligence platform", summary: "Final application packet is ready after form discovery, tailored resume, and answer population.", priority: "high", assignee: "Career", dependencies: "Ready", actions: ["Submit"] },
-      { epic: "TARS Dev", title: "TARS dev task: Plan & Approve visual update", summary: "Portfolio-safe implementation is complete; verify the Kanban-like review state before closing.", priority: "high", assignee: "Developer", dependencies: "Ready", actions: ["Revise", "Done"] },
-      { epic: "Email", title: "Overnight inbound: partnership intro draft", summary: "Draft reply prepared from the message that arrived overnight; needs approval before sending.", priority: "medium", assignee: "Personal", dependencies: "Ready", actions: ["Send", "Revise"] },
     ],
   },
 ];
