@@ -7338,6 +7338,18 @@
   will-change: transform, opacity, filter;
 }
 
+.highlights-stack--tars .tars-agentic-copy {
+  grid-column: 1;
+  grid-row: 1;
+  max-width: 520px;
+  will-change: transform, opacity, filter;
+}
+
+.highlights-stack--tars .tars-agentic-copy--reveal {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .highlights-stack--tars .tars-agents-tab-header h3,
 .highlights-stack--tars .tars-agents-tab-header p {
   margin-left: 0;
@@ -7350,6 +7362,10 @@
   font-size: clamp(2.4rem, 5.2vw, 5.8rem);
   line-height: 0.88;
   letter-spacing: -0.085em;
+}
+
+.highlights-stack--tars .tars-agentic-copy--reveal h3 {
+  max-width: 12ch;
 }
 
 .highlights-stack--tars .tars-agents-tab-header p {

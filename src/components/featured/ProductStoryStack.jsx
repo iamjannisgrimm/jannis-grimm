@@ -1115,9 +1115,13 @@ function TarsAgentsTabSlice() {
       <section className="tars-agents-tab-main">
         <div className="tars-agent-lane-board">
           <header className="tars-agents-tab-header" data-agent-section-title="agents">
-            <div>
+            <div className="tars-agentic-copy tars-agentic-copy--initial">
               <h3>Agentic.</h3>
               <p>TARS uses the A2A protocol to pass scoped task packets between domain agents, reusable specialists, and implementation subagents.</p>
+            </div>
+            <div className="tars-agentic-copy tars-agentic-copy--reveal" aria-hidden="true">
+              <h3>Parallel teams on demand</h3>
+              <p>Spin up specialized agent teams that work side by side whenever the task calls for it.</p>
             </div>
           </header>
           <div className="tars-agentic-graph-panel" aria-hidden="true">
@@ -1132,10 +1136,6 @@ function TarsAgentsTabSlice() {
                   {agentNetworkGraph("tars-agent-network--spawn-clone", routeKey)}
                 </div>
               ))}
-            </div>
-            <div className="tars-agentic-spawn-label">
-              <h4>Parallel teams on demand</h4>
-              <p>Spin up specialized agent teams that work side by side when the task calls for it.</p>
             </div>
           </div>
         </div>
@@ -1544,7 +1544,8 @@ function TarsScrollSections({ blocks }) {
 
       const graph = agenticSection.querySelector(".tars-agentic-spawn-stage > .tars-agent-network");
       const clones = gsap.utils.toArray(".tars-agentic-spawn-clone", agenticSection);
-      const label = agenticSection.querySelector(".tars-agentic-spawn-label");
+      const initialCopy = agenticSection.querySelector(".tars-agentic-copy--initial");
+      const revealCopy = agenticSection.querySelector(".tars-agentic-copy--reveal");
       if (!graph || clones.length < 2) return;
 
       gsap.set(graph, { transformOrigin: "center center" });
@@ -1559,7 +1560,8 @@ function TarsScrollSections({ blocks }) {
         filter: "blur(1px)",
         transformOrigin: "center center",
       });
-      if (label) gsap.set(label, { opacity: 0, x: 0, filter: "blur(8px)" });
+      if (initialCopy) gsap.set(initialCopy, { opacity: 1, y: 0, filter: "blur(0px)" });
+      if (revealCopy) gsap.set(revealCopy, { opacity: 0, y: 18, filter: "blur(8px)" });
 
       const tl = gsap.timeline({ paused: true });
       tl.to(graph, { x: -720, scale: 0.74, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
@@ -1572,8 +1574,9 @@ function TarsScrollSections({ blocks }) {
           duration: 1,
           ease: "none",
         }, 0);
-      if (label) {
-        tl.to(label, { opacity: 0.92, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 0.44);
+      if (initialCopy && revealCopy) {
+        tl.to(initialCopy, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.28, ease: "power2.out" }, 0.36)
+          .to(revealCopy, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, 0.44);
       }
 
       const renderFromScroll = () => {
