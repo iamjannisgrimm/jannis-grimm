@@ -6248,9 +6248,27 @@
   min-height: 180px;
   align-content: center;
   justify-items: start;
+  overflow: hidden;
   background:
     radial-gradient(circle at 80% 22%, rgba(175,82,222,0.2), transparent 32%),
     linear-gradient(135deg, rgba(175,82,222,0.16), rgba(100,168,255,0.08));
+}
+
+.highlights-stack--tars .tars-memory-task-packet__image {
+  position: absolute;
+  right: clamp(10px, 2.2vw, 24px);
+  bottom: clamp(10px, 2vw, 22px);
+  width: min(38%, 168px);
+  max-height: 78%;
+  object-fit: contain;
+  opacity: 0.36;
+  filter: drop-shadow(0 22px 34px rgba(0,0,0,0.34));
+  pointer-events: none;
+}
+
+.highlights-stack--tars .tars-memory-task-packet > :not(.tars-memory-task-packet__image) {
+  position: relative;
+  z-index: 1;
 }
 
 .highlights-stack--tars .tars-memory-copy {
