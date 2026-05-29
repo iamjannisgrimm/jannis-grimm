@@ -52,7 +52,7 @@ if (!/gsap\.set\(prompts,\s*\{[\s\S]*?opacity:\s*0,[\s\S]*?xPercent:\s*-50,[\s\S
   violations.push("ProductStoryStack.jsx: prompt entry should start hidden at the stage center with positive z");
 }
 
-if (!/\.to\(prompts,\s*\{[\s\S]*?opacity:\s*\(index\)[\s\S]*?x:\s*\(_index,\s*element\)\s*=>\s*promptTargetFor\(element\)\.x[\s\S]*?y:\s*\(_index,\s*element\)\s*=>\s*promptTargetFor\(element\)\.y[\s\S]*?z:\s*0[\s\S]*?duration:\s*0\.24/.test(story)) {
+if (!/\.to\(prompts,\s*\{[\s\S]*?opacity:\s*\(index\)[\s\S]*?x:\s*\(_index,\s*element\)\s*=>\s*promptTargetFor\(element\)\.x[\s\S]*?y:\s*\(_index,\s*element\)\s*=>\s*promptTargetFor\(element\)\.y[\s\S]*?z:\s*0[\s\S]*?duration:\s*0\.2/.test(story)) {
   violations.push("ProductStoryStack.jsx: prompt visible positions should animate out from center to stage-relative targets");
 }
 
@@ -64,8 +64,12 @@ if (!/"--prompt-target-x":\s*`\$\{x - 50\}vw`[\s\S]*?"--prompt-target-y":\s*`\$\
   violations.push("ProductStoryStack.jsx: prompt inline styles should define center-relative vw/vh targets");
 }
 
-if (!/const start = viewportHeight \* 0\.62;[\s\S]*?const end = viewportHeight \* 0\.18;/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt storm scroll range should be short and decisive");
+if (!/const sceneDistance = Math\.max\(rect\.height - viewportHeight, viewportHeight \* 0\.88\);[\s\S]*?const progress = gsap\.utils\.clamp\(0, 1, -rect\.top \/ sceneDistance\);/.test(transitionStorm)) {
+  violations.push("ProductStoryStack.jsx: prompt storm should map progress across a balanced fullscreen scene distance");
+}
+
+if (/const start = viewportHeight \* 0\.62|const end = viewportHeight \* 0\.18/.test(transitionStorm)) {
+  violations.push("ProductStoryStack.jsx: prompt storm should not regress to the too-short manual scroll range");
 }
 
 if (!/gsap\.set\(headline,\s*\{\s*opacity:\s*0,\s*y:\s*0[\s\S]*?\}\);/.test(story) || !/\.to\(headline,\s*\{\s*opacity:\s*0,\s*y:\s*0/.test(story)) {
@@ -93,8 +97,21 @@ if (/gsap\.fromTo\(prompts|gsap\.fromTo\(headline|gsap\.fromTo\(stage/.test(stor
   violations.push("ProductStoryStack.jsx: prompt storm should avoid fromTo origins that can flash viewport/page origin");
 }
 
-if (!/\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*92dvh;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm should use a faster short scroll section");
+if (!/\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*192dvh;[\s\S]*?min-height:\s*192svh;[\s\S]*?display:\s*grid;[\s\S]*?place-items:\s*center;/.test(css)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm section should feel like a centered fullscreen stage");
+}
+
+if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?top:\s*0;[\s\S]*?width:\s*100vw;[\s\S]*?height:\s*100dvh;[\s\S]*?display:\s*grid;[\s\S]*?place-items:\s*center;/.test(css)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm stage should occupy and center the full viewport");
+}
+
+const promptStormSectionBlock = css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[^}]*\}/)?.[0] ?? "";
+if (/min-height:\s*(?:9[0-9]|1[0-5][0-9])dvh;/.test(promptStormSectionBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm scroll scene is too short for a fullscreen page moment");
+}
+
+if (/\.tars-prompt-storm__stage\s*\{[\s\S]*?position:\s*fixed;/.test(css)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm stage should be section-scoped, not globally fixed");
 }
 
 if (!/\.tars-prompt-storm__headline\s*\{[\s\S]*?opacity:\s*0;/.test(css)) {

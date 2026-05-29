@@ -1376,8 +1376,8 @@ function TarsTransitionStorm() {
 
       const tl = gsap.timeline({ paused: true });
 
-      tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.18, ease: "expo.out" }, 0)
-        .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.24, ease: "expo.out" }, 0.02)
+      tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, 0)
+        .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.2, ease: "expo.out" }, 0.02)
         .to(prompts, {
           opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
           x: (_index, element) => promptTargetFor(element).x,
@@ -1387,15 +1387,15 @@ function TarsTransitionStorm() {
           rotationX: 0,
           scale: (index) => (index % 6 === 0 ? 1.08 : 1),
           filter: "blur(0px)",
-          duration: 0.24,
+          duration: 0.2,
           ease: "expo.out",
-          stagger: { each: 0.006, from: "center" },
+          stagger: { each: 0.004, from: "center" },
         }, 0.04)
-        .to(stage, { opacity: 1, duration: 0.14 }, 0.28)
-        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.14 }, 0.28)
-        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.14 }, 0.28)
-        .to(stage, { opacity: 0, y: 0, z: -260, scale: 0.8, rotateX: 7, filter: "blur(20px)", duration: 0.18, ease: "power3.in" }, 0.52)
-        .to(headline, { opacity: 0, y: 0, z: -180, scale: 0.72, rotateX: -6, filter: "blur(16px)", duration: 0.16, ease: "power3.in" }, 0.5)
+        .to(stage, { opacity: 1, duration: 0.38 }, 0.24)
+        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.38 }, 0.24)
+        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.38 }, 0.24)
+        .to(stage, { opacity: 0, y: 0, z: -260, scale: 0.8, rotateX: 7, filter: "blur(20px)", duration: 0.16, ease: "power3.in" }, 0.72)
+        .to(headline, { opacity: 0, y: 0, z: -180, scale: 0.72, rotateX: -6, filter: "blur(16px)", duration: 0.16, ease: "power3.in" }, 0.7)
         .to(prompts, {
           x: 0,
           y: 0,
@@ -1407,7 +1407,7 @@ function TarsTransitionStorm() {
           duration: 0.1,
           ease: "power3.inOut",
           stagger: { each: 0.003, from: "edges" },
-        }, 0.44)
+        }, 0.64)
         .to(prompts, {
           opacity: 0,
           x: 0,
@@ -1417,25 +1417,19 @@ function TarsTransitionStorm() {
           rotationX: (index) => 24 + (index % 3) * 9,
           scale: (index) => 0.36 + (index % 3) * 0.035,
           filter: "blur(26px)",
-          duration: 0.18,
+          duration: 0.16,
           ease: "power3.in",
-          stagger: { each: 0.005, from: "edges" },
-        }, 0.52);
+          stagger: { each: 0.004, from: "edges" },
+        }, 0.72);
 
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
         const rect = sectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const start = viewportHeight * 0.62;
-        const end = viewportHeight * 0.18;
-        const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
+        const sceneDistance = Math.max(rect.height - viewportHeight, viewportHeight * 0.88);
+        const progress = gsap.utils.clamp(0, 1, -rect.top / sceneDistance);
         tl.progress(progress);
-
-        if (progress > 0.02 && progress < 0.98) {
-          sectionRef.current.classList.add("is-visible");
-        } else {
-          sectionRef.current.classList.remove("is-visible");
-        }
+        sectionRef.current.classList.toggle("is-visible", rect.top < viewportHeight * 0.5 && rect.bottom > viewportHeight * 0.5);
       };
 
       renderFromScroll();

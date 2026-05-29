@@ -5794,13 +5794,14 @@
 /* TARS handoff: explicit full-screen scroll section before Agents. */
 .highlights-stack--tars .tars-prompt-storm {
   position: relative;
-  min-height: 92dvh;
-  min-height: 92svh;
-  overflow: clip;
+  min-height: 192dvh;
+  min-height: 192svh;
+  overflow: visible;
   isolation: isolate;
   background: #10161f;
   pointer-events: none;
-  display: block;
+  display: grid;
+  place-items: center;
   color: #fff;
   z-index: 1;
   opacity: 0;
@@ -5811,8 +5812,8 @@
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage {
-  position: fixed;
-  inset: 0;
+  position: sticky;
+  top: 0;
   width: 100vw;
   height: 100dvh;
   min-height: 100svh;
