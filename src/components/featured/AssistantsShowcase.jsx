@@ -56,6 +56,7 @@ function buildAssistantsContent() {
       },
       {
         sectionTitle: "Memory",
+        hideSectionTitle: true,
         tarsBoardSlice: "architecture-privacy",
       },
       {
