@@ -980,8 +980,8 @@ function TarsAgentsTabSlice() {
         <div className="tars-agent-lane-board">
           <header className="tars-agents-tab-header" data-agent-section-title="agents">
             <div>
-              <h3>Agent graph.</h3>
-              <p>The left side is the explanation; the right side is the operating model. TARS starts at the top, checks domain ownership first, then hands bounded work to reusable specialists. Developer owns the implementation subagents underneath it.</p>
+              <h3>Agentic.</h3>
+              <p>TARS uses the A2A protocol to pass scoped task packets between domain agents, reusable specialists, and implementation subagents.</p>
             </div>
           </header>
           <div className="tars-agent-network tars-agent-network--dark-cell" data-agent-graph="openclaw-agents">
@@ -1045,9 +1045,9 @@ function TarsVisionSlice() {
         </div>
       </div>
       <section className="tars-vision-copy" data-vision-copy="primary">
-        <h3 className="tars-vision-title">Private execution graph.</h3>
+        <h3 className="tars-vision-title">Plan &amp; Approve</h3>
         <p className="tars-vision-description">
-          TARS turns intent into scoped work: OpenClaw routes to the right agent, keeps context and tools bounded, then returns verified proof to the operator.
+          TARS routes intent, proposes a plan, waits for approval when actions cross a boundary, then executes with artifacts and proof.
         </p>
       </section>
     </div>
