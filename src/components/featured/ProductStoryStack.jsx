@@ -1463,13 +1463,17 @@ function TarsTransitionStorm() {
         }, 0.8)
         .to(group, { opacity: 0, y: 56, z: -320, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.3, ease: "power3.in" }, 0.88);
 
+      let rafId = 0;
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
         const rect = sectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const start = viewportHeight * TARS_PROMPT_STORM_SCROLL_START_VH;
-        const end = viewportHeight * TARS_PROMPT_STORM_SCROLL_END_VH - rect.height;
-        const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        const sectionTop = scrollY + rect.top;
+        const sectionHeight = sectionRef.current.offsetHeight || rect.height || viewportHeight;
+        const startScroll = sectionTop - viewportHeight * TARS_PROMPT_STORM_SCROLL_START_VH;
+        const endScroll = sectionTop + sectionHeight - viewportHeight * TARS_PROMPT_STORM_SCROLL_END_VH;
+        const progress = gsap.utils.clamp(0, 1, (scrollY - startScroll) / Math.max(1, endScroll - startScroll));
         tl.progress(progress);
 
         const isActive = progress > 0.02 && progress < 0.98;
@@ -1481,14 +1485,22 @@ function TarsTransitionStorm() {
           sectionRef.current.classList.remove("is-visible");
         }
       };
+      const requestRender = () => {
+        if (rafId) return;
+        rafId = window.requestAnimationFrame(() => {
+          rafId = 0;
+          renderFromScroll();
+        });
+      };
 
       renderFromScroll();
-      window.addEventListener("scroll", renderFromScroll, { passive: true });
-      window.addEventListener("resize", renderFromScroll);
+      window.addEventListener("scroll", requestRender, { passive: true });
+      window.addEventListener("resize", requestRender);
 
       return () => {
-        window.removeEventListener("scroll", renderFromScroll);
-        window.removeEventListener("resize", renderFromScroll);
+        if (rafId) window.cancelAnimationFrame(rafId);
+        window.removeEventListener("scroll", requestRender);
+        window.removeEventListener("resize", requestRender);
       };
     }, sectionRef);
 
@@ -1589,29 +1601,43 @@ function TarsScrollSections({ blocks }) {
           duration: 1,
           ease: "none",
         }, 0);
+      let rafId = 0;
       const renderFromScroll = () => {
         const rect = agenticSection.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const pinnedTravel = Math.max(1, rect.height - viewportHeight);
-        const progress = gsap.utils.clamp(0, 1, -rect.top / pinnedTravel);
-        const shouldPin = rect.top <= 0 && rect.bottom >= viewportHeight;
-        const shouldRelease = rect.top < 0 && rect.bottom < viewportHeight && rect.bottom > 0;
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        const sectionTop = scrollY + rect.top;
+        const sectionHeight = agenticSection.offsetHeight || rect.height || viewportHeight;
+        const sectionBottom = sectionTop + sectionHeight;
+        const pinStart = sectionTop;
+        const pinEnd = Math.max(pinStart + 1, sectionBottom - viewportHeight);
+        const progress = gsap.utils.clamp(0, 1, (scrollY - pinStart) / Math.max(1, pinEnd - pinStart));
+        const shouldPin = scrollY >= pinStart && scrollY <= pinEnd;
+        const shouldRelease = scrollY > pinEnd && scrollY < sectionBottom;
 
         agenticSection.classList.toggle("is-agentic-pinned", shouldPin);
         agenticSection.classList.toggle("is-agentic-released", shouldRelease);
         tl.progress(progress);
         setAgenticCopyProgress(progress);
       };
+      const requestRender = () => {
+        if (rafId) return;
+        rafId = window.requestAnimationFrame(() => {
+          rafId = 0;
+          renderFromScroll();
+        });
+      };
 
       renderFromScroll();
-      window.addEventListener("scroll", renderFromScroll, { passive: true });
-      window.addEventListener("resize", renderFromScroll);
+      window.addEventListener("scroll", requestRender, { passive: true });
+      window.addEventListener("resize", requestRender);
 
       return () => {
         agenticSection.classList.remove("is-agentic-pinned");
         agenticSection.classList.remove("is-agentic-released");
-        window.removeEventListener("scroll", renderFromScroll);
-        window.removeEventListener("resize", renderFromScroll);
+        if (rafId) window.cancelAnimationFrame(rafId);
+        window.removeEventListener("scroll", requestRender);
+        window.removeEventListener("resize", requestRender);
       };
     }, sectionsRef);
 
