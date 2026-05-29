@@ -64,7 +64,7 @@ if (!/"--prompt-target-x":\s*`\$\{x - 50\}vw`[\s\S]*?"--prompt-target-y":\s*`\$\
   violations.push("ProductStoryStack.jsx: prompt inline styles should define center-relative vw/vh targets");
 }
 
-if (!/const start = viewportHeight \* 0\.66;[\s\S]*?const end = -rect\.height \+ viewportHeight \* 0\.54;/.test(story)) {
+if (!/const start = viewportHeight \* 0\.62;[\s\S]*?const end = viewportHeight \* 0\.18;/.test(story)) {
   violations.push("ProductStoryStack.jsx: prompt storm scroll range should be short and decisive");
 }
 
@@ -93,7 +93,7 @@ if (/gsap\.fromTo\(prompts|gsap\.fromTo\(headline|gsap\.fromTo\(stage/.test(stor
   violations.push("ProductStoryStack.jsx: prompt storm should avoid fromTo origins that can flash viewport/page origin");
 }
 
-if (!/\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*138dvh;/.test(css)) {
+if (!/\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*92dvh;/.test(css)) {
   violations.push("FeaturedProjectsStory.css: prompt storm should use a faster short scroll section");
 }
 

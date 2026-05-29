@@ -1426,8 +1426,8 @@ function TarsTransitionStorm() {
         if (!sectionRef.current) return;
         const rect = sectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const start = viewportHeight * 0.66;
-        const end = -rect.height + viewportHeight * 0.54;
+        const start = viewportHeight * 0.62;
+        const end = viewportHeight * 0.18;
         const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
         tl.progress(progress);
 
@@ -1516,7 +1516,7 @@ function TarsScrollSections({ blocks }) {
         id: "tars-agentic-side-by-side",
         trigger: agenticSection,
         start: "top top",
-        end: "+=72%",
+        end: "+=38%",
         pin: true,
         pinSpacing: true,
         scrub: true,
