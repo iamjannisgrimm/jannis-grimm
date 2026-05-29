@@ -949,6 +949,18 @@ const tarsMemPalaceEdges = [
   ["projects", "artifacts"],
 ];
 
+const tarsSecurityModelCards = [
+  { label: "Private route", model: "Local model", task: "Sensitive context", tone: "100,168,255" },
+  { label: "Open route", model: "Frontier model", task: "High-reasoning builds", tone: "175,82,222" },
+  { label: "Agent route", model: "Specialist agent", task: "Scoped execution", tone: "52,199,89" },
+];
+
+const tarsSecurityLockCards = [
+  { label: "Files", detail: "Need-to-know context only" },
+  { label: "Tools", detail: "Permissioned by agent role" },
+  { label: "Hardware", detail: "Runs on my own machine" },
+];
+
 function TarsAgentsTabSlice() {
   const tars = tarsAgents.find((agent) => agent.tier === "tars");
   const domainOrder = ["career", "seeme", "personal", "claw"];
@@ -1134,6 +1146,48 @@ function TarsEarlyAccessSlice() {
   );
 }
 
+function TarsSecuritySlice() {
+  return (
+    <div className="tars-product-slice tars-product-slice--security" aria-hidden="true">
+      <div className="tars-security-visualEdge" aria-label="TARS security routing visual">
+        <div className="tars-security-visualCard">
+          <div className="tars-security-chip" aria-hidden="true">
+            <span>Own hardware</span>
+            <strong>TARS</strong>
+            <small>local runtime</small>
+          </div>
+          <div className="tars-security-route-grid" role="list">
+            {tarsSecurityModelCards.map((card) => (
+              <article className="tars-security-route-card" style={{ "--security-rgb": card.tone }} key={card.label} role="listitem">
+                <span>{card.label}</span>
+                <strong>{card.model}</strong>
+                <small>{card.task}</small>
+              </article>
+            ))}
+          </div>
+          <div className="tars-security-lock-grid" role="list">
+            {tarsSecurityLockCards.map((card) => (
+              <article className="tars-security-lock-card" key={card.label} role="listitem">
+                <i aria-hidden="true">⌘</i>
+                <div>
+                  <strong>{card.label}</strong>
+                  <small>{card.detail}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+      <section className="tars-security-copy">
+        <h3 className="tars-security-title">Security by routing.</h3>
+        <p className="tars-security-description">
+          Different models handle different tasks and agents. Files and tools stay locked unless an agent has permission, and the whole system runs on hardware I control.
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function TarsAutomationCalendarSlice() {
   return (
     <div className="tars-product-slice tars-product-slice--automation-calendar" aria-hidden="true">
@@ -1211,6 +1265,10 @@ function TarsBoardProductSlice({ kind }) {
 
   if (kind === "architecture-privacy") {
     return <TarsArchitecturePrivacySlice />;
+  }
+
+  if (kind === "security") {
+    return <TarsSecuritySlice />;
   }
 
   if (kind === "early-access") {

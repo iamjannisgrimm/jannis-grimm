@@ -60,6 +60,11 @@ function buildAssistantsContent() {
         tarsBoardSlice: "architecture-privacy",
       },
       {
+        sectionTitle: "Security",
+        hideSectionTitle: true,
+        tarsBoardSlice: "security",
+      },
+      {
         sectionTitle: "Early Access",
         tarsBoardSlice: "early-access",
       },
