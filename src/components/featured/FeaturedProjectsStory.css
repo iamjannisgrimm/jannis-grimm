@@ -6021,9 +6021,28 @@
 }
 
 .highlights-stack--tars .tars-scroll-section--agents-tab {
-  min-height: 112dvh;
-  padding-top: clamp(54px, 7vh, 92px);
-  padding-bottom: clamp(54px, 7vh, 92px);
+  min-height: 172dvh;
+  align-items: start;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.highlights-stack--tars .tars-scroll-section--agents-tab .tars-scroll-section__inner {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  align-items: center;
+  padding-top: clamp(42px, 5.5vh, 72px);
+  padding-bottom: clamp(42px, 5.5vh, 72px);
+}
+
+.highlights-stack--tars .tars-scroll-section--agents-tab.is-agentic-pinned .tars-scroll-section__inner {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 50%;
+  width: min(1180px, calc(100vw - 108px));
+  transform: translateX(-50%);
 }
 
 .highlights-stack--tars .tars-automation-header {
@@ -6151,12 +6170,13 @@
   grid-column: 1 / -1;
   display: grid;
   place-items: center;
-  width: min(1400px, calc(100vw - 32px));
-  margin-inline: calc((min(1220px, calc(100vw - 32px)) - min(1400px, calc(100vw - 32px))) / 2);
-  min-height: 520px;
+  width: min(1280px, calc(100vw - 32px));
+  margin-inline: auto;
+  min-height: clamp(430px, 58vh, 560px);
   isolation: isolate;
   perspective: 1400px;
-  overflow: visible;
+  overflow: hidden;
+  border-radius: 28px;
 }
 
 .highlights-stack--tars .tars-agentic-spawn-stage > .tars-agent-network {
@@ -6170,7 +6190,7 @@
   position: absolute;
   z-index: 7;
   top: 50%;
-  right: clamp(8px, 4vw, 58px);
+  right: clamp(10px, 2.8vw, 42px);
   display: grid;
   gap: 8px;
   width: min(300px, 30vw);
@@ -6208,6 +6228,11 @@
   transform-origin: center center;
   transform-style: preserve-3d;
   will-change: transform, opacity, filter;
+}
+
+.highlights-stack--tars .tars-agentic-spawn-clone .tars-agent-network,
+.highlights-stack--tars .tars-agentic-spawn-stage > .tars-agent-network {
+  flex: 0 0 auto;
 }
 
 .highlights-stack--tars .tars-agentic-spawn-clone--2 { z-index: 1; }
@@ -6335,6 +6360,21 @@
 }
 
 @media (max-width: 760px) {
+  .highlights-stack--tars .tars-scroll-section--agents-tab {
+    min-height: auto;
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .highlights-stack--tars .tars-scroll-section--agents-tab .tars-scroll-section__inner {
+    position: relative;
+    width: min(1180px, 100%);
+    min-height: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    transform: none;
+  }
+
   .highlights-stack--tars .tars-agent-row--domains,
   .highlights-stack--tars .tars-agent-row--specialists,
   .highlights-stack--tars .tars-agent-row--developer-subagents,

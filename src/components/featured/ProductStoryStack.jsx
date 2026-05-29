@@ -1504,7 +1504,8 @@ function TarsScrollSections({ blocks }) {
     if (!sectionsRef.current) return undefined;
 
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) return undefined;
+    const useMobileFallback = window.matchMedia?.("(max-width: 760px)").matches;
+    if (prefersReducedMotion || useMobileFallback) return undefined;
 
     const ctx = gsap.context(() => {
       const agenticSection = sectionsRef.current.querySelector(".tars-scroll-section--agents-tab");
@@ -1513,37 +1514,57 @@ function TarsScrollSections({ blocks }) {
       const graph = agenticSection.querySelector(".tars-agentic-spawn-stage > .tars-agent-network");
       const clones = gsap.utils.toArray(".tars-agentic-spawn-clone", agenticSection);
       const label = agenticSection.querySelector(".tars-agentic-spawn-label");
-      const primaryClone = clones[0];
-      const extraClones = clones.slice(1);
-      if (!graph || !primaryClone) return;
+      if (!graph || clones.length < 2) return;
 
       gsap.set(graph, { transformOrigin: "center center" });
-      gsap.set(primaryClone, { opacity: 0, x: 300, y: 0, scale: 0.66, rotateY: 0, filter: "blur(8px)", transformOrigin: "center center" });
-      gsap.set(extraClones, { opacity: 0, display: "none" });
+      gsap.set(graph, { x: -24, scale: 0.58, rotateY: 0, filter: "blur(0px)" });
+      gsap.set(clones, {
+        display: "grid",
+        opacity: (index) => (index === 0 ? 0.36 : 0.18),
+        x: (index) => 520 + index * 430,
+        y: 0,
+        scale: 0.58,
+        rotateY: 0,
+        filter: "blur(1px)",
+        transformOrigin: "center center",
+      });
       if (label) gsap.set(label, { opacity: 0, x: 0, filter: "blur(8px)" });
 
       const tl = gsap.timeline({ paused: true });
-      tl.to(graph, { x: -330, scale: 0.66, rotateY: 0, duration: 1, ease: "none" }, 0)
-        .to(primaryClone, { opacity: 0.96, x: 330, scale: 0.66, rotateY: 0, filter: "blur(0px)", duration: 1, ease: "none" }, 0);
+      tl.to(graph, { x: -560, scale: 0.58, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
+        .to(clones, {
+          opacity: (index) => (index === 0 ? 0.96 : index === 1 ? 0.72 : 0.42),
+          x: (index) => 24 + index * 430,
+          scale: 0.58,
+          rotateY: 0,
+          filter: "blur(0px)",
+          duration: 1,
+          ease: "none",
+        }, 0);
       if (label) {
         tl.to(label, { opacity: 0.92, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 0.44);
       }
 
-      const trigger = ScrollTrigger.create({
-        id: "tars-agentic-side-by-side",
-        trigger: agenticSection,
-        start: "top top",
-        end: "+=38%",
-        pin: true,
-        pinSpacing: true,
-        scrub: true,
-        fastScrollEnd: false,
-        anticipatePin: 1,
-        animation: tl,
-        invalidateOnRefresh: true,
-      });
+      const renderFromScroll = () => {
+        const rect = agenticSection.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+        const pinnedTravel = Math.max(1, rect.height - viewportHeight);
+        const progress = gsap.utils.clamp(0, 1, -rect.top / pinnedTravel);
+        const shouldPin = rect.top <= 0 && rect.bottom >= viewportHeight;
 
-      return () => trigger.kill();
+        agenticSection.classList.toggle("is-agentic-pinned", shouldPin);
+        tl.progress(progress);
+      };
+
+      renderFromScroll();
+      window.addEventListener("scroll", renderFromScroll, { passive: true });
+      window.addEventListener("resize", renderFromScroll);
+
+      return () => {
+        agenticSection.classList.remove("is-agentic-pinned");
+        window.removeEventListener("scroll", renderFromScroll);
+        window.removeEventListener("resize", renderFromScroll);
+      };
     }, sectionsRef);
 
     return () => ctx.revert();
