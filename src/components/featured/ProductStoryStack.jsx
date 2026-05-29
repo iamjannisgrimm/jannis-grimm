@@ -1337,108 +1337,85 @@ function TarsTransitionStorm() {
 
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
-      const section = sectionRef.current;
-      const stage = section.querySelector(".tars-prompt-storm__stage");
+      const stage = sectionRef.current.querySelector(".tars-prompt-storm__stage");
       const headline = sectionRef.current.querySelector(".tars-prompt-storm__headline");
       const prompts = gsap.utils.toArray(".tars-prompt-storm__prompt", sectionRef.current);
 
       if (prefersReducedMotion) {
-        section.classList.add("is-visible");
-        gsap.set(stage, { opacity: 1, filter: "blur(0px)" });
+        sectionRef.current.classList.add("is-visible");
+        gsap.set(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" });
         gsap.set(headline, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(prompts, {
-          opacity: 0.86,
-          xPercent: -50,
-          yPercent: -50,
-          x: (_index, element) => element.style.getPropertyValue("--prompt-target-x") || "0vw",
-          y: (_index, element) => element.style.getPropertyValue("--prompt-target-y") || "0vh",
-          z: 0,
-          scale: 1,
-          filter: "blur(0px)",
-        });
+        gsap.set(prompts, { opacity: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)" });
         return;
       }
 
-      const promptVarsFor = (element) => ({
-        x: element.style.getPropertyValue("--prompt-target-x") || "0vw",
-        y: element.style.getPropertyValue("--prompt-target-y") || "0vh",
-        entryX: element.style.getPropertyValue("--prompt-entry-x") || "0vw",
-        entryY: element.style.getPropertyValue("--prompt-entry-y") || "-72vh",
-      });
-
-      gsap.set(stage, { opacity: 1, filter: "blur(0px)" });
-      gsap.set(headline, { opacity: 0, y: 0, z: 110, scale: 0.96, rotateX: -3, filter: "blur(10px)" });
+      gsap.set(sectionRef.current, { opacity: 1 });
+      gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)" });
+      gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)" });
       gsap.set(prompts, {
         opacity: 0,
         xPercent: -50,
         yPercent: -50,
-        x: (_index, element) => promptVarsFor(element).entryX,
-        y: (_index, element) => promptVarsFor(element).entryY,
-        z: (index) => 680 + (index % 5) * 120,
-        rotation: (index) => (index % 7 - 3) * 9,
-        rotationX: (index) => -24 - (index % 4) * 6,
-        scale: (index) => 1.55 + (index % 4) * 0.09,
-        filter: "blur(22px)",
+        x: (index) => ((index % 7) - 3) * 22,
+        y: (index) => -220 - (index % 5) * 34,
+        z: (index) => 360 + (index % 4) * 74,
+        rotation: (index) => (index % 7 - 3) * 14,
+        rotationX: (index) => -24 - (index % 3) * 9,
+        scale: (index) => 1.46 + (index % 3) * 0.08,
+        filter: "blur(18px)",
         transformOrigin: "center center",
       });
 
       const tl = gsap.timeline({ paused: true });
 
-      tl.to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.16, ease: "power3.out" }, 0.04)
+      tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 0)
+        .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.35)" }, 0.04)
         .to(prompts, {
-          opacity: (index) => (index % 6 === 0 ? 1 : 0.88),
-          x: (_index, element) => promptVarsFor(element).x,
-          y: (_index, element) => promptVarsFor(element).y,
-          z: (index) => (index % 4) * -18,
-          rotation: (index) => (index % 7 - 3) * 2.4,
-          rotationX: 0,
-          scale: (index) => (index % 6 === 0 ? 1.06 : 1),
-          filter: "blur(0px)",
-          duration: 0.24,
-          ease: "power4.out",
-          stagger: { each: 0.005, from: "start" },
-        }, 0.08)
-        .to(prompts, { opacity: (index) => (index % 6 === 0 ? 1 : 0.9), duration: 0.42 }, 0.34)
-        .to(prompts, {
-          x: 0,
+          opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
           y: 0,
-          z: (index) => -260 - (index % 5) * 72,
-          rotation: (index) => (index % 7 - 3) * 8,
-          rotationX: (index) => 18 + (index % 4) * 7,
-          scale: (index) => 0.56 + (index % 3) * 0.035,
-          filter: "blur(15px)",
-          duration: 0.14,
-          ease: "power2.in",
-          stagger: { each: 0.003, from: "edges" },
-        }, 0.76)
+          x: 0,
+          z: 0,
+          rotation: (index) => (index % 7 - 3) * 3,
+          rotationX: 0,
+          scale: (index) => (index % 6 === 0 ? 1.08 : 1),
+          filter: "blur(0px)",
+          duration: 0.46,
+          ease: "back.out(1.6)",
+          stagger: { each: 0.012, from: "center" },
+        }, 0.06)
+        .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
+        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
+        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
+        .to(stage, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.82)
+        .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.82)
         .to(prompts, {
           opacity: 0,
-          x: 0,
-          y: 0,
-          z: (index) => -620 - (index % 5) * 126,
-          rotation: (index) => (index % 7 - 3) * 14,
-          rotationX: (index) => 32 + (index % 4) * 10,
-          scale: (index) => 0.22 + (index % 3) * 0.035,
-          filter: "blur(26px)",
-          duration: 0.18,
+          y: (index) => 220 + (index % 5) * 46,
+          x: (index) => ((index % 7) - 3) * 26,
+          z: (index) => -360 - (index % 4) * 78,
+          rotation: (index) => (index % 7 - 3) * 13,
+          rotationX: (index) => 24 + (index % 3) * 9,
+          scale: (index) => 0.44 + (index % 3) * 0.04,
+          filter: "blur(24px)",
+          duration: 0.3,
           ease: "power3.in",
-          stagger: { each: 0.004, from: "edges" },
-        }, 0.84)
-        .to(headline, { opacity: 0, y: 0, z: -220, scale: 0.78, rotateX: -5, filter: "blur(16px)", duration: 0.14, ease: "power3.in" }, 0.9)
-        .to(stage, { opacity: 0, filter: "blur(18px)", duration: 0.12, ease: "power3.in" }, 0.92);
+          stagger: { each: 0.008, from: "edges" },
+        }, 0.8);
 
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
         const rect = sectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const sceneDistance = Math.max(rect.height - viewportHeight, viewportHeight * 0.88);
-        const progress = gsap.utils.clamp(0, 1, -rect.top / sceneDistance);
-        const stickY = gsap.utils.clamp(0, Math.max(0, rect.height - viewportHeight), -rect.top);
+        const start = viewportHeight * 0.8;
+        const end = viewportHeight * 0.2 - rect.height;
+        const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
         tl.progress(progress);
-        section.style.setProperty("--storm-stick-y", `${stickY.toFixed(2)}px`);
-        section.style.setProperty("--storm-progress", progress.toFixed(3));
-        section.dataset.promptStormProgress = progress.toFixed(3);
-        section.classList.toggle("is-visible", rect.top < viewportHeight * 0.5 && rect.bottom > viewportHeight * 0.5);
+
+        if (progress > 0.02 && progress < 0.98) {
+          sectionRef.current.classList.add("is-visible");
+        } else {
+          sectionRef.current.classList.remove("is-visible");
+        }
       };
 
       renderFromScroll();
@@ -1465,10 +1442,6 @@ function TarsTransitionStorm() {
                 "--prompt-x": `${x}%`,
                 "--prompt-y": `${y}%`,
                 "--prompt-rotate": `${(index % 7 - 3) * 3}deg`,
-                "--prompt-target-x": `${x - 50}vw`,
-                "--prompt-target-y": `${y - 50}vh`,
-                "--prompt-entry-x": `${x - 50 + ((index % 5) - 2) * 7}vw`,
-                "--prompt-entry-y": `${y - 120 - (index % 4) * 10}vh`,
               }}
               key={prompt}
             >
