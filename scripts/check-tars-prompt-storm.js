@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -141,8 +141,16 @@ if (headlineSetBlocks.length === 0 || headlineSetBlocks.some((block) => !/transf
   violations.push("ProductStoryStack.jsx: headline GSAP set calls must pin transformOrigin to center center");
 }
 
-if (!/gsap\.set\(prompts,\s*\{\s*opacity:\s*1,\s*transformOrigin:\s*"center center"\s*\}\);/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt anchors must stay transform-clean after CSS center anchoring");
+if (!/gsap\.set\(prompts,\s*\{\s*opacity:\s*0,\s*transformOrigin:\s*"center center"\s*\}\);/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt anchors must start invisible at the centered CSS anchor");
+}
+
+if (!/\.to\(prompts,\s*\{\s*opacity:\s*1,\s*duration:\s*0\.01\s*\},\s*0\.025\)/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt anchors must only become visible after the centered transform state is active");
+}
+
+if (!/\.to\(prompts,\s*\{\s*opacity:\s*0,\s*duration:\s*0\.01\s*\},\s*0\.985\)/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt anchors must go invisible again for the final boundary frame");
 }
 
 if (!/gsap\.set\(promptPills,\s*\{[\s\S]*?x:\s*\(index\)[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?transformOrigin:\s*"center center"/.test(story)) {
@@ -157,10 +165,114 @@ if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(headlineAnchorBlock)) {
   violations.push("FeaturedProjectsStory.css: headline anchor must not use top-left 0/0 origin defaults");
 }
 
-if (violations.length > 0) {
-  console.error("TARS prompt storm sanity check failed:");
-  for (const violation of violations) console.error(`- ${violation}`);
-  process.exit(1);
+if (!/opacity:\s*0;/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt anchors must have an invisible CSS default before GSAP runs");
 }
 
-console.log("TARS prompt storm sanity check passed.");
+if (!/opacity:\s*0;/.test(headlineBlock)) {
+  violations.push("FeaturedProjectsStory.css: headline card must have an invisible CSS default before GSAP runs");
+}
+
+async function runBrowserBoundaryCheck() {
+  const url = process.env.TARS_PROMPT_STORM_QA_URL;
+  if (!url) return null;
+
+  let chromium;
+  try {
+    ({ chromium } = await import("playwright"));
+  } catch (error) {
+    throw new Error(`Browser boundary QA requested but Playwright is unavailable: ${error.message}`);
+  }
+
+  const artifact = resolve(root, process.env.TARS_PROMPT_STORM_QA_ARTIFACT ?? "artifacts/tars-prompt-storm-boundary-qa.json");
+  const screenshot = resolve(root, process.env.TARS_PROMPT_STORM_QA_SCREENSHOT ?? "artifacts/tars-prompt-storm-boundary-qa.png");
+  const browser = await chromium.launch({ headless: true });
+
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.waitForLoadState("networkidle", { timeout: 10000 }).catch(() => {});
+
+    const samples = [];
+    const points = [
+      ["before-start", -0.02],
+      ["start", 0],
+      ["just-after-start", 0.01],
+      ["just-before-end", 0.99],
+      ["end", 1],
+      ["after-end", 1.02],
+    ];
+
+    for (const [label, progress] of points) {
+      const scrollY = await page.evaluate((targetProgress) => {
+        const section = document.querySelector(".tars-prompt-storm");
+        if (!section) throw new Error("Missing .tars-prompt-storm section");
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+        const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+        const start = viewportHeight * 0.94;
+        const end = viewportHeight * 0.12 - section.getBoundingClientRect().height;
+        const rectTop = start - targetProgress * (start - end);
+        return Math.max(0, sectionTop - rectTop);
+      }, progress);
+
+      await page.evaluate((y) => window.scrollTo(0, y), scrollY);
+      await page.waitForTimeout(80);
+
+      samples.push(await page.evaluate((sampleLabel) => {
+        const viewport = { width: window.innerWidth, height: window.innerHeight };
+        const topLeftCutoff = { x: viewport.width * 0.28, y: viewport.height * 0.28 };
+        const nodes = Array.from(document.querySelectorAll(".tars-prompt-storm__headlineCard, .tars-prompt-storm__promptPill"));
+        const elements = nodes.map((node) => {
+          const rect = node.getBoundingClientRect();
+          const style = window.getComputedStyle(node);
+          const opacity = Number(style.opacity || 0);
+          const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const visible = opacity > 0.03 && style.visibility !== "hidden" && style.display !== "none" && rect.width > 1 && rect.height > 1 && rect.bottom > 0 && rect.right > 0 && rect.left < viewport.width && rect.top < viewport.height;
+          return {
+            className: node.className,
+            opacity,
+            rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+            center,
+            visible,
+            topLeftish: visible && center.x < topLeftCutoff.x && center.y < topLeftCutoff.y,
+          };
+        });
+        return {
+          label: sampleLabel,
+          scrollY: window.scrollY,
+          viewport,
+          violations: elements.filter((element) => element.topLeftish),
+          visibleCount: elements.filter((element) => element.visible).length,
+          elements: elements.filter((element) => element.visible || element.topLeftish).slice(0, 12),
+        };
+      }, label));
+    }
+
+    mkdirSync(dirname(artifact), { recursive: true });
+    await page.screenshot({ path: screenshot, fullPage: false });
+    const result = { ok: samples.every((sample) => sample.violations.length === 0), url, screenshot, samples };
+    writeFileSync(artifact, `${JSON.stringify(result, null, 2)}\n`);
+    if (!result.ok) {
+      violations.push(`Browser boundary QA: visible top-left-ish storm elements found; see ${artifact}`);
+    }
+    return artifact;
+  } finally {
+    await browser.close();
+  }
+}
+
+try {
+  const artifact = await runBrowserBoundaryCheck();
+  if (violations.length > 0) {
+    console.error("TARS prompt storm sanity check failed:");
+    for (const violation of violations) console.error(`- ${violation}`);
+    process.exit(1);
+  }
+
+  console.log("TARS prompt storm sanity check passed.");
+  if (artifact) console.log(`Boundary browser QA artifact: ${artifact}`);
+} catch (error) {
+  console.error("TARS prompt storm sanity check failed:");
+  console.error(`- ${error.message}`);
+  process.exit(1);
+}

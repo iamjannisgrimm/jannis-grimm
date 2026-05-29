@@ -1357,7 +1357,7 @@ function TarsTransitionStorm() {
       gsap.set(sectionRef.current, { opacity: 1 });
       gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)", transformOrigin: "center center" });
       gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)", transformOrigin: "center center" });
-      gsap.set(prompts, { opacity: 1, transformOrigin: "center center" });
+      gsap.set(prompts, { opacity: 0, transformOrigin: "center center" });
       gsap.set(promptPills, {
         opacity: 0,
         x: (index) => ((index % 7) - 3) * 22,
@@ -1374,6 +1374,7 @@ function TarsTransitionStorm() {
 
       tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 0)
         .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.35)" }, 0.04)
+        .to(prompts, { opacity: 1, duration: 0.01 }, 0.025)
         .to(promptPills, {
           opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
           y: 0,
@@ -1392,6 +1393,7 @@ function TarsTransitionStorm() {
         .to(promptPills, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
         .to(stage, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.9)
         .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.9)
+        .to(prompts, { opacity: 0, duration: 0.01 }, 0.985)
         .to(promptPills, {
           opacity: 0,
           y: (index) => 220 + (index % 5) * 46,

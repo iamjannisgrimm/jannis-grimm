@@ -5873,6 +5873,7 @@
   transform: translate3d(-50%, -50%, 0) translate3d(var(--prompt-offset-x, 0px), var(--prompt-offset-y, 0px), 0);
   transform-origin: center center;
   transform-style: preserve-3d;
+  opacity: 0;
   will-change: transform, opacity, filter;
 }
 
@@ -5951,6 +5952,7 @@
   width: min(760px, calc(100vw - 40px));
   text-align: center;
   text-wrap: balance;
+  opacity: 0;
   transform-origin: center center;
   transform-style: preserve-3d;
   text-shadow:
