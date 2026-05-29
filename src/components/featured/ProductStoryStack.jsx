@@ -925,9 +925,8 @@ function BoardCard({ card }) {
 }
 
 const tarsMemoryTypes = [
-  { id: "short", label: "Short-term", horizon: "minutes → hours", detail: "Active task packet, open files, safety boundaries, and verification targets. It is fast, scoped, and discarded after the run.", examples: ["current brief", "repo state", "QA targets"], tone: "100, 168, 255" },
-  { id: "medium", label: "Medium-term", horizon: "days → weeks", detail: "Daily notes, recent decisions, sprint context, and issue traces compressed into retrieval-friendly summaries.", examples: ["daily notes", "sprint deltas", "decision logs"], tone: "175, 82, 222" },
-  { id: "long", label: "Long-term", horizon: "months+", detail: "Stable preferences, product truths, tool registries, playbooks, and durable operating patterns loaded only when relevant.", examples: ["preferences", "tool registry", "playbooks"], tone: "52, 199, 89" },
+  { id: "short", label: "Short-term", horizon: "Current run", detail: "Active task packet, open files, safety boundaries, and verification targets.", examples: ["brief", "repo state", "QA targets"], tone: "100, 168, 255" },
+  { id: "long", label: "Long-term", horizon: "Durable context", detail: "Stable preferences, product truths, tool registries, playbooks, and operating patterns.", examples: ["preferences", "tool registry", "playbooks"], tone: "52, 199, 89" },
 ];
 
 const tarsMemPalaceNodes = [
@@ -1169,53 +1168,45 @@ function TarsBoardProductSlice({ kind }) {
 function TarsArchitecturePrivacySlice() {
   return (
     <div className="tars-product-slice tars-product-slice--memory" aria-hidden="true">
-      <div className="tars-memory-hero">
-        <span>Technical memory model</span>
-        <h3>Memory is layered, scoped, and deliberately forgetful.</h3>
-        <p>Private contents are not rendered here. The portfolio-safe version shows the architecture: how TARS decides what context to keep, what to compress, what to retrieve, and what never leaves local control.</p>
-      </div>
-      <div className="tars-memory-system" aria-label="TARS memory system diagram">
-        <section className="tars-memory-card tars-memory-card--layers" aria-label="Conceptual memory layers">
-          <div className="tars-memory-layer-visual">
-            {tarsMemoryTypes.map((memory, index) => (
-              <article className={`tars-memory-layer tars-memory-layer--${memory.id}`} style={{ "--memory-rgb": memory.tone, "--memory-index": index }} key={memory.id}>
+      <div className="tars-memory-visualEdge" aria-label="TARS memory and task-packet visual">
+        <div className="tars-memory-visualCard">
+          <div className="tars-memory-buckets" aria-label="Short-term and long-term memory buckets">
+            {tarsMemoryTypes.map((memory) => (
+              <article className={`tars-memory-bucket tars-memory-bucket--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
                 <span>{memory.label}</span>
                 <strong>{memory.horizon}</strong>
+                <p>{memory.detail}</p>
+                <div>
+                  {memory.examples.map((example) => <small key={example}>{example}</small>)}
+                </div>
               </article>
             ))}
           </div>
-          <div className="tars-memory-card-copy">
-            <span>Layered memory</span>
-            <h4>Short, medium, and long-term context stay separated.</h4>
-            <p>TARS keeps live task context lightweight, compresses recent decisions, and retrieves durable preferences or playbooks only when they are relevant.</p>
+          <div className="tars-memory-packet-flow" aria-hidden="true">
+            <i />
+            <span>memPalace selects only what the task needs</span>
+            <i />
           </div>
-        </section>
-        <section className="tars-memory-card tars-memory-card--palace" aria-label="Conceptual memPalace graph">
-          <div className="tars-mempalace-graph">
-            <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              {tarsMemPalaceEdges.map(([fromId, toId]) => {
-                const from = tarsMemPalaceNodes.find((node) => node.id === fromId);
-                const to = tarsMemPalaceNodes.find((node) => node.id === toId);
-                return <line key={`${fromId}-${toId}`} x1={from.x} y1={from.y} x2={to.x} y2={to.y} />;
-              })}
-            </svg>
-            <div className="tars-mempalace-core"><span>Context compiler</span><strong>Task packet</strong><small>Only relevant labels, boundaries, and proof paths are hydrated.</small></div>
-            {tarsMemPalaceNodes.map((node) => (
-              <div className="tars-mempalace-node" style={{ "--node-x": `${node.x}%`, "--node-y": `${node.y}%`, "--node-rgb": node.tone }} key={node.id}>
-                <i />
-                <span>{node.label}</span>
-              </div>
-            ))}
-          </div>
-          <div className="tars-memory-card-copy">
-            <span>memPalace graph</span>
-            <h4>A retrieval map, not a diary on display.</h4>
-            <p>The graph shows how task packets can assemble the right labels, boundaries, and proof paths without exposing private memory contents.</p>
-          </div>
-        </section>
+          <article className="tars-memory-task-packet" aria-label="memPalace task packet">
+            <span>memPalace</span>
+            <strong>Task packet</strong>
+            <p>Prompt, boundaries, memory labels, tool scope, deliverables, and proof path.</p>
+            <div className="tars-memory-packet-tags">
+              <small>intent</small>
+              <small>context</small>
+              <small>tools</small>
+              <small>proof</small>
+            </div>
+          </article>
+        </div>
       </div>
-      <div className="tars-privacy-rails tars-memory-rails"><span>No private memory contents</span><span>Scoped retrieval</span><span>Daily → long-term compression</span><span>Credential refs only</span></div>
-    </div>
+      <section className="tars-memory-copy">
+        <h3 className="tars-memory-title">Memory without the mess.</h3>
+        <p className="tars-memory-description">
+          TARS keeps live work in short-term memory, stores stable truths in long-term memory, then lets memPalace compile only the relevant context into a scoped task packet.
+        </p>
+      </section>
+      </div>
   );
 }
 
