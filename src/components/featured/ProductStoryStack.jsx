@@ -1133,9 +1133,10 @@ function TarsAgentsTabSlice() {
                 </div>
               ))}
             </div>
-            <p className="tars-agentic-spawn-label">
-              Spin up purpose-built teams in parallel: OpenClaw systems work can route through Claw to Developer, while personal ops, research, and product paths use their own canonical owners.
-            </p>
+            <div className="tars-agentic-spawn-label">
+              <h4>Parallel teams on demand</h4>
+              <p>Spin up specialized agent teams that work side by side when the task calls for it.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -1544,7 +1545,6 @@ function TarsScrollSections({ blocks }) {
       const graph = agenticSection.querySelector(".tars-agentic-spawn-stage > .tars-agent-network");
       const clones = gsap.utils.toArray(".tars-agentic-spawn-clone", agenticSection);
       const label = agenticSection.querySelector(".tars-agentic-spawn-label");
-      const header = agenticSection.querySelector(".tars-agents-tab-header");
       if (!graph || clones.length < 2) return;
 
       gsap.set(graph, { transformOrigin: "center center" });
@@ -1560,12 +1560,8 @@ function TarsScrollSections({ blocks }) {
         transformOrigin: "center center",
       });
       if (label) gsap.set(label, { opacity: 0, x: 0, filter: "blur(8px)" });
-      if (header) gsap.set(header, { autoAlpha: 1, x: 0, filter: "blur(0px)" });
 
       const tl = gsap.timeline({ paused: true });
-      if (header) {
-        tl.to(header, { autoAlpha: 0, x: -72, filter: "blur(8px)", duration: 0.26, ease: "power2.out" }, 0);
-      }
       tl.to(graph, { x: -720, scale: 0.74, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
         .to(clones, {
           opacity: (index) => (index === 0 ? 0.96 : index === 1 ? 0.72 : 0.42),

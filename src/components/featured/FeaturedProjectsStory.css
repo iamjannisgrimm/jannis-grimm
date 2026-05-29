@@ -6215,12 +6215,12 @@
 
 .highlights-stack--tars .tars-agentic-spawn-stage::before {
   left: 0;
-  background: linear-gradient(90deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0));
+  background: linear-gradient(90deg, var(--tars-agentic-stage-bg, var(--tars-bg, #10161f)), rgba(16, 22, 31, 0));
 }
 
 .highlights-stack--tars .tars-agentic-spawn-stage::after {
   right: 0;
-  background: linear-gradient(270deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0));
+  background: linear-gradient(270deg, var(--tars-agentic-stage-bg, var(--tars-bg, #10161f)), rgba(16, 22, 31, 0));
 }
 
 .highlights-stack--tars .tars-agentic-spawn-stage > .tars-agent-network {
@@ -6234,11 +6234,26 @@
   z-index: 7;
   max-width: 54ch;
   margin: 0 auto;
+  display: grid;
+  gap: 10px;
+  color: #f7f9ff;
+  text-align: left;
+  pointer-events: none;
+}
+
+.highlights-stack--tars .tars-agentic-spawn-label h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+}
+
+.highlights-stack--tars .tars-agentic-spawn-label p {
+  margin: 0;
   color: rgba(221, 228, 240, 0.68);
   font-size: clamp(1.1rem, 1.9vw, 1.3rem);
   line-height: 1.58;
-  text-align: center;
-  pointer-events: none;
 }
 
 .highlights-stack--tars .tars-agentic-spawn-clone {
@@ -7112,6 +7127,7 @@
 
 /* Agents feedback pass: description left, hierarchy-only graph right. */
 .highlights-stack--tars .tars-product-slice--agents-tab {
+  --tars-agentic-stage-bg: #10161f;
   min-height: min(720px, calc(100dvh - 56px));
 }
 
