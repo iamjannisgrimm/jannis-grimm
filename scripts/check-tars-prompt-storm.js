@@ -37,31 +37,40 @@ const blockFor = (selector) => {
 };
 
 const stageBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__stage");
+const groupBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__group");
 const fieldBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__field");
 const promptBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__prompt");
 const promptPillBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__promptPill");
 const headlineAnchorBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__headline");
 const headlineBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__headlineCard");
 const stageSetBlocks = story.match(/gsap\.set\(stage,\s*\{[\s\S]*?\}\);/g) ?? [];
-const headlineSetBlocks = story.match(/gsap\.set\(headline,\s*\{[\s\S]*?\}\);/g) ?? [];
+const groupSetBlocks = story.match(/gsap\.set\(group,\s*\{[\s\S]*?\}\);/g) ?? [];
 
-if (!/gsap\.set\(promptPills,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?z:\s*\(index\)\s*=>\s*360[\s\S]*?scale:\s*\(index\)\s*=>\s*1\.46/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt entry should start above the field from positive z/foreground scale");
+if (!/querySelector\("\.tars-prompt-storm__group"\)/.test(story)) {
+  violations.push("ProductStoryStack.jsx: storm boundary transition must target the centered group");
 }
 
-if (!/\.to\(promptPills,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*220[\s\S]*?z:\s*\(index\)\s*=>\s*-360[\s\S]*?scale:\s*\(index\)\s*=>\s*0\.44/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt exit should keep falling down and away on negative z");
+if (/querySelector\("\.tars-prompt-storm__headlineCard"\)|gsap\.set\(headline|\.to\(headline/.test(story)) {
+  violations.push("ProductStoryStack.jsx: headline must not have an independent boundary transition");
+}
+
+if (/gsap\.utils\.toArray\("\.tars-prompt-storm__prompt"|gsap\.set\(prompts|\.to\(prompts,\s*\{[\s\S]*?opacity/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt anchors must not have per-chip boundary opacity transitions");
+}
+
+if (/gsap\.set\(promptPills,\s*\{\s*opacity\s*:|\.to\(promptPills,\s*\{\s*opacity\s*:/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt pills must not control boundary visibility with opacity tweens");
 }
 
 const startMatch = story.match(/TARS_PROMPT_STORM_SCROLL_START_VH\s*=\s*([\d.]+)/);
 const endMatch = story.match(/TARS_PROMPT_STORM_SCROLL_END_VH\s*=\s*([\d.]+)/);
-const promptExitMatch = story.match(/\.to\(promptPills,\s*\{[\s\S]*?stagger:\s*\{\s*each:\s*0\.008,\s*from:\s*"edges"\s*\},\s*\}\s*,\s*([\d.]+)\s*\)/);
+const groupExitMatch = story.match(/\.to\(group,\s*\{[\s\S]*?opacity:\s*0[\s\S]*?\}\s*,\s*([\d.]+)\s*\)/);
 const minHeightMatch = css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*(\d+)dvh;/);
 const mobileMinHeightMatch = css.match(/@media\s*\(max-width:\s*760px\)\s*\{[\s\S]*?\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*(\d+)dvh;/);
 
 const scrollStart = startMatch ? Number(startMatch[1]) : NaN;
 const scrollEnd = endMatch ? Number(endMatch[1]) : NaN;
-const promptExit = promptExitMatch ? Number(promptExitMatch[1]) : NaN;
+const groupExit = groupExitMatch ? Number(groupExitMatch[1]) : NaN;
 const minHeight = minHeightMatch ? Number(minHeightMatch[1]) : NaN;
 const mobileMinHeight = mobileMinHeightMatch ? Number(mobileMinHeightMatch[1]) : NaN;
 
@@ -73,8 +82,8 @@ if (!Number.isFinite(scrollEnd) || scrollEnd < 0.08 || scrollEnd > 0.16) {
   violations.push("ProductStoryStack.jsx: prompt storm scroll end should leave minimal dead zone before Agentic");
 }
 
-if (!Number.isFinite(promptExit) || promptExit < 0.86 || promptExit > 0.92) {
-  violations.push("ProductStoryStack.jsx: prompts should exit late enough to finish close to Agentic");
+if (!Number.isFinite(groupExit) || groupExit < 0.86 || groupExit > 0.92) {
+  violations.push("ProductStoryStack.jsx: centered group should exit late enough to finish close to Agentic");
 }
 
 if (!Number.isFinite(minHeight) || minHeight < 150 || minHeight > 190) {
@@ -89,12 +98,24 @@ if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?perspective:\s*1320px;[\s\S]*?persp
   violations.push("FeaturedProjectsStory.css: prompt storm stage should preserve a foreground rain perspective origin");
 }
 
-if (!/\.tars-prompt-storm__prompt\s*\{[\s\S]*?backface-visibility:\s*hidden;/.test(css)) {
+if (!/\.tars-prompt-storm__promptPill\s*\{[\s\S]*?backface-visibility:\s*hidden;/.test(css)) {
   violations.push("FeaturedProjectsStory.css: prompt pills should render as intact 3D chips");
 }
 
 if (!/transform-origin:\s*center\s+center;/.test(stageBlock)) {
   violations.push("FeaturedProjectsStory.css: prompt storm stage must transform from center center");
+}
+
+if (!/left:\s*50%;/.test(groupBlock) || !/top:\s*50%;/.test(groupBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm group must be anchored at viewport center");
+}
+
+if (!/transform:\s*translate3d\(-50%,\s*-50%,\s*0\)\s*scale\(0\.88\);/.test(groupBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm group must have a center-origin CSS transform");
+}
+
+if (!/opacity:\s*0;/.test(groupBlock)) {
+  violations.push("FeaturedProjectsStory.css: centered group must own boundary visibility");
 }
 
 if (!/transform-origin:\s*center\s+center;/.test(fieldBlock)) {
@@ -137,24 +158,16 @@ if (stageSetBlocks.length === 0 || stageSetBlocks.some((block) => !/transformOri
   violations.push("ProductStoryStack.jsx: stage GSAP set calls must pin transformOrigin to center center");
 }
 
-if (headlineSetBlocks.length === 0 || headlineSetBlocks.some((block) => !/transformOrigin:\s*"center center"/.test(block))) {
-  violations.push("ProductStoryStack.jsx: headline GSAP set calls must pin transformOrigin to center center");
+if (groupSetBlocks.length === 0 || groupSetBlocks.some((block) => !/transformOrigin:\s*"center center"/.test(block) || !/xPercent:\s*-50/.test(block) || !/yPercent:\s*-50/.test(block))) {
+  violations.push("ProductStoryStack.jsx: group GSAP set calls must pin center origin and preserve center translation");
 }
 
-if (!/gsap\.set\(prompts,\s*\{\s*opacity:\s*0,\s*transformOrigin:\s*"center center"\s*\}\);/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt anchors must start invisible at the centered CSS anchor");
+if (!/\.to\(group,\s*\{[\s\S]*?opacity:\s*1[\s\S]*?scale:\s*1[\s\S]*?\},\s*0\)/.test(story)) {
+  violations.push("ProductStoryStack.jsx: group must fade/scale in from center as one unit");
 }
 
-if (!/\.to\(prompts,\s*\{\s*opacity:\s*1,\s*duration:\s*0\.01\s*\},\s*0\.025\)/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt anchors must only become visible after the centered transform state is active");
-}
-
-if (!/\.to\(prompts,\s*\{\s*opacity:\s*0,\s*duration:\s*0\.01\s*\},\s*0\.985\)/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt anchors must go invisible again for the final boundary frame");
-}
-
-if (!/gsap\.set\(promptPills,\s*\{[\s\S]*?x:\s*\(index\)[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?transformOrigin:\s*"center center"/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt pill animation must happen inside centered prompt anchors");
+if (!/\.to\(group,\s*\{[\s\S]*?opacity:\s*0[\s\S]*?scale:\s*0\.84[\s\S]*?\},\s*0\.88\)/.test(story)) {
+  violations.push("ProductStoryStack.jsx: group must fade/scale out from center as one unit");
 }
 
 if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(promptBlock)) {
@@ -165,12 +178,12 @@ if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(headlineAnchorBlock)) {
   violations.push("FeaturedProjectsStory.css: headline anchor must not use top-left 0/0 origin defaults");
 }
 
-if (!/opacity:\s*0;/.test(promptBlock)) {
-  violations.push("FeaturedProjectsStory.css: prompt anchors must have an invisible CSS default before GSAP runs");
+if (!/opacity:\s*1;/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt anchors must remain laid out/visible inside the group");
 }
 
-if (!/opacity:\s*0;/.test(headlineBlock)) {
-  violations.push("FeaturedProjectsStory.css: headline card must have an invisible CSS default before GSAP runs");
+if (!/opacity:\s*1;/.test(headlineBlock)) {
+  violations.push("FeaturedProjectsStory.css: headline card must remain visible inside the group");
 }
 
 async function runBrowserBoundaryCheck() {

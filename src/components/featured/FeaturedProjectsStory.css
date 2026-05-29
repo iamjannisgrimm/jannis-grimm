@@ -5832,6 +5832,21 @@
     linear-gradient(180deg, rgba(16,22,31,0.96) 0%, rgba(12,17,25,0.92) 55%, rgba(16,22,31,0.62) 100%);
 }
 
+.highlights-stack--tars .tars-prompt-storm__group {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 100svh;
+  z-index: 2;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0) scale(0.88);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  will-change: opacity, transform, filter;
+}
+
 .highlights-stack--tars .tars-prompt-storm__stage::before,
 .highlights-stack--tars .tars-prompt-storm__stage::after {
   content: "";
@@ -5860,6 +5875,7 @@
   position: absolute;
   inset: 0;
   z-index: 2;
+  opacity: 1;
   transform-origin: center center;
   transform-style: preserve-3d;
 }
@@ -5873,8 +5889,8 @@
   transform: translate3d(-50%, -50%, 0) translate3d(var(--prompt-offset-x, 0px), var(--prompt-offset-y, 0px), 0);
   transform-origin: center center;
   transform-style: preserve-3d;
-  opacity: 0;
-  will-change: transform, opacity, filter;
+  opacity: 1;
+  will-change: transform, filter;
 }
 
 .highlights-stack--tars .tars-prompt-storm__promptPill {
@@ -5952,7 +5968,7 @@
   width: min(760px, calc(100vw - 40px));
   text-align: center;
   text-wrap: balance;
-  opacity: 0;
+  opacity: 1;
   transform-origin: center center;
   transform-style: preserve-3d;
   text-shadow:
@@ -6020,6 +6036,12 @@
 
   .highlights-stack--tars .tars-prompt-storm__stage {
     position: relative;
+  }
+
+  .highlights-stack--tars .tars-prompt-storm__group {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0);
+    filter: none;
   }
 
   .highlights-stack--tars .tars-prompt-storm__prompt {
