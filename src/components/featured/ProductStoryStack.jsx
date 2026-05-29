@@ -62,10 +62,43 @@ const TARS_TRANSITION_PROMPTS = [
 
 const TARS_PROMPT_STORM_SCROLL_START_VH = 0.94;
 const TARS_PROMPT_STORM_SCROLL_END_VH = 0.12;
-const TARS_PROMPT_STORM_ENTRY_Y = -260;
-const TARS_PROMPT_STORM_ENTRY_Z = 340;
-const TARS_PROMPT_STORM_EXIT_Y = 190;
-const TARS_PROMPT_STORM_EXIT_Z = -360;
+const TARS_PROMPT_STORM_ENTRY_Y = -36;
+const TARS_PROMPT_STORM_ENTRY_Z = 720;
+const TARS_PROMPT_STORM_EXIT_Y = 72;
+const TARS_PROMPT_STORM_EXIT_Z = -520;
+
+function TeamBridgeIcon({ icon }) {
+  const [failed, setFailed] = useState(false);
+  const label = icon?.alt || "";
+
+  if (icon?.image && !failed) {
+    return (
+      <img
+        className="highlights-stack__teamBridgeIconImage"
+        src={icon.image}
+        alt={label}
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  if (/phone/i.test(label)) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6.6 4.8c.4-.4 1-.5 1.5-.3l2.2 1c.7.3 1 .9.9 1.6l-.3 2c0 .5.1 1 .5 1.4l2.6 2.6c.4.4.9.6 1.4.5l2-.3c.7-.1 1.3.2 1.6.9l1 2.2c.2.5.1 1.1-.3 1.5l-1 1c-.8.8-2 1.1-3.1.8-2.3-.6-4.8-2.2-7-4.4-2.2-2.2-3.8-4.7-4.4-7-.3-1.1 0-2.3.8-3.1l1-1Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H9l-5 4v-3.5A2.5 2.5 0 0 1 4 14V6.5Z" />
+    </svg>
+  );
+}
 
 function buildPanelTimeline({
   header,
@@ -1362,10 +1395,10 @@ function TarsTransitionStorm() {
       gsap.set(group, { opacity: 0, xPercent: -50, yPercent: -50, x: 0, y: 0, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)", transformOrigin: "center center" });
       gsap.set(promptPills, {
         x: 0,
-        y: (index) => TARS_PROMPT_STORM_ENTRY_Y - (index % 5) * 18,
+        y: (index) => TARS_PROMPT_STORM_ENTRY_Y - (index % 5) * 4,
         z: (index) => TARS_PROMPT_STORM_ENTRY_Z + (index % 4) * 42,
-        scale: 1.14,
-        filter: "blur(11px)",
+        scale: 1.24,
+        filter: "blur(18px)",
         transformOrigin: "center center",
       });
 
@@ -1386,7 +1419,7 @@ function TarsTransitionStorm() {
         }, 0.16)
         .to(group, { opacity: 1, duration: 0.44 }, 0.42)
         .to(promptPills, {
-          y: (index) => TARS_PROMPT_STORM_EXIT_Y + (index % 5) * 16,
+          y: (index) => TARS_PROMPT_STORM_EXIT_Y + (index % 5) * 4,
           x: 0,
           z: (index) => TARS_PROMPT_STORM_EXIT_Z - (index % 4) * 34,
           rotation: (index) => (index % 7 - 3) * 3,
@@ -1397,7 +1430,7 @@ function TarsTransitionStorm() {
           ease: "power3.in",
           stagger: { each: 0.008, from: "center" },
         }, 0.8)
-        .to(group, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.3, ease: "power3.in" }, 0.88);
+        .to(group, { opacity: 0, y: 56, z: -320, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.3, ease: "power3.in" }, 0.88);
 
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
@@ -1762,34 +1795,10 @@ function PanelShell({
                 ) : null}
                 <div className="highlights-stack__teamBridgeIcons">
                   <div className="highlights-stack__teamBridgeIcon">
-                    {teamBridgeIcons?.left?.image ? (
-                      <img
-                        className="highlights-stack__teamBridgeIconImage"
-                        src={teamBridgeIcons.left.image}
-                        alt={teamBridgeIcons.left.alt || ""}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7A2.5 2.5 0 0 1 17.5 16H9l-5 4v-3.5A2.5 2.5 0 0 1 4 14V6.5Z" />
-                      </svg>
-                    )}
+                    <TeamBridgeIcon icon={teamBridgeIcons?.left} />
                   </div>
                   <div className="highlights-stack__teamBridgeIcon">
-                    {teamBridgeIcons?.right?.image ? (
-                      <img
-                        className="highlights-stack__teamBridgeIconImage"
-                        src={teamBridgeIcons.right.image}
-                        alt={teamBridgeIcons.right.alt || ""}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M6.6 4.8c.4-.4 1-.5 1.5-.3l2.2 1c.7.3 1 .9.9 1.6l-.3 2c0 .5.1 1 .5 1.4l2.6 2.6c.4.4.9.6 1.4.5l2-.3c.7-.1 1.3.2 1.6.9l1 2.2c.2.5.1 1.1-.3 1.5l-1 1c-.8.8-2 1.1-3.1.8-2.3-.6-4.8-2.2-7-4.4-2.2-2.2-3.8-4.7-4.4-7-.3-1.1 0-2.3.8-3.1l1-1Z" />
-                      </svg>
-                    )}
+                    <TeamBridgeIcon icon={teamBridgeIcons?.right} />
                   </div>
                 </div>
                 <div

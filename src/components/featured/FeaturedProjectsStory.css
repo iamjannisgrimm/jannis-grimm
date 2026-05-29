@@ -387,6 +387,7 @@
   justify-content: center;
   align-items: center;
   z-index: 1;
+  color: #15171c;
 }
 
 .highlights-stack__teamBridgeIcon svg {
@@ -400,6 +401,8 @@
   height: 20px;
   object-fit: contain;
   display: block;
+  opacity: 1;
+  visibility: visible;
 }
 
 .highlights-stack__teamConnector {
