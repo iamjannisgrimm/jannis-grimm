@@ -1004,15 +1004,8 @@ const tarsMemPalaceEdges = [
 ];
 
 const tarsSecurityModelCards = [
-  { label: "Private route", model: "Local model", task: "Sensitive context", tone: "100,168,255" },
-  { label: "Open route", model: "Frontier model", task: "High-reasoning builds", tone: "175,82,222" },
-  { label: "Agent route", model: "Specialist agent", task: "Scoped execution", tone: "52,199,89" },
-];
-
-const tarsSecurityLockCards = [
-  { label: "Files", detail: "Need-to-know context only" },
-  { label: "Tools", detail: "Permissioned by agent role" },
-  { label: "Hardware", detail: "Runs on my own machine" },
+  { label: "Local model", model: "DeepSeek R1-70B", task: "Private route", tone: "52,199,89" },
+  { label: "Open model", model: "Opus 4.7", task: "Frontier route", tone: "175,82,222" },
 ];
 
 function TarsAgentsTabSlice() {
@@ -1211,28 +1204,23 @@ function TarsSecuritySlice() {
       </section>
       <div className="tars-security-visualEdge" aria-label="TARS security routing visual">
         <div className="tars-security-visualCard">
-          <div className="tars-security-chip" aria-hidden="true">
-            <span>Own hardware</span>
-            <strong>TARS</strong>
-            <small>local runtime</small>
+          <div className="tars-security-core" aria-hidden="true">
+            <div className="tars-security-shield">
+              <span className="tars-security-shield-mark"> M5</span>
+              <strong>48GB RAM</strong>
+              <small>protected hardware cell</small>
+            </div>
           </div>
-          <div className="tars-security-route-grid" role="list">
+          <div className="tars-security-branches" aria-hidden="true">
+            <span />
+            <span />
+          </div>
+          <div className="tars-security-route-grid" role="list" aria-label="Model route options">
             {tarsSecurityModelCards.map((card) => (
               <article className="tars-security-route-card" style={{ "--security-rgb": card.tone }} key={card.label} role="listitem">
                 <span>{card.label}</span>
                 <strong>{card.model}</strong>
                 <small>{card.task}</small>
-              </article>
-            ))}
-          </div>
-          <div className="tars-security-lock-grid" role="list">
-            {tarsSecurityLockCards.map((card) => (
-              <article className="tars-security-lock-card" key={card.label} role="listitem">
-                <i aria-hidden="true">⌘</i>
-                <div>
-                  <strong>{card.label}</strong>
-                  <small>{card.detail}</small>
-                </div>
               </article>
             ))}
           </div>

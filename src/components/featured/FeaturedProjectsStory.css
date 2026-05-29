@@ -6544,7 +6544,8 @@
 .highlights-stack--tars .tars-security-visualCard {
   position: relative;
   display: grid;
-  gap: clamp(14px, 2vh, 22px);
+  align-content: center;
+  gap: clamp(18px, 3vh, 30px);
   min-height: clamp(500px, 72vh, 680px);
   padding: clamp(18px, 2.2vw, 28px);
   overflow: hidden;
@@ -6557,13 +6558,11 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 22px 54px rgba(0,0,0,0.34);
 }
 
-.highlights-stack--tars .tars-security-chip {
+.highlights-stack--tars .tars-security-core {
   position: relative;
-  min-height: 170px;
   display: grid;
   place-items: center;
-  align-content: center;
-  gap: 7px;
+  min-height: clamp(240px, 36vh, 320px);
   border: 1px solid rgba(100,168,255,0.24);
   border-radius: 26px;
   background:
@@ -6574,23 +6573,44 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.055);
 }
 
-.highlights-stack--tars .tars-security-chip::before {
+.highlights-stack--tars .tars-security-core::before,
+.highlights-stack--tars .tars-security-core::after {
   content: "";
   position: absolute;
-  width: min(44%, 178px);
+  pointer-events: none;
+}
+
+.highlights-stack--tars .tars-security-core::before {
+  inset: 18px;
+  border: 1px solid rgba(226,232,245,0.08);
+  border-radius: 22px;
+  background: radial-gradient(circle, rgba(100,168,255,0.16), transparent 66%);
+}
+
+.highlights-stack--tars .tars-security-core::after {
+  width: min(55%, 250px);
   aspect-ratio: 1;
-  border: 1px solid rgba(226,232,245,0.2);
-  border-radius: 26px;
-  background: linear-gradient(135deg, rgba(20,29,42,0.96), rgba(8,12,18,0.96));
-  box-shadow: 0 24px 54px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.08);
+  border: 1px solid rgba(100,168,255,0.34);
+  border-radius: 34% 34% 42% 42% / 28% 28% 52% 52%;
+  background: linear-gradient(135deg, rgba(20,29,42,0.98), rgba(8,12,18,0.98));
+  clip-path: polygon(50% 0, 90% 14%, 82% 74%, 50% 100%, 18% 74%, 10% 14%);
+  box-shadow: 0 28px 64px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 44px rgba(100,168,255,0.14);
 }
 
-.highlights-stack--tars .tars-security-chip > * {
+.highlights-stack--tars .tars-security-shield {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  width: min(48%, 220px);
+  aspect-ratio: 0.88;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  text-align: center;
+  color: #fff;
 }
 
-.highlights-stack--tars .tars-security-chip span,
+.highlights-stack--tars .tars-security-shield-mark,
 .highlights-stack--tars .tars-security-route-card span {
   color: rgba(100,168,255,0.88);
   font-size: 0.64rem;
@@ -6599,41 +6619,74 @@
   text-transform: uppercase;
 }
 
-.highlights-stack--tars .tars-security-chip strong {
+.highlights-stack--tars .tars-security-shield strong {
   color: #fff;
-  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
   line-height: 0.88;
-  letter-spacing: -0.1em;
+  letter-spacing: -0.08em;
 }
 
-.highlights-stack--tars .tars-security-chip small {
+.highlights-stack--tars .tars-security-shield small {
   color: rgba(221,228,240,0.58);
   font-size: 0.75rem;
   font-weight: 760;
 }
 
-.highlights-stack--tars .tars-security-route-grid,
-.highlights-stack--tars .tars-security-lock-grid {
+.highlights-stack--tars .tars-security-branches {
+  position: relative;
+  height: 42px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: calc(clamp(18px, 3vh, 30px) * -0.7) clamp(42px, 8vw, 90px) calc(clamp(18px, 3vh, 30px) * -0.35);
+}
+
+.highlights-stack--tars .tars-security-branches::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 18px;
+  background: linear-gradient(180deg, rgba(100,168,255,0.74), rgba(100,168,255,0.14));
+}
+
+.highlights-stack--tars .tars-security-branches span {
+  position: relative;
+  border-top: 1px solid rgba(100,168,255,0.28);
+}
+
+.highlights-stack--tars .tars-security-branches span:first-child {
+  border-left: 1px solid rgba(100,168,255,0.28);
+  border-radius: 22px 0 0;
+}
+
+.highlights-stack--tars .tars-security-branches span:last-child {
+  border-right: 1px solid rgba(175,82,222,0.32);
+  border-color: rgba(175,82,222,0.32);
+  border-radius: 0 22px 0 0;
+}
+
+.highlights-stack--tars .tars-security-route-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(10px, 1.5vw, 16px);
 }
 
-.highlights-stack--tars .tars-security-route-card,
-.highlights-stack--tars .tars-security-lock-card {
+.highlights-stack--tars .tars-security-route-card {
   position: relative;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
-  padding: clamp(14px, 1.5vw, 19px);
+  min-height: 132px;
+  align-content: center;
+  padding: clamp(16px, 1.8vw, 24px);
   border: 1px solid rgba(var(--security-rgb, 100,168,255), 0.28);
   border-radius: 22px;
   background: linear-gradient(135deg, rgba(var(--security-rgb, 100,168,255), 0.14), rgba(255,255,255,0.04));
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.055), 0 18px 42px rgba(0,0,0,0.22);
 }
 
-.highlights-stack--tars .tars-security-route-card::before,
-.highlights-stack--tars .tars-security-lock-card::before {
+.highlights-stack--tars .tars-security-route-card::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
@@ -6642,44 +6695,18 @@
   background: rgb(var(--security-rgb, 100,168,255));
 }
 
-.highlights-stack--tars .tars-security-route-card strong,
-.highlights-stack--tars .tars-security-lock-card strong {
+.highlights-stack--tars .tars-security-route-card strong {
   color: #fff;
-  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-size: clamp(1.28rem, 2.15vw, 1.9rem);
   line-height: 1;
   letter-spacing: -0.045em;
 }
 
-.highlights-stack--tars .tars-security-route-card small,
-.highlights-stack--tars .tars-security-lock-card small {
+.highlights-stack--tars .tars-security-route-card small {
   color: rgba(221,228,240,0.64);
   font-size: 0.72rem;
   font-weight: 690;
   line-height: 1.38;
-}
-
-.highlights-stack--tars .tars-security-lock-card {
-  --security-rgb: 52,199,89;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-}
-
-.highlights-stack--tars .tars-security-lock-card i {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(52,199,89,0.24);
-  border-radius: 12px;
-  background: rgba(52,199,89,0.1);
-  color: rgba(82,220,126,0.96);
-  font-style: normal;
-  font-weight: 800;
-}
-
-.highlights-stack--tars .tars-security-lock-card div {
-  display: grid;
-  gap: 4px;
 }
 
 .highlights-stack--tars .tars-security-copy {
@@ -6739,9 +6766,12 @@
     padding: 20px 14px;
   }
 
-  .highlights-stack--tars .tars-security-route-grid,
-  .highlights-stack--tars .tars-security-lock-grid {
+  .highlights-stack--tars .tars-security-route-grid {
     grid-template-columns: 1fr;
+  }
+
+  .highlights-stack--tars .tars-security-branches {
+    display: none;
   }
 
   .highlights-stack--tars .tars-security-visualCard {
