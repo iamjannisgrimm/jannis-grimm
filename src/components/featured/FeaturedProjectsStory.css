@@ -5794,8 +5794,8 @@
 /* TARS handoff: explicit full-screen scroll section before Agents. */
 .highlights-stack--tars .tars-prompt-storm {
   position: relative;
-  min-height: 230dvh;
-  min-height: 230svh;
+  min-height: 138dvh;
+  min-height: 138svh;
   overflow: clip;
   isolation: isolate;
   background: #10161f;
@@ -5860,12 +5860,15 @@
   inset: 0;
   z-index: 2;
   transform-style: preserve-3d;
+  transform: translateZ(0);
 }
 
 .highlights-stack--tars .tars-prompt-storm__prompt {
   position: absolute;
   left: 50%;
   top: 50%;
+  --prompt-target-x: 0vw;
+  --prompt-target-y: 0vh;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5886,7 +5889,7 @@
   line-height: 1;
   white-space: nowrap;
   opacity: 0;
-  transform: translate3d(-50%, -50%, 0) rotate(var(--prompt-rotate)) scale(1);
+  transform: translate3d(-50%, -50%, 0) translate3d(0, 0, 0) rotate(var(--prompt-rotate)) scale(1);
   transform-origin: center center;
   transform-style: preserve-3d;
   backface-visibility: hidden;
@@ -6028,8 +6031,8 @@
 
 @media (max-width: 760px) {
   .highlights-stack--tars .tars-prompt-storm {
-    min-height: 240dvh;
-    min-height: 240svh;
+    min-height: 150dvh;
+    min-height: 150svh;
   }
 
   .highlights-stack--tars .tars-prompt-storm__prompt {

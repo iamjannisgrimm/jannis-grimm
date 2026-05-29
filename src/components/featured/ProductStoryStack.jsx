@@ -1351,29 +1351,24 @@ function TarsTransitionStorm() {
         return;
       }
 
-      const promptOffsetFor = (element) => {
-        const stageRect = stage.getBoundingClientRect();
-        const xPercent = Number.parseFloat(element.style.getPropertyValue("--prompt-x")) || 50;
-        const yPercent = Number.parseFloat(element.style.getPropertyValue("--prompt-y")) || 50;
-        return {
-          x: (xPercent / 100 - 0.5) * stageRect.width,
-          y: (yPercent / 100 - 0.5) * stageRect.height,
-        };
-      };
+      const promptTargetFor = (element) => ({
+        x: element.style.getPropertyValue("--prompt-target-x") || "0vw",
+        y: element.style.getPropertyValue("--prompt-target-y") || "0vh",
+      });
 
-      gsap.set(stage, { opacity: 0, y: 0, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)" });
-      gsap.set(headline, { opacity: 0, y: 0, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)" });
+      gsap.set(stage, { opacity: 0, y: 0, z: -120, scale: 0.94, rotateX: 5, filter: "blur(12px)" });
+      gsap.set(headline, { opacity: 0, y: 0, z: 160, scale: 0.72, rotateX: -6, filter: "blur(12px)" });
       gsap.set(prompts, {
         opacity: 0,
         xPercent: -50,
         yPercent: -50,
         x: 0,
         y: 0,
-        z: (index) => 360 + (index % 4) * 74,
-        rotation: (index) => (index % 7 - 3) * 14,
-        rotationX: (index) => -24 - (index % 3) * 9,
-        scale: (index) => 1.46 + (index % 3) * 0.08,
-        filter: "blur(18px)",
+        z: (index) => 520 + (index % 4) * 110,
+        rotation: (index) => (index % 7 - 3) * 10,
+        rotationX: (index) => -18 - (index % 3) * 7,
+        scale: (index) => 1.9 + (index % 3) * 0.12,
+        filter: "blur(22px)",
         transformOrigin: "center center",
       });
       sectionRef.current.classList.remove("is-initializing");
@@ -1381,58 +1376,58 @@ function TarsTransitionStorm() {
 
       const tl = gsap.timeline({ paused: true });
 
-      tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 0)
-        .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.35)" }, 0.04)
+      tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.18, ease: "expo.out" }, 0)
+        .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.24, ease: "expo.out" }, 0.02)
         .to(prompts, {
           opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
-          x: (_index, element) => promptOffsetFor(element).x,
-          y: (_index, element) => promptOffsetFor(element).y,
+          x: (_index, element) => promptTargetFor(element).x,
+          y: (_index, element) => promptTargetFor(element).y,
           z: 0,
           rotation: (index) => (index % 7 - 3) * 3,
           rotationX: 0,
           scale: (index) => (index % 6 === 0 ? 1.08 : 1),
           filter: "blur(0px)",
-          duration: 0.46,
-          ease: "back.out(1.6)",
-          stagger: { each: 0.012, from: "center" },
-        }, 0.06)
-        .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
-        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
-        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
-        .to(stage, { opacity: 0, y: 0, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.82)
-        .to(headline, { opacity: 0, y: 0, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.82)
+          duration: 0.24,
+          ease: "expo.out",
+          stagger: { each: 0.006, from: "center" },
+        }, 0.04)
+        .to(stage, { opacity: 1, duration: 0.14 }, 0.28)
+        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.14 }, 0.28)
+        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.14 }, 0.28)
+        .to(stage, { opacity: 0, y: 0, z: -260, scale: 0.8, rotateX: 7, filter: "blur(20px)", duration: 0.18, ease: "power3.in" }, 0.52)
+        .to(headline, { opacity: 0, y: 0, z: -180, scale: 0.72, rotateX: -6, filter: "blur(16px)", duration: 0.16, ease: "power3.in" }, 0.5)
         .to(prompts, {
           x: 0,
           y: 0,
-          z: -120,
+          z: -160,
           rotation: (index) => (index % 7 - 3) * 7,
           rotationX: (index) => 12 + (index % 3) * 5,
-          scale: (index) => 0.68 + (index % 3) * 0.04,
-          filter: "blur(10px)",
-          duration: 0.14,
+          scale: (index) => 0.7 + (index % 3) * 0.03,
+          filter: "blur(12px)",
+          duration: 0.1,
           ease: "power3.inOut",
-          stagger: { each: 0.004, from: "edges" },
-        }, 0.76)
+          stagger: { each: 0.003, from: "edges" },
+        }, 0.44)
         .to(prompts, {
           opacity: 0,
           x: 0,
           y: 0,
-          z: (index) => -360 - (index % 4) * 78,
+          z: (index) => -460 - (index % 4) * 96,
           rotation: (index) => (index % 7 - 3) * 13,
           rotationX: (index) => 24 + (index % 3) * 9,
-          scale: (index) => 0.44 + (index % 3) * 0.04,
-          filter: "blur(24px)",
-          duration: 0.22,
+          scale: (index) => 0.36 + (index % 3) * 0.035,
+          filter: "blur(26px)",
+          duration: 0.18,
           ease: "power3.in",
-          stagger: { each: 0.008, from: "edges" },
-        }, 0.88);
+          stagger: { each: 0.005, from: "edges" },
+        }, 0.52);
 
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
         const rect = sectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const start = viewportHeight * 0.8;
-        const end = viewportHeight * 0.2 - rect.height;
+        const start = viewportHeight * 0.66;
+        const end = -rect.height + viewportHeight * 0.54;
         const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
         tl.progress(progress);
 
@@ -1467,6 +1462,8 @@ function TarsTransitionStorm() {
                 "--prompt-x": `${x}%`,
                 "--prompt-y": `${y}%`,
                 "--prompt-rotate": `${(index % 7 - 3) * 3}deg`,
+                "--prompt-target-x": `${x - 50}vw`,
+                "--prompt-target-y": `${y - 50}vh`,
               }}
               key={prompt}
             >
