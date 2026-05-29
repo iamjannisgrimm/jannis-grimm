@@ -6186,12 +6186,12 @@
   }
 }
 
-/* Memory feedback pass: left copy, right agent memory cell visual. */
+/* Memory feedback pass: left visual, right copy; the visual card is the agent memory cell. */
 .highlights-stack--tars .tars-product-slice--memory {
   width: min(1240px, 100%);
   min-height: min(720px, calc(100dvh - 56px));
   display: grid;
-  grid-template-columns: minmax(360px, 0.9fr) minmax(470px, 1.1fr) !important;
+  grid-template-columns: minmax(470px, 1.1fr) minmax(360px, 0.9fr) !important;
   align-items: center;
   gap: clamp(18px, 3vw, 42px);
   padding: clamp(22px, 3.1vw, 42px);
@@ -6218,9 +6218,8 @@
 .highlights-stack--tars .tars-memory-visualCard {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(170px, 0.82fr) minmax(260px, 1.18fr);
-  align-items: center;
-  gap: clamp(14px, 2.2vw, 28px);
+  align-content: center;
+  gap: clamp(16px, 2vw, 24px);
   min-height: clamp(500px, 72vh, 680px);
   padding: clamp(18px, 2.2vw, 28px);
   overflow: hidden;
@@ -6239,10 +6238,10 @@
   position: relative;
   z-index: 2;
   display: grid;
-  justify-items: center;
+  justify-items: stretch;
   align-content: center;
-  gap: 10px;
-  min-height: 320px;
+  gap: clamp(14px, 2vh, 22px);
+  min-height: clamp(500px, 72vh, 680px);
   padding: clamp(18px, 2vw, 24px);
   border: 1px solid rgba(226,232,245,0.16);
   border-radius: 28px;
@@ -6255,7 +6254,20 @@
   text-align: center;
 }
 
-.highlights-stack--tars .tars-memory-agent-cell > span {
+.highlights-stack--tars .tars-memory-agent-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 18px);
+  padding: clamp(12px, 1.5vw, 18px);
+  border: 1px solid rgba(226,232,245,0.12);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+  text-align: left;
+}
+
+.highlights-stack--tars .tars-memory-agent-header > span {
+  grid-column: 1 / -1;
   color: rgba(226,232,245,0.48);
   font-size: 0.64rem;
   font-weight: 820;
@@ -6264,7 +6276,7 @@
 }
 
 .highlights-stack--tars .tars-memory-agent-orb {
-  width: clamp(92px, 11vw, 136px);
+  width: clamp(82px, 9vw, 116px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
@@ -6281,15 +6293,18 @@
   object-fit: cover;
 }
 
-.highlights-stack--tars .tars-memory-agent-cell strong {
+.highlights-stack--tars .tars-memory-agent-header strong {
+  display: block;
   color: #fff;
-  font-size: clamp(2.4rem, 4.8vw, 4.4rem);
+  font-size: clamp(2.4rem, 4.6vw, 4.1rem);
   line-height: 0.88;
   letter-spacing: -0.1em;
 }
 
-.highlights-stack--tars .tars-memory-agent-cell small {
+.highlights-stack--tars .tars-memory-agent-header small {
+  display: block;
   max-width: 24ch;
+  margin-top: 7px;
   color: rgba(221,228,240,0.58);
   font-size: 0.78rem;
   font-weight: 700;
@@ -6297,15 +6312,7 @@
 }
 
 .highlights-stack--tars .tars-memory-link-lines {
-  position: absolute;
-  left: 32%;
-  right: 42%;
-  top: 50%;
-  z-index: 1;
-  display: grid;
-  gap: 58px;
-  transform: translateY(-50%);
-  pointer-events: none;
+  display: none;
 }
 
 .highlights-stack--tars .tars-memory-link-lines i {
@@ -6411,7 +6418,7 @@
 
 .highlights-stack--tars .tars-memory-copy {
   max-width: 560px;
-  justify-self: start;
+  justify-self: end;
   display: grid;
   align-content: center;
   text-align: left;

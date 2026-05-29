@@ -1350,27 +1350,18 @@ function TarsBoardProductSlice({ kind }) {
 function TarsArchitecturePrivacySlice() {
   return (
     <div className="tars-product-slice tars-product-slice--memory" aria-hidden="true">
-      <section className="tars-memory-copy">
-        <h3 className="tars-memory-title">Memory without the mess.</h3>
-        <p className="tars-memory-description">
-          TARS keeps live work in short-term memory, stores stable truths in long-term memory, then lets memPalace compile only the relevant context into a scoped task packet.
-        </p>
-      </section>
       <div className="tars-memory-visualEdge" aria-label="TARS memory and task-packet visual">
-        <div className="tars-memory-visualCard">
-          <div className="tars-memory-agent-cell" aria-label="TARS agent memory cell">
+        <div className="tars-memory-visualCard tars-memory-agent-cell" aria-label="TARS agent memory cell">
+          <header className="tars-memory-agent-header">
             <span>agent cell</span>
             <div className="tars-memory-agent-orb">
               <img src={TarsPortrait} alt="" loading="lazy" />
             </div>
-            <strong>TARS</strong>
-            <small>receives only the memory slice needed for this task</small>
-          </div>
-          <div className="tars-memory-link-lines" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </div>
+            <div>
+              <strong>TARS</strong>
+              <small>receives only the memory slice needed for this task</small>
+            </div>
+          </header>
           <div className="tars-memory-buckets" aria-label="Short-term and long-term memory buckets">
             {tarsMemoryTypes.map((memory) => (
               <article className={`tars-memory-bucket tars-memory-bucket--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
@@ -1386,6 +1377,12 @@ function TarsArchitecturePrivacySlice() {
           </div>
         </div>
       </div>
+      <section className="tars-memory-copy">
+        <h3 className="tars-memory-title">Memory without the mess.</h3>
+        <p className="tars-memory-description">
+          TARS keeps live work in short-term memory, stores stable truths in long-term memory, then lets memPalace compile only the relevant context into a scoped task packet.
+        </p>
+      </section>
       </div>
   );
 }
