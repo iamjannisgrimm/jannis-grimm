@@ -5,151 +5,134 @@ import { dirname, resolve } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
 
-const files = [
-  "src/components/featured/ProductStoryStack.jsx",
-  "src/components/featured/FeaturedProjectsStory.css",
-];
+const storyPath = "src/components/featured/ProductStoryStack.jsx";
+const cssPath = "src/components/featured/FeaturedProjectsStory.css";
+const story = readFileSync(resolve(root, storyPath), "utf8");
+const css = readFileSync(resolve(root, cssPath), "utf8");
 
 const violations = [];
+const blockFor = (source, selector) => {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return source.match(new RegExp(`${escaped}\\s*\\{[\\s\\S]*?\\n\\}`, "m"))?.[0] ?? "";
+};
 
-for (const file of files) {
-  const content = readFileSync(resolve(root, file), "utf8");
-
-  if (/prompt-float|tarsPromptStormFloat/.test(content)) {
-    violations.push(`${file}: found legacy prompt float animation tokens`);
-  }
-
-  const promptTextBlocks = content.match(/\.highlights-stack--tars\s+\.tars-prompt-storm__promptText\s*\{[^}]*\}/g) ?? [];
-  for (const block of promptTextBlocks) {
-    if (/\banimation(?:-[\w-]+)?\s*:/.test(block)) {
-      violations.push(`${file}: prompt text has its own animation`);
-      break;
-    }
-  }
-}
-
-const story = readFileSync(resolve(root, "src/components/featured/ProductStoryStack.jsx"), "utf8");
-const css = readFileSync(resolve(root, "src/components/featured/FeaturedProjectsStory.css"), "utf8");
 const transitionStormStart = story.indexOf("function TarsTransitionStorm()");
 const transitionStormEnd = story.indexOf("function TarsScrollSections", transitionStormStart);
 const transitionStorm = transitionStormStart >= 0 && transitionStormEnd > transitionStormStart
   ? story.slice(transitionStormStart, transitionStormEnd)
   : "";
 
-if (!/<section\s+className="tars-prompt-storm is-initializing"/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt storm should render hidden until centered setup is applied");
+if (!transitionStorm) {
+  violations.push(`${storyPath}: missing TarsTransitionStorm implementation`);
 }
 
-if (/centerOffsetFor|promptOffsetFor|const\s+rect\s*=\s*element\.getBoundingClientRect\(\)|stage\.getBoundingClientRect\(\)/.test(transitionStorm)) {
-  violations.push("ProductStoryStack.jsx: prompt storm should not measure current child rects that can encode top-left defaults");
-}
-
-if (!/const promptTargetFor = \(element\) => \(\{[\s\S]*?--prompt-target-x[\s\S]*?--prompt-target-y[\s\S]*?\}\);/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt targets should come from deterministic center-relative CSS vars");
-}
-
-if (!/gsap\.set\(prompts,\s*\{[\s\S]*?opacity:\s*0,[\s\S]*?xPercent:\s*-50,[\s\S]*?yPercent:\s*-50,[\s\S]*?x:\s*0,[\s\S]*?y:\s*0,[\s\S]*?z:\s*\(index\)\s*=>\s*520/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt entry should start hidden at the stage center with positive z");
-}
-
-if (!/\.to\(prompts,\s*\{[\s\S]*?opacity:\s*\(index\)[\s\S]*?x:\s*\(_index,\s*element\)\s*=>\s*promptTargetFor\(element\)\.x[\s\S]*?y:\s*\(_index,\s*element\)\s*=>\s*promptTargetFor\(element\)\.y[\s\S]*?z:\s*0[\s\S]*?duration:\s*0\.2/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt visible positions should animate out from center to stage-relative targets");
-}
-
-if (!/\.to\(prompts,\s*\{\s*opacity:\s*\(index\)\s*=>\s*\(index % 5 === 0 \? 1 : 0\.9\),\s*duration:\s*0\.5\s*\},\s*0\.24\)/.test(transitionStorm)) {
-  violations.push("ProductStoryStack.jsx: prompt storm should hold visible chips through the middle of the fullscreen scene");
-}
-
-if (!/\.to\(prompts,\s*\{[\s\S]*?filter:\s*"blur\(12px\)"[\s\S]*?\},\s*0\.8\)[\s\S]*?\.to\(prompts,\s*\{[\s\S]*?opacity:\s*0[\s\S]*?\},\s*0\.88\)/.test(transitionStorm)) {
-  violations.push("ProductStoryStack.jsx: prompt exit should start after the middle scene band, not before it");
-}
-
-if (!/\.to\(prompts,\s*\{[\s\S]*?opacity:\s*0,[\s\S]*?x:\s*0,[\s\S]*?y:\s*0,[\s\S]*?z:\s*\(index\)\s*=>\s*-460[\s\S]*?scale:\s*\(index\)\s*=>\s*0\.36/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt exit should collapse through center and away on negative z");
-}
-
-if (!/"--prompt-target-x":\s*`\$\{x - 50\}vw`[\s\S]*?"--prompt-target-y":\s*`\$\{y - 50\}vh`/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt inline styles should define center-relative vw/vh targets");
-}
-
-if (!/const sceneDistance = Math\.max\(rect\.height - viewportHeight, viewportHeight \* 0\.88\);[\s\S]*?const progress = gsap\.utils\.clamp\(0, 1, -rect\.top \/ sceneDistance\);/.test(transitionStorm)) {
-  violations.push("ProductStoryStack.jsx: prompt storm should map progress across a balanced fullscreen scene distance");
-}
-
-if (/const start = viewportHeight \* 0\.62|const end = viewportHeight \* 0\.18/.test(transitionStorm)) {
-  violations.push("ProductStoryStack.jsx: prompt storm should not regress to the too-short manual scroll range");
-}
-
-if (!/gsap\.set\(headline,\s*\{\s*opacity:\s*0,\s*y:\s*0[\s\S]*?\}\);/.test(story) || !/\.to\(headline,\s*\{\s*opacity:\s*0,\s*y:\s*0/.test(story)) {
-  violations.push("ProductStoryStack.jsx: headline should enter and exit from centered y=0 state");
-}
-
-if (!/\.tars-prompt-storm\s*\{[\s\S]*?opacity:\s*0;[\s\S]*?\}[\s\S]*?\.tars-prompt-storm\.is-ready\s*\{[\s\S]*?opacity:\s*1;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm should stay hidden until JS marks centered setup ready");
-}
-
-if (!/\.tars-prompt-storm__prompt\s*\{[\s\S]*?left:\s*50%;[\s\S]*?top:\s*50%;[\s\S]*?--prompt-target-x:\s*0vw;[\s\S]*?--prompt-target-y:\s*0vh;[\s\S]*?opacity:\s*0;[\s\S]*?transform:\s*translate3d\(-50%,\s*-50%,\s*0\)\s+translate3d\(0,\s*0,\s*0\)/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt pills need centered hidden CSS defaults, not top-left defaults");
-}
-
-const promptBlocks = (css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm__prompt\s*\{[^}]*\}/g) ?? [])
-  .filter((block) => /--prompt-target-x/.test(block));
-for (const block of promptBlocks) {
-  if (/(?:left:\s*0;|top:\s*0;|opacity:\s*1;)/.test(block)) {
-    violations.push("FeaturedProjectsStory.css: prompt pills must not have top-left or visible defaults");
-    break;
+for (const [file, content] of [[storyPath, story], [cssPath, css]]) {
+  if (/prompt-float|tarsPromptStormFloat/.test(content)) {
+    violations.push(`${file}: found legacy prompt float animation tokens`);
   }
 }
 
-if (/gsap\.fromTo\(prompts|gsap\.fromTo\(headline|gsap\.fromTo\(stage/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt storm should avoid fromTo origins that can flash viewport/page origin");
+if (!/<section\s+className="tars-prompt-storm"/.test(transitionStorm)) {
+  violations.push(`${storyPath}: storm should render as a plain deterministic section, without hidden-ready classes`);
 }
 
-if (!/\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*192dvh;[\s\S]*?min-height:\s*192svh;[\s\S]*?display:\s*grid;[\s\S]*?place-items:\s*center;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm section should feel like a centered fullscreen stage");
+if (/is-initializing|is-ready/.test(transitionStorm)) {
+  violations.push(`${storyPath}: storm should not depend on hidden-ready initialization states`);
 }
 
-if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?top:\s*0;[\s\S]*?width:\s*100vw;[\s\S]*?height:\s*100dvh;[\s\S]*?display:\s*grid;[\s\S]*?place-items:\s*center;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm stage should occupy and center the full viewport");
+if (/centerOffsetFor|promptOffsetFor|element\.getBoundingClientRect\(\)|stage\.getBoundingClientRect\(\)/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt storm should not measure child/stage rects for animation origins`);
 }
 
-if (!/\.tars-prompt-storm__stage::after\s*\{[\s\S]*?z-index:\s*1;/.test(css) || !/\.tars-prompt-storm__field\s*\{[\s\S]*?z-index:\s*2;/.test(css) || !/\.tars-prompt-storm__headline\s*\{[\s\S]*?z-index:\s*3;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt chips/headline should layer above the stage vignette");
+if (!/const\s+promptVarsFor\s*=\s*\(element\)\s*=>\s*\(\{[\s\S]*--prompt-target-x[\s\S]*--prompt-target-y[\s\S]*--prompt-entry-x[\s\S]*--prompt-entry-y[\s\S]*\}\);/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt positions should come from deterministic CSS variables`);
+}
+
+if (!/"--prompt-target-x":\s*`\$\{x - 50\}vw`[\s\S]*"--prompt-target-y":\s*`\$\{y - 50\}vh`[\s\S]*"--prompt-entry-x"[\s\S]*"--prompt-entry-y"/.test(transitionStorm)) {
+  violations.push(`${storyPath}: inline prompt variables must include center-relative target and above-screen entry positions`);
+}
+
+if (!/gsap\.set\(prompts,\s*\{[\s\S]*opacity:\s*0,[\s\S]*xPercent:\s*-50,[\s\S]*yPercent:\s*-50,[\s\S]*entryX[\s\S]*entryY[\s\S]*z:\s*\(index\)\s*=>\s*680/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt entry should start hidden, centered as whole chips, above/front in positive z`);
+}
+
+if (!/\.to\(prompts,\s*\{[\s\S]*x:\s*\(_index,\s*element\)\s*=>\s*promptVarsFor\(element\)\.x[\s\S]*y:\s*\(_index,\s*element\)\s*=>\s*promptVarsFor\(element\)\.y[\s\S]*duration:\s*0\.24/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt rain should animate quickly into deterministic stage targets`);
+}
+
+if (!/\.to\(prompts,\s*\{\s*opacity:[\s\S]*duration:\s*0\.42\s*\},\s*0\.34\)/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt storm should hold enough visible chips through the middle of the scene`);
+}
+
+if (!/\.to\(prompts,\s*\{[\s\S]*z:\s*\(index\)\s*=>\s*-260[\s\S]*filter:\s*"blur\(15px\)"[\s\S]*\},\s*0\.76\)[\s\S]*\.to\(prompts,\s*\{[\s\S]*opacity:\s*0,[\s\S]*z:\s*\(index\)\s*=>\s*-620[\s\S]*scale:\s*\(index\)\s*=>\s*0\.22/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt exit should fade/shrink/blur into negative-z back depth`);
+}
+
+if (/gsap\.fromTo\(prompts|gsap\.fromTo\(headline|gsap\.fromTo\(stage/.test(transitionStorm)) {
+  violations.push(`${storyPath}: prompt storm should avoid fromTo origins that can flash from page/viewport origin`);
+}
+
+if (!/const sceneDistance = Math\.max\(rect\.height - viewportHeight, viewportHeight \* 0\.88\);[\s\S]*const progress = gsap\.utils\.clamp\(0, 1, -rect\.top \/ sceneDistance\);/.test(transitionStorm)) {
+  violations.push(`${storyPath}: scroll progress should map across the fullscreen section distance`);
+}
+
+if (!/const stickY = gsap\.utils\.clamp\(0, Math\.max\(0, rect\.height - viewportHeight\), -rect\.top\);[\s\S]*--storm-stick-y/.test(transitionStorm)) {
+  violations.push(`${storyPath}: storm stage should have deterministic JS sticky fallback for nested scroll containers`);
+}
+
+const sectionBlock = blockFor(css, ".highlights-stack--tars .tars-prompt-storm");
+if (!/min-height:\s*205dvh;[\s\S]*min-height:\s*205svh;[\s\S]*display:\s*block;/.test(sectionBlock)) {
+  violations.push(`${cssPath}: prompt storm section should be a full-screen block scroll moment with enough scene height`);
+}
+if (/opacity:\s*0;/.test(sectionBlock)) {
+  violations.push(`${cssPath}: prompt storm section must not hide itself before JS`);
+}
+
+const stageBlock = blockFor(css, ".highlights-stack--tars .tars-prompt-storm__stage");
+if (!/position:\s*sticky;[\s\S]*top:\s*0;[\s\S]*transform:\s*translate3d\(0, var\(--storm-stick-y, 0px\), 0\);[\s\S]*width:\s*100vw;[\s\S]*height:\s*100dvh;[\s\S]*display:\s*grid;[\s\S]*place-items:\s*center;/.test(stageBlock)) {
+  violations.push(`${cssPath}: sticky stage should occupy and center the full viewport`);
+}
+if (!/perspective:\s*1320px;[\s\S]*perspective-origin:\s*50%\s+38%;/.test(stageBlock)) {
+  violations.push(`${cssPath}: stage needs a foreground rain perspective origin`);
+}
+if (/position:\s*fixed;/.test(stageBlock)) {
+  violations.push(`${cssPath}: prompt storm stage should be section-scoped sticky, not fixed`);
+}
+
+const promptBlock = blockFor(css, ".highlights-stack--tars .tars-prompt-storm__prompt");
+if (!/left:\s*50%;[\s\S]*top:\s*50%;[\s\S]*--prompt-target-x:\s*0vw;[\s\S]*--prompt-target-y:\s*0vh;[\s\S]*opacity:\s*0;[\s\S]*transform:\s*translate3d\(-50%,\s*-50%,\s*0\)/.test(promptBlock)) {
+  violations.push(`${cssPath}: visible chips must have centered hidden defaults, never top-left defaults`);
+}
+if (/left:\s*0;|top:\s*0;|opacity:\s*1;/.test(promptBlock)) {
+  violations.push(`${cssPath}: prompt chip defaults must not be top-left or visible`);
+}
+if (!/transform-origin:\s*center center;[\s\S]*transform-style:\s*preserve-3d;[\s\S]*backface-visibility:\s*hidden;[\s\S]*contain:\s*paint;/.test(promptBlock)) {
+  violations.push(`${cssPath}: prompt pills should transform/render as intact 3D chips`);
+}
+
+const headlineBlock = blockFor(css, ".highlights-stack--tars .tars-prompt-storm__headline");
+if (!/z-index:\s*3;[\s\S]*text-align:\s*center;[\s\S]*opacity:\s*1;/.test(headlineBlock)) {
+  violations.push(`${cssPath}: headline should be centered and readable by default`);
+}
+
+if (!/\.tars-prompt-storm__stage::after\s*\{[\s\S]*z-index:\s*1;/.test(css) || !/\.tars-prompt-storm__field\s*\{[\s\S]*z-index:\s*2;/.test(css) || !/\.tars-prompt-storm__headline\s*\{[\s\S]*z-index:\s*3;/.test(css)) {
+  violations.push(`${cssPath}: field/headline/vignette layering should preserve readable center headline over rain`);
 }
 
 const visibleMiddlePrompts = [...story.matchAll(/\["[^"]+",\s*(\d+),\s*(\d+),\s*"[^"]+",\s*"[^"]+"\]/g)]
   .filter(([, rawX, rawY]) => {
     const x = Number(rawX);
     const y = Number(rawY);
-    return x >= 20 && x <= 80 && y >= 20 && y <= 80;
+    return x >= 18 && x <= 82 && y >= 18 && y <= 82;
   }).length;
-if (visibleMiddlePrompts < 7) {
-  violations.push(`ProductStoryStack.jsx: expected at least 7 prompt chips in the readable middle viewport band, found ${visibleMiddlePrompts}`);
+if (visibleMiddlePrompts < 14) {
+  violations.push(`${storyPath}: expected many readable mid-scene prompt chips, found ${visibleMiddlePrompts}`);
 }
 
-const promptStormSectionBlock = css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[^}]*\}/)?.[0] ?? "";
-if (/min-height:\s*(?:9[0-9]|1[0-5][0-9])dvh;/.test(promptStormSectionBlock)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm scroll scene is too short for a fullscreen page moment");
-}
-
-if (/\.tars-prompt-storm__stage\s*\{[\s\S]*?position:\s*fixed;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm stage should be section-scoped, not globally fixed");
-}
-
-if (!/\.tars-prompt-storm__headline\s*\{[\s\S]*?opacity:\s*0;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: headline should be hidden before centered JS setup");
-}
-
-if (!/\.tars-prompt-storm__prompt\s*\{[\s\S]*?transform-origin:\s*center center;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt pills should transform from their center");
-}
-
-if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?perspective:\s*1320px;[\s\S]*?perspective-origin:\s*50%\s+38%;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm stage should preserve a foreground rain perspective origin");
-}
-
-if (!/\.tars-prompt-storm__prompt\s*\{[\s\S]*?backface-visibility:\s*hidden;/.test(css)) {
-  violations.push("FeaturedProjectsStory.css: prompt pills should render as intact 3D chips");
+const mobileStormIndex = css.indexOf("min-height: 170dvh;");
+const mobileBlock = mobileStormIndex >= 0 ? css.slice(Math.max(0, mobileStormIndex - 160), mobileStormIndex + 220) : "";
+if (!/min-height:\s*170dvh;[\s\S]*min-height:\s*170svh;/.test(mobileBlock)) {
+  violations.push(`${cssPath}: mobile prompt storm scene is too short for the full-screen effect`);
 }
 
 if (violations.length > 0) {

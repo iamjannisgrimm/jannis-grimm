@@ -32,6 +32,11 @@
   isolation: isolate;
 }
 
+.highlights-stack--tars {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
 .highlights-stack__cards {
   position: relative;
   z-index: 1;
@@ -5794,26 +5799,22 @@
 /* TARS handoff: explicit full-screen scroll section before Agents. */
 .highlights-stack--tars .tars-prompt-storm {
   position: relative;
-  min-height: 192dvh;
-  min-height: 192svh;
+  min-height: 205dvh;
+  min-height: 205svh;
   overflow: visible;
   isolation: isolate;
   background: #10161f;
   pointer-events: none;
-  display: grid;
-  place-items: center;
+  display: block;
   color: #fff;
   z-index: 1;
-  opacity: 0;
-}
-
-.highlights-stack--tars .tars-prompt-storm.is-ready {
   opacity: 1;
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage {
   position: sticky;
   top: 0;
+  transform: translate3d(0, var(--storm-stick-y, 0px), 0);
   width: 100vw;
   height: 100dvh;
   min-height: 100svh;
@@ -5829,7 +5830,7 @@
     radial-gradient(circle at 18% 24%, rgba(175,82,222,0.16), transparent 24%),
     radial-gradient(circle at 84% 70%, rgba(48,209,88,0.1), transparent 22%),
     linear-gradient(180deg, rgba(16,22,31,0.96) 0%, rgba(12,17,25,0.92) 55%, rgba(16,22,31,0.62) 100%);
-  opacity: 0;
+  opacity: 1;
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage::before,
@@ -5894,6 +5895,7 @@
   transform-origin: center center;
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  contain: paint;
   will-change: transform, opacity, filter;
   z-index: 2;
 }
@@ -5938,7 +5940,7 @@
   pointer-events: none;
   transform-origin: center center;
   transform-style: preserve-3d;
-  opacity: 0;
+  opacity: 1;
   text-shadow:
     0 2px 4px rgba(0,0,0,0.72),
     0 18px 52px rgba(0,0,0,0.76),
@@ -6033,8 +6035,8 @@
 
 @media (max-width: 760px) {
   .highlights-stack--tars .tars-prompt-storm {
-    min-height: 110dvh;
-    min-height: 110svh;
+    min-height: 170dvh;
+    min-height: 170svh;
   }
 
   .highlights-stack--tars .tars-prompt-storm__prompt {
