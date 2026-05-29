@@ -10,7 +10,10 @@ body, html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  overscroll-behavior-y: contain;
+  /* Keep viewport wheel chaining intact on Windows/Chromium. `contain` can trap
+     mouse-wheel deltas inside non-scrollable nested sections and prevent the
+     page scroll events that drive the TARS story animations. */
+  overscroll-behavior-y: auto;
   overscroll-behavior-x: none;
   background: var(--portfolio-overscroll-background, #ffffff) !important;
   background-color: var(--portfolio-overscroll-background, #ffffff) !important;
