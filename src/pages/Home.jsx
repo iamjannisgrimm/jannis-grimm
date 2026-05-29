@@ -91,13 +91,26 @@ export function Home() {
 
       document.documentElement.style.setProperty("--portfolio-overscroll-background", "#0d1117");
       document.body.style.setProperty("--portfolio-overscroll-background", "#0d1117");
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-bottom", "#0d1117");
+      document.body.style.setProperty("--portfolio-mobile-chrome-bottom", "#0d1117");
       document.documentElement.style.backgroundColor = "#0d1117";
       document.body.style.backgroundColor = "#0d1117";
+
+      const themeColor = document.querySelector("meta[name='theme-color']");
+      if (themeColor?.getAttribute("content") !== "#0d1117") {
+        themeColor?.setAttribute("content", "#0d1117");
+      }
 
       const root = document.getElementById("root");
       if (root instanceof HTMLElement) {
         root.style.backgroundColor = "#0d1117";
       }
+
+      document.querySelectorAll(".portfolio-mobile-chrome-fill--bottom").forEach((element) => {
+        if (element instanceof HTMLElement) {
+          element.style.background = "#0d1117";
+        }
+      });
 
       return true;
     };
