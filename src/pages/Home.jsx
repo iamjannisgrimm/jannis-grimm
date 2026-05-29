@@ -13,6 +13,10 @@ export function Home() {
   const [githubContributionTotal, setGithubContributionTotal] = useState(null);
 
   useEffect(() => {
+    const FOOTER_BACKGROUND_COLOR = "#0d1117";
+    const FOOTER_PRETRIGGER_MIN_PX = 180;
+    const FOOTER_PRETRIGGER_VIEWPORT_RATIO = 0.35;
+
     document.documentElement.classList.add("home-scroll-snap");
     document.body.classList.add("home-scroll-snap");
 
@@ -75,9 +79,13 @@ export function Home() {
         document.documentElement.scrollHeight,
         document.body.scrollHeight,
       );
+      const footerPretriggerDistance = Math.max(
+        FOOTER_PRETRIGGER_MIN_PX,
+        viewportHeight * FOOTER_PRETRIGGER_VIEWPORT_RATIO,
+      );
       const isNearDocumentEnd = window.scrollY + viewportHeight >= documentHeight - 2;
 
-      return footerRect.top <= viewportHeight || isNearDocumentEnd;
+      return footerRect.top <= viewportHeight + footerPretriggerDistance || isNearDocumentEnd;
     };
 
     const applyFooterBackgroundState = () => {
@@ -89,26 +97,26 @@ export function Home() {
         return false;
       }
 
-      document.documentElement.style.setProperty("--portfolio-overscroll-background", "#0d1117");
-      document.body.style.setProperty("--portfolio-overscroll-background", "#0d1117");
-      document.documentElement.style.setProperty("--portfolio-mobile-chrome-bottom", "#0d1117");
-      document.body.style.setProperty("--portfolio-mobile-chrome-bottom", "#0d1117");
-      document.documentElement.style.backgroundColor = "#0d1117";
-      document.body.style.backgroundColor = "#0d1117";
+      document.documentElement.style.setProperty("--portfolio-overscroll-background", FOOTER_BACKGROUND_COLOR);
+      document.body.style.setProperty("--portfolio-overscroll-background", FOOTER_BACKGROUND_COLOR);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-bottom", FOOTER_BACKGROUND_COLOR);
+      document.body.style.setProperty("--portfolio-mobile-chrome-bottom", FOOTER_BACKGROUND_COLOR);
+      document.documentElement.style.backgroundColor = FOOTER_BACKGROUND_COLOR;
+      document.body.style.backgroundColor = FOOTER_BACKGROUND_COLOR;
 
       const themeColor = document.querySelector("meta[name='theme-color']");
-      if (themeColor?.getAttribute("content") !== "#0d1117") {
-        themeColor?.setAttribute("content", "#0d1117");
+      if (themeColor?.getAttribute("content") !== FOOTER_BACKGROUND_COLOR) {
+        themeColor?.setAttribute("content", FOOTER_BACKGROUND_COLOR);
       }
 
       const root = document.getElementById("root");
       if (root instanceof HTMLElement) {
-        root.style.backgroundColor = "#0d1117";
+        root.style.backgroundColor = FOOTER_BACKGROUND_COLOR;
       }
 
       document.querySelectorAll(".portfolio-mobile-chrome-fill--bottom").forEach((element) => {
         if (element instanceof HTMLElement) {
-          element.style.background = "#0d1117";
+          element.style.background = FOOTER_BACKGROUND_COLOR;
         }
       });
 
@@ -149,7 +157,7 @@ export function Home() {
         root.style.backgroundColor = pageCanvasColor;
       }
 
-      applyFooterBackgroundState();
+      const isFooterActive = applyFooterBackgroundState();
 
       document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
         if (!(element instanceof HTMLElement)) {
@@ -163,9 +171,10 @@ export function Home() {
       ensureMobileChromeFills();
       document.querySelectorAll(".portfolio-mobile-chrome-fill").forEach((element) => {
         if (element instanceof HTMLElement) {
-          element.style.background = element.classList.contains("portfolio-mobile-chrome-fill--bottom")
-            ? chromeSpec.bottom
-            : chromeSpec.top;
+          const isBottomFill = element.classList.contains("portfolio-mobile-chrome-fill--bottom");
+          element.style.background = isBottomFill && isFooterActive
+            ? FOOTER_BACKGROUND_COLOR
+            : isBottomFill ? chromeSpec.bottom : chromeSpec.top;
         }
       });
     };

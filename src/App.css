@@ -160,6 +160,12 @@ html.portfolio-footer-background-active #root {
     height: max(env(safe-area-inset-bottom, 0px), 12px);
     background: var(--portfolio-mobile-chrome-bottom, var(--portfolio-mobile-chrome, #ffffff));
   }
+
+  html.portfolio-footer-background-active .portfolio-mobile-chrome-fill--bottom,
+  body.portfolio-footer-background-active .portfolio-mobile-chrome-fill--bottom {
+    background: #0d1117 !important;
+    transition: none;
+  }
 }
 
 /* ===== Layout Helpers ===== */
