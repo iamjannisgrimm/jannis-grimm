@@ -1093,7 +1093,7 @@ function TarsEarlyAccessSlice() {
     <div className="tars-product-slice tars-product-slice--early-access">
       <div className="tars-early-access-copy">
         <span>Private operating system</span>
-        <h3>Want a TARS style layer for your work?</h3>
+        <h3>Your private work OS.</h3>
         <p>
           I am opening a small early-access lane for people and organizations who want a private AI operating system around their tools, memory, automations, and execution workflows.
         </p>
