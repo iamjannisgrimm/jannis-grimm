@@ -5815,6 +5815,7 @@
   place-items: center;
   overflow: hidden;
   perspective: 1320px;
+  perspective-origin: 50% 38%;
   transform-style: preserve-3d;
   will-change: opacity, transform, filter;
   background:
@@ -5881,6 +5882,7 @@
   opacity: 0.9;
   transform: translate3d(-50%, -50%, 0) rotate(var(--prompt-rotate)) scale(1);
   transform-style: preserve-3d;
+  backface-visibility: hidden;
   will-change: transform, opacity, filter;
 }
 
@@ -5889,6 +5891,7 @@
   align-items: center;
   justify-content: center;
   transform-origin: center center;
+  transform: translateZ(0);
 }
 
 .highlights-stack--tars .tars-prompt-storm__prompt--blue { --prompt-rgb: 100,168,255; }

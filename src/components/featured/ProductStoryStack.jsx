@@ -1418,12 +1418,12 @@ function TarsTransitionStorm() {
         xPercent: -50,
         yPercent: -50,
         x: (index) => ((index % 7) - 3) * 22,
-        y: (index) => 140 + (index % 5) * 12,
-        z: (index) => -260 - (index % 4) * 44,
+        y: (index) => -220 - (index % 5) * 34,
+        z: (index) => 360 + (index % 4) * 74,
         rotation: (index) => (index % 7 - 3) * 14,
-        rotationX: (index) => 18 + (index % 3) * 8,
-        scale: 0.42,
-        filter: "blur(22px)",
+        rotationX: (index) => -24 - (index % 3) * 9,
+        scale: (index) => 1.46 + (index % 3) * 0.08,
+        filter: "blur(18px)",
         transformOrigin: "center center",
       });
 
@@ -1447,18 +1447,18 @@ function TarsTransitionStorm() {
         .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
         .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
         .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
-        .to(stage, { opacity: 0, y: -96, z: 160, scale: 1.16, rotateX: -7, filter: "blur(20px)", duration: 0.26, ease: "power3.in" }, 0.82)
-        .to(headline, { opacity: 0, y: -114, z: 120, scale: 0.82, rotateX: 9, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.8)
+        .to(stage, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.82)
+        .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.82)
         .to(prompts, {
           opacity: 0,
-          y: (index) => -150 + ((index % 5) - 2) * 24,
-          x: (index) => ((index % 7) - 3) * 18,
-          z: (index) => 180 + (index % 4) * 58,
-          rotation: (index) => (index % 7 - 3) * -12,
-          rotationX: (index) => -18 - (index % 3) * 8,
-          scale: 1.38,
+          y: (index) => 220 + (index % 5) * 46,
+          x: (index) => ((index % 7) - 3) * 26,
+          z: (index) => -360 - (index % 4) * 78,
+          rotation: (index) => (index % 7 - 3) * 13,
+          rotationX: (index) => 24 + (index % 3) * 9,
+          scale: (index) => 0.44 + (index % 3) * 0.04,
           filter: "blur(24px)",
-          duration: 0.28,
+          duration: 0.3,
           ease: "power3.in",
           stagger: { each: 0.008, from: "edges" },
         }, 0.8);

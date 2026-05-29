@@ -28,6 +28,25 @@ for (const file of files) {
   }
 }
 
+const story = readFileSync(resolve(root, "src/components/featured/ProductStoryStack.jsx"), "utf8");
+const css = readFileSync(resolve(root, "src/components/featured/FeaturedProjectsStory.css"), "utf8");
+
+if (!/gsap\.set\(prompts,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?z:\s*\(index\)\s*=>\s*360[\s\S]*?scale:\s*\(index\)\s*=>\s*1\.46/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt entry should start above the field from positive z/foreground scale");
+}
+
+if (!/\.to\(prompts,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*220[\s\S]*?z:\s*\(index\)\s*=>\s*-360[\s\S]*?scale:\s*\(index\)\s*=>\s*0\.44/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt exit should keep falling down and away on negative z");
+}
+
+if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?perspective:\s*1320px;[\s\S]*?perspective-origin:\s*50%\s+38%;/.test(css)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm stage should preserve a foreground rain perspective origin");
+}
+
+if (!/\.tars-prompt-storm__prompt\s*\{[\s\S]*?backface-visibility:\s*hidden;/.test(css)) {
+  violations.push("FeaturedProjectsStory.css: prompt pills should render as intact 3D chips");
+}
+
 if (violations.length > 0) {
   console.error("TARS prompt storm sanity check failed:");
   for (const violation of violations) console.error(`- ${violation}`);
