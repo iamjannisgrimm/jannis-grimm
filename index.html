@@ -1734,13 +1734,7 @@
           console.warn("Portfolio timeline bootstrap fallback", error);
         } finally {
           installTimelineBackgroundBridge();
-          const shouldUseDevEntry =
-            window.location.hostname === "localhost" ||
-            window.location.hostname === "127.0.0.1";
-          const appEntry = shouldUseDevEntry
-              ? "/src/main.jsx"
-              : "./assets/main-GpkKg-yI.js?v=2026-05-17-hold-final-agents";
-          await import(appEntry);
+          await import("/src/main.jsx");
           requestAnimationFrame(() => {
             attachPrivacyFooterLink();
             startJourneyOptInPlacement();
