@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import TarsPortrait from "../../../me/TARS.png";
 import "./FeaturedProjectsStory.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -977,34 +976,9 @@ function BoardCard({ card }) {
   );
 }
 
-const tarsMemoryTypes = [
-  { id: "short", label: "Short-term", horizon: "Current run", detail: "Active task packet, open files, safety boundaries, and verification targets.", examples: ["brief", "repo state", "QA targets"], tone: "100, 168, 255" },
-  { id: "long", label: "Long-term", horizon: "Durable context", detail: "Stable preferences, product truths, tool registries, playbooks, and operating patterns.", examples: ["preferences", "tool registry", "playbooks"], tone: "52, 199, 89" },
-  { id: "palace", label: "memPalace", horizon: "Task packet", detail: "Compiles only the context an agent needs for a scoped handoff.", examples: ["context refs", "boundaries", "proof"], tone: "175, 82, 222", image: "/assets/images/mempalace.png" },
-];
-
-const tarsMemPalaceNodes = [
-  { id: "operator", label: "Operator profile", x: 14, y: 28, tone: "100,168,255" },
-  { id: "projects", label: "Project truths", x: 33, y: 16, tone: "52,199,89" },
-  { id: "tools", label: "Tool registry", x: 66, y: 18, tone: "255,149,0" },
-  { id: "agents", label: "Agent playbooks", x: 84, y: 34, tone: "175,82,222" },
-  { id: "artifacts", label: "Proof artifacts", x: 70, y: 76, tone: "255,45,85" },
-  { id: "tasks", label: "Task context", x: 27, y: 74, tone: "90,200,250" },
-];
-
-const tarsMemPalaceEdges = [
-  ["operator", "projects"],
-  ["projects", "tools"],
-  ["tools", "agents"],
-  ["agents", "artifacts"],
-  ["artifacts", "tasks"],
-  ["tasks", "operator"],
-  ["tasks", "tools"],
-  ["projects", "artifacts"],
-];
-
 const tarsSecurityModelCards = [
   { label: "Local model", model: "DeepSeek R1-70B", task: "Private route", tone: "52,199,89" },
+  { label: "Memory option", model: "Permissioned local memory", task: "Off, scoped, or durable", tone: "100,168,255" },
   { label: "Open model", model: "Opus 4.7", task: "Frontier route", tone: "175,82,222" },
 ];
 
@@ -1202,7 +1176,7 @@ function TarsSecuritySlice() {
       <section className="tars-security-copy">
         <h3 className="tars-security-title">Security by routing.</h3>
         <p className="tars-security-description">
-          Different models handle different tasks and agents. Files and tools stay locked unless an agent has permission, and the whole system runs on hardware I control.
+          Different models handle different tasks and agents. Memory is optional and permissioned, files and tools stay locked unless an agent has access, and the whole system runs on hardware I control.
         </p>
       </section>
       <div className="tars-security-visualEdge" aria-label="TARS security routing visual">
@@ -1211,7 +1185,7 @@ function TarsSecuritySlice() {
             <div className="tars-security-shield">
               <span className="tars-security-shield-mark"> M5</span>
               <strong>48GB RAM</strong>
-              <small>protected hardware cell</small>
+              <small>protected local hardware + memory cell</small>
             </div>
             {localModelCard ? (
               <article className="tars-security-route-card tars-security-route-card--local" style={{ "--security-rgb": localModelCard.tone }}>
@@ -1224,7 +1198,7 @@ function TarsSecuritySlice() {
           <div className="tars-security-branches" aria-hidden="true">
             <span />
           </div>
-          <div className="tars-security-route-grid" role="list" aria-label="Model route options">
+          <div className="tars-security-route-grid" role="list" aria-label="Model route and memory options">
             {openModelCards.map((card) => (
               <article className="tars-security-route-card" style={{ "--security-rgb": card.tone }} key={card.label} role="listitem">
                 <span>{card.label}</span>
@@ -1314,10 +1288,6 @@ function TarsBoardProductSlice({ kind }) {
     return <TarsAutomationCalendarSlice />;
   }
 
-  if (kind === "architecture-privacy") {
-    return <TarsArchitecturePrivacySlice />;
-  }
-
   if (kind === "security") {
     return <TarsSecuritySlice />;
   }
@@ -1341,60 +1311,6 @@ function TarsBoardProductSlice({ kind }) {
       </div>
       <div className="tars-privacy-rails"><span>Credential refs only</span><span>Approval-gated external actions</span><span>Synthetic portfolio data</span><span>No private live logs</span></div>
     </div>
-  );
-}
-
-function TarsArchitecturePrivacySlice() {
-  const primaryMemoryTypes = tarsMemoryTypes.filter((memory) => memory.id !== "palace");
-  const memPalaceMemory = tarsMemoryTypes.find((memory) => memory.id === "palace");
-
-  return (
-    <div className="tars-product-slice tars-product-slice--memory" aria-hidden="true">
-      <div className="tars-memory-visualEdge" aria-label="TARS memory and task-packet visual">
-        <div className="tars-memory-visualCard tars-memory-agent-cell" aria-label="TARS agent memory cell">
-          <header className="tars-memory-agent-header">
-            <span>agent cell</span>
-            <div className="tars-memory-agent-orb">
-              <img src={TarsPortrait} alt="" loading="lazy" />
-            </div>
-            <div>
-              <strong>TARS</strong>
-              <small>receives only the memory slice needed for this task</small>
-            </div>
-          </header>
-          <div className="tars-memory-buckets" aria-label="Short-term and long-term memory buckets">
-            {primaryMemoryTypes.map((memory) => (
-              <article className={`tars-memory-bucket tars-memory-bucket--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
-                <span>{memory.label}</span>
-                <strong>{memory.horizon}</strong>
-                <p>{memory.detail}</p>
-                {memory.image ? <img className="tars-memory-bucket__image" src={memory.image} alt="" loading="lazy" /> : null}
-                <div>
-                  {memory.examples.map((example) => <small key={example}>{example}</small>)}
-                </div>
-              </article>
-            ))}
-            {memPalaceMemory ? (
-              <article className={`tars-memory-bucket tars-memory-bucket--${memPalaceMemory.id}`} style={{ "--memory-rgb": memPalaceMemory.tone }} key={memPalaceMemory.id}>
-                <span>{memPalaceMemory.label}</span>
-                <strong>{memPalaceMemory.horizon}</strong>
-                <p>{memPalaceMemory.detail}</p>
-                {memPalaceMemory.image ? <img className="tars-memory-bucket__image" src={memPalaceMemory.image} alt="" loading="lazy" /> : null}
-                <div>
-                  {memPalaceMemory.examples.map((example) => <small key={example}>{example}</small>)}
-                </div>
-              </article>
-            ) : null}
-          </div>
-        </div>
-      </div>
-      <section className="tars-memory-copy">
-        <h3 className="tars-memory-title">Memory without the mess.</h3>
-        <p className="tars-memory-description">
-          TARS keeps live work in short-term memory, stores stable truths in long-term memory, then lets memPalace compile only the relevant context into a scoped task packet.
-        </p>
-      </section>
-      </div>
   );
 }
 
