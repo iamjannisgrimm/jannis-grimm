@@ -31,6 +31,18 @@ for (const file of files) {
 const story = readFileSync(resolve(root, "src/components/featured/ProductStoryStack.jsx"), "utf8");
 const css = readFileSync(resolve(root, "src/components/featured/FeaturedProjectsStory.css"), "utf8");
 
+const blockFor = (selector) => {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return css.match(new RegExp(`${escaped}\\s*\\{[\\s\\S]*?\\}`))?.[0] ?? "";
+};
+
+const stageBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__stage");
+const fieldBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__field");
+const promptBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__prompt");
+const headlineBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__headline");
+const stageSetBlocks = story.match(/gsap\.set\(stage,\s*\{[\s\S]*?\}\);/g) ?? [];
+const headlineSetBlocks = story.match(/gsap\.set\(headline,\s*\{[\s\S]*?\}\);/g) ?? [];
+
 if (!/gsap\.set\(prompts,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?z:\s*\(index\)\s*=>\s*360[\s\S]*?scale:\s*\(index\)\s*=>\s*1\.46/.test(story)) {
   violations.push("ProductStoryStack.jsx: prompt entry should start above the field from positive z/foreground scale");
 }
@@ -77,6 +89,46 @@ if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?perspective:\s*1320px;[\s\S]*?persp
 
 if (!/\.tars-prompt-storm__prompt\s*\{[\s\S]*?backface-visibility:\s*hidden;/.test(css)) {
   violations.push("FeaturedProjectsStory.css: prompt pills should render as intact 3D chips");
+}
+
+if (!/transform-origin:\s*center\s+center;/.test(stageBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm stage must transform from center center");
+}
+
+if (!/transform-origin:\s*center\s+center;/.test(fieldBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm field must transform from center center");
+}
+
+if (!/left:\s*var\(--prompt-x,\s*50%\);/.test(promptBlock) || !/top:\s*var\(--prompt-y,\s*50%\);/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt chips must default missing x/y CSS vars to center, not top-left");
+}
+
+if (!/transform:\s*translate3d\(-50%,\s*-50%,\s*0\)\s*rotate\(var\(--prompt-rotate,\s*0deg\)\)\s*scale\(1\);/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt chip base transform must stay centered with a safe rotation fallback");
+}
+
+if (!/transform-origin:\s*center\s+center;/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt chips must transform from center center");
+}
+
+if (!/transform-origin:\s*center\s+center;/.test(headlineBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm headline must transform from center center");
+}
+
+if (stageSetBlocks.length === 0 || stageSetBlocks.some((block) => !/transformOrigin:\s*"center center"/.test(block))) {
+  violations.push("ProductStoryStack.jsx: stage GSAP set calls must pin transformOrigin to center center");
+}
+
+if (headlineSetBlocks.length === 0 || headlineSetBlocks.some((block) => !/transformOrigin:\s*"center center"/.test(block))) {
+  violations.push("ProductStoryStack.jsx: headline GSAP set calls must pin transformOrigin to center center");
+}
+
+if (!/gsap\.set\(prompts,\s*\{[\s\S]*?xPercent:\s*-50,[\s\S]*?yPercent:\s*-50,[\s\S]*?transformOrigin:\s*"center center"/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt GSAP initial state must remain centered around each chip");
+}
+
+if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt chips must not use top-left 0/0 origin defaults");
 }
 
 if (violations.length > 0) {

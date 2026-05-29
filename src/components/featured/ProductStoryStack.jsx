@@ -1346,15 +1346,15 @@ function TarsTransitionStorm() {
 
       if (prefersReducedMotion) {
         sectionRef.current.classList.add("is-visible");
-        gsap.set(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" });
-        gsap.set(headline, { opacity: 1, y: 0, scale: 1 });
-        gsap.set(prompts, { opacity: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)" });
+        gsap.set(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
+        gsap.set(headline, { opacity: 1, y: 0, scale: 1, transformOrigin: "center center" });
+        gsap.set(prompts, { opacity: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
         return;
       }
 
       gsap.set(sectionRef.current, { opacity: 1 });
-      gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)" });
-      gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)" });
+      gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)", transformOrigin: "center center" });
+      gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)", transformOrigin: "center center" });
       gsap.set(prompts, {
         opacity: 0,
         xPercent: -50,

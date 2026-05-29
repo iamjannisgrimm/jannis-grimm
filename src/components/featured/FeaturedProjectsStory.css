@@ -5821,6 +5821,7 @@
   overflow: hidden;
   perspective: 1320px;
   perspective-origin: 50% 38%;
+  transform-origin: center center;
   transform-style: preserve-3d;
   will-change: opacity, transform, filter;
   background:
@@ -5858,13 +5859,14 @@
   position: absolute;
   inset: 0;
   z-index: 2;
+  transform-origin: center center;
   transform-style: preserve-3d;
 }
 
 .highlights-stack--tars .tars-prompt-storm__prompt {
   position: absolute;
-  left: var(--prompt-x);
-  top: var(--prompt-y);
+  left: var(--prompt-x, 50%);
+  top: var(--prompt-y, 50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5885,7 +5887,8 @@
   line-height: 1;
   white-space: nowrap;
   opacity: 0.9;
-  transform: translate3d(-50%, -50%, 0) rotate(var(--prompt-rotate)) scale(1);
+  transform: translate3d(-50%, -50%, 0) rotate(var(--prompt-rotate, 0deg)) scale(1);
+  transform-origin: center center;
   transform-style: preserve-3d;
   backface-visibility: hidden;
   will-change: transform, opacity, filter;
@@ -5929,6 +5932,7 @@
   text-align: center;
   text-wrap: balance;
   pointer-events: none;
+  transform-origin: center center;
   transform-style: preserve-3d;
   text-shadow:
     0 2px 4px rgba(0,0,0,0.72),
