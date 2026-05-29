@@ -21,12 +21,12 @@ const TEAM_MEDIA_TEXT_GAP = 0.22;
 const TEAM_INFO_EXIT_GAP = 0.38;
 
 const TARS_TRANSITION_PROMPTS = [
-  ["Run my morning operator brief", 8, 14, "blue", "sm"],
-  ["Summarize tonight's execution", 23, 9, "slate", "md"],
+  ["Run my morning operator brief", 28, 18, "blue", "sm"],
+  ["Summarize tonight's execution", 42, 12, "slate", "md"],
   ["Find AI/product jobs that fit me", 48, 11, "orange", "lg"],
   ["Check OpenClaw health at 11", 74, 12, "purple", "md"],
   ["Resolve the mem:// context refs", 91, 18, "blue", "sm"],
-  ["Show which agent touched this", 14, 29, "green", "md"],
+  ["Show which agent touched this", 20, 30, "green", "md"],
   ["Tailor my resume to this link", 34, 24, "slate", "sm"],
   ["Use the Gmail credential ref", 62, 25, "orange", "md"],
   ["Check portfolio dashboard visits", 84, 31, "blue", "lg"],
@@ -44,7 +44,7 @@ const TARS_TRANSITION_PROMPTS = [
   ["Send the resume PDF back to me", 53, 79, "purple", "md"],
   ["Refresh the safe control mirror", 73, 84, "green", "sm"],
   ["Pull AI news from approved sources", 89, 77, "purple", "md"],
-  ["Shape a SeeMe growth experiment", 19, 18, "orange", "md"],
+  ["Shape a SeeMe growth experiment", 27, 21, "orange", "md"],
   ["Check MoltGuard before installing", 40, 17, "green", "sm"],
   ["Help with a verification-code login", 57, 17, "slate", "sm"],
   ["Search X for coach-market signals", 79, 22, "purple", "md"],
@@ -1341,24 +1341,25 @@ function TarsTransitionStorm() {
     const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
       const stage = sectionRef.current.querySelector(".tars-prompt-storm__stage");
-      const headline = sectionRef.current.querySelector(".tars-prompt-storm__headline");
+      const headline = sectionRef.current.querySelector(".tars-prompt-storm__headlineCard");
       const prompts = gsap.utils.toArray(".tars-prompt-storm__prompt", sectionRef.current);
+      const promptPills = gsap.utils.toArray(".tars-prompt-storm__promptPill", sectionRef.current);
 
       if (prefersReducedMotion) {
         sectionRef.current.classList.add("is-visible");
         gsap.set(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
         gsap.set(headline, { opacity: 1, y: 0, scale: 1, transformOrigin: "center center" });
-        gsap.set(prompts, { opacity: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
+        gsap.set(prompts, { opacity: 1, transformOrigin: "center center" });
+        gsap.set(promptPills, { opacity: 1, x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
         return;
       }
 
       gsap.set(sectionRef.current, { opacity: 1 });
       gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)", transformOrigin: "center center" });
       gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)", transformOrigin: "center center" });
-      gsap.set(prompts, {
+      gsap.set(prompts, { opacity: 1, transformOrigin: "center center" });
+      gsap.set(promptPills, {
         opacity: 0,
-        xPercent: -50,
-        yPercent: -50,
         x: (index) => ((index % 7) - 3) * 22,
         y: (index) => -220 - (index % 5) * 34,
         z: (index) => 360 + (index % 4) * 74,
@@ -1373,7 +1374,7 @@ function TarsTransitionStorm() {
 
       tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 0)
         .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.35)" }, 0.04)
-        .to(prompts, {
+        .to(promptPills, {
           opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
           y: 0,
           x: 0,
@@ -1388,10 +1389,10 @@ function TarsTransitionStorm() {
         }, 0.06)
         .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
         .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
-        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
+        .to(promptPills, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
         .to(stage, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.9)
         .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.9)
-        .to(prompts, {
+        .to(promptPills, {
           opacity: 0,
           y: (index) => 220 + (index % 5) * 46,
           x: (index) => ((index % 7) - 3) * 26,
@@ -1442,19 +1443,23 @@ function TarsTransitionStorm() {
             <span
               className={`tars-prompt-storm__prompt tars-prompt-storm__prompt--${tone} tars-prompt-storm__prompt--${size}`}
               style={{
-                "--prompt-x": `${x}%`,
-                "--prompt-y": `${y}%`,
+                "--prompt-offset-x": `${x - 50}vw`,
+                "--prompt-offset-y": `${y - 50}dvh`,
                 "--prompt-rotate": `${(index % 7 - 3) * 3}deg`,
               }}
               key={prompt}
             >
-              <span className="tars-prompt-storm__promptText">{prompt}</span>
+              <span className="tars-prompt-storm__promptPill">
+                <span className="tars-prompt-storm__promptText">{prompt}</span>
+              </span>
             </span>
           ))}
         </div>
         <div className="tars-prompt-storm__headline">
-          <span>handoff beat</span>
-          <strong>Every task finds its agent.</strong>
+          <div className="tars-prompt-storm__headlineCard">
+            <span>handoff beat</span>
+            <strong>Every task finds its agent.</strong>
+          </div>
         </div>
       </div>
     </section>

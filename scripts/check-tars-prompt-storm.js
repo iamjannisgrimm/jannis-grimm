@@ -39,21 +39,23 @@ const blockFor = (selector) => {
 const stageBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__stage");
 const fieldBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__field");
 const promptBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__prompt");
-const headlineBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__headline");
+const promptPillBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__promptPill");
+const headlineAnchorBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__headline");
+const headlineBlock = blockFor(".highlights-stack--tars .tars-prompt-storm__headlineCard");
 const stageSetBlocks = story.match(/gsap\.set\(stage,\s*\{[\s\S]*?\}\);/g) ?? [];
 const headlineSetBlocks = story.match(/gsap\.set\(headline,\s*\{[\s\S]*?\}\);/g) ?? [];
 
-if (!/gsap\.set\(prompts,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?z:\s*\(index\)\s*=>\s*360[\s\S]*?scale:\s*\(index\)\s*=>\s*1\.46/.test(story)) {
+if (!/gsap\.set\(promptPills,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?z:\s*\(index\)\s*=>\s*360[\s\S]*?scale:\s*\(index\)\s*=>\s*1\.46/.test(story)) {
   violations.push("ProductStoryStack.jsx: prompt entry should start above the field from positive z/foreground scale");
 }
 
-if (!/\.to\(prompts,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*220[\s\S]*?z:\s*\(index\)\s*=>\s*-360[\s\S]*?scale:\s*\(index\)\s*=>\s*0\.44/.test(story)) {
+if (!/\.to\(promptPills,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*220[\s\S]*?z:\s*\(index\)\s*=>\s*-360[\s\S]*?scale:\s*\(index\)\s*=>\s*0\.44/.test(story)) {
   violations.push("ProductStoryStack.jsx: prompt exit should keep falling down and away on negative z");
 }
 
 const startMatch = story.match(/TARS_PROMPT_STORM_SCROLL_START_VH\s*=\s*([\d.]+)/);
 const endMatch = story.match(/TARS_PROMPT_STORM_SCROLL_END_VH\s*=\s*([\d.]+)/);
-const promptExitMatch = story.match(/\.to\(prompts,\s*\{[\s\S]*?stagger:\s*\{\s*each:\s*0\.008,\s*from:\s*"edges"\s*\},\s*\}\s*,\s*([\d.]+)\s*\)/);
+const promptExitMatch = story.match(/\.to\(promptPills,\s*\{[\s\S]*?stagger:\s*\{\s*each:\s*0\.008,\s*from:\s*"edges"\s*\},\s*\}\s*,\s*([\d.]+)\s*\)/);
 const minHeightMatch = css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*(\d+)dvh;/);
 const mobileMinHeightMatch = css.match(/@media\s*\(max-width:\s*760px\)\s*\{[\s\S]*?\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*(\d+)dvh;/);
 
@@ -99,20 +101,36 @@ if (!/transform-origin:\s*center\s+center;/.test(fieldBlock)) {
   violations.push("FeaturedProjectsStory.css: prompt storm field must transform from center center");
 }
 
-if (!/left:\s*var\(--prompt-x,\s*50%\);/.test(promptBlock) || !/top:\s*var\(--prompt-y,\s*50%\);/.test(promptBlock)) {
-  violations.push("FeaturedProjectsStory.css: prompt chips must default missing x/y CSS vars to center, not top-left");
+if (!/left:\s*50%;/.test(promptBlock) || !/top:\s*50%;/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt anchors must use immutable 50%/50% layout, not variable top-left-prone layout");
 }
 
-if (!/transform:\s*translate3d\(-50%,\s*-50%,\s*0\)\s*rotate\(var\(--prompt-rotate,\s*0deg\)\)\s*scale\(1\);/.test(promptBlock)) {
-  violations.push("FeaturedProjectsStory.css: prompt chip base transform must stay centered with a safe rotation fallback");
+if (!/--prompt-offset-x:\s*0px;/.test(promptBlock) || !/--prompt-offset-y:\s*0px;/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt offset variables must default to center-safe 0px values");
+}
+
+if (!/transform:\s*translate3d\(-50%,\s*-50%,\s*0\)\s*translate3d\(var\(--prompt-offset-x,\s*0px\),\s*var\(--prompt-offset-y,\s*0px\),\s*0\);/.test(promptBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt anchor transform must always include center translation before offsets");
+}
+
+if (!/transform:\s*translate3d\(0,\s*0,\s*0\)\s*rotate\(var\(--prompt-rotate,\s*0deg\)\)\s*scale\(1\);/.test(promptPillBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt pill visual transform must be local to the centered anchor");
 }
 
 if (!/transform-origin:\s*center\s+center;/.test(promptBlock)) {
   violations.push("FeaturedProjectsStory.css: prompt chips must transform from center center");
 }
 
-if (!/transform-origin:\s*center\s+center;/.test(headlineBlock)) {
-  violations.push("FeaturedProjectsStory.css: prompt storm headline must transform from center center");
+if (!/left:\s*50%;/.test(headlineAnchorBlock) || !/top:\s*50%;/.test(headlineAnchorBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm headline anchor must use immutable 50%/50% layout");
+}
+
+if (!/transform:\s*translate3d\(-50%,\s*-50%,\s*0\);/.test(headlineAnchorBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm headline anchor must include center translation");
+}
+
+if (!/transform-origin:\s*center\s+center;/.test(headlineAnchorBlock) || !/transform-origin:\s*center\s+center;/.test(headlineBlock)) {
+  violations.push("FeaturedProjectsStory.css: prompt storm headline must transform from center center inside a centered anchor");
 }
 
 if (stageSetBlocks.length === 0 || stageSetBlocks.some((block) => !/transformOrigin:\s*"center center"/.test(block))) {
@@ -123,12 +141,20 @@ if (headlineSetBlocks.length === 0 || headlineSetBlocks.some((block) => !/transf
   violations.push("ProductStoryStack.jsx: headline GSAP set calls must pin transformOrigin to center center");
 }
 
-if (!/gsap\.set\(prompts,\s*\{[\s\S]*?xPercent:\s*-50,[\s\S]*?yPercent:\s*-50,[\s\S]*?transformOrigin:\s*"center center"/.test(story)) {
-  violations.push("ProductStoryStack.jsx: prompt GSAP initial state must remain centered around each chip");
+if (!/gsap\.set\(prompts,\s*\{\s*opacity:\s*1,\s*transformOrigin:\s*"center center"\s*\}\);/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt anchors must stay transform-clean after CSS center anchoring");
+}
+
+if (!/gsap\.set\(promptPills,\s*\{[\s\S]*?x:\s*\(index\)[\s\S]*?y:\s*\(index\)\s*=>\s*-220[\s\S]*?transformOrigin:\s*"center center"/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt pill animation must happen inside centered prompt anchors");
 }
 
 if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(promptBlock)) {
-  violations.push("FeaturedProjectsStory.css: prompt chips must not use top-left 0/0 origin defaults");
+  violations.push("FeaturedProjectsStory.css: prompt anchors must not use top-left 0/0 origin defaults");
+}
+
+if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(headlineAnchorBlock)) {
+  violations.push("FeaturedProjectsStory.css: headline anchor must not use top-left 0/0 origin defaults");
 }
 
 if (violations.length > 0) {
