@@ -6255,13 +6255,11 @@
 }
 
 .highlights-stack--tars .tars-memory-task-packet__image {
-  position: absolute;
-  right: clamp(10px, 2.2vw, 24px);
-  bottom: clamp(10px, 2vw, 22px);
-  width: min(38%, 168px);
-  max-height: 78%;
+  position: relative;
+  width: min(100%, 280px);
+  max-height: 116px;
   object-fit: contain;
-  opacity: 0.36;
+  opacity: 0.9;
   filter: drop-shadow(0 22px 34px rgba(0,0,0,0.34));
   pointer-events: none;
 }

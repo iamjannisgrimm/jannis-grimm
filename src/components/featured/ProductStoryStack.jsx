@@ -1258,16 +1258,9 @@ function TarsArchitecturePrivacySlice() {
             <i />
           </div>
           <article className="tars-memory-task-packet" aria-label="memPalace task packet">
-            <img className="tars-memory-task-packet__image" src="/assets/images/mempalace.png" alt="" loading="lazy" />
             <span>memPalace</span>
             <strong>Task packet</strong>
-            <p>Prompt, boundaries, memory labels, tool scope, deliverables, and proof path.</p>
-            <div className="tars-memory-packet-tags">
-              <small>intent</small>
-              <small>context</small>
-              <small>tools</small>
-              <small>proof</small>
-            </div>
+            <img className="tars-memory-task-packet__image" src="/assets/images/mempalace.png" alt="" loading="lazy" />
           </article>
         </div>
       </div>
