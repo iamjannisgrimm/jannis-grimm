@@ -1556,8 +1556,10 @@ function TarsScrollSections({ blocks }) {
         const pinnedTravel = Math.max(1, rect.height - viewportHeight);
         const progress = gsap.utils.clamp(0, 1, -rect.top / pinnedTravel);
         const shouldPin = rect.top <= 0 && rect.bottom >= viewportHeight;
+        const shouldRelease = rect.top < 0 && rect.bottom < viewportHeight && rect.bottom > 0;
 
         agenticSection.classList.toggle("is-agentic-pinned", shouldPin);
+        agenticSection.classList.toggle("is-agentic-released", shouldRelease);
         tl.progress(progress);
       };
 
@@ -1567,6 +1569,7 @@ function TarsScrollSections({ blocks }) {
 
       return () => {
         agenticSection.classList.remove("is-agentic-pinned");
+        agenticSection.classList.remove("is-agentic-released");
         window.removeEventListener("scroll", renderFromScroll);
         window.removeEventListener("resize", renderFromScroll);
       };

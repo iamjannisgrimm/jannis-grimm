@@ -6045,6 +6045,14 @@
   transform: translateX(-50%);
 }
 
+.highlights-stack--tars .tars-scroll-section--agents-tab.is-agentic-released .tars-scroll-section__inner {
+  position: absolute;
+  z-index: 3;
+  inset: auto auto 0 50%;
+  width: min(1180px, calc(100vw - 108px));
+  transform: translateX(-50%);
+}
+
 .highlights-stack--tars .tars-automation-header {
   justify-content: center;
   text-align: center;
