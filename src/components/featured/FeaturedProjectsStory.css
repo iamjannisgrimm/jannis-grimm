@@ -6173,22 +6173,54 @@
   padding: 58px clamp(6px, 1vw, 12px) 0;
 }
 
-.highlights-stack--tars .tars-agentic-spawn-stage {
+.highlights-stack--tars .tars-agentic-graph-panel {
   position: relative;
   grid-column: 2;
   grid-row: 1;
   justify-self: stretch;
   align-self: center;
   display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(16px, 2.5vh, 26px);
   place-items: center;
   width: 100%;
-  max-width: 780px;
+  max-width: 960px;
   margin-inline: 0;
-  min-height: clamp(460px, 60vh, 590px);
+  min-height: clamp(560px, 70vh, 720px);
+  isolation: isolate;
+}
+
+.highlights-stack--tars .tars-agentic-spawn-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: clamp(500px, 64vh, 660px);
   isolation: isolate;
   perspective: 1400px;
-  overflow: visible;
+  overflow: hidden;
   border-radius: 28px;
+}
+
+.highlights-stack--tars .tars-agentic-spawn-stage::before,
+.highlights-stack--tars .tars-agentic-spawn-stage::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 6;
+  width: clamp(52px, 9vw, 120px);
+  pointer-events: none;
+}
+
+.highlights-stack--tars .tars-agentic-spawn-stage::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0));
+}
+
+.highlights-stack--tars .tars-agentic-spawn-stage::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(7, 10, 16, 0.98), rgba(7, 10, 16, 0));
 }
 
 .highlights-stack--tars .tars-agentic-spawn-stage > .tars-agent-network {
@@ -6199,36 +6231,14 @@
 }
 
 .highlights-stack--tars .tars-agentic-spawn-label {
-  position: absolute;
   z-index: 7;
-  left: 50%;
-  bottom: clamp(0px, 1.8vh, 18px);
-  display: grid;
-  gap: 7px;
-  width: min(620px, 72vw);
-  padding: 12px 18px 10px;
-  border: 1px solid rgba(100,168,255,0.16);
-  border-radius: 999px;
-  background: rgba(7, 10, 16, 0.58);
-  box-shadow: 0 18px 46px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.06);
+  max-width: 54ch;
+  margin: 0 auto;
+  color: rgba(221, 228, 240, 0.68);
+  font-size: clamp(1.1rem, 1.9vw, 1.3rem);
+  line-height: 1.58;
   text-align: center;
-  transform: translateX(-50%);
   pointer-events: none;
-}
-
-.highlights-stack--tars .tars-agentic-spawn-label span {
-  color: rgba(100,168,255,0.88);
-  font-size: 0.58rem;
-  font-weight: 840;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.highlights-stack--tars .tars-agentic-spawn-label strong {
-  color: #fff;
-  font-size: clamp(0.95rem, 1.35vw, 1.24rem);
-  line-height: 1.12;
-  letter-spacing: -0.04em;
 }
 
 .highlights-stack--tars .tars-agentic-spawn-clone {
@@ -6252,7 +6262,7 @@
 .highlights-stack--tars .tars-agentic-spawn-clone--3 { z-index: 0; }
 
 .highlights-stack--tars .tars-agent-network--spawn-clone {
-  width: min(1080px, 100%);
+  width: min(1180px, 100%);
   opacity: 0.72;
   transform-origin: center center;
 }
@@ -6363,11 +6373,8 @@
   }
 
   .highlights-stack--tars .tars-agentic-spawn-label {
-    right: 50%;
-    top: auto;
-    bottom: 12px;
-    width: min(360px, calc(100% - 32px));
-    transform: translateX(50%);
+    width: min(54ch, calc(100% - 32px));
+    transform: none;
     text-align: center;
   }
 }
@@ -6401,6 +6408,7 @@
     display: grid;
   }
 
+  .highlights-stack--tars .tars-agentic-graph-panel,
   .highlights-stack--tars .tars-agentic-spawn-stage {
     min-height: auto;
   }
@@ -7290,7 +7298,7 @@
   height: 100%;
   min-height: 0;
   display: grid;
-  grid-template-columns: minmax(0, 0.94fr) minmax(430px, 1.06fr) !important;
+  grid-template-columns: minmax(300px, 0.72fr) minmax(620px, 1.28fr) !important;
   grid-template-rows: minmax(0, 1fr);
   align-items: center;
   justify-items: stretch;
@@ -7338,7 +7346,7 @@
 
 .highlights-stack--tars .tars-agentic-spawn-stage > .tars-agent-network,
 .highlights-stack--tars .tars-agentic-spawn-clone .tars-agent-network {
-  width: min(720px, 100%);
+  width: min(860px, 100%);
 }
 
 .highlights-stack--tars .tars-vision-description,
@@ -7350,13 +7358,13 @@
 
 .highlights-stack--tars .tars-agent-network {
   width: 100%;
-  max-width: 720px;
-  min-height: 650px;
+  max-width: 860px;
+  min-height: 690px;
   align-self: center;
   justify-self: end;
   align-content: start;
-  gap: clamp(34px, 5.2vh, 46px);
-  padding: 28px clamp(16px, 2vw, 22px) 30px;
+  gap: clamp(36px, 5.4vh, 52px);
+  padding: 30px clamp(18px, 2.2vw, 28px) 32px;
   overflow: visible;
   border: 1px solid rgba(226, 232, 245, 0.14);
   border-radius: 30px;
@@ -7391,31 +7399,31 @@
 }
 
 .highlights-stack--tars .tars-agent-tab-node {
-  min-height: 94px;
-  padding: 8px 5px 9px;
+  min-height: 106px;
+  padding: 10px 6px 11px;
   gap: 6px;
-  border-radius: 16px;
+  border-radius: 18px;
 }
 
 .highlights-stack--tars .tars-agent-tab-node--tars {
-  width: min(172px, 100%);
-  min-height: 96px;
+  width: min(200px, 100%);
+  min-height: 110px;
 }
 
 .highlights-stack--tars .tars-agent-tab-orb {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
 }
 
 .highlights-stack--tars .tars-agent-tab-node--tars .tars-agent-tab-orb {
-  width: 50px;
-  height: 50px;
+  width: 58px;
+  height: 58px;
 }
 
 .highlights-stack--tars .tars-agent-tab-node strong {
   max-width: 100%;
   color: #1d1d1f;
-  font-size: clamp(0.62rem, 0.85vw, 0.78rem);
+  font-size: clamp(0.68rem, 0.9vw, 0.84rem);
   line-height: 1.06;
   overflow-wrap: anywhere;
 }
@@ -7430,7 +7438,7 @@
     align-content: start;
   }
 
-  .highlights-stack--tars .tars-agentic-spawn-stage {
+  .highlights-stack--tars .tars-agentic-graph-panel {
     grid-column: 1;
     grid-row: 2;
     justify-self: center;
@@ -7456,7 +7464,7 @@
 
   .highlights-stack--tars .tars-agent-network {
     justify-self: center;
-    min-height: 620px;
+    min-height: 650px;
   }
 }
 
@@ -7484,6 +7492,11 @@
   .highlights-stack--tars .tars-agent-network {
     min-height: auto;
     padding: 20px 14px;
+  }
+
+  .highlights-stack--tars .tars-agentic-graph-panel,
+  .highlights-stack--tars .tars-agentic-spawn-stage {
+    min-height: auto;
   }
 
   .highlights-stack--tars .tars-agent-row--domains,

@@ -1034,22 +1034,46 @@ function TarsAgentsTabSlice() {
     .filter((agent) => agent.tier === "specialist")
     .sort((a, b) => specialistOrder.indexOf(a.id) - specialistOrder.indexOf(b.id));
   const developerSubagents = tarsAgents.filter((agent) => agent.tier === "developer-subagent");
-  const activeNodeIds = new Set(["tars", "career", "developer", "frontend-developer"]);
+  const routeHighlights = {
+    "career-frontend": {
+      nodes: ["tars", "career", "developer", "frontend-developer"],
+      edges: ["tars-career", "career-developer", "developer-frontend-developer"],
+    },
+    "claw-developer": {
+      nodes: ["tars", "claw", "developer"],
+      edges: ["tars-claw", "claw-developer"],
+    },
+    "personal-news": {
+      nodes: ["tars", "personal", "news-retriever"],
+      edges: ["tars-personal", "personal-news-retriever"],
+    },
+    "seeme-research": {
+      nodes: ["tars", "seeme", "research"],
+      edges: ["tars-seeme", "seeme-research"],
+    },
+  };
 
-  const agentNetworkGraph = (className = "") => (
+  const agentNetworkGraph = (className = "", routeKey = "career-frontend") => {
+    const activeRoute = routeHighlights[routeKey] || routeHighlights["career-frontend"];
+    const activeNodeIds = new Set(activeRoute.nodes);
+    const activeEdgeIds = new Set(activeRoute.edges);
+    const edgeClassName = (edgeId) => (activeEdgeIds.has(edgeId) ? "is-live-active" : undefined);
+
+    return (
     <div className={`tars-agent-network tars-agent-network--dark-cell${className ? ` ${className}` : ""}`} data-agent-graph="openclaw-agents">
       <svg className="tars-agent-connectors" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
-        <path className="is-live-active" data-edge="tars-career" d="M500 122 C305 132 176 144 125 166" />
-        <path data-edge="tars-seeme" d="M500 122 C420 136 392 148 375 166" />
-        <path data-edge="tars-personal" d="M500 122 C580 136 608 148 625 166" />
-        <path data-edge="tars-claw" d="M500 122 C695 132 824 144 875 166" />
+        <path className={edgeClassName("tars-career")} data-edge="tars-career" d="M500 122 C305 132 176 144 125 166" />
+        <path className={edgeClassName("tars-seeme")} data-edge="tars-seeme" d="M500 122 C420 136 392 148 375 166" />
+        <path className={edgeClassName("tars-personal")} data-edge="tars-personal" d="M500 122 C580 136 608 148 625 166" />
+        <path className={edgeClassName("tars-claw")} data-edge="tars-claw" d="M500 122 C695 132 824 144 875 166" />
         <path data-edge="career-marketer" d="M125 250 C112 274 96 282 84 292" />
-        <path className="is-live-active" data-edge="career-developer" d="M125 250 C150 272 206 282 250 292" />
-        <path data-edge="seeme-research" d="M375 250 C392 274 408 282 417 292" />
-        <path data-edge="personal-news-retriever" d="M625 250 C608 274 592 282 583 292" />
+        <path className={edgeClassName("career-developer")} data-edge="career-developer" d="M125 250 C150 272 206 282 250 292" />
+        <path className={edgeClassName("seeme-research")} data-edge="seeme-research" d="M375 250 C392 274 408 282 417 292" />
+        <path className={edgeClassName("personal-news-retriever")} data-edge="personal-news-retriever" d="M625 250 C608 274 592 282 583 292" />
+        <path className={edgeClassName("claw-developer")} data-edge="claw-developer" d="M875 250 C720 280 408 286 250 292" />
         <path data-edge="claw-security" d="M875 250 C850 272 794 282 750 292" />
         <path data-edge="claw-legal" d="M875 250 C900 272 916 282 917 292" />
-        <path className="is-live-active" data-edge="developer-frontend-developer" d="M250 376 C226 396 196 408 170 418" />
+        <path className={edgeClassName("developer-frontend-developer")} data-edge="developer-frontend-developer" d="M250 376 C226 396 196 408 170 418" />
         <path data-edge="developer-backend-developer" d="M250 376 C274 396 304 408 330 418" />
       </svg>
       <div className="tars-agent-tier tars-agent-tier--tars">
@@ -1083,7 +1107,8 @@ function TarsAgentsTabSlice() {
         ))}
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="tars-product-slice tars-product-slice--agents-tab" aria-hidden="true">
@@ -1095,17 +1120,22 @@ function TarsAgentsTabSlice() {
               <p>TARS uses the A2A protocol to pass scoped task packets between domain agents, reusable specialists, and implementation subagents.</p>
             </div>
           </header>
-          <div className="tars-agentic-spawn-stage" aria-hidden="true">
-            {agentNetworkGraph()}
-            <div className="tars-agentic-spawn-label">
-              <span>Parallel execution</span>
-              <strong>Spin up your own teams working in parallel as needed.</strong>
+          <div className="tars-agentic-graph-panel" aria-hidden="true">
+            <div className="tars-agentic-spawn-stage">
+              {agentNetworkGraph()}
+              {[
+                [1, "claw-developer"],
+                [2, "personal-news"],
+                [3, "seeme-research"],
+              ].map(([instance, routeKey]) => (
+                <div className={`tars-agentic-spawn-clone tars-agentic-spawn-clone--${instance}`} key={instance}>
+                  {agentNetworkGraph("tars-agent-network--spawn-clone", routeKey)}
+                </div>
+              ))}
             </div>
-            {[1, 2, 3].map((instance) => (
-              <div className={`tars-agentic-spawn-clone tars-agentic-spawn-clone--${instance}`} key={instance}>
-                {agentNetworkGraph("tars-agent-network--spawn-clone")}
-              </div>
-            ))}
+            <p className="tars-agentic-spawn-label">
+              Spin up purpose-built teams in parallel: OpenClaw systems work can route through Claw to Developer, while personal ops, research, and product paths use their own canonical owners.
+            </p>
           </div>
         </div>
       </section>
@@ -1518,13 +1548,13 @@ function TarsScrollSections({ blocks }) {
       if (!graph || clones.length < 2) return;
 
       gsap.set(graph, { transformOrigin: "center center" });
-      gsap.set(graph, { x: 0, scale: 0.62, rotateY: 0, filter: "blur(0px)" });
+      gsap.set(graph, { x: 0, scale: 0.74, rotateY: 0, filter: "blur(0px)" });
       gsap.set(clones, {
         display: "grid",
         opacity: (index) => (index === 0 ? 0.36 : 0.18),
-        x: (index) => 520 + index * 440,
+        x: (index) => 650 + index * 560,
         y: 0,
-        scale: 0.62,
+        scale: 0.74,
         rotateY: 0,
         filter: "blur(1px)",
         transformOrigin: "center center",
@@ -1536,11 +1566,11 @@ function TarsScrollSections({ blocks }) {
       if (header) {
         tl.to(header, { autoAlpha: 0, x: -72, filter: "blur(8px)", duration: 0.26, ease: "power2.out" }, 0);
       }
-      tl.to(graph, { x: -580, scale: 0.62, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
+      tl.to(graph, { x: -720, scale: 0.74, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
         .to(clones, {
           opacity: (index) => (index === 0 ? 0.96 : index === 1 ? 0.72 : 0.42),
-          x: (index) => -24 + index * 440,
-          scale: 0.62,
+          x: (index) => -24 + index * 560,
+          scale: 0.74,
           rotateY: 0,
           filter: "blur(0px)",
           duration: 1,
