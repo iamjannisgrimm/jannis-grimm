@@ -5803,6 +5803,11 @@
   display: block;
   color: #fff;
   z-index: 1;
+  opacity: 0;
+}
+
+.highlights-stack--tars .tars-prompt-storm.is-ready {
+  opacity: 1;
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage {
@@ -5823,6 +5828,7 @@
     radial-gradient(circle at 18% 24%, rgba(175,82,222,0.16), transparent 24%),
     radial-gradient(circle at 84% 70%, rgba(48,209,88,0.1), transparent 22%),
     linear-gradient(180deg, rgba(16,22,31,0.96) 0%, rgba(12,17,25,0.92) 55%, rgba(16,22,31,0.62) 100%);
+  opacity: 0;
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage::before,
@@ -5858,8 +5864,8 @@
 
 .highlights-stack--tars .tars-prompt-storm__prompt {
   position: absolute;
-  left: var(--prompt-x);
-  top: var(--prompt-y);
+  left: 50%;
+  top: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -5879,7 +5885,7 @@
   letter-spacing: -0.025em;
   line-height: 1;
   white-space: nowrap;
-  opacity: 0.9;
+  opacity: 0;
   transform: translate3d(-50%, -50%, 0) rotate(var(--prompt-rotate)) scale(1);
   transform-origin: center center;
   transform-style: preserve-3d;
@@ -5927,6 +5933,7 @@
   pointer-events: none;
   transform-origin: center center;
   transform-style: preserve-3d;
+  opacity: 0;
   text-shadow:
     0 2px 4px rgba(0,0,0,0.72),
     0 18px 52px rgba(0,0,0,0.76),
