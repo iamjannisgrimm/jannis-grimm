@@ -1098,8 +1098,8 @@ function TarsAgentsTabSlice() {
           <div className="tars-agentic-spawn-stage" aria-hidden="true">
             {agentNetworkGraph()}
             <div className="tars-agentic-spawn-label">
-              <span>Instance fan-out</span>
-              <strong>Spin up the exact agents this task needs.</strong>
+              <span>Parallel execution</span>
+              <strong>Spin up your own teams working in parallel as needed.</strong>
             </div>
             {[1, 2, 3].map((instance) => (
               <div className={`tars-agentic-spawn-clone tars-agentic-spawn-clone--${instance}`} key={instance}>
@@ -1518,13 +1518,13 @@ function TarsScrollSections({ blocks }) {
       if (!graph || clones.length < 2) return;
 
       gsap.set(graph, { transformOrigin: "center center" });
-      gsap.set(graph, { x: 0, scale: 0.58, rotateY: 0, filter: "blur(0px)" });
+      gsap.set(graph, { x: 0, scale: 0.62, rotateY: 0, filter: "blur(0px)" });
       gsap.set(clones, {
         display: "grid",
         opacity: (index) => (index === 0 ? 0.36 : 0.18),
-        x: (index) => 500 + index * 420,
+        x: (index) => 520 + index * 440,
         y: 0,
-        scale: 0.58,
+        scale: 0.62,
         rotateY: 0,
         filter: "blur(1px)",
         transformOrigin: "center center",
@@ -1536,11 +1536,11 @@ function TarsScrollSections({ blocks }) {
       if (header) {
         tl.to(header, { autoAlpha: 0, x: -72, filter: "blur(8px)", duration: 0.26, ease: "power2.out" }, 0);
       }
-      tl.to(graph, { x: -560, scale: 0.58, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
+      tl.to(graph, { x: -580, scale: 0.62, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
         .to(clones, {
           opacity: (index) => (index === 0 ? 0.96 : index === 1 ? 0.72 : 0.42),
-          x: (index) => -20 + index * 420,
-          scale: 0.58,
+          x: (index) => -24 + index * 440,
+          scale: 0.62,
           rotateY: 0,
           filter: "blur(0px)",
           duration: 1,
