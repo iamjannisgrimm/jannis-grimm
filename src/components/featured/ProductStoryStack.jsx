@@ -979,10 +979,11 @@ function BoardCard({ card }) {
   );
 }
 
+const tarsSecurityMemoryBuckets = ["short-term", "long-term", "MemPalace / files"];
+
 const tarsSecurityModelCards = [
-  { label: "Local model", model: "DeepSeek R1-70B", task: "Private route", tone: "52,199,89" },
-  { label: "Memory option", model: "Permissioned local memory", task: "Off, scoped, or durable", tone: "100,168,255" },
-  { label: "Open model", model: "Opus 4.7", task: "Frontier route", tone: "175,82,222" },
+  { label: "Private system", model: "Local model", task: "DeepSeek R1-70B", tone: "52,199,89" },
+  { label: "Open system", model: "Cloud frontier model", task: "Opus 4.7 route", tone: "175,82,222" },
 ];
 
 function TarsAgentsTabSlice() {
@@ -1186,47 +1187,47 @@ function TarsEarlyAccessSlice() {
 }
 
 function TarsSecuritySlice() {
-  const localModelCard = tarsSecurityModelCards.find((card) => card.label === "Local model");
-  const openModelCards = tarsSecurityModelCards.filter((card) => card.label !== "Local model");
+  const privateModelCard = tarsSecurityModelCards.find((card) => card.label === "Private system");
+  const openModelCard = tarsSecurityModelCards.find((card) => card.label === "Open system");
+  const renderMemoryBuckets = () => (
+    <div className="tars-security-memory-buckets" aria-label="Memory buckets">
+      {tarsSecurityMemoryBuckets.map((bucket) => (
+        <span key={bucket}>{bucket}</span>
+      ))}
+    </div>
+  );
 
   return (
     <div className="tars-product-slice tars-product-slice--security" aria-hidden="true">
-      <section className="tars-security-copy">
-        <h3 className="tars-security-title">Security by routing.</h3>
-        <p className="tars-security-description">
-          Different models handle different tasks and agents. Memory is optional and permissioned, files and tools stay locked unless an agent has access, and the whole system runs on hardware I control.
-        </p>
-      </section>
       <div className="tars-security-visualEdge" aria-label="TARS security routing visual">
         <div className="tars-security-visualCard">
           <div className="tars-security-core" aria-hidden="true">
-            <div className="tars-security-shield">
-              <span className="tars-security-shield-mark"> M5</span>
-              <strong>48GB RAM</strong>
-              <small>protected local hardware + memory cell</small>
+            <div className="tars-security-shield" style={{ "--security-rgb": privateModelCard?.tone }}>
+              <span className="tars-security-shield-mark">Private / local</span>
+              <strong> M5</strong>
+              <small>48GB RAM · {privateModelCard?.model} · {privateModelCard?.task}</small>
+              {renderMemoryBuckets()}
             </div>
-            {localModelCard ? (
-              <article className="tars-security-route-card tars-security-route-card--local" style={{ "--security-rgb": localModelCard.tone }}>
-                <span>{localModelCard.label}</span>
-                <strong>{localModelCard.model}</strong>
-                <small>{localModelCard.task}</small>
+            {openModelCard ? (
+              <article className="tars-security-route-card tars-security-route-card--open" style={{ "--security-rgb": openModelCard.tone }}>
+                <span>{openModelCard.label}</span>
+                <strong>{openModelCard.model}</strong>
+                <small>{openModelCard.task}</small>
+                {renderMemoryBuckets()}
               </article>
             ) : null}
           </div>
           <div className="tars-security-branches" aria-hidden="true">
             <span />
           </div>
-          <div className="tars-security-route-grid" role="list" aria-label="Model route and memory options">
-            {openModelCards.map((card) => (
-              <article className="tars-security-route-card" style={{ "--security-rgb": card.tone }} key={card.label} role="listitem">
-                <span>{card.label}</span>
-                <strong>{card.model}</strong>
-                <small>{card.task}</small>
-              </article>
-            ))}
-          </div>
         </div>
       </div>
+      <section className="tars-security-copy">
+        <h3 className="tars-security-title">Security by routing.</h3>
+        <p className="tars-security-description">
+          Different models handle different tasks and agents. Memory is optional and permissioned, files and tools stay locked unless an agent has access, and the whole system runs on hardware I control.
+        </p>
+      </section>
     </div>
   );
 }
