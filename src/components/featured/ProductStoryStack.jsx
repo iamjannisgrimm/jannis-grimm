@@ -1352,17 +1352,20 @@ function TarsTransitionStorm() {
       gsap.set(sectionRef.current, { opacity: 1 });
       gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)" });
       gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)" });
-      const centerXFor = (element) => {
+      const centerOffsetFor = (element) => {
         const stageRect = stage.getBoundingClientRect();
         const rect = element.getBoundingClientRect();
-        return stageRect.left + stageRect.width / 2 - (rect.left + rect.width / 2);
+        return {
+          x: stageRect.left + stageRect.width / 2 - (rect.left + rect.width / 2),
+          y: stageRect.top + stageRect.height / 2 - (rect.top + rect.height / 2),
+        };
       };
       gsap.set(prompts, {
         opacity: 0,
         xPercent: -50,
         yPercent: -50,
-        x: (_index, element) => centerXFor(element),
-        y: (index) => -220 - (index % 5) * 42,
+        x: (_index, element) => centerOffsetFor(element).x,
+        y: (_index, element) => centerOffsetFor(element).y,
         z: (index) => 360 + (index % 4) * 74,
         rotation: (index) => (index % 7 - 3) * 14,
         rotationX: (index) => -24 - (index % 3) * 9,
@@ -1395,8 +1398,8 @@ function TarsTransitionStorm() {
         .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.82)
         .to(prompts, {
           opacity: 0,
-          y: (index) => 220 + (index % 5) * 46,
-          x: (_index, element) => centerXFor(element),
+          x: (_index, element) => centerOffsetFor(element).x,
+          y: (_index, element) => centerOffsetFor(element).y + 140,
           z: (index) => -360 - (index % 4) * 78,
           rotation: (index) => (index % 7 - 3) * 13,
           rotationX: (index) => 24 + (index % 3) * 9,
@@ -1488,27 +1491,60 @@ function TarsScrollSections({ blocks }) {
       gsap.set(clones, { opacity: 0, xPercent: 0, x: 0, scale: 0.86, rotateY: -10, filter: "blur(8px)" });
       if (label) gsap.set(label, { opacity: 0, x: -18, filter: "blur(8px)" });
 
-      const tl = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: agenticSection,
-          start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 1.35)}`,
-          scrub: true,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
+      const renderAgenticFanout = () => {
+        const rect = agenticSection.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+        const progress = gsap.utils.clamp(0, 1, (viewportHeight * 0.86 - rect.top) / (viewportHeight * 0.96));
+        const eased = gsap.parseEase("power2.out")(progress);
+        const drift = Math.round(gsap.utils.interpolate(0, -18, eased));
 
-      tl.to(header, { opacity: 0.18, y: -24, filter: "blur(4px)", duration: 0.24 }, 0.08)
-        .to(graph, { scale: 0.88, xPercent: -18, yPercent: 1, duration: 0.76 }, 0)
-        .to(label, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.18 }, 0.16)
-        .to(clones[0], { opacity: 0.9, xPercent: 30, yPercent: -2, scale: 0.78, rotateY: -4, filter: "blur(0px)", duration: 0.34 }, 0.14)
-        .to(clones[1], { opacity: 0.72, xPercent: 47, yPercent: 7, scale: 0.68, rotateY: -7, filter: "blur(1px)", duration: 0.42 }, 0.24)
-        .to(clones[2], { opacity: 0.54, xPercent: 63, yPercent: -10, scale: 0.58, rotateY: -10, filter: "blur(2px)", duration: 0.5 }, 0.34)
-        .to([graph, ...clones], { yPercent: -3, duration: 0.24 }, 0.76)
-        .to(label, { opacity: 0.84, duration: 0.24 }, 0.76);
+        gsap.set(header, {
+          opacity: gsap.utils.interpolate(1, 0.2, eased),
+          y: gsap.utils.interpolate(0, -22, eased),
+          filter: `blur(${gsap.utils.interpolate(0, 4, eased)}px)`,
+        });
+        gsap.set(graph, {
+          x: gsap.utils.interpolate(0, -245, eased),
+          y: drift,
+          scale: gsap.utils.interpolate(1, 0.68, eased),
+          rotateY: gsap.utils.interpolate(0, 5, eased),
+        });
+        if (label) {
+          gsap.set(label, {
+            opacity: gsap.utils.interpolate(0, 0.92, eased),
+            x: gsap.utils.interpolate(-18, 0, eased),
+            filter: `blur(${gsap.utils.interpolate(8, 0, eased)}px)`,
+          });
+        }
+
+        const fanout = [
+          { opacity: 0.92, x: 40, y: -34, scale: 0.58, rotateY: -7, blur: 0 },
+          { opacity: 0.76, x: 245, y: 28, scale: 0.52, rotateY: -10, blur: 0.8 },
+          { opacity: 0.58, x: 420, y: -72, scale: 0.46, rotateY: -13, blur: 1.6 },
+        ];
+
+        clones.forEach((clone, index) => {
+          const target = fanout[index];
+          if (!target) return;
+          gsap.set(clone, {
+            opacity: gsap.utils.interpolate(0, target.opacity, eased),
+            x: gsap.utils.interpolate(0, target.x, eased),
+            y: gsap.utils.interpolate(0, target.y + drift, eased),
+            scale: gsap.utils.interpolate(0.76, target.scale, eased),
+            rotateY: gsap.utils.interpolate(-10, target.rotateY, eased),
+            filter: `blur(${gsap.utils.interpolate(8, target.blur, eased)}px)`,
+          });
+        });
+      };
+
+      renderAgenticFanout();
+      window.addEventListener("scroll", renderAgenticFanout, { passive: true });
+      window.addEventListener("resize", renderAgenticFanout);
+
+      return () => {
+        window.removeEventListener("scroll", renderAgenticFanout);
+        window.removeEventListener("resize", renderAgenticFanout);
+      };
     }, sectionsRef);
 
     return () => ctx.revert();
