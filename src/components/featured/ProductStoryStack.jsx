@@ -62,6 +62,10 @@ const TARS_TRANSITION_PROMPTS = [
 
 const TARS_PROMPT_STORM_SCROLL_START_VH = 0.94;
 const TARS_PROMPT_STORM_SCROLL_END_VH = 0.12;
+const TARS_PROMPT_STORM_ENTRY_Y = -260;
+const TARS_PROMPT_STORM_ENTRY_Z = 340;
+const TARS_PROMPT_STORM_EXIT_Y = 190;
+const TARS_PROMPT_STORM_EXIT_Z = -360;
 
 function buildPanelTimeline({
   header,
@@ -1356,7 +1360,14 @@ function TarsTransitionStorm() {
       gsap.set(sectionRef.current, { opacity: 1 });
       gsap.set(stage, { autoAlpha: 0, transformOrigin: "center center" });
       gsap.set(group, { opacity: 0, xPercent: -50, yPercent: -50, x: 0, y: 0, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)", transformOrigin: "center center" });
-      gsap.set(promptPills, { x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
+      gsap.set(promptPills, {
+        x: 0,
+        y: (index) => TARS_PROMPT_STORM_ENTRY_Y - (index % 5) * 18,
+        z: (index) => TARS_PROMPT_STORM_ENTRY_Z + (index % 4) * 42,
+        scale: 1.14,
+        filter: "blur(11px)",
+        transformOrigin: "center center",
+      });
 
       const tl = gsap.timeline({ paused: true });
 
@@ -1374,6 +1385,18 @@ function TarsTransitionStorm() {
           stagger: { each: 0.012, from: "center" },
         }, 0.16)
         .to(group, { opacity: 1, duration: 0.44 }, 0.42)
+        .to(promptPills, {
+          y: (index) => TARS_PROMPT_STORM_EXIT_Y + (index % 5) * 16,
+          x: 0,
+          z: (index) => TARS_PROMPT_STORM_EXIT_Z - (index % 4) * 34,
+          rotation: (index) => (index % 7 - 3) * 3,
+          rotationX: -10,
+          scale: 0.68,
+          filter: "blur(14px)",
+          duration: 0.34,
+          ease: "power3.in",
+          stagger: { each: 0.008, from: "center" },
+        }, 0.8)
         .to(group, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.3, ease: "power3.in" }, 0.88);
 
       const renderFromScroll = () => {

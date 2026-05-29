@@ -64,12 +64,20 @@ if (/gsap\.set\(promptPills,\s*\{\s*opacity\s*:|\.to\(promptPills,\s*\{\s*opacit
 
 const startMatch = story.match(/TARS_PROMPT_STORM_SCROLL_START_VH\s*=\s*([\d.]+)/);
 const endMatch = story.match(/TARS_PROMPT_STORM_SCROLL_END_VH\s*=\s*([\d.]+)/);
+const entryYMatch = story.match(/TARS_PROMPT_STORM_ENTRY_Y\s*=\s*(-?[\d.]+)/);
+const entryZMatch = story.match(/TARS_PROMPT_STORM_ENTRY_Z\s*=\s*(-?[\d.]+)/);
+const exitYMatch = story.match(/TARS_PROMPT_STORM_EXIT_Y\s*=\s*(-?[\d.]+)/);
+const exitZMatch = story.match(/TARS_PROMPT_STORM_EXIT_Z\s*=\s*(-?[\d.]+)/);
 const groupExitMatch = story.match(/\.to\(group,\s*\{[\s\S]*?opacity:\s*0[\s\S]*?\}\s*,\s*([\d.]+)\s*\)/);
 const minHeightMatch = css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*(\d+)dvh;/);
 const mobileMinHeightMatch = css.match(/@media\s*\(max-width:\s*760px\)\s*\{[\s\S]*?\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*(\d+)dvh;/);
 
 const scrollStart = startMatch ? Number(startMatch[1]) : NaN;
 const scrollEnd = endMatch ? Number(endMatch[1]) : NaN;
+const entryY = entryYMatch ? Number(entryYMatch[1]) : NaN;
+const entryZ = entryZMatch ? Number(entryZMatch[1]) : NaN;
+const exitY = exitYMatch ? Number(exitYMatch[1]) : NaN;
+const exitZ = exitZMatch ? Number(exitZMatch[1]) : NaN;
 const groupExit = groupExitMatch ? Number(groupExitMatch[1]) : NaN;
 const minHeight = minHeightMatch ? Number(minHeightMatch[1]) : NaN;
 const mobileMinHeight = mobileMinHeightMatch ? Number(mobileMinHeightMatch[1]) : NaN;
@@ -80,6 +88,22 @@ if (!Number.isFinite(scrollStart) || scrollStart < 0.9 || scrollStart > 0.98) {
 
 if (!Number.isFinite(scrollEnd) || scrollEnd < 0.08 || scrollEnd > 0.16) {
   violations.push("ProductStoryStack.jsx: prompt storm scroll end should leave minimal dead zone before Agentic");
+}
+
+if (!Number.isFinite(entryY) || entryY > -180) {
+  violations.push("ProductStoryStack.jsx: prompt chips should enter from above the settled field");
+}
+
+if (!Number.isFinite(entryZ) || entryZ < 240) {
+  violations.push("ProductStoryStack.jsx: prompt chips should rain in with forward Z depth");
+}
+
+if (!Number.isFinite(exitY) || exitY < 150) {
+  violations.push("ProductStoryStack.jsx: prompt chips should exit downward from the settled field");
+}
+
+if (!Number.isFinite(exitZ) || exitZ > -260) {
+  violations.push("ProductStoryStack.jsx: prompt chips should exit backward in Z depth");
 }
 
 if (!Number.isFinite(groupExit) || groupExit < 0.86 || groupExit > 0.92) {
@@ -168,6 +192,14 @@ if (!/\.to\(group,\s*\{[\s\S]*?opacity:\s*1[\s\S]*?scale:\s*1[\s\S]*?\},\s*0\)/.
 
 if (!/\.to\(group,\s*\{[\s\S]*?opacity:\s*0[\s\S]*?scale:\s*0\.84[\s\S]*?\},\s*0\.88\)/.test(story)) {
   violations.push("ProductStoryStack.jsx: group must fade/scale out from center as one unit");
+}
+
+if (!/gsap\.set\(promptPills,\s*\{[\s\S]*?x:\s*0[\s\S]*?y:\s*\(index\)\s*=>\s*TARS_PROMPT_STORM_ENTRY_Y[\s\S]*?z:\s*\(index\)\s*=>\s*TARS_PROMPT_STORM_ENTRY_Z[\s\S]*?\}\);/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt chip entry should be top/Z depth motion with no sideways origin");
+}
+
+if (!/\.to\(promptPills,\s*\{[\s\S]*?y:\s*\(index\)\s*=>\s*TARS_PROMPT_STORM_EXIT_Y[\s\S]*?x:\s*0[\s\S]*?z:\s*\(index\)\s*=>\s*TARS_PROMPT_STORM_EXIT_Z[\s\S]*?\},\s*0\.8\)/.test(story)) {
+  violations.push("ProductStoryStack.jsx: prompt chip exit should be bottom/back Z depth motion with no sideways origin");
 }
 
 if (/left:\s*(?:0|0px|0%);|top:\s*(?:0|0px|0%);/.test(promptBlock)) {
