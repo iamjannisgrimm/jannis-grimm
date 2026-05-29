@@ -5839,7 +5839,7 @@
   width: 100vw;
   height: 100dvh;
   min-height: 100svh;
-  z-index: 2;
+  z-index: 5;
   opacity: 0;
   transform: translate3d(-50%, -50%, 0) scale(0.88);
   transform-origin: center center;
@@ -5865,7 +5865,7 @@
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage::after {
-  z-index: 4;
+  z-index: 1;
   background:
     linear-gradient(180deg, rgba(16,22,31,0.94) 0%, transparent 12%, transparent 78%, rgba(16,22,31,0.18) 100%),
     radial-gradient(circle at center, transparent 0 56%, rgba(16,22,31,0.66) 100%);

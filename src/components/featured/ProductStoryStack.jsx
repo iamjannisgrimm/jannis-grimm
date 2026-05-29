@@ -1354,7 +1354,7 @@ function TarsTransitionStorm() {
       }
 
       gsap.set(sectionRef.current, { opacity: 1 });
-      gsap.set(stage, { opacity: 1, transformOrigin: "center center" });
+      gsap.set(stage, { autoAlpha: 0, transformOrigin: "center center" });
       gsap.set(group, { opacity: 0, xPercent: -50, yPercent: -50, x: 0, y: 0, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)", transformOrigin: "center center" });
       gsap.set(promptPills, { x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
 
@@ -1385,7 +1385,10 @@ function TarsTransitionStorm() {
         const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
         tl.progress(progress);
 
-        if (progress > 0.02 && progress < 0.98) {
+        const isActive = progress > 0.02 && progress < 0.98;
+        gsap.set(stage, { autoAlpha: isActive ? 1 : 0, transformOrigin: "center center" });
+
+        if (isActive) {
           sectionRef.current.classList.add("is-visible");
         } else {
           sectionRef.current.classList.remove("is-visible");

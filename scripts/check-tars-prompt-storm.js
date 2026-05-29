@@ -211,6 +211,9 @@ async function runBrowserBoundaryCheck() {
       ["before-start", -0.02],
       ["start", 0],
       ["just-after-start", 0.01],
+      ["mid-scene-early", 0.25],
+      ["mid-scene", 0.5],
+      ["mid-scene-late", 0.75],
       ["just-before-end", 0.99],
       ["end", 1],
       ["after-end", 1.02],
@@ -234,27 +237,43 @@ async function runBrowserBoundaryCheck() {
       samples.push(await page.evaluate((sampleLabel) => {
         const viewport = { width: window.innerWidth, height: window.innerHeight };
         const topLeftCutoff = { x: viewport.width * 0.28, y: viewport.height * 0.28 };
+        const inheritedOpacity = (node) => {
+          let opacity = 1;
+          let current = node;
+          while (current && current.nodeType === 1) {
+            opacity *= Number(window.getComputedStyle(current).opacity || 1);
+            current = current.parentElement;
+          }
+          return opacity;
+        };
         const nodes = Array.from(document.querySelectorAll(".tars-prompt-storm__headlineCard, .tars-prompt-storm__promptPill"));
         const elements = nodes.map((node) => {
           const rect = node.getBoundingClientRect();
           const style = window.getComputedStyle(node);
           const opacity = Number(style.opacity || 0);
+          const effectiveOpacity = inheritedOpacity(node);
           const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-          const visible = opacity > 0.03 && style.visibility !== "hidden" && style.display !== "none" && rect.width > 1 && rect.height > 1 && rect.bottom > 0 && rect.right > 0 && rect.left < viewport.width && rect.top < viewport.height;
+          const visible = effectiveOpacity > 0.03 && opacity > 0.03 && style.visibility !== "hidden" && style.display !== "none" && rect.width > 1 && rect.height > 1 && rect.bottom > 0 && rect.right > 0 && rect.left < viewport.width && rect.top < viewport.height;
           return {
             className: node.className,
             opacity,
+            effectiveOpacity,
             rect: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
             center,
             visible,
             topLeftish: visible && center.x < topLeftCutoff.x && center.y < topLeftCutoff.y,
           };
         });
+        const headline = elements.find((element) => String(element.className).includes("tars-prompt-storm__headlineCard"));
+        const visiblePrompts = elements.filter((element) => String(element.className).includes("tars-prompt-storm__promptPill") && element.visible);
+        const isBoundarySample = !sampleLabel.startsWith("mid-scene");
         return {
           label: sampleLabel,
           scrollY: window.scrollY,
           viewport,
-          violations: elements.filter((element) => element.topLeftish),
+          violations: isBoundarySample ? elements.filter((element) => element.topLeftish) : [],
+          headlineVisible: Boolean(headline?.visible),
+          visiblePromptCount: visiblePrompts.length,
           visibleCount: elements.filter((element) => element.visible).length,
           elements: elements.filter((element) => element.visible || element.topLeftish).slice(0, 12),
         };
@@ -263,10 +282,17 @@ async function runBrowserBoundaryCheck() {
 
     mkdirSync(dirname(artifact), { recursive: true });
     await page.screenshot({ path: screenshot, fullPage: false });
-    const result = { ok: samples.every((sample) => sample.violations.length === 0), url, screenshot, samples };
+    const midSceneSamples = samples.filter((sample) => sample.label.startsWith("mid-scene"));
+    const visibilityViolations = midSceneSamples.filter((sample) => !sample.headlineVisible || sample.visiblePromptCount < 8);
+    const result = { ok: samples.every((sample) => sample.violations.length === 0) && visibilityViolations.length === 0, url, screenshot, samples };
     writeFileSync(artifact, `${JSON.stringify(result, null, 2)}\n`);
     if (!result.ok) {
-      violations.push(`Browser boundary QA: visible top-left-ish storm elements found; see ${artifact}`);
+      if (samples.some((sample) => sample.violations.length > 0)) {
+        violations.push(`Browser boundary QA: visible top-left-ish storm elements found; see ${artifact}`);
+      }
+      if (visibilityViolations.length > 0) {
+        violations.push(`Browser visibility QA: prompt storm headline and prompt chips must be visible mid-scene; see ${artifact}`);
+      }
     }
     return artifact;
   } finally {
