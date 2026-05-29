@@ -1560,8 +1560,23 @@ function TarsScrollSections({ blocks }) {
         filter: "blur(1px)",
         transformOrigin: "center center",
       });
-      if (initialCopy) gsap.set(initialCopy, { opacity: 1, y: 0, filter: "blur(0px)" });
-      if (revealCopy) gsap.set(revealCopy, { opacity: 0, y: 18, filter: "blur(8px)" });
+      const setAgenticCopyProgress = (progress) => {
+        if (!initialCopy || !revealCopy) return;
+        const revealOpacity = gsap.utils.clamp(0, 1, gsap.utils.mapRange(0.24, 0.46, 0, 1, progress));
+        const initialOpacity = 1 - revealOpacity;
+
+        gsap.set(initialCopy, {
+          opacity: initialOpacity,
+          y: -14 * revealOpacity,
+          filter: `blur(${6 * revealOpacity}px)`,
+        });
+        gsap.set(revealCopy, {
+          opacity: revealOpacity,
+          y: 14 * initialOpacity,
+          filter: `blur(${6 * initialOpacity}px)`,
+        });
+      };
+      setAgenticCopyProgress(0);
 
       const tl = gsap.timeline({ paused: true });
       tl.to(graph, { x: -720, scale: 0.74, rotateY: 0, filter: "blur(1px)", duration: 1, ease: "none" }, 0)
@@ -1574,11 +1589,6 @@ function TarsScrollSections({ blocks }) {
           duration: 1,
           ease: "none",
         }, 0);
-      if (initialCopy && revealCopy) {
-        tl.to(initialCopy, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.28, ease: "power2.out" }, 0.36)
-          .to(revealCopy, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, 0.44);
-      }
-
       const renderFromScroll = () => {
         const rect = agenticSection.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
@@ -1590,6 +1600,7 @@ function TarsScrollSections({ blocks }) {
         agenticSection.classList.toggle("is-agentic-pinned", shouldPin);
         agenticSection.classList.toggle("is-agentic-released", shouldRelease);
         tl.progress(progress);
+        setAgenticCopyProgress(progress);
       };
 
       renderFromScroll();
