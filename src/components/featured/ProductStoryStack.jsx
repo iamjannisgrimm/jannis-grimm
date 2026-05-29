@@ -1496,72 +1496,40 @@ function TarsScrollSections({ blocks }) {
       const agenticSection = sectionsRef.current.querySelector(".tars-scroll-section--agents-tab");
       if (!agenticSection) return;
 
-      const board = agenticSection.querySelector(".tars-agent-lane-board");
-      const header = agenticSection.querySelector(".tars-agents-tab-header");
       const graph = agenticSection.querySelector(".tars-agentic-spawn-stage > .tars-agent-network");
       const clones = gsap.utils.toArray(".tars-agentic-spawn-clone", agenticSection);
       const label = agenticSection.querySelector(".tars-agentic-spawn-label");
-      if (!board || !graph || !clones.length) return;
+      const primaryClone = clones[0];
+      const extraClones = clones.slice(1);
+      if (!graph || !primaryClone) return;
 
-      gsap.set(board, { transformOrigin: "center center" });
       gsap.set(graph, { transformOrigin: "center center" });
-      gsap.set(clones, { opacity: 0, xPercent: 0, x: 0, scale: 0.86, rotateY: -10, filter: "blur(8px)" });
-      if (label) gsap.set(label, { opacity: 0, x: -18, filter: "blur(8px)" });
+      gsap.set(primaryClone, { opacity: 0, x: 300, y: 0, scale: 0.66, rotateY: 0, filter: "blur(8px)", transformOrigin: "center center" });
+      gsap.set(extraClones, { opacity: 0, display: "none" });
+      if (label) gsap.set(label, { opacity: 0, x: 0, filter: "blur(8px)" });
 
-      const renderAgenticFanout = () => {
-        const rect = agenticSection.getBoundingClientRect();
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const progress = gsap.utils.clamp(0, 1, (viewportHeight * 0.86 - rect.top) / (viewportHeight * 0.96));
-        const eased = gsap.parseEase("power2.out")(progress);
-        const drift = Math.round(gsap.utils.interpolate(0, -18, eased));
+      const tl = gsap.timeline({ paused: true });
+      tl.to(graph, { x: -330, scale: 0.66, rotateY: 0, duration: 1, ease: "none" }, 0)
+        .to(primaryClone, { opacity: 0.96, x: 330, scale: 0.66, rotateY: 0, filter: "blur(0px)", duration: 1, ease: "none" }, 0);
+      if (label) {
+        tl.to(label, { opacity: 0.92, filter: "blur(0px)", duration: 0.28, ease: "power2.out" }, 0.44);
+      }
 
-        gsap.set(header, {
-          opacity: gsap.utils.interpolate(1, 0.2, eased),
-          y: gsap.utils.interpolate(0, -22, eased),
-          filter: `blur(${gsap.utils.interpolate(0, 4, eased)}px)`,
-        });
-        gsap.set(graph, {
-          x: gsap.utils.interpolate(0, -245, eased),
-          y: drift,
-          scale: gsap.utils.interpolate(1, 0.68, eased),
-          rotateY: gsap.utils.interpolate(0, 5, eased),
-        });
-        if (label) {
-          gsap.set(label, {
-            opacity: gsap.utils.interpolate(0, 0.92, eased),
-            x: gsap.utils.interpolate(-18, 0, eased),
-            filter: `blur(${gsap.utils.interpolate(8, 0, eased)}px)`,
-          });
-        }
+      const trigger = ScrollTrigger.create({
+        id: "tars-agentic-side-by-side",
+        trigger: agenticSection,
+        start: "top top",
+        end: "+=72%",
+        pin: true,
+        pinSpacing: true,
+        scrub: true,
+        fastScrollEnd: false,
+        anticipatePin: 1,
+        animation: tl,
+        invalidateOnRefresh: true,
+      });
 
-        const fanout = [
-          { opacity: 0.92, x: 40, y: -34, scale: 0.58, rotateY: -7, blur: 0 },
-          { opacity: 0.76, x: 245, y: 28, scale: 0.52, rotateY: -10, blur: 0.8 },
-          { opacity: 0.58, x: 420, y: -72, scale: 0.46, rotateY: -13, blur: 1.6 },
-        ];
-
-        clones.forEach((clone, index) => {
-          const target = fanout[index];
-          if (!target) return;
-          gsap.set(clone, {
-            opacity: gsap.utils.interpolate(0, target.opacity, eased),
-            x: gsap.utils.interpolate(0, target.x, eased),
-            y: gsap.utils.interpolate(0, target.y + drift, eased),
-            scale: gsap.utils.interpolate(0.76, target.scale, eased),
-            rotateY: gsap.utils.interpolate(-10, target.rotateY, eased),
-            filter: `blur(${gsap.utils.interpolate(8, target.blur, eased)}px)`,
-          });
-        });
-      };
-
-      renderAgenticFanout();
-      window.addEventListener("scroll", renderAgenticFanout, { passive: true });
-      window.addEventListener("resize", renderAgenticFanout);
-
-      return () => {
-        window.removeEventListener("scroll", renderAgenticFanout);
-        window.removeEventListener("resize", renderAgenticFanout);
-      };
+      return () => trigger.kill();
     }, sectionsRef);
 
     return () => ctx.revert();
