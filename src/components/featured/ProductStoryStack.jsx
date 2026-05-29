@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./FeaturedProjectsStory.css";
@@ -1043,21 +1043,91 @@ function TarsVisionSlice() {
 }
 
 function TarsEarlyAccessSlice() {
+  const [email, setEmail] = useState("");
+  const [interestType, setInterestType] = useState("personal");
+  const [status, setStatus] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const trimmedEmail = email.trim();
+
+    if (!trimmedEmail) {
+      setStatus("Add an email so I know where to follow up.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setStatus("");
+
+    try {
+      const response = await fetch("https://dashboard.iamjannisgrimm.com/api/journey-subscriptions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          quote: "TARS early access request",
+          source: "portfolio-tars-early-access",
+          sourcePath: typeof window !== "undefined" ? window.location.pathname : "/",
+          sourceType: "tars_early_access",
+          interestType,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Early access request failed");
+      }
+
+      setEmail("");
+      setStatus("You are on the list. I will follow up directly.");
+    } catch {
+      setStatus("Something went sideways. Try again in a moment or email me directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="tars-product-slice tars-product-slice--early-access">
       <div className="tars-early-access-copy">
         <span>Private operating system</span>
-        <h3>Want a TARS-style layer for your work?</h3>
+        <h3>Want a TARS style layer for your work?</h3>
         <p>
           I am opening a small early-access lane for people and organizations who want a private AI operating system around their tools, memory, automations, and execution workflows.
         </p>
       </div>
-      <form className="tars-early-access-form" action="mailto:iamjannisgrimm@gmail.com" method="post" encType="text/plain">
+      <form className="tars-early-access-form" onSubmit={handleSubmit}>
+        <fieldset className="tars-early-access-interest" aria-label="Interest type">
+          {["personal", "business"].map((option) => (
+            <label className={interestType === option ? "is-selected" : ""} key={option}>
+              <input
+                type="radio"
+                name="interestType"
+                value={option}
+                checked={interestType === option}
+                onChange={() => setInterestType(option)}
+              />
+              <span>{option === "personal" ? "Personal" : "Business"}</span>
+            </label>
+          ))}
+        </fieldset>
         <label htmlFor="tars-early-access-email">Email</label>
-        <div>
-          <input id="tars-early-access-email" name="email" type="email" placeholder="you@company.com" autoComplete="email" />
-          <a href="mailto:iamjannisgrimm@gmail.com?subject=TARS%20early%20access&body=I%27m%20interested%20in%20a%20TARS%2FOpenClaw-style%20operating%20system.%0A%0AEmail%3A%20" aria-label="Email Jannis about TARS early access">Request access</a>
+        <div className="tars-early-access-row">
+          <input
+            id="tars-early-access-email"
+            name="email"
+            type="email"
+            placeholder="you@company.com"
+            autoComplete="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+          <button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending" : "Request access"}</button>
         </div>
+        <p className={`tars-early-access-status${status ? " is-visible" : ""}`} aria-live="polite">{status}</p>
         <small>No spam, no public launch list theatrics — just a direct early-access conversation.</small>
       </form>
     </div>

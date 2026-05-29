@@ -40,6 +40,8 @@ export default function ConnectSection() {
           email: trimmedEmail,
           quote: CONNECT_DESCRIPTION,
           source: "portfolio-connect-section",
+          sourcePath: typeof window !== "undefined" ? window.location.pathname : "/",
+          sourceType: "lets_build",
         }),
       });
 
