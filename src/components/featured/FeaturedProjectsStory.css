@@ -5850,7 +5850,7 @@
 }
 
 .highlights-stack--tars .tars-prompt-storm__stage::after {
-  z-index: 4;
+  z-index: 1;
   background:
     linear-gradient(180deg, rgba(16,22,31,0.94) 0%, transparent 12%, transparent 78%, rgba(16,22,31,0.18) 100%),
     radial-gradient(circle at center, transparent 0 56%, rgba(16,22,31,0.66) 100%);
@@ -5895,6 +5895,7 @@
   transform-style: preserve-3d;
   backface-visibility: hidden;
   will-change: transform, opacity, filter;
+  z-index: 2;
 }
 
 .highlights-stack--tars .tars-prompt-storm__promptText {

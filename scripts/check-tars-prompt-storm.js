@@ -56,6 +56,14 @@ if (!/\.to\(prompts,\s*\{[\s\S]*?opacity:\s*\(index\)[\s\S]*?x:\s*\(_index,\s*el
   violations.push("ProductStoryStack.jsx: prompt visible positions should animate out from center to stage-relative targets");
 }
 
+if (!/\.to\(prompts,\s*\{\s*opacity:\s*\(index\)\s*=>\s*\(index % 5 === 0 \? 1 : 0\.9\),\s*duration:\s*0\.5\s*\},\s*0\.24\)/.test(transitionStorm)) {
+  violations.push("ProductStoryStack.jsx: prompt storm should hold visible chips through the middle of the fullscreen scene");
+}
+
+if (!/\.to\(prompts,\s*\{[\s\S]*?filter:\s*"blur\(12px\)"[\s\S]*?\},\s*0\.8\)[\s\S]*?\.to\(prompts,\s*\{[\s\S]*?opacity:\s*0[\s\S]*?\},\s*0\.88\)/.test(transitionStorm)) {
+  violations.push("ProductStoryStack.jsx: prompt exit should start after the middle scene band, not before it");
+}
+
 if (!/\.to\(prompts,\s*\{[\s\S]*?opacity:\s*0,[\s\S]*?x:\s*0,[\s\S]*?y:\s*0,[\s\S]*?z:\s*\(index\)\s*=>\s*-460[\s\S]*?scale:\s*\(index\)\s*=>\s*0\.36/.test(story)) {
   violations.push("ProductStoryStack.jsx: prompt exit should collapse through center and away on negative z");
 }
@@ -103,6 +111,20 @@ if (!/\.tars-prompt-storm\s*\{[\s\S]*?min-height:\s*192dvh;[\s\S]*?min-height:\s
 
 if (!/\.tars-prompt-storm__stage\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?top:\s*0;[\s\S]*?width:\s*100vw;[\s\S]*?height:\s*100dvh;[\s\S]*?display:\s*grid;[\s\S]*?place-items:\s*center;/.test(css)) {
   violations.push("FeaturedProjectsStory.css: prompt storm stage should occupy and center the full viewport");
+}
+
+if (!/\.tars-prompt-storm__stage::after\s*\{[\s\S]*?z-index:\s*1;/.test(css) || !/\.tars-prompt-storm__field\s*\{[\s\S]*?z-index:\s*2;/.test(css) || !/\.tars-prompt-storm__headline\s*\{[\s\S]*?z-index:\s*3;/.test(css)) {
+  violations.push("FeaturedProjectsStory.css: prompt chips/headline should layer above the stage vignette");
+}
+
+const visibleMiddlePrompts = [...story.matchAll(/\["[^"]+",\s*(\d+),\s*(\d+),\s*"[^"]+",\s*"[^"]+"\]/g)]
+  .filter(([, rawX, rawY]) => {
+    const x = Number(rawX);
+    const y = Number(rawY);
+    return x >= 20 && x <= 80 && y >= 20 && y <= 80;
+  }).length;
+if (visibleMiddlePrompts < 7) {
+  violations.push(`ProductStoryStack.jsx: expected at least 7 prompt chips in the readable middle viewport band, found ${visibleMiddlePrompts}`);
 }
 
 const promptStormSectionBlock = css.match(/\.highlights-stack--tars\s+\.tars-prompt-storm\s*\{[^}]*\}/)?.[0] ?? "";

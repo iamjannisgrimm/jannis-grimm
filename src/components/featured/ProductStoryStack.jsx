@@ -1391,11 +1391,11 @@ function TarsTransitionStorm() {
           ease: "expo.out",
           stagger: { each: 0.004, from: "center" },
         }, 0.04)
-        .to(stage, { opacity: 1, duration: 0.38 }, 0.24)
-        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.38 }, 0.24)
-        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.38 }, 0.24)
-        .to(stage, { opacity: 0, y: 0, z: -260, scale: 0.8, rotateX: 7, filter: "blur(20px)", duration: 0.16, ease: "power3.in" }, 0.72)
-        .to(headline, { opacity: 0, y: 0, z: -180, scale: 0.72, rotateX: -6, filter: "blur(16px)", duration: 0.16, ease: "power3.in" }, 0.7)
+        .to(stage, { opacity: 1, duration: 0.5 }, 0.24)
+        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.5 }, 0.24)
+        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.5 }, 0.24)
+        .to(stage, { opacity: 0, y: 0, z: -260, scale: 0.8, rotateX: 7, filter: "blur(20px)", duration: 0.16, ease: "power3.in" }, 0.86)
+        .to(headline, { opacity: 0, y: 0, z: -180, scale: 0.72, rotateX: -6, filter: "blur(16px)", duration: 0.16, ease: "power3.in" }, 0.84)
         .to(prompts, {
           x: 0,
           y: 0,
@@ -1407,7 +1407,7 @@ function TarsTransitionStorm() {
           duration: 0.1,
           ease: "power3.inOut",
           stagger: { each: 0.003, from: "edges" },
-        }, 0.64)
+        }, 0.8)
         .to(prompts, {
           opacity: 0,
           x: 0,
@@ -1420,7 +1420,7 @@ function TarsTransitionStorm() {
           duration: 0.16,
           ease: "power3.in",
           stagger: { each: 0.004, from: "edges" },
-        }, 0.72);
+        }, 0.88);
 
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
@@ -1429,6 +1429,7 @@ function TarsTransitionStorm() {
         const sceneDistance = Math.max(rect.height - viewportHeight, viewportHeight * 0.88);
         const progress = gsap.utils.clamp(0, 1, -rect.top / sceneDistance);
         tl.progress(progress);
+        sectionRef.current.dataset.promptStormProgress = progress.toFixed(3);
         sectionRef.current.classList.toggle("is-visible", rect.top < viewportHeight * 0.5 && rect.bottom > viewportHeight * 0.5);
       };
 
