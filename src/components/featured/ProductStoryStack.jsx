@@ -1194,6 +1194,9 @@ function TarsEarlyAccessSlice() {
 }
 
 function TarsSecuritySlice() {
+  const localModelCard = tarsSecurityModelCards.find((card) => card.label === "Local model");
+  const openModelCards = tarsSecurityModelCards.filter((card) => card.label !== "Local model");
+
   return (
     <div className="tars-product-slice tars-product-slice--security" aria-hidden="true">
       <section className="tars-security-copy">
@@ -1210,13 +1213,19 @@ function TarsSecuritySlice() {
               <strong>48GB RAM</strong>
               <small>protected hardware cell</small>
             </div>
+            {localModelCard ? (
+              <article className="tars-security-route-card tars-security-route-card--local" style={{ "--security-rgb": localModelCard.tone }}>
+                <span>{localModelCard.label}</span>
+                <strong>{localModelCard.model}</strong>
+                <small>{localModelCard.task}</small>
+              </article>
+            ) : null}
           </div>
           <div className="tars-security-branches" aria-hidden="true">
             <span />
-            <span />
           </div>
           <div className="tars-security-route-grid" role="list" aria-label="Model route options">
-            {tarsSecurityModelCards.map((card) => (
+            {openModelCards.map((card) => (
               <article className="tars-security-route-card" style={{ "--security-rgb": card.tone }} key={card.label} role="listitem">
                 <span>{card.label}</span>
                 <strong>{card.model}</strong>
@@ -1336,6 +1345,9 @@ function TarsBoardProductSlice({ kind }) {
 }
 
 function TarsArchitecturePrivacySlice() {
+  const primaryMemoryTypes = tarsMemoryTypes.filter((memory) => memory.id !== "palace");
+  const memPalaceMemory = tarsMemoryTypes.find((memory) => memory.id === "palace");
+
   return (
     <div className="tars-product-slice tars-product-slice--memory" aria-hidden="true">
       <div className="tars-memory-visualEdge" aria-label="TARS memory and task-packet visual">
@@ -1351,7 +1363,7 @@ function TarsArchitecturePrivacySlice() {
             </div>
           </header>
           <div className="tars-memory-buckets" aria-label="Short-term and long-term memory buckets">
-            {tarsMemoryTypes.map((memory) => (
+            {primaryMemoryTypes.map((memory) => (
               <article className={`tars-memory-bucket tars-memory-bucket--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
                 <span>{memory.label}</span>
                 <strong>{memory.horizon}</strong>
@@ -1362,6 +1374,17 @@ function TarsArchitecturePrivacySlice() {
                 </div>
               </article>
             ))}
+            {memPalaceMemory ? (
+              <article className={`tars-memory-bucket tars-memory-bucket--${memPalaceMemory.id}`} style={{ "--memory-rgb": memPalaceMemory.tone }} key={memPalaceMemory.id}>
+                <span>{memPalaceMemory.label}</span>
+                <strong>{memPalaceMemory.horizon}</strong>
+                <p>{memPalaceMemory.detail}</p>
+                {memPalaceMemory.image ? <img className="tars-memory-bucket__image" src={memPalaceMemory.image} alt="" loading="lazy" /> : null}
+                <div>
+                  {memPalaceMemory.examples.map((example) => <small key={example}>{example}</small>)}
+                </div>
+              </article>
+            ) : null}
           </div>
         </div>
       </div>
