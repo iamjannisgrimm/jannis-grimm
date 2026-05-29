@@ -995,6 +995,55 @@ function TarsAgentsTabSlice() {
   const developerSubagents = tarsAgents.filter((agent) => agent.tier === "developer-subagent");
   const activeNodeIds = new Set(["tars", "career", "developer", "frontend-developer"]);
 
+  const agentNetworkGraph = (className = "") => (
+    <div className={`tars-agent-network tars-agent-network--dark-cell${className ? ` ${className}` : ""}`} data-agent-graph="openclaw-agents">
+      <svg className="tars-agent-connectors" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+        <path className="is-live-active" data-edge="tars-career" d="M500 122 C305 132 176 144 125 166" />
+        <path data-edge="tars-seeme" d="M500 122 C420 136 392 148 375 166" />
+        <path data-edge="tars-personal" d="M500 122 C580 136 608 148 625 166" />
+        <path data-edge="tars-claw" d="M500 122 C695 132 824 144 875 166" />
+        <path data-edge="career-marketer" d="M125 250 C112 274 96 282 84 292" />
+        <path className="is-live-active" data-edge="career-developer" d="M125 250 C150 272 206 282 250 292" />
+        <path data-edge="seeme-research" d="M375 250 C392 274 408 282 417 292" />
+        <path data-edge="personal-news-retriever" d="M625 250 C608 274 592 282 583 292" />
+        <path data-edge="claw-security" d="M875 250 C850 272 794 282 750 292" />
+        <path data-edge="claw-legal" d="M875 250 C900 272 916 282 917 292" />
+        <path className="is-live-active" data-edge="developer-frontend-developer" d="M250 376 C226 396 196 408 170 418" />
+        <path data-edge="developer-backend-developer" d="M250 376 C274 396 304 408 330 418" />
+      </svg>
+      <div className="tars-agent-tier tars-agent-tier--tars">
+        <div className={`tars-agent-tab-node tars-agent-tab-node--tars${activeNodeIds.has("tars") ? " is-live-active" : ""}`} style={{ "--agent-rgb": tars?.tone }}>
+          <div className="tars-agent-tab-orb"><img src={tars?.image} alt="" /></div>
+          <strong>{tars?.name}</strong>
+        </div>
+      </div>
+      <div className="tars-agent-row tars-agent-row--domains">
+        {domainAgents.map((agent) => (
+          <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+            <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
+            <strong>{agent.name}</strong>
+          </div>
+        ))}
+      </div>
+      <div className="tars-agent-row tars-agent-row--specialists">
+        {specialistAgents.map((agent) => (
+          <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+            <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
+            <strong>{agent.name}</strong>
+          </div>
+        ))}
+      </div>
+      <div className="tars-agent-row tars-agent-row--developer-subagents">
+        {developerSubagents.map((agent) => (
+          <div className={`tars-agent-tab-node tars-agent-tab-node--subagent${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
+            <div className="tars-agent-tab-orb"><span>{agent.name.slice(0, 2).toUpperCase()}</span></div>
+            <strong>{agent.name}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="tars-product-slice tars-product-slice--agents-tab" aria-hidden="true">
       <section className="tars-agents-tab-main">
@@ -1005,51 +1054,17 @@ function TarsAgentsTabSlice() {
               <p>TARS uses the A2A protocol to pass scoped task packets between domain agents, reusable specialists, and implementation subagents.</p>
             </div>
           </header>
-          <div className="tars-agent-network tars-agent-network--dark-cell" data-agent-graph="openclaw-agents">
-            <svg className="tars-agent-connectors" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
-              <path className="is-live-active" data-edge="tars-career" d="M500 122 C305 132 176 144 125 166" />
-              <path data-edge="tars-seeme" d="M500 122 C420 136 392 148 375 166" />
-              <path data-edge="tars-personal" d="M500 122 C580 136 608 148 625 166" />
-              <path data-edge="tars-claw" d="M500 122 C695 132 824 144 875 166" />
-              <path data-edge="career-marketer" d="M125 250 C112 274 96 282 84 292" />
-              <path className="is-live-active" data-edge="career-developer" d="M125 250 C150 272 206 282 250 292" />
-              <path data-edge="seeme-research" d="M375 250 C392 274 408 282 417 292" />
-              <path data-edge="personal-news-retriever" d="M625 250 C608 274 592 282 583 292" />
-              <path data-edge="claw-security" d="M875 250 C850 272 794 282 750 292" />
-              <path data-edge="claw-legal" d="M875 250 C900 272 916 282 917 292" />
-              <path className="is-live-active" data-edge="developer-frontend-developer" d="M250 376 C226 396 196 408 170 418" />
-              <path data-edge="developer-backend-developer" d="M250 376 C274 396 304 408 330 418" />
-            </svg>
-            <div className="tars-agent-tier tars-agent-tier--tars">
-              <div className={`tars-agent-tab-node tars-agent-tab-node--tars${activeNodeIds.has("tars") ? " is-live-active" : ""}`} style={{ "--agent-rgb": tars?.tone }}>
-                <div className="tars-agent-tab-orb"><img src={tars?.image} alt="" /></div>
-                <strong>{tars?.name}</strong>
+          <div className="tars-agentic-spawn-stage" aria-hidden="true">
+            {agentNetworkGraph()}
+            <div className="tars-agentic-spawn-label">
+              <span>Instance fan-out</span>
+              <strong>Spin up the exact agents this task needs.</strong>
+            </div>
+            {[1, 2, 3].map((instance) => (
+              <div className={`tars-agentic-spawn-clone tars-agentic-spawn-clone--${instance}`} key={instance}>
+                {agentNetworkGraph("tars-agent-network--spawn-clone")}
               </div>
-            </div>
-            <div className="tars-agent-row tars-agent-row--domains">
-              {domainAgents.map((agent) => (
-                <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
-                  <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
-                  <strong>{agent.name}</strong>
-                </div>
-              ))}
-            </div>
-            <div className="tars-agent-row tars-agent-row--specialists">
-              {specialistAgents.map((agent) => (
-                <div className={`tars-agent-tab-node${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
-                  <div className="tars-agent-tab-orb"><img src={agent.image} alt="" /></div>
-                  <strong>{agent.name}</strong>
-                </div>
-              ))}
-            </div>
-            <div className="tars-agent-row tars-agent-row--developer-subagents">
-              {developerSubagents.map((agent) => (
-                <div className={`tars-agent-tab-node tars-agent-tab-node--subagent${activeNodeIds.has(agent.id) ? " is-live-active" : ""}`} style={{ "--agent-rgb": agent.tone }} key={agent.id}>
-                  <div className="tars-agent-tab-orb"><span>{agent.name.slice(0, 2).toUpperCase()}</span></div>
-                  <strong>{agent.name}</strong>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -1337,12 +1352,17 @@ function TarsTransitionStorm() {
       gsap.set(sectionRef.current, { opacity: 1 });
       gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)" });
       gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)" });
+      const centerXFor = (element) => {
+        const stageRect = stage.getBoundingClientRect();
+        const rect = element.getBoundingClientRect();
+        return stageRect.left + stageRect.width / 2 - (rect.left + rect.width / 2);
+      };
       gsap.set(prompts, {
         opacity: 0,
         xPercent: -50,
         yPercent: -50,
-        x: (index) => ((index % 7) - 3) * 22,
-        y: (index) => -220 - (index % 5) * 34,
+        x: (_index, element) => centerXFor(element),
+        y: (index) => -220 - (index % 5) * 42,
         z: (index) => 360 + (index % 4) * 74,
         rotation: (index) => (index % 7 - 3) * 14,
         rotationX: (index) => -24 - (index % 3) * 9,
@@ -1376,7 +1396,7 @@ function TarsTransitionStorm() {
         .to(prompts, {
           opacity: 0,
           y: (index) => 220 + (index % 5) * 46,
-          x: (index) => ((index % 7) - 3) * 26,
+          x: (_index, element) => centerXFor(element),
           z: (index) => -360 - (index % 4) * 78,
           rotation: (index) => (index % 7 - 3) * 13,
           rotationX: (index) => 24 + (index % 3) * 9,
@@ -1444,10 +1464,60 @@ function TarsTransitionStorm() {
 }
 
 function TarsScrollSections({ blocks }) {
+  const sectionsRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (!sectionsRef.current) return undefined;
+
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return undefined;
+
+    const ctx = gsap.context(() => {
+      const agenticSection = sectionsRef.current.querySelector(".tars-scroll-section--agents-tab");
+      if (!agenticSection) return;
+
+      const board = agenticSection.querySelector(".tars-agent-lane-board");
+      const header = agenticSection.querySelector(".tars-agents-tab-header");
+      const graph = agenticSection.querySelector(".tars-agentic-spawn-stage > .tars-agent-network");
+      const clones = gsap.utils.toArray(".tars-agentic-spawn-clone", agenticSection);
+      const label = agenticSection.querySelector(".tars-agentic-spawn-label");
+      if (!board || !graph || !clones.length) return;
+
+      gsap.set(board, { transformOrigin: "center center" });
+      gsap.set(graph, { transformOrigin: "center center" });
+      gsap.set(clones, { opacity: 0, xPercent: 0, x: 0, scale: 0.86, rotateY: -10, filter: "blur(8px)" });
+      if (label) gsap.set(label, { opacity: 0, x: -18, filter: "blur(8px)" });
+
+      const tl = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: agenticSection,
+          start: "top top",
+          end: () => `+=${Math.round(window.innerHeight * 1.35)}`,
+          scrub: true,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      tl.to(header, { opacity: 0.18, y: -24, filter: "blur(4px)", duration: 0.24 }, 0.08)
+        .to(graph, { scale: 0.88, xPercent: -18, yPercent: 1, duration: 0.76 }, 0)
+        .to(label, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.18 }, 0.16)
+        .to(clones[0], { opacity: 0.9, xPercent: 30, yPercent: -2, scale: 0.78, rotateY: -4, filter: "blur(0px)", duration: 0.34 }, 0.14)
+        .to(clones[1], { opacity: 0.72, xPercent: 47, yPercent: 7, scale: 0.68, rotateY: -7, filter: "blur(1px)", duration: 0.42 }, 0.24)
+        .to(clones[2], { opacity: 0.54, xPercent: 63, yPercent: -10, scale: 0.58, rotateY: -10, filter: "blur(2px)", duration: 0.5 }, 0.34)
+        .to([graph, ...clones], { yPercent: -3, duration: 0.24 }, 0.76)
+        .to(label, { opacity: 0.84, duration: 0.24 }, 0.76);
+    }, sectionsRef);
+
+    return () => ctx.revert();
+  }, [blocks]);
+
   if (!Array.isArray(blocks) || blocks.length === 0) return null;
 
   return (
-    <div className="tars-scroll-sections" aria-label="TARS product sections">
+    <div className="tars-scroll-sections" aria-label="TARS product sections" ref={sectionsRef}>
       <TarsTransitionStorm />
       {blocks.map((block, index) => (
         <section className={`tars-scroll-section tars-scroll-section--${block.tarsBoardSlice || "text"}`} key={`${block.sectionTitle || "section"}-${index}`}>
