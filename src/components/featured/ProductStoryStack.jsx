@@ -1433,20 +1433,15 @@ function TarsTransitionStorm() {
           duration: 0.32,
           ease: "power3.out",
         }, 0.08)
-        .to(prompts, {
-          x: (index) => ((index % 9) - 4) * 18,
-          y: (index) => ((index % 8) - 3.5) * 16,
-          rotation: (index) => (index % 7 - 3) * -6,
-          scale: (index) => 1.04 + (index % 4) * 0.045,
-          duration: 0.32,
-          ease: "none",
-        }, 0.38)
-        .to(headline, { y: -18, scale: 0.98, opacity: 0.72, duration: 0.22, ease: "none" }, 0.5)
+        .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
+        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
+        .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
         .to(stage, { opacity: 0, y: -42, scale: 1.08, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, 0.82)
         .to(headline, { opacity: 0, y: -58, scale: 0.92, duration: 0.18, ease: "power2.in" }, 0.8)
         .to(prompts, {
           opacity: 0,
           y: (index) => -76 + ((index % 5) - 2) * 14,
+          rotation: (index) => (index % 7 - 3) * -6,
           scale: 1.22,
           filter: "blur(14px)",
           duration: 0.2,
@@ -1493,11 +1488,6 @@ function TarsTransitionStorm() {
                 "--prompt-x": `${x}%`,
                 "--prompt-y": `${y}%`,
                 "--prompt-rotate": `${(index % 7 - 3) * 3}deg`,
-                "--prompt-float-x": `${((index % 5) - 2) * 9}px`,
-                "--prompt-float-y": `${((index % 7) - 3) * 7}px`,
-                "--prompt-float-scale": 1 + (index % 4) * 0.025,
-                "--prompt-float-duration": `${3.4 + (index % 6) * 0.42}s`,
-                "--prompt-float-delay": `${index * -0.17}s`,
               }}
               key={prompt}
             >

@@ -5888,9 +5888,6 @@
   align-items: center;
   justify-content: center;
   transform-origin: center center;
-  will-change: transform;
-  animation: tarsPromptStormFloat var(--prompt-float-duration, 4s) ease-in-out var(--prompt-float-delay, 0s) infinite alternate;
-  animation-play-state: paused;
 }
 
 .highlights-stack--tars .tars-prompt-storm__prompt--blue { --prompt-rgb: 100,168,255; }
@@ -5941,27 +5938,6 @@
   opacity: 0.86;
 }
 
-.highlights-stack--tars .tars-prompt-storm.is-visible .tars-prompt-storm__headline,
-.highlights-stack--tars .tars-prompt-storm.is-visible .tars-prompt-storm__promptText {
-  animation-play-state: running;
-}
-
-@keyframes tarsPromptStormFloat {
-  from {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-  }
-
-  to {
-    transform: translate3d(
-        var(--prompt-float-x, 0px),
-        var(--prompt-float-y, 0px),
-        0
-      )
-      rotate(calc(var(--prompt-rotate) * -0.35))
-      scale(var(--prompt-float-scale, 1.04));
-  }
-}
-
 .highlights-stack--tars .tars-prompt-storm__headline span {
   color: rgba(100,168,255,0.92);
   font-size: 0.72rem;
@@ -6010,10 +5986,6 @@
     opacity: 1;
     transform: translate(-50%, -50%);
     filter: none;
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__promptText {
-    animation: none;
   }
 
   .highlights-stack--tars .tars-prompt-storm__headline {
