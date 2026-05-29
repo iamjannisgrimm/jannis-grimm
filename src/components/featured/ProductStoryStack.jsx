@@ -60,6 +60,9 @@ const TARS_TRANSITION_PROMPTS = [
   ["Prepare a local application packet", 88, 89, "purple", "sm"],
 ];
 
+const TARS_PROMPT_STORM_SCROLL_START_VH = 0.94;
+const TARS_PROMPT_STORM_SCROLL_END_VH = 0.12;
+
 function buildPanelTimeline({
   header,
   image,
@@ -1386,8 +1389,8 @@ function TarsTransitionStorm() {
         .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
         .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
         .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
-        .to(stage, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.82)
-        .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.82)
+        .to(stage, { opacity: 0, y: 132, z: -220, scale: 0.84, rotateX: 8, filter: "blur(18px)", duration: 0.28, ease: "power3.in" }, 0.9)
+        .to(headline, { opacity: 0, y: 118, z: -120, scale: 0.9, rotateX: -7, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.9)
         .to(prompts, {
           opacity: 0,
           y: (index) => 220 + (index % 5) * 46,
@@ -1400,14 +1403,14 @@ function TarsTransitionStorm() {
           duration: 0.3,
           ease: "power3.in",
           stagger: { each: 0.008, from: "edges" },
-        }, 0.8);
+        }, 0.88);
 
       const renderFromScroll = () => {
         if (!sectionRef.current) return;
         const rect = sectionRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-        const start = viewportHeight * 0.8;
-        const end = viewportHeight * 0.2 - rect.height;
+        const start = viewportHeight * TARS_PROMPT_STORM_SCROLL_START_VH;
+        const end = viewportHeight * TARS_PROMPT_STORM_SCROLL_END_VH - rect.height;
         const progress = gsap.utils.clamp(0, 1, (start - rect.top) / (start - end));
         tl.progress(progress);
 
