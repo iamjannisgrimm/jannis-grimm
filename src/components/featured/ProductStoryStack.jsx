@@ -1407,19 +1407,10 @@ function TarsTransitionStorm() {
   useLayoutEffect(() => {
     if (!sectionRef.current) return undefined;
 
-    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const ctx = gsap.context(() => {
       const stage = sectionRef.current.querySelector(".tars-prompt-storm__stage");
       const group = sectionRef.current.querySelector(".tars-prompt-storm__group");
       const promptPills = gsap.utils.toArray(".tars-prompt-storm__promptPill", sectionRef.current);
-
-      if (prefersReducedMotion) {
-        sectionRef.current.classList.add("is-visible");
-        gsap.set(stage, { opacity: 1, transformOrigin: "center center" });
-        gsap.set(group, { opacity: 1, xPercent: -50, yPercent: -50, x: 0, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", transformOrigin: "center center" });
-        gsap.set(promptPills, { x: 0, y: 0, z: 0, scale: 1, filter: "blur(0px)", transformOrigin: "center center" });
-        return;
-      }
 
       gsap.set(sectionRef.current, { opacity: 1 });
       gsap.set(stage, { autoAlpha: 0, transformOrigin: "center center" });
@@ -1546,9 +1537,8 @@ function TarsScrollSections({ blocks }) {
   useLayoutEffect(() => {
     if (!sectionsRef.current) return undefined;
 
-    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const useMobileFallback = window.matchMedia?.("(max-width: 760px)").matches;
-    if (prefersReducedMotion || useMobileFallback) return undefined;
+    if (useMobileFallback) return undefined;
 
     const ctx = gsap.context(() => {
       const agenticSection = sectionsRef.current.querySelector(".tars-scroll-section--agents-tab");

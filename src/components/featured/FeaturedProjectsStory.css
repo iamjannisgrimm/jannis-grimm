@@ -6058,56 +6058,6 @@
   text-align: center;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .highlights-stack--tars .tars-prompt-storm {
-    height: 100dvh;
-    min-height: 100svh;
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__stage {
-    position: relative;
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__group {
-    opacity: 1;
-    transform: translate3d(-50%, -50%, 0);
-    filter: none;
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__prompt {
-    opacity: 1;
-    filter: none;
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__promptPill {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__headline {
-    transform: translate3d(-50%, -50%, 0);
-  }
-
-  .highlights-stack--tars .tars-prompt-storm__headlineCard {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
-
-  .highlights-stack--tars .tars-agentic-spawn-clone,
-  .highlights-stack--tars .tars-agentic-spawn-label {
-    display: none;
-  }
-
-  .highlights-stack--tars .tars-agentic-spawn-stage > .tars-agent-network,
-  .highlights-stack--tars .tars-agents-tab-header {
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-  }
-}
-
 @media (max-width: 760px) {
   .highlights-stack--tars .tars-prompt-storm {
     min-height: 180dvh;
