@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import TarsPortrait from "../../../me/TARS.png";
 import "./FeaturedProjectsStory.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -979,6 +980,7 @@ function BoardCard({ card }) {
 const tarsMemoryTypes = [
   { id: "short", label: "Short-term", horizon: "Current run", detail: "Active task packet, open files, safety boundaries, and verification targets.", examples: ["brief", "repo state", "QA targets"], tone: "100, 168, 255" },
   { id: "long", label: "Long-term", horizon: "Durable context", detail: "Stable preferences, product truths, tool registries, playbooks, and operating patterns.", examples: ["preferences", "tool registry", "playbooks"], tone: "52, 199, 89" },
+  { id: "palace", label: "memPalace", horizon: "Task packet", detail: "Compiles only the context an agent needs for a scoped handoff.", examples: ["context refs", "boundaries", "proof"], tone: "175, 82, 222", image: "/assets/images/mempalace.png" },
 ];
 
 const tarsMemPalaceNodes = [
@@ -1201,6 +1203,12 @@ function TarsEarlyAccessSlice() {
 function TarsSecuritySlice() {
   return (
     <div className="tars-product-slice tars-product-slice--security" aria-hidden="true">
+      <section className="tars-security-copy">
+        <h3 className="tars-security-title">Security by routing.</h3>
+        <p className="tars-security-description">
+          Different models handle different tasks and agents. Files and tools stay locked unless an agent has permission, and the whole system runs on hardware I control.
+        </p>
+      </section>
       <div className="tars-security-visualEdge" aria-label="TARS security routing visual">
         <div className="tars-security-visualCard">
           <div className="tars-security-chip" aria-hidden="true">
@@ -1230,12 +1238,6 @@ function TarsSecuritySlice() {
           </div>
         </div>
       </div>
-      <section className="tars-security-copy">
-        <h3 className="tars-security-title">Security by routing.</h3>
-        <p className="tars-security-description">
-          Different models handle different tasks and agents. Files and tools stay locked unless an agent has permission, and the whole system runs on hardware I control.
-        </p>
-      </section>
     </div>
   );
 }
@@ -1348,38 +1350,42 @@ function TarsBoardProductSlice({ kind }) {
 function TarsArchitecturePrivacySlice() {
   return (
     <div className="tars-product-slice tars-product-slice--memory" aria-hidden="true">
-      <div className="tars-memory-visualEdge" aria-label="TARS memory and task-packet visual">
-        <div className="tars-memory-visualCard">
-          <div className="tars-memory-buckets" aria-label="Short-term and long-term memory buckets">
-            {tarsMemoryTypes.map((memory) => (
-              <article className={`tars-memory-bucket tars-memory-bucket--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
-                <span>{memory.label}</span>
-                <strong>{memory.horizon}</strong>
-                <p>{memory.detail}</p>
-                <div>
-                  {memory.examples.map((example) => <small key={example}>{example}</small>)}
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="tars-memory-packet-flow" aria-hidden="true">
-            <i />
-            <span>memPalace selects only what the task needs</span>
-            <i />
-          </div>
-          <article className="tars-memory-task-packet" aria-label="memPalace task packet">
-            <span>memPalace</span>
-            <strong>Task packet</strong>
-            <img className="tars-memory-task-packet__image" src="/assets/images/mempalace.png" alt="" loading="lazy" />
-          </article>
-        </div>
-      </div>
       <section className="tars-memory-copy">
         <h3 className="tars-memory-title">Memory without the mess.</h3>
         <p className="tars-memory-description">
           TARS keeps live work in short-term memory, stores stable truths in long-term memory, then lets memPalace compile only the relevant context into a scoped task packet.
         </p>
       </section>
+      <div className="tars-memory-visualEdge" aria-label="TARS memory and task-packet visual">
+        <div className="tars-memory-visualCard">
+          <div className="tars-memory-agent-cell" aria-label="TARS agent memory cell">
+            <span>agent cell</span>
+            <div className="tars-memory-agent-orb">
+              <img src={TarsPortrait} alt="" loading="lazy" />
+            </div>
+            <strong>TARS</strong>
+            <small>receives only the memory slice needed for this task</small>
+          </div>
+          <div className="tars-memory-link-lines" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="tars-memory-buckets" aria-label="Short-term and long-term memory buckets">
+            {tarsMemoryTypes.map((memory) => (
+              <article className={`tars-memory-bucket tars-memory-bucket--${memory.id}`} style={{ "--memory-rgb": memory.tone }} key={memory.id}>
+                <span>{memory.label}</span>
+                <strong>{memory.horizon}</strong>
+                <p>{memory.detail}</p>
+                {memory.image ? <img className="tars-memory-bucket__image" src={memory.image} alt="" loading="lazy" /> : null}
+                <div>
+                  {memory.examples.map((example) => <small key={example}>{example}</small>)}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
       </div>
   );
 }
@@ -1405,47 +1411,56 @@ function TarsTransitionStorm() {
       }
 
       gsap.set(sectionRef.current, { opacity: 1 });
-      gsap.set(stage, { opacity: 0, y: 34, scale: 0.96, filter: "blur(8px)" });
-      gsap.set(headline, { opacity: 0, y: 36, scale: 0.94 });
+      gsap.set(stage, { opacity: 0, y: 76, z: -180, scale: 0.88, rotateX: 8, filter: "blur(18px)" });
+      gsap.set(headline, { opacity: 0, y: 78, z: 80, scale: 0.82, rotateX: -8, filter: "blur(10px)" });
       gsap.set(prompts, {
         opacity: 0,
         xPercent: -50,
         yPercent: -50,
-        x: (index) => ((index % 7) - 3) * 7,
-        y: 74,
-        rotation: (index) => (index % 7 - 3) * 7,
-        scale: 0.68,
-        filter: "blur(12px)",
+        x: (index) => ((index % 7) - 3) * 22,
+        y: (index) => 140 + (index % 5) * 12,
+        z: (index) => -260 - (index % 4) * 44,
+        rotation: (index) => (index % 7 - 3) * 14,
+        rotationX: (index) => 18 + (index % 3) * 8,
+        scale: 0.42,
+        filter: "blur(22px)",
         transformOrigin: "center center",
       });
 
       const tl = gsap.timeline({ paused: true });
 
-      tl.to(stage, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, 0)
-        .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.24, ease: "power3.out" }, 0.04)
+      tl.to(stage, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.32, ease: "expo.out" }, 0)
+        .to(headline, { opacity: 1, y: 0, z: 0, scale: 1, rotateX: 0, filter: "blur(0px)", duration: 0.38, ease: "back.out(1.35)" }, 0.04)
         .to(prompts, {
           opacity: (index) => (index % 5 === 0 ? 1 : 0.9),
           y: 0,
           x: 0,
+          z: 0,
           rotation: (index) => (index % 7 - 3) * 3,
+          rotationX: 0,
           scale: (index) => (index % 6 === 0 ? 1.08 : 1),
           filter: "blur(0px)",
-          duration: 0.32,
-          ease: "power3.out",
-        }, 0.08)
+          duration: 0.46,
+          ease: "back.out(1.6)",
+          stagger: { each: 0.012, from: "center" },
+        }, 0.06)
         .to(stage, { opacity: 1, duration: 0.4 }, 0.42)
         .to(headline, { opacity: 1, y: 0, scale: 1, duration: 0.4 }, 0.42)
         .to(prompts, { opacity: (index) => (index % 5 === 0 ? 1 : 0.9), duration: 0.4 }, 0.42)
-        .to(stage, { opacity: 0, y: -42, scale: 1.08, filter: "blur(10px)", duration: 0.2, ease: "power2.in" }, 0.82)
-        .to(headline, { opacity: 0, y: -58, scale: 0.92, duration: 0.18, ease: "power2.in" }, 0.8)
+        .to(stage, { opacity: 0, y: -96, z: 160, scale: 1.16, rotateX: -7, filter: "blur(20px)", duration: 0.26, ease: "power3.in" }, 0.82)
+        .to(headline, { opacity: 0, y: -114, z: 120, scale: 0.82, rotateX: 9, filter: "blur(12px)", duration: 0.24, ease: "power3.in" }, 0.8)
         .to(prompts, {
           opacity: 0,
-          y: (index) => -76 + ((index % 5) - 2) * 14,
-          rotation: (index) => (index % 7 - 3) * -6,
-          scale: 1.22,
-          filter: "blur(14px)",
-          duration: 0.2,
-          ease: "power2.in",
+          y: (index) => -150 + ((index % 5) - 2) * 24,
+          x: (index) => ((index % 7) - 3) * 18,
+          z: (index) => 180 + (index % 4) * 58,
+          rotation: (index) => (index % 7 - 3) * -12,
+          rotationX: (index) => -18 - (index % 3) * 8,
+          scale: 1.38,
+          filter: "blur(24px)",
+          duration: 0.28,
+          ease: "power3.in",
+          stagger: { each: 0.008, from: "edges" },
         }, 0.8);
 
       const renderFromScroll = () => {
