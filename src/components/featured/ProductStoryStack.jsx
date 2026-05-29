@@ -808,6 +808,51 @@ const tarsBoardColumns = [
   },
 ];
 
+const tarsPlanApproveNavItems = [
+  ["▣", "Overview", true],
+  ["◆", "Vision"],
+  ["▦", "Sprint"],
+  ["⌁", "Backlog"],
+  ["⌘", "Agents"],
+  ["◎", "Automations"],
+  ["◇", "Skills"],
+  ["⚙", "Tools"],
+  ["✦", "Workflows"],
+  ["▤", "Reports"],
+];
+
+const tarsPlanApproveColumns = [
+  {
+    title: "ready",
+    description: "Approved work that can run",
+    count: 2,
+    cards: [
+      { epic: "TARS Improvements", title: "Morning synthesis report", summary: "Compile overnight agent activity into one operator-ready summary with artifacts and open decisions.", priority: "high", assignee: "TARS", dependencies: "Ready" },
+      { epic: "Automations", title: "Portfolio early-access follow-up", summary: "Prepare a private draft response for new early-access requests without sending externally.", priority: "medium", assignee: "Personal", dependencies: "Ready" },
+    ],
+  },
+  {
+    title: "in progress",
+    description: "Active work in motion",
+    count: 2,
+    cards: [
+      { epic: "OpenClaw Systems", title: "Agent session tail polish", summary: "Surface live agent progress, tool use, and handoffs in a compact dashboard trace.", priority: "high", assignee: "TARS", dependencies: "Ready", live: true },
+      { epic: "Security Hygiene", title: "Credential reference audit", summary: "Verify sensitive automation paths use references instead of raw secrets.", priority: "high", assignee: "Security", dependencies: "Ready" },
+    ],
+  },
+  {
+    title: "review",
+    description: "Approval-gated actions waiting on Jannis",
+    count: 3,
+    tone: "review",
+    cards: [
+      { epic: "Career", title: "Founding AI Engineer — applied intelligence platform", summary: "Final application packet is ready after form discovery, tailored resume, and answer population.", priority: "high", assignee: "Career", dependencies: "Ready", actions: ["Submit"] },
+      { epic: "TARS Dev", title: "TARS dev task: Plan & Approve visual update", summary: "Portfolio-safe implementation is complete; verify the Kanban-like review state before closing.", priority: "high", assignee: "Developer", dependencies: "Ready", actions: ["Revise", "Done"] },
+      { epic: "Email", title: "Overnight inbound: partnership intro draft", summary: "Draft reply prepared from the message that arrived overnight; needs approval before sending.", priority: "medium", assignee: "Personal", dependencies: "Ready", actions: ["Send", "Revise"] },
+    ],
+  },
+];
+
 const tarsAgents = [
   { id: "tars", name: "TARS", headline: "Entrypoint / router / orchestrator", role: "Runtime compatibility still enters through personal-assistant, but the visible identity is TARS: it loads context, chooses a domain owner, then synthesizes verified results.", tier: "tars", tone: "110, 110, 115", image: "/images/TARSAgents/TARS.png", live: true },
   { id: "seeme", name: "SeeMe", headline: "Domain owner", role: "Owns SeeMe product truth, roadmap, launch readiness, coach strategy, user-growth priorities, and product/brand judgment before specialists execute.", tier: "domain", tone: "255, 77, 112", image: "/images/TARSAgents/seeme-default-256.png" },
@@ -911,7 +956,7 @@ const tarsAutomationMondayEvents = layoutAutomationCalendarEvents(
 function BoardCard({ card }) {
   const epicClass = String(card.epic || "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
   return (
-    <article className={`card tars-board-card tars-board-card--${epicClass}${card.live ? " is-live" : ""}`} role="listitem">
+    <article className={`card tars-board-card tars-board-card--${epicClass}${card.live ? " is-live" : ""}${card.actions?.length ? " tars-board-card--needs-review" : ""}`} role="listitem">
       <div className="card-epic-tag tars-board-epic">{card.epic}</div>
       <h4 className="card-title">{card.title}</h4>
       <p className="card-summary">{card.summary}</p>
@@ -920,6 +965,13 @@ function BoardCard({ card }) {
         <div className={`card-priority-tag priority-${card.priority}`}>{card.priority}</div>
         <div className={`card-dependency-tag ${card.dependencies?.startsWith("Blocked") ? "is-blocked" : "is-ready"}`}>{card.dependencies}</div>
       </div>
+      {card.actions?.length ? (
+        <div className="tars-board-review-actions" aria-label={`${card.title} review actions`}>
+          {card.actions.map((action) => (
+            <button className={`tars-board-review-button ${["Submit", "Send", "Done"].includes(action) ? "is-primary" : "is-secondary"}`} type="button" key={action}>{action}</button>
+          ))}
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -1240,15 +1292,15 @@ function TarsBoardProductSlice({ kind }) {
       <div className="tars-product-slice tars-product-slice--board" aria-hidden="true">
         <aside className="tars-product-sidebar">
           <div className="tars-product-brand"><span><img src="/images/me/JannisGrimm.png" alt="" /></span><strong>Jannis</strong><small>CEO</small></div>
-          {[["◆", "Vision"], ["▦", "Sprint", true], ["⌁", "Backlog"], ["⌘", "Agents"], ["◎", "Automations"]].map(([icon, label, active]) => (
+          {tarsPlanApproveNavItems.map(([icon, label, active]) => (
             <span className={`tars-product-tab${active ? " is-active" : ""}`} key={label}><i>{icon}</i>{label}</span>
           ))}
         </aside>
         <section className="tars-product-main">
-          <header className="tars-product-section-header section-header"><h3>Sprint</h3><button className="universal-create-trigger">+</button></header>
+          <header className="tars-product-section-header section-header"><h3>Overview</h3><button className="universal-create-trigger">+</button></header>
           <div className="board tars-board-columns" role="list">
-            {tarsBoardColumns.map((column) => (
-              <section className="column tars-board-column" key={column.title}>
+            {tarsPlanApproveColumns.map((column) => (
+              <section className="column tars-board-column" data-column-tone={column.tone || column.title} key={column.title}>
                 <div className="column-head"><div><h3>{column.title}</h3><p>{column.description}</p></div><span className="count">{column.count}</span></div>
                 <div className="cards">{column.cards.length ? column.cards.map((card) => <BoardCard card={card} key={card.title} />) : <div className="empty-state">No cards in this column yet.</div>}</div>
               </section>

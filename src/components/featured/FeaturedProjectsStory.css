@@ -4245,7 +4245,7 @@
 
 /* Exactness pass: match the current Kanban Manage board and make dark-mode slices legible. */
 .highlights-stack--tars .tars-product-slice--board {
-  grid-template-columns: 168px minmax(0, 1fr);
+  grid-template-columns: 190px minmax(0, 1fr);
   min-height: min(650px, 74dvh);
   border-radius: 30px;
   overflow: hidden;
@@ -4257,10 +4257,54 @@
 }
 
 .highlights-stack--tars .tars-board-columns.board {
-  grid-template-columns: repeat(6, minmax(186px, 1fr));
+  grid-template-columns: minmax(186px, 0.9fr) minmax(186px, 0.9fr) minmax(245px, 1.18fr);
   gap: 10px;
   padding: 0 0 12px;
   align-items: stretch;
+}
+
+.highlights-stack--tars .tars-product-tab {
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: rgba(235, 241, 252, 0.66);
+  background: transparent;
+  font-size: 0.94rem;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+.highlights-stack--tars .tars-product-tab i {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(221, 228, 240, 0.45);
+  font-size: 0.82rem;
+  font-style: normal;
+}
+
+.highlights-stack--tars .tars-product-tab.is-active {
+  color: #fff;
+  background: rgba(60, 60, 67, 0.16);
+  border-color: transparent;
+}
+
+.highlights-stack--tars .tars-product-tab.is-active i {
+  color: #fff;
+  background: transparent;
+}
+
+.highlights-stack--tars .tars-board-column[data-column-tone="review"] {
+  background: linear-gradient(180deg, rgba(0, 113, 227, 0.12), rgba(255, 255, 255, 0.045)) !important;
+  outline: 1px solid rgba(100, 168, 255, 0.16);
 }
 
 .highlights-stack--tars .tars-board-column.column {
@@ -4399,6 +4443,38 @@
 .highlights-stack--tars .tars-board-card .card-dependency-tag.is-blocked {
   background: rgba(255, 149, 0, 0.18) !important;
   color: #ffd18a !important;
+}
+
+.highlights-stack--tars .tars-board-card--needs-review {
+  border-color: rgba(100, 168, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+}
+
+.highlights-stack--tars .tars-board-review-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.highlights-stack--tars .tars-board-review-button {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(226, 232, 245, 0.13);
+  color: rgba(245, 248, 255, 0.86);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  font-weight: 760;
+  line-height: 1;
+}
+
+.highlights-stack--tars .tars-board-review-button.is-primary {
+  border-color: rgba(22, 135, 255, 0.34);
+  color: #ffffff;
+  background: linear-gradient(180deg, #1687ff 0%, #0067d6 100%);
+  box-shadow: 0 8px 20px rgba(0, 113, 227, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 .highlights-stack--tars .tars-board-column .empty-state {
