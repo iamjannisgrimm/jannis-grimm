@@ -1164,6 +1164,7 @@ function TarsVisionSlice() {
 
 function TarsEarlyAccessSlice() {
   const [email, setEmail] = useState("");
+  const [accessProduct, setAccessProduct] = useState("tars");
   const [interestType, setInterestType] = useState("personal");
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1179,6 +1180,7 @@ function TarsEarlyAccessSlice() {
 
     setIsSubmitting(true);
     setStatus("");
+    const isVenty = accessProduct === "venty";
 
     try {
       const response = await fetch("https://dashboard.iamjannisgrimm.com/api/journey-subscriptions", {
@@ -1188,10 +1190,10 @@ function TarsEarlyAccessSlice() {
         },
         body: JSON.stringify({
           email: trimmedEmail,
-          quote: "TARS early access request",
-          source: "portfolio-tars-early-access",
+          quote: isVenty ? "Venty access request" : "TARS early access request",
+          source: isVenty ? "portfolio-venty-access" : "portfolio-tars-early-access",
           sourcePath: typeof window !== "undefined" ? window.location.pathname : "/",
-          sourceType: "tars_early_access",
+          sourceType: isVenty ? "venty_access" : "tars_early_access",
           interestType,
         }),
       });
@@ -1201,7 +1203,7 @@ function TarsEarlyAccessSlice() {
       }
 
       setEmail("");
-      setStatus("You are on the list. I will follow up directly.");
+      setStatus(isVenty ? "You are on the Venty access list. I will follow up directly." : "You are on the list. I will follow up directly.");
     } catch {
       setStatus("Something went sideways. Try again in a moment or email me directly.");
     } finally {
@@ -1213,12 +1215,31 @@ function TarsEarlyAccessSlice() {
     <div className="tars-product-slice tars-product-slice--early-access">
       <div className="tars-early-access-copy">
         <span>Private operating system</span>
-        <h3>Your private work OS.</h3>
+        <h3>{accessProduct === "venty" ? "Access to Venty." : "Your private work OS."}</h3>
         <p>
-          I am opening a small early-access lane for people and organizations who want a private AI operating system around their tools, memory, automations, and execution workflows.
+          {accessProduct === "venty"
+            ? "Venty is a focused access lane for people who want a private place to unpack thoughts, patterns, and pressure with AI support."
+            : "I am opening a small early-access lane for people and organizations who want a private AI operating system around their tools, memory, automations, and execution workflows."}
         </p>
       </div>
       <form className="tars-early-access-form" onSubmit={handleSubmit}>
+        <fieldset className="tars-early-access-interest" aria-label="Access option">
+          {[
+            ["tars", "TARS"],
+            ["venty", "Venty"],
+          ].map(([value, label]) => (
+            <label className={accessProduct === value ? "is-selected" : ""} key={value}>
+              <input
+                type="radio"
+                name="accessProduct"
+                value={value}
+                checked={accessProduct === value}
+                onChange={() => setAccessProduct(value)}
+              />
+              <span>{label}</span>
+            </label>
+          ))}
+        </fieldset>
         <fieldset className="tars-early-access-interest" aria-label="Interest type">
           {["personal", "business"].map((option) => (
             <label className={interestType === option ? "is-selected" : ""} key={option}>

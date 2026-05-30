@@ -550,6 +550,100 @@
         window.location.href = `mailto:${INQUIRE_EMAIL}?subject=${subject}&body=${body}`;
       }
 
+      function detectVisitorPlatform() {
+        const platform = navigator.userAgentData?.platform || navigator.platform || "";
+        const ua = navigator.userAgent || "";
+        let os = "Unknown";
+        if (/windows/i.test(platform) || /Windows/i.test(ua)) os = "Windows";
+        else if (/android/i.test(platform) || /Android/i.test(ua)) os = "Android";
+        else if (/iphone|ipad|ipod/i.test(platform) || /iPhone|iPad|iPod/i.test(ua)) os = "iOS";
+        else if (/mac/i.test(platform) || /Macintosh/i.test(ua)) os = "macOS";
+        else if (/linux/i.test(platform) || /Linux/i.test(ua)) os = "Linux";
+        return { platform: platform || os, os };
+      }
+
+      function describeClickTarget(target) {
+        const element = target instanceof Element ? target.closest("a, button, [role='button'], input, textarea, select") || target : null;
+        if (!element) return "unknown element";
+        const label =
+          element.getAttribute("aria-label") ||
+          element.getAttribute("title") ||
+          element.textContent ||
+          element.getAttribute("href") ||
+          element.getAttribute("name") ||
+          element.className ||
+          element.tagName;
+        return `${element.tagName.toLowerCase()}: ${String(label).replace(/\s+/g, " ").trim().slice(0, 120)}`;
+      }
+
+      function createVisitEngagementTracker() {
+        const startedAt = Date.now();
+        const clickTargets = [];
+        let clickCount = 0;
+        let maxScrollPercent = 0;
+        let sent = false;
+
+        const updateScroll = () => {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+          const scrollHeight = Math.max(
+            document.documentElement.scrollHeight,
+            document.body.scrollHeight,
+            window.innerHeight,
+          );
+          const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+          const denominator = Math.max(1, scrollHeight - viewportHeight);
+          maxScrollPercent = Math.max(maxScrollPercent, Math.min(100, Math.round((scrollTop / denominator) * 100)));
+        };
+
+        const recordClick = (event) => {
+          clickCount += 1;
+          const description = describeClickTarget(event.target);
+          if (description && !clickTargets.includes(description)) clickTargets.push(description);
+          if (clickTargets.length > 20) clickTargets.shift();
+        };
+
+        const payload = () => {
+          updateScroll();
+          const platform = detectVisitorPlatform();
+          return {
+            path: window.location.pathname,
+            referrer: document.referrer || "",
+            sessionDurationMs: Math.max(0, Date.now() - startedAt),
+            maxScrollPercent,
+            clickCount,
+            clickTargets,
+            platform: platform.platform,
+            os: platform.os,
+          };
+        };
+
+        const send = () => {
+          if (sent || !VISIT_TRACKING_ENDPOINT) return;
+          sent = true;
+          const body = JSON.stringify(payload());
+          if (navigator.sendBeacon) {
+            const blob = new Blob([body], { type: "application/json" });
+            if (navigator.sendBeacon(VISIT_TRACKING_ENDPOINT, blob)) return;
+          }
+          void fetch(VISIT_TRACKING_ENDPOINT, {
+            method: "POST",
+            mode: "cors",
+            keepalive: true,
+            headers: { "Content-Type": "application/json" },
+            body,
+          }).catch(() => {});
+        };
+
+        window.addEventListener("scroll", updateScroll, { passive: true });
+        document.addEventListener("click", recordClick, { passive: true, capture: true });
+        window.addEventListener("pagehide", send, { once: true });
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "hidden") send();
+        }, { once: true });
+        window.setTimeout(send, 30000);
+        updateScroll();
+      }
+
       function isTimelineHeroEntry(entry) {
         return Boolean(entry?.isHero) || stringValue(entry?.title).trim().toLowerCase() === "seeme";
       }
@@ -1632,20 +1726,7 @@
 
       async function bootstrapPortfolio() {
         try {
-          if (VISIT_TRACKING_ENDPOINT) {
-            void fetch(VISIT_TRACKING_ENDPOINT, {
-              method: "POST",
-              mode: "cors",
-              keepalive: true,
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                path: window.location.pathname,
-                referrer: document.referrer || "",
-              }),
-            }).catch(() => {});
-          }
+          createVisitEngagementTracker();
 
           const [quoteResponse, journeyQuoteResponse, stackResponse] = CONTENT_ENDPOINT_BASE
             ? await Promise.allSettled([
