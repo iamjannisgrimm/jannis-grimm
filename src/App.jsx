@@ -3,6 +3,7 @@ import { Home } from "./pages/Home";
 import TimelinePage from "./pages/TimelinePage";
 import TopSegmentedNav from "./components/TopSegmentedNav";
 import { isTimelineRoute } from "./lib/navigation";
+import { installVisitTracking } from "./lib/visitTracking";
 import "./App.css";
 
 function getCurrentPathname() {
@@ -16,6 +17,10 @@ function getCurrentPathname() {
 
 function App() {
   const [pathname, setPathname] = useState(getCurrentPathname);
+
+  useEffect(() => {
+    return installVisitTracking();
+  }, []);
 
   useEffect(() => {
     const handleNavigation = () => {
