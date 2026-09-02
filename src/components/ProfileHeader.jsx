@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 
 const ProfileHeader = ({ image, title }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 768 : false,
@@ -23,45 +23,11 @@ const ProfileHeader = ({ image, title }) => {
     };
   }, []);
 
-  useEffect(() => {
-    let isActive = true;
-    const preloadImage = new Image();
-    preloadImage.src = imageSrc;
-
-    const revealImage = async () => {
-      try {
-        if (typeof preloadImage.decode === "function") {
-          await preloadImage.decode();
-        }
-      } catch {
-        // Ignore decode failures and reveal the already-loaded asset.
-      }
-
-      if (!isActive) {
-        return;
-      }
-      setIsLoaded(true);
-      requestAnimationFrame(() => {
-        if (isActive) {
-          setIsVisible(true);
-        }
-      });
-    };
-
-    if (preloadImage.complete) {
-      revealImage();
-      return () => {
-        isActive = false;
-      };
-    }
-
-    preloadImage.onload = revealImage;
-    preloadImage.onerror = revealImage;
-
-    return () => {
-      isActive = false;
-    };
-  }, [imageSrc]);
+  const revealImage = () => {
+    requestAnimationFrame(() => {
+      setIsVisible(true);
+    });
+  };
 
   return (
     <div
@@ -153,19 +119,31 @@ const ProfileHeader = ({ image, title }) => {
               borderRadius: "12px",
               overflow: "hidden",
               background: "white",
-              backgroundImage: isLoaded ? `url("${imageSrc}")` : "none",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "contain",
             }}
           >
+            <img
+              src={imageSrc}
+              alt="Jannis Grimm"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              onLoad={revealImage}
+              onError={revealImage}
+              style={{
+                display: "block",
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                objectPosition: "center",
+              }}
+            />
             <div
               style={{
                 position: "absolute",
                 inset: 0,
                 background: "white",
                 opacity: isVisible ? 0 : 1,
-                transition: "opacity 900ms cubic-bezier(0.22, 1, 0.36, 1)",
+                transition: "opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)",
                 pointerEvents: "none",
               }}
             />
