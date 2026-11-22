@@ -1711,7 +1711,6 @@
 
       async function bootstrapPortfolio() {
         installTimelineBackgroundBridge();
-        const app = import("/src/main.jsx");
 
         if (VISIT_TRACKING_ENDPOINT) {
           void fetch(VISIT_TRACKING_ENDPOINT, {
@@ -1728,19 +1727,19 @@
           }).catch(() => {});
         }
 
-        void loadDashboardContent("hero_quote", DEFAULT_QUOTE).then((quote) => {
+        const quote = loadDashboardContent("hero_quote", DEFAULT_QUOTE).then((quote) => {
           publishPortfolioContent("__PORTFOLIO_QUOTE_DATA__", [quote]);
         });
         void loadDashboardContent("journey_quote", DEFAULT_JOURNEY_QUOTE).then((quote) => {
           window.__PORTFOLIO_JOURNEY_QUOTE_DATA__ = quote;
           renderJourneyOptInSection();
         });
-        void loadDashboardContent("number_stack", DEFAULT_NUMBER_STACK).then((achievements) => {
+        const achievements = loadDashboardContent("number_stack", DEFAULT_NUMBER_STACK).then((achievements) => {
           publishPortfolioContent("__PORTFOLIO_ACHIEVEMENTS__", achievements);
         });
-        void loadTimeline();
+        await Promise.all([quote, achievements, loadTimeline()]);
 
-        await app;
+        await import("/src/main.jsx");
         requestAnimationFrame(() => {
           attachPrivacyFooterLink();
           startJourneyOptInPlacement();
