@@ -476,7 +476,6 @@ const Card = ({ item, index, total }) => {
   const heroProductSource = isMobile ? item.productImageMobile || item.productImage : item.productImage;
   const heroBackgroundReady = useImageReady(isHero ? item.backgroundImage : "");
 
-  const nextItem = index < total - 1 ? null : null;
   const showRightBorder = index < total - 1;
 
   if (isHero) {

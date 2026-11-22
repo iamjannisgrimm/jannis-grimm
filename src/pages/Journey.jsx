@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Timeline from "../components/timeline/Timeline";
 
 export function Journey({ onBack }) {

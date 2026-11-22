@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import ProductStoryStack from "./ProductStoryStack";
 
 const BUCKET = import.meta.env.DEV

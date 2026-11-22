@@ -253,6 +253,7 @@ async function runBrowserBoundaryCheck() {
 
     for (const [label, progress] of points) {
       const scrollY = await page.evaluate((targetProgress) => {
+        const { document, window } = globalThis;
         const section = document.querySelector(".tars-prompt-storm");
         if (!section) throw new Error("Missing .tars-prompt-storm section");
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
@@ -263,10 +264,11 @@ async function runBrowserBoundaryCheck() {
         return Math.max(0, sectionTop - rectTop);
       }, progress);
 
-      await page.evaluate((y) => window.scrollTo(0, y), scrollY);
+      await page.evaluate((y) => globalThis.scrollTo(0, y), scrollY);
       await page.waitForTimeout(80);
 
       samples.push(await page.evaluate((sampleLabel) => {
+        const { document, window } = globalThis;
         const viewport = { width: window.innerWidth, height: window.innerHeight };
         const topLeftCutoff = { x: viewport.width * 0.28, y: viewport.height * 0.28 };
         const inheritedOpacity = (node) => {

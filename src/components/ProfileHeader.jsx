@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const ProfileHeader = ({ image, title }) => {
   const [isLoaded, setIsLoaded] = useState(false);
