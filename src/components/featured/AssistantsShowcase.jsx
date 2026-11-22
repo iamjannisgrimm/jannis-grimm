@@ -39,31 +39,6 @@ function buildAssistantsContent() {
         },
       },
     },
-    infoBlocks: [
-      {
-        sectionTitle: "",
-        tarsBoardSlice: "agents-tab",
-      },
-      {
-        sectionTitle: "Vision",
-        hideSectionTitle: true,
-        tarsBoardSlice: "vision",
-      },
-      {
-        sectionTitle: "Automation",
-        hideSectionTitle: true,
-        tarsBoardSlice: "automation-cleaner",
-      },
-      {
-        sectionTitle: "Security",
-        hideSectionTitle: true,
-        tarsBoardSlice: "security",
-      },
-      {
-        sectionTitle: "Early Access",
-        tarsBoardSlice: "early-access",
-      },
-    ],
   };
 }
 
