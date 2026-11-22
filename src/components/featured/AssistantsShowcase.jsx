@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import ProductStoryStack from "./ProductStoryStack";
 import JannisPortrait from "../../../me/JannisGrimm.png";
 import TarsPortrait from "../../../me/TARS.png";

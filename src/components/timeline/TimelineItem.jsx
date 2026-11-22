@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TimelineDetail } from './TimelineDetail';
 import { timelineDetailData } from '../../data/timeline-detail-data';
 

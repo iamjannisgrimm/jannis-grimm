@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import GitHubCalendar from "react-github-calendar";
 
 const GitHubContributions = ({ username, onTotalContributionsChange }) => {

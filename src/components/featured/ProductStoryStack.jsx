@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./FeaturedProjectsStory.css";
@@ -174,10 +174,6 @@ function buildPanelTimeline({
       const deltaY =
         targetRect.top + targetRect.height / 2 - (introRect.top + introRect.height / 2);
       const scale = targetRect.width / Math.max(introRect.width, 1);
-      const desktopCardShiftX =
-        !isMobileTeamScene && teamIntro.leftCard && teamIntro.rightCard
-          ? teamIntro.leftCard.getBoundingClientRect().left - teamIntro.rightCard.getBoundingClientRect().left
-          : 0;
       const desktopCardCenterX =
         !isMobileTeamScene && teamIntro.rightCard
           ? (() => {
@@ -793,60 +789,6 @@ function OpsDashboardPreview({ dashboard }) {
     </div>
   );
 }
-
-const tarsBoardColumns = [
-  {
-    title: "todo",
-    description: "Raw captures waiting for shape",
-    count: 22,
-    cards: [
-      { epic: "TARS Improvements", title: "Weekly TARS synthesis report", summary: "Summarize the week into one calm operator report with open questions and what is coming next.", priority: "high", assignee: "TARS", dependencies: "Ready" },
-      { epic: "Operator Planning", title: "Private extraction planning model", summary: "Portfolio-safe card based on the live board; sensitive finance details stay private.", priority: "high", assignee: "Jannis", dependencies: "Blocked by 1" },
-      { epic: "TARS Improvements", title: "Async task handoff mode", summary: "Call an agent with a scoped task, disconnect, and let work continue to completion.", priority: "high", assignee: "TARS", dependencies: "Ready" },
-    ],
-  },
-  {
-    title: "ready",
-    description: "Approved work that can run",
-    count: 0,
-    cards: [],
-  },
-  {
-    title: "in progress",
-    description: "Active work in motion",
-    count: 8,
-    cards: [
-      { epic: "TARS Improvements", title: "Voice/phone integration lane", summary: "Use a dedicated number as the operator-facing path into TARS.", priority: "high", assignee: "TARS", dependencies: "Ready", live: true },
-      { epic: "OpenClaw Systems", title: "Private vs open model routing guide", summary: "Document when work should stay local/private versus use the open model path.", priority: "high", assignee: "TARS", dependencies: "Ready" },
-      { epic: "Security Hygiene", title: "Credential surface cleanup", summary: "Harden password/key/payment references without exposing raw secrets in UI or logs.", priority: "high", assignee: "Security", dependencies: "Ready" },
-    ],
-  },
-  {
-    title: "done review",
-    description: "Completed in the last day",
-    count: 7,
-    cards: [
-      { epic: "TARS Improvements", title: "Stop-working control", summary: "Added an operator command path for halting work cleanly.", priority: "high", assignee: "TARS", dependencies: "Ready" },
-      { epic: "OpenClaw Systems", title: "Full-context request flow", summary: "Improved how large-context requests are captured and routed.", priority: "high", assignee: "TARS", dependencies: "Ready" },
-      { epic: "Automations", title: "Automation instance model", summary: "Split reusable workflows from scheduled automation instances.", priority: "high", assignee: "TARS", dependencies: "Ready" },
-    ],
-  },
-  {
-    title: "done",
-    description: "Completed and archived",
-    count: 50,
-    cards: [
-      { epic: "OpenClaw Systems", title: "Board bridge reliability pass", summary: "Made the control plane more durable without exposing private runtime details.", priority: "medium", assignee: "TARS", dependencies: "Ready" },
-      { epic: "Portfolio", title: "TARS product story polish", summary: "Converted system capabilities into portfolio-safe visual proof.", priority: "medium", assignee: "TARS", dependencies: "Ready" },
-    ],
-  },
-  {
-    title: "blocked",
-    description: "Waiting on a decision or dependency",
-    count: 0,
-    cards: [],
-  },
-];
 
 const tarsPlanApproveNavItems = [
   ["▣", "Overview", true],
@@ -2079,7 +2021,6 @@ export default function ProductStoryStack({
   className = "",
   backgroundStyle,
 }) {
-  const isPrimaryStack = stackId === "highlights-stack";
   const sectionRef = useRef(null);
   const heroCardRef = useRef(null);
   const productCardRef = useRef(null);
@@ -2212,6 +2153,10 @@ export default function ProductStoryStack({
     content.hero.productImages,
   ]);
 
+  const heroThemeColor = content.hero.themeColor || content.hero.backgroundColor || "#ffffff";
+  const overlayThemeColor = content.overlay?.hero?.themeColor || content.overlay?.hero?.backgroundColor || "#ffffff";
+  const isPlanner = className.includes("highlights-stack--planner");
+
   useEffect(() => {
     const section = sectionRef.current;
     const heroCard = heroCardRef.current;
@@ -2267,8 +2212,6 @@ export default function ProductStoryStack({
     window.visualViewport?.addEventListener("resize", applyVh);
     ScrollTrigger.addEventListener("refresh", applyVh);
 
-    const heroThemeColor = content.hero.themeColor || content.hero.backgroundColor || "#ffffff";
-    const overlayThemeColor = content.overlay?.hero?.themeColor || content.overlay?.hero?.backgroundColor || "#ffffff";
     const destroyStepScrollControllers = [];
 
     const ctx = gsap.context(() => {
@@ -2291,7 +2234,6 @@ export default function ProductStoryStack({
       const teamMobileScrollLength = `+=${240 + Math.max(0, infos.length - 3) * 58}%`;
 
       // ── Product panel ──────────────────────────────────────────────────────
-      const isPlanner = className.includes("highlights-stack--planner");
       const tl = buildPanelTimeline({
         header: productHeader,
         image: productImage,
@@ -2406,7 +2348,7 @@ export default function ProductStoryStack({
       destroyStepScrollControllers.forEach((destroy) => destroy());
       ctx.revert();
     };
-  }, [stackId]);
+  }, [heroThemeColor, isPlanner, overlayThemeColor, stackId]);
 
   return (
     <section
