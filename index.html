@@ -588,8 +588,15 @@
 
         return new Promise((resolve) => {
           const image = new Image();
-          image.onload = () => resolve(source);
-          image.onerror = () => resolve("");
+          const finish = (value) => {
+            clearTimeout(timeout);
+            image.onload = null;
+            image.onerror = null;
+            resolve(value);
+          };
+          const timeout = setTimeout(() => finish(""), 5000);
+          image.onload = () => finish(source);
+          image.onerror = () => finish("");
           image.src = source;
         });
       }
@@ -1644,7 +1651,9 @@
         if (!CONTENT_ENDPOINT_BASE) return fallback;
 
         try {
-          const response = await fetch(`${CONTENT_ENDPOINT_BASE}?key=${key}`);
+          const response = await fetch(`${CONTENT_ENDPOINT_BASE}?key=${key}`, {
+            signal: AbortSignal.timeout(5000),
+          });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const payload = await response.json();
           return parseJsonContent(payload.body, fallback);
@@ -1666,6 +1675,7 @@
           url.searchParams.set("event_media.order", "sort_order.asc");
 
           const response = await fetch(url, {
+            signal: AbortSignal.timeout(5000),
             headers: {
               apikey: SUPABASE_ANON_KEY,
               Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
