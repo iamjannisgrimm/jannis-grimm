@@ -1,410 +1,464 @@
-import React, { useState, useEffect, useRef } from "react";
-import Timeline from "../components/timeline/Timeline";
-import timelineData from "../data/timeline-data";
+import { useEffect, useState } from "react";
 import GitHubContributions from "../components/GitHubContributions";
 import ProfileHeader from "../components/ProfileHeader";
-import Chatbot from "../components/chatbot/Chatbot";
+import Achievements from "../components/Achievements";
+import Quotes from "../components/Quotes";
+import ConnectSection from "../components/ConnectSection";
 import Footer from "../components/Footer";
-import Achievements from '../components/Achievements';
-import Quotes from '../components/Quotes';
-import Skills from '../components/Skills';
-import Chevron from "../components/Chevron";
-import { useInView } from "../components/hooks/useInView";
-import { useFadeEffect } from "../components/hooks/useFadeEffect";
-import { useMobileInView } from "../components/hooks/useMobileInView";
-import { useMobileFadeEffect } from "../components/hooks/useMobileFadeEffect";
-import skills from "../data/skills";
+import FeaturedProjectsStory from "../components/featured/FeaturedProjectsStory";
+import EventPlannerStory from "../components/featured/EventPlannerStory";
+import AssistantsShowcase from "../components/featured/AssistantsShowcase";
 
 export function Home() {
-  const [chatFocus, setChatFocus] = useState(false);
-  const [showChat, setShowChat] = useState(true);
-  const [chatDirection, setChatDirection] = useState('active'); // 'active' or 'inactive'
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 600 : false
-  ); 
-  const [showContributions, setShowContributions] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 0
-  );
+  const [githubContributionTotal, setGithubContributionTotal] = useState(null);
 
-  // Create refs for both desktop and mobile chatbots to access their handleClose methods
-  const desktopChatbotRef = useRef(null);
-  const mobileChatbotRef = useRef(null);
-  const chatbotRef = useRef(null);
-
-  // Use the mobile-specific fade effects for the mobile view
-  const [mobileAchievementsRef, mobileAchievementsOpacity] = useMobileFadeEffect({
-    topFadeDistance: 20,
-    bottomFadeDistance: 60,
-    startVisibleThreshold: 0.1
-  });
-  
-  const [mobileContribRef, mobileContribOpacity] = useMobileFadeEffect({
-    topFadeDistance: 100,
-    bottomFadeDistance: 120,
-    startVisibleThreshold: 0.1
-  });
-  
-  // For achieving the "show once" behavior in desktop view
-  const [achievementsRef, achievementsInView] = useMobileInView(0.15, true);
-  const [contribRef, contribInView] = useMobileInView(0.15, true);
-  
-  // Individual fade effects for each component with both top and bottom edge detection
-  const [profileTitleRef, profileTitleOpacity] = useFadeEffect({ 
-    topEdgeDistance: 100, 
-    bottomEdgeDistance: 150, 
-    fadeBottom: false // Only fade when scrolling up past the top
-  });
-  
-  // Custom implementation for profile image that fades gradually as it scrolls off screen
-  const profileImageRef = useRef(null);
-  const [profileImageOpacity, setProfileImageOpacity] = useState(1);
-  
-  // Special effect for profile image - gradual fade as it scrolls off screen
   useEffect(() => {
-    const calculateImageOpacity = () => {
-      const image = profileImageRef.current;
-      if (!image) return;
-      
-      const rect = image.getBoundingClientRect();
-      const imageHeight = rect.height;
-      const imageTop = rect.top;
-      
-      // Start fading when top of image is 100px from the top edge
-      // Complete fade BEFORE bottom of image reaches the top edge, but much more slowly
-      if (imageTop < 100) {
-        // For the profile image, we use its full height as the fade distance
-        // This makes it fade more slowly as it's larger
-        const fadeDistance = imageHeight * 0.9; // Use 90% of image height for fade distance
-        
-        // Adjust scroll progress to create a slower fade
-        const scrollProgress = (100 - imageTop) / fadeDistance;
-        
-        // Apply a more gradual fade curve by using a square root function
-        // This makes the initial fade happen more quickly but slows down as it progresses
-        const adjustedProgress = Math.sqrt(scrollProgress) * 0.8; // 80% of sqrt for even slower fade
-        
-        setProfileImageOpacity(Math.max(0, 1 - Math.min(1, adjustedProgress)));
-      }
-      else {
-        // Image is fully visible or below the fade threshold
-        setProfileImageOpacity(1);
-      }
+    const FOOTER_BACKGROUND_COLOR = "#0d1117";
+    const FOOTER_PRETRIGGER_MIN_PX = 180;
+    const FOOTER_PRETRIGGER_VIEWPORT_RATIO = 0.35;
+
+    document.documentElement.classList.add("home-scroll-snap");
+    document.body.classList.add("home-scroll-snap");
+
+    const previousSafeAreaBarsAllowed = window.__portfolioTimelineSafeAreaBarsAllowed;
+    const previousTimelineBackgroundSetter = window.__PORTFOLIO_SET_TIMELINE_BACKGROUND;
+    const previousMobileChromeSetter = window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR;
+    const previousMobileChromeSync = window.__PORTFOLIO_SYNC_MOBILE_CHROME;
+    const previousThemeColorContent =
+      document.querySelector("meta[name='theme-color']")?.getAttribute("content") || "#ffffff";
+
+    const ensureMobileChromeFills = () => {
+      ["top", "bottom"].forEach((placement) => {
+        if (document.querySelector(`.portfolio-mobile-chrome-fill--${placement}`)) {
+          return;
+        }
+
+        const fill = document.createElement("div");
+        fill.className = `portfolio-mobile-chrome-fill portfolio-mobile-chrome-fill--${placement}`;
+        fill.setAttribute("aria-hidden", "true");
+        document.body.appendChild(fill);
+      });
     };
-    
-    window.addEventListener('scroll', calculateImageOpacity, { passive: true });
-    calculateImageOpacity(); // Initial calculation
-    
-    return () => window.removeEventListener('scroll', calculateImageOpacity);
-  }, []);
-  
-  // Enhanced fade effects with both top and bottom edge detection
-  const [achievementsSectionRef, achievementsSectionOpacity] = useFadeEffect({
-    topEdgeDistance: isMobile ? 80 : 100,
-    bottomEdgeDistance: isMobile ? 100 : 200,
-    fadeTop: true,
-    fadeBottom: true
-  });
 
-  const [githubRef, githubOpacity] = useFadeEffect({
-    topEdgeDistance: isMobile ? 80 : 100,
-    bottomEdgeDistance: isMobile ? 100 : 200,
-    fadeTop: true,
-    fadeBottom: true
-  });
-
-  const [quotesRef, quotesOpacity] = useFadeEffect({
-    topEdgeDistance: isMobile ? 80 : 100,
-    bottomEdgeDistance: isMobile ? 100 : 200,
-    fadeTop: true,
-    fadeBottom: true
-  });
-
-  const [footerRef, footerOpacity] = useFadeEffect({
-    topEdgeDistance: isMobile ? 80 : 100,
-    bottomEdgeDistance: 0, // No bottom fade for footer
-    fadeTop: true,
-    fadeBottom: false
-  });
-
-  useEffect(() => {
-    function handleScroll() {
-      const scrolled = window.scrollY > 20; // Lower threshold for scroll detection
-      setIsScrolled(scrolled);
-      
-      // Don't change chat visibility while it's focused
-      if (!chatFocus && showChat !== !scrolled) {
-        setChatDirection(scrolled ? 'inactive' : 'active');
-        setShowChat(!scrolled);
+    const getMobileChromeSpec = (value) => {
+      if (value && typeof value === "object") {
+        const theme = value.theme || value.color || value.top || "#ffffff";
+        const top = value.top || theme;
+        const bottom = value.bottom || theme;
+        return { theme, top, bottom };
       }
-      
-      // For mobile, set the flag but don't tie component visibility directly to it
-      if (isMobile) {
-        setShowContributions(scrolled);
-      } else {
-        setShowContributions(true);
+
+      const theme = value || "#ffffff";
+      return { theme, top: theme, bottom: theme };
+    };
+
+    const readMobileChromeSpec = (element) => {
+      if (!(element instanceof HTMLElement)) {
+        return getMobileChromeSpec("#ffffff");
       }
-    }
-    
+
+      const theme = element.getAttribute("data-mobile-chrome-color") || "#ffffff";
+      return getMobileChromeSpec({
+        theme,
+        top: element.getAttribute("data-mobile-chrome-top") || theme,
+        bottom: element.getAttribute("data-mobile-chrome-bottom") || theme,
+      });
+    };
+
+    const getMobileChromeKey = (spec) => `${spec.theme}|${spec.top}|${spec.bottom}`;
+
+    const isFooterBackgroundActive = () => {
+      const footer = document.querySelector(".portfolio-footer");
+      if (!(footer instanceof HTMLElement)) {
+        return false;
+      }
+
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+      const footerRect = footer.getBoundingClientRect();
+      const documentHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+      );
+      const footerPretriggerDistance = Math.max(
+        FOOTER_PRETRIGGER_MIN_PX,
+        viewportHeight * FOOTER_PRETRIGGER_VIEWPORT_RATIO,
+      );
+      const isNearDocumentEnd = window.scrollY + viewportHeight >= documentHeight - 2;
+
+      return footerRect.top <= viewportHeight + footerPretriggerDistance || isNearDocumentEnd;
+    };
+
+    const applyFooterBackgroundState = () => {
+      const isActive = isFooterBackgroundActive();
+      document.documentElement.classList.toggle("portfolio-footer-background-active", isActive);
+      document.body.classList.toggle("portfolio-footer-background-active", isActive);
+
+      if (!isActive) {
+        return false;
+      }
+
+      document.documentElement.style.setProperty("--portfolio-overscroll-background", FOOTER_BACKGROUND_COLOR);
+      document.body.style.setProperty("--portfolio-overscroll-background", FOOTER_BACKGROUND_COLOR);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-bottom", FOOTER_BACKGROUND_COLOR);
+      document.body.style.setProperty("--portfolio-mobile-chrome-bottom", FOOTER_BACKGROUND_COLOR);
+      document.documentElement.style.backgroundColor = FOOTER_BACKGROUND_COLOR;
+      document.body.style.backgroundColor = FOOTER_BACKGROUND_COLOR;
+
+      const themeColor = document.querySelector("meta[name='theme-color']");
+      if (themeColor?.getAttribute("content") !== FOOTER_BACKGROUND_COLOR) {
+        themeColor?.setAttribute("content", FOOTER_BACKGROUND_COLOR);
+      }
+
+      const root = document.getElementById("root");
+      if (root instanceof HTMLElement) {
+        root.style.backgroundColor = FOOTER_BACKGROUND_COLOR;
+      }
+
+      document.querySelectorAll(".portfolio-mobile-chrome-fill--bottom").forEach((element) => {
+        if (element instanceof HTMLElement) {
+          element.style.background = FOOTER_BACKGROUND_COLOR;
+        }
+      });
+
+      return true;
+    };
+
+    const applyMobileChromeColor = (color) => {
+      const chromeSpec = getMobileChromeSpec(color);
+      const nextColor = chromeSpec.top;
+      const pageCanvasColor = chromeSpec.bottom;
+      const themeColor = document.querySelector("meta[name='theme-color']");
+      if (themeColor) {
+        if (themeColor.getAttribute("content") !== nextColor) {
+          themeColor.setAttribute("content", nextColor);
+        }
+      }
+
+      window.__portfolioTimelineSafeAreaBarsAllowed = false;
+      document.documentElement.style.setProperty("--timeline-app-background", pageCanvasColor);
+      document.body.style.setProperty("--timeline-app-background", pageCanvasColor);
+      document.documentElement.style.setProperty("--portfolio-overscroll-background", pageCanvasColor);
+      document.body.style.setProperty("--portfolio-overscroll-background", pageCanvasColor);
+      document.documentElement.style.setProperty("--app-top-chrome", nextColor);
+      document.body.style.setProperty("--app-top-chrome", nextColor);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome", nextColor);
+      document.body.style.setProperty("--portfolio-mobile-chrome", nextColor);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-top", chromeSpec.top);
+      document.body.style.setProperty("--portfolio-mobile-chrome-top", chromeSpec.top);
+      document.documentElement.style.setProperty("--portfolio-mobile-chrome-bottom", chromeSpec.bottom);
+      document.body.style.setProperty("--portfolio-mobile-chrome-bottom", chromeSpec.bottom);
+      document.documentElement.classList.remove("timeline-app-background-active");
+      document.body.classList.remove("timeline-app-background-active");
+      document.documentElement.style.backgroundColor = pageCanvasColor;
+      document.body.style.backgroundColor = pageCanvasColor;
+
+      const root = document.getElementById("root");
+      if (root instanceof HTMLElement) {
+        root.style.backgroundColor = pageCanvasColor;
+      }
+
+      const isFooterActive = applyFooterBackgroundState();
+
+      document.querySelectorAll(".timeline-safe-area-fill").forEach((element) => {
+        if (!(element instanceof HTMLElement)) {
+          return;
+        }
+
+        element.style.opacity = "0";
+        element.style.background = pageCanvasColor;
+      });
+
+      ensureMobileChromeFills();
+      document.querySelectorAll(".portfolio-mobile-chrome-fill").forEach((element) => {
+        if (element instanceof HTMLElement) {
+          const isBottomFill = element.classList.contains("portfolio-mobile-chrome-fill--bottom");
+          element.style.background = isBottomFill && isFooterActive
+            ? FOOTER_BACKGROUND_COLOR
+            : isBottomFill ? chromeSpec.bottom : chromeSpec.top;
+        }
+      });
+    };
+    let activeMobileChromeColor = getMobileChromeSpec("#ffffff");
+    let mobileChromeFrame = 0;
+
+    const getActiveSectionChromeColor = () => {
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+      const visibleTop = 0;
+      const visibleHeight = viewportHeight;
+      const visibleBottom = viewportHeight;
+      const visibleCenter = viewportHeight * 0.5;
+      const probeX = viewportWidth * 0.5;
+      const topProbeY = 1;
+      const centerProbeY = Math.max(1, Math.min(viewportHeight - 1, visibleCenter));
+      const bottomProbeY = Math.max(1, Math.min(viewportHeight - 1, visibleBottom - 1));
+      const specAtPoint = (x, y) =>
+        document
+          .elementsFromPoint(x, y)
+          .map((element) => element.closest?.("[data-mobile-chrome-color]"))
+          .find((element) => element instanceof HTMLElement);
+      const topSection = specAtPoint(probeX, topProbeY);
+      const centerSection = specAtPoint(probeX, centerProbeY);
+      const bottomSection = specAtPoint(probeX, bottomProbeY);
+      const pointColor = centerSection;
+
+      if (topSection || bottomSection) {
+        const topSpec = readMobileChromeSpec(topSection || pointColor || bottomSection);
+        const bottomSpec = readMobileChromeSpec(bottomSection || pointColor || topSection);
+
+        return getMobileChromeSpec({
+          theme: topSpec.top,
+          top: topSpec.top,
+          bottom: bottomSpec.bottom,
+        });
+      }
+
+      const centerColor = document
+        .elementsFromPoint(probeX, centerProbeY)
+        .map((element) => element.closest?.("[data-mobile-chrome-color]"))
+        .find((element) => element instanceof HTMLElement);
+
+      if (centerColor) {
+        return readMobileChromeSpec(centerColor);
+      }
+
+      const sections = Array.from(
+        document.querySelectorAll("[data-mobile-chrome-color]"),
+      ).filter((element) => element instanceof HTMLElement);
+
+      let bestColor = getMobileChromeSpec("#ffffff");
+      let bestScore = -1;
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const visibleY = Math.max(0, Math.min(rect.bottom, visibleBottom) - Math.max(rect.top, visibleTop));
+        const visibleX = Math.max(0, Math.min(rect.right, viewportWidth) - Math.max(rect.left, 0));
+        if (visibleY <= 0 || visibleX <= 0) {
+          return;
+        }
+
+        const centerBonus = rect.top <= visibleCenter && rect.bottom >= visibleCenter ? visibleHeight : 0;
+        const score = visibleY * visibleX + centerBonus;
+        if (score > bestScore) {
+          bestScore = score;
+          bestColor = readMobileChromeSpec(section);
+        }
+      });
+
+      return bestColor;
+    };
+
+    const syncMobileChromeColor = () => {
+      const pageCanvasColor = getActiveSectionChromeColor();
+
+      if (getMobileChromeKey(pageCanvasColor) !== getMobileChromeKey(activeMobileChromeColor)) {
+        activeMobileChromeColor = pageCanvasColor;
+      }
+      applyMobileChromeColor(activeMobileChromeColor);
+    };
+
+    const requestMobileChromeSync = () => {
+      if (mobileChromeFrame) {
+        return;
+      }
+
+      mobileChromeFrame = window.requestAnimationFrame(() => {
+        mobileChromeFrame = 0;
+        syncMobileChromeColor();
+      });
+    };
+
+    syncMobileChromeColor();
+    applyFooterBackgroundState();
+    window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = () => {
+      applyMobileChromeColor(activeMobileChromeColor);
+    };
+    window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR = applyMobileChromeColor;
+    window.__PORTFOLIO_SYNC_MOBILE_CHROME = requestMobileChromeSync;
+
+    const handleScroll = () => {
+      applyFooterBackgroundState();
+      requestMobileChromeSync();
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isMobile, showChat, chatFocus]);
+    window.addEventListener("resize", requestMobileChromeSync);
+    window.addEventListener("resize", applyFooterBackgroundState);
+    window.visualViewport?.addEventListener("resize", requestMobileChromeSync);
+    window.visualViewport?.addEventListener("resize", applyFooterBackgroundState);
+    window.visualViewport?.addEventListener("scroll", requestMobileChromeSync);
+    window.visualViewport?.addEventListener("scroll", applyFooterBackgroundState);
 
-  useEffect(() => {
-    function handleResize() {
-      const m = window.innerWidth <= 600;
-      setIsMobile(m);
-      setShowContributions(!m || window.scrollY > 0);
-    }
-    window.addEventListener("resize", handleResize, { passive: true });
-    handleResize();
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      if (mobileChromeFrame) {
+        window.cancelAnimationFrame(mobileChromeFrame);
+      }
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", requestMobileChromeSync);
+      window.removeEventListener("resize", applyFooterBackgroundState);
+      window.visualViewport?.removeEventListener("resize", requestMobileChromeSync);
+      window.visualViewport?.removeEventListener("resize", applyFooterBackgroundState);
+      window.visualViewport?.removeEventListener("scroll", requestMobileChromeSync);
+      window.visualViewport?.removeEventListener("scroll", applyFooterBackgroundState);
+      window.__PORTFOLIO_SET_TIMELINE_BACKGROUND = previousTimelineBackgroundSetter;
+      window.__PORTFOLIO_APPLY_MOBILE_CHROME_COLOR = previousMobileChromeSetter;
+      window.__PORTFOLIO_SYNC_MOBILE_CHROME = previousMobileChromeSync;
+      window.__portfolioTimelineSafeAreaBarsAllowed = previousSafeAreaBarsAllowed;
+      document.documentElement.style.removeProperty("--app-top-chrome");
+      document.documentElement.style.removeProperty("--portfolio-mobile-chrome");
+      document.documentElement.style.removeProperty("--portfolio-mobile-chrome-top");
+      document.documentElement.style.removeProperty("--portfolio-mobile-chrome-bottom");
+      document.documentElement.style.removeProperty("--portfolio-overscroll-background");
+      document.body.style.removeProperty("--app-top-chrome");
+      document.body.style.removeProperty("--portfolio-mobile-chrome");
+      document.body.style.removeProperty("--portfolio-mobile-chrome-top");
+      document.body.style.removeProperty("--portfolio-mobile-chrome-bottom");
+      document.body.style.removeProperty("--portfolio-overscroll-background");
+      document.querySelectorAll(".portfolio-mobile-chrome-fill").forEach((element) => {
+        element.remove();
+      });
+      const themeColorMeta = document.querySelector("meta[name='theme-color']");
+      if (themeColorMeta) {
+        themeColorMeta.setAttribute("content", previousThemeColorContent);
+      }
+      document.documentElement.classList.remove("home-scroll-snap");
+      document.documentElement.classList.remove("portfolio-footer-background-active");
+      document.body.classList.remove("home-scroll-snap");
+      document.body.classList.remove("portfolio-footer-background-active");
+    };
   }, []);
-
-  useEffect(() => {
-    function handleWindowResize() {
-      setWindowWidth(window.innerWidth);
-    }
-    window.addEventListener("resize", handleWindowResize, { passive: true });
-    handleWindowResize();
-    return () => window.removeEventListener("resize", handleWindowResize);
-  }, []);
-
-  // Handle chat visibility and animations with improved mobile support
-  const handleChatVisibility = (isVisible) => {
-    setChatDirection(isVisible ? 'active' : 'inactive');
-    setShowChat(isVisible);
-  };
-  
-  // Enhanced focus/blur handlers for chatbot
-  const handleChatFocus = () => {
-    setChatFocus(true);
-    // On mobile, ensure the chat stays visible when focused
-    if (isMobile) {
-      setShowChat(true);
-    }
-  };
-  
-  const handleChatBlur = () => {
-    setChatFocus(false);
-    // On mobile, don't immediately hide the chat on blur
-    // The visibility will be managed by the scroll handler
-  };
-
-  // Function to properly clear messages and hide chat
-  const handleChatClose = () => {
-    // First close the chatbot (clear messages)
-    if (chatbotRef.current && chatbotRef.current.handleClose) {
-      chatbotRef.current.handleClose();
-    }
-    
-    // Then hide the chat interface
-    setChatDirection('inactive');
-    setShowChat(false);
-    setChatFocus(false);
-  };
-
-  // Function to force close and clear the chatbot
-  const forceClearChat = () => {
-    // Find the close button and click it
-    const closeButton = document.querySelector('.chat-close-button, .chat-close-button-mobile');
-    if (closeButton) {
-      closeButton.click();
-    }
-    
-    // Make sure the chat is hidden
-    setShowChat(false);
-    setChatFocus(false);
-    setChatDirection('inactive');
-    
-    // Force clear any remaining chat UI
-    const chatWrapper = document.querySelector('.chatbot-fixed-wrapper');
-    if (chatWrapper) {
-      chatWrapper.classList.add('hidden');
-    }
-  };
 
   return (
-    <div className="home-container">
-      <div 
-        className={`blurrable-content ${showChat ? 'chat-active' : 'chat-inactive'}`}
+    <div
+      className="home-scroll-shell"
+      style={{
+        width: "100%",
+        overflowX: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      {/* Hero */}
+      <div
+        id="home"
+        className="center-container home-snap-section"
+        data-mobile-chrome-color="#ffffff"
+        style={{ width: "100%" }}
       >
-        <div className={`top-section${chatFocus ? " fade" : ""}`}>
-          <div className="center-container">
-            <div
-              className="content-container responsive-container"
-              style={
-                !isMobile
-                  ? {
-                      transform: windowWidth > 1200 ? "scale(0.9)" : windowWidth > 768 ? "scale(0.95)" : "none",
-                      transformOrigin: "top center",
-                      width: "100%",
-                    }
-                  : { paddingTop: isMobile ? "40px" : "0" } // Reduced padding for mobile
-              }
-            >
-              <ProfileHeader
-                image="me/me.png"
-                title="Engineer. Innovator. Leader."
-                titleRef={profileTitleRef}
-                titleOpacity={profileTitleOpacity}
-                imageRef={profileImageRef}
-                imageOpacity={profileImageOpacity}
-              />
-            </div>
-          </div>
+        <div className="content-container" data-snap-anchor="center">
+          <ProfileHeader
+            image={`${import.meta.env.DEV ? "/images" : "https://pub-6eb94f6bdfbf410fa3232ad37ef1deab.r2.dev"}/me/JannisGrimm.png`}
+            title="Engineer. Innovator. Leader"
+          />
+        </div>
+      </div>
 
+      <div
+        id="overview"
+        className="home-snap-section"
+        data-mobile-chrome-color="#ffffff"
+        style={{
+          width: "100%",
+          position: "relative",
+          overflow: "hidden",
+          background: "white",
+        }}
+      >
+        <div data-snap-anchor="center">
+          {/* Quote */}
           <div
+            className="center-container overview-quote-block"
             style={{
-              paddingTop: "5px",
-              display: isMobile ? "flex" : "none",
-              justifyContent: "center",
-              transition: "opacity 0.5s cubic-bezier(0.33,1,0.68,1)",
-              opacity: isScrolled ? 0 : 1,
-              pointerEvents: isScrolled ? "none" : "auto",
+              width: "100%",
+              backgroundColor: "transparent",
+              position: "relative",
+              zIndex: 1,
             }}
           >
-            <Chevron />
-          </div>
-
-          {/* Achievements: Mobile = fade, Desktop = always visible */}
-          {isMobile ? (
-            <section
-              ref={mobileAchievementsRef}
-              style={{
-                opacity: showChat ? 0 : mobileAchievementsOpacity,
-                transition: "opacity 0.3s ease-out",
-                pointerEvents: (showChat || mobileAchievementsOpacity <= 0.1) ? "none" : "auto",
-                marginTop: "30px",
-                visibility: showChat ? "hidden" : "visible"
-              }}
-            >
-              <h2></h2>
-              <Achievements />
-            </section>
-          ) : (
-            <section ref={achievementsSectionRef} style={{ opacity: achievementsSectionOpacity, transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)" }}>
-              <h2></h2>
-              <Achievements />
-            </section>
-          )}
-
-          {isMobile ? (
-            <div
-              ref={mobileContribRef}
-              className="center-container contributions-container"
-              style={{
-                opacity: showChat ? 0 : mobileContribOpacity,
-                transition: "opacity 0.3s ease-out",
-                pointerEvents: (showChat || mobileContribOpacity <= 0.1) ? "none" : "auto",
-                marginTop: "20px",
-                visibility: showChat ? "hidden" : "visible"
-              }}
-            >
-              <div className="content-container">
-                <GitHubContributions username="iamjannisgrimm" />
-              </div>
-            </div>
-          ) : (
-            <a
-              ref={githubRef}
-              href="https://github.com/iamjannisgrimm"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="center-container github-desktop-contributions"
-              style={{ 
-                display: "block", 
-                textDecoration: "none", 
-                color: "inherit", 
-                cursor: "pointer",
-                opacity: githubOpacity,
-                transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-                marginBottom: "-100px", // Reasonable negative margin
-                transform: !isMobile ? "scale(0.9)" : "none", // Scale down slightly on desktop
-                transformOrigin: "center bottom"
-              }}
-              title="View GitHub Profile"
-              onClick={(e) => {
-                e.preventDefault();
-                window.open("https://github.com/iamjannisgrimm", "_blank", "noopener,noreferrer");
-              }}
-            >
-              <div className="content-container">
-                <GitHubContributions username="iamjannisgrimm" />
-              </div>
-            </a>
-          )}
-          
-        </div>
-
-        <section 
-          ref={quotesRef}
-          style={{
-            opacity: quotesOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-            paddingBottom: "10px",
-            marginTop: isMobile ? "100px" : "0px", // No margin for desktop now
-            position: "relative",
-            zIndex: 1 // Ensure quotes appear above any overlapping elements
-          }}
-        >
-          <h2></h2>
-          <Quotes />
-        </section>
-
-        {/* Skills Section */}
-        <section 
-          style={{
-            marginBottom: "60px" // Keep extra space after the skills section
-          }}
-        >
-          <div className="center-container">
             <div className="content-container">
-              <Skills skills={skills} />
+              <Quotes />
             </div>
           </div>
-        </section>
 
-        <div className="center-container">
-          <div className="content-container">
-            <Timeline items={timelineData} />
-          </div>
-        </div>
+          {/* Stats + GitHub Contributions */}
+          <div
+            className="center-container overview-stats-block"
+            style={{
+              width: "100%",
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            <div className="content-container">
+              <div>
+                <Achievements githubContributionTotal={githubContributionTotal} />
+              </div>
 
-        <div 
-          className="center-container"
-          ref={footerRef}
-          style={{
-            opacity: footerOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)"
-          }}
-        >
-          <div className="content-container">
-            <Footer />
+              <div>
+                <GitHubContributions
+                  username="iamjannisgrimm"
+                  onTotalContributionsChange={setGithubContributionTotal}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div 
-        className={`chatbot-fixed-wrapper ${showChat ? "" : "hidden"}`}
-        onClick={(e) => {
-          // Only respond to clicks directly on the wrapper (background), not its children
-          if (e.target === e.currentTarget) {
-            forceClearChat();
-          }
-        }}
+
+      <div
+        id="highlights"
+        className="home-snap-section home-highlights-section"
+        data-mobile-chrome-color="#d5c1c5"
+        style={{ width: "100%" }}
       >
-        <div className="chatbot-fixed-container">
-          <Chatbot
-            ref={chatbotRef}
-            onFocus={handleChatFocus}
-            onBlur={handleChatBlur}
-          />
+        <div data-snap-anchor="center">
+          <FeaturedProjectsStory />
+        </div>
+      </div>
+
+      <div
+        style={{
+          width: "100%",
+          position: "relative",
+          zIndex: 3,
+          backgroundColor: "#2f4257",
+        }}
+        data-mobile-chrome-color="#2f4257"
+      >
+        <EventPlannerStory />
+      </div>
+
+      <div
+        id="assistants"
+        className="home-snap-section"
+        style={{
+          width: "100%",
+          position: "relative",
+          zIndex: 1,
+          backgroundColor: "transparent",
+        }}
+        data-mobile-chrome-color="#ffffff"
+      >
+        <div data-snap-anchor="center">
+          <AssistantsShowcase />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div
+        id="contact"
+        className="center-container home-snap-section"
+        data-mobile-chrome-color="#0d1117"
+        style={{ width: "100%", backgroundColor: "#0d1117" }}
+      >
+        <div className="content-container">
+          <ConnectSection />
+          <Footer />
         </div>
       </div>
     </div>
   );
 }
-
-export default Home;

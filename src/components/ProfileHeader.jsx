@@ -1,131 +1,215 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from "react";
 
-const ProfileHeader = ({ 
-  image, 
-  title, 
-  titleRef, 
-  titleOpacity, 
-  imageRef, 
-  imageOpacity 
-}) => {
+const ProfileHeader = ({ image, title }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 600 : false
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false,
   );
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200
-  );
-  const headerRef = useRef(null);
+  const imageSrc = /^https?:\/\//.test(image) || image.startsWith("/")
+    ? image
+    : `${import.meta.env.BASE_URL}${image}`;
 
   useEffect(() => {
-    const onResize = () => {
-      setIsMobile(window.innerWidth <= 600);
-      setWindowWidth(window.innerWidth);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
     };
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
+
+    handleResize();
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
-  // Calculate dynamic margin based on screen size
-  const getMarginTop = () => {
-    if (windowWidth <= 600) return "0px";
-    if (windowWidth <= 768) return "-60px";
-    if (windowWidth <= 1024) return "-100px";
-    return "-140px"; // Default for large screens
-  };
+  useEffect(() => {
+    let isActive = true;
+    const preloadImage = new Image();
+    preloadImage.src = imageSrc;
 
-  // Calculate image width based on screen size
-  const getImageWidth = () => {
-    if (windowWidth <= 480) return "80%";
-    if (windowWidth <= 768) return "70%";
-    if (windowWidth <= 1024) return "65%";
-    return "60%"; // Default for large screens
-  };
+    const revealImage = async () => {
+      try {
+        if (typeof preloadImage.decode === "function") {
+          await preloadImage.decode();
+        }
+      } catch {
+        // Ignore decode failures and reveal the already-loaded asset.
+      }
 
-  // Calculate font size based on screen size
-  const getFontSize = () => {
-    if (windowWidth <= 480) return "1.8rem";
-    if (windowWidth <= 768) return "2.2rem";
-    if (windowWidth <= 1024) return "2.5rem";
-    return "3rem"; // Default for large screens
-  };
+      if (!isActive) {
+        return;
+      }
+      setIsLoaded(true);
+      requestAnimationFrame(() => {
+        if (isActive) {
+          setIsVisible(true);
+        }
+      });
+    };
 
-  if (isMobile) {
-    const lines = title
-      .split(".")
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .map((s) => `${s}.`);
+    if (preloadImage.complete) {
+      revealImage();
+      return () => {
+        isActive = false;
+      };
+    }
 
-    return (
-      <div ref={headerRef} className="profile-header" style={{ paddingTop: "20px" }}>
+    preloadImage.onload = revealImage;
+    preloadImage.onerror = revealImage;
+
+    return () => {
+      isActive = false;
+    };
+  }, [imageSrc]);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        minHeight: "100vh",
+        padding: "80px 0",
+        margin: 0,
+        textAlign: "center",
+        boxSizing: "border-box",
+        position: "relative",
+      }}
+    >
+      <style>
+        {`
+          @keyframes hero-chevron-breathe {
+            0%, 100% {
+              opacity: 0.38;
+              transform: translate3d(-50%, 0, 0);
+            }
+            50% {
+              opacity: 0.58;
+              transform: translate3d(-50%, 4px, 0);
+            }
+          }
+        `}
+      </style>
+
+      <div
+        style={{
+          width: "100%",
+          transform: `translate3d(0, ${isMobile ? "-18px" : "-26px"}, 0)`,
+        }}
+      >
         <h1
-          ref={titleRef}
-          className="profile-title"
-          style={{ 
-            wordSpacing: "1rem", 
+          style={{
+            display: isMobile ? "flex" : "block",
+            flexDirection: isMobile ? "column" : undefined,
+            alignItems: isMobile ? "center" : undefined,
+            gap: isMobile ? "calc(0.14em + 10px)" : 0,
+            color: "black",
+            fontSize: isMobile
+              ? "clamp(2.2rem, 8vw, 3.6rem)"
+              : "clamp(2.2rem, calc(4vw - 0.2rem), 3.3rem)",
+            fontWeight: 800,
+            lineHeight: 0.93,
             textAlign: "center",
-            opacity: titleOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-            fontSize: "2.5rem",
-            fontWeight: 800
+            fontFamily: "SF Pro",
+            letterSpacing: "-0.06em",
+            padding: 0,
+            margin: "0 auto 30px",
+            width: "100%",
+            maxWidth: isMobile ? "800px" : "1100px",
+            whiteSpace: isMobile ? "normal" : "nowrap",
           }}
         >
-          {lines.map((line, i) => (
+          {title.split(". ").map((part, i, arr) => (
             <span
               key={i}
+              className="title-part"
               style={{
-                display: "block",
-                marginBottom: i < lines.length - 1 ? "1rem" : 0,
+                display: isMobile ? "block" : "inline-block",
+                marginRight: isMobile ? 0 : (i < arr.length - 1 ? "0.2em" : 0),
               }}
             >
-              {line}
+              {part}{"."}
             </span>
           ))}
         </h1>
-        <img
-          ref={imageRef}
-          src={`${import.meta.env.BASE_URL}${image}`}
-          alt="Profile"
-          className="profile-image"
-          style={{
-            opacity: imageOpacity,
-            transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-            width: getImageWidth(),
-            maxWidth: "300px"
-          }}
-        />
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          margin: 0,
+          padding: 0,
+          position: "relative",
+        }}>
+          <div
+            style={{
+              width: "90%",
+              maxWidth: isMobile ? "400px" : "470px",
+              aspectRatio: "2131 / 2050",
+              position: "relative",
+              borderRadius: "12px",
+              overflow: "hidden",
+              background: "white",
+              backgroundImage: isLoaded ? `url("${imageSrc}")` : "none",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "contain",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "white",
+                opacity: isVisible ? 0 : 1,
+                transition: "opacity 900ms cubic-bezier(0.22, 1, 0.36, 1)",
+                pointerEvents: "none",
+              }}
+            />
+          </div>
+          <div style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "40%",
+            background: "linear-gradient(to bottom, transparent, white)",
+            borderRadius: "0 0 12px 12px",
+            pointerEvents: "none"
+          }} />
+        </div>
       </div>
-    );
-  }
 
-  // Desktop: single line
-  return (
-    <div ref={headerRef} className="profile-header">
-      <h1 
-        ref={titleRef} 
-        className="profile-title"
+      <svg
+        width={isMobile ? "84" : "112"}
+        height="24"
+        viewBox="0 0 112 24"
+        aria-hidden="true"
+        focusable="false"
         style={{
-          wordSpacing: "1rem",
-          opacity: titleOpacity,
-          transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-          marginTop: getMarginTop(),
-          fontSize: getFontSize()
+          position: "absolute",
+          left: "50%",
+          bottom: isMobile ? "32px" : "42px",
+          overflow: "visible",
+          animation: "hero-chevron-breathe 2.8s ease-in-out infinite",
+          pointerEvents: "none",
         }}
       >
-        {title}
-      </h1>
-      <img 
-        ref={imageRef}
-        src={`${import.meta.env.BASE_URL}${image}`}
-        alt="Profile" 
-        className="profile-image"
-        style={{
-          opacity: imageOpacity,
-          transition: "opacity 0.4s cubic-bezier(0.33,1,0.68,1)",
-          width: getImageWidth(),
-          maxWidth: "300px"
-        }}
-      />
+        <path
+          d="M36 8 L56 18 L76 8"
+          fill="none"
+          stroke="rgba(0,0,0,0.24)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.1))",
+          }}
+        />
+      </svg>
     </div>
   );
 };

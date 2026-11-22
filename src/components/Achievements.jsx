@@ -1,235 +1,243 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { achievements } from '../data/achievements'
+import { usePortfolioContent } from '../lib/portfolio-content'
 
-export default function Achievements() {
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' ? window.innerWidth <= 600 : false
-  )
-  const wrapperRef = useRef(null)
-  const containerRef = useRef(null)
-  const [scrollWidth, setScrollWidth] = useState(0)
-  const animationStartTimeRef = useRef(null)
-  const currentTransformRef = useRef(0)
-  const rafRef = useRef(null)
+const WORK_CONTRIBUTION_OFFSET = 2500
 
-  // Track mobile/desktop
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 600)
-    window.addEventListener('resize', onResize, { passive: true })
-    onResize()
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  // Always re-measure scrollWidth for accurate animation
-  useEffect(() => {
-    if (!isMobile) return
-
-    function measureWidth() {
-      // Use double requestAnimationFrame for layout to settle (fixes prod jank)
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (wrapperRef.current) {
-            // Only half the scrollWidth, because we double the items for looping
-            setScrollWidth(wrapperRef.current.scrollWidth / 2)
-          }
-        })
-      })
-    }
-
-    measureWidth()
-    window.addEventListener('resize', measureWidth)
-    return () => window.removeEventListener('resize', measureWidth)
-  }, [isMobile, achievements.length])
-
-  // Custom animation implementation that won't reset when component visibility changes
-  useEffect(() => {
-    if (!isMobile || !scrollWidth) return
-    const wrapper = wrapperRef.current
-    if (!wrapper) return
-
-    // Manual animation to avoid CSS animation resets
-    const totalDuration = 12000; // Increased from 12s to 20s for smoother animation with narrower items
-    const startTime = performance.now();
-    animationStartTimeRef.current = startTime;
-    
-    const animate = (timestamp) => {
-      if (!wrapper) return;
-      
-      // Calculate elapsed time accounting for animation resumption
-      const elapsed = timestamp - animationStartTimeRef.current;
-      
-      // Calculate the position within the animation cycle
-      const position = elapsed % totalDuration;
-      
-      // Convert position to scroll percentage
-      const scrollPercentage = position / totalDuration;
-      
-      // Calculate the transform value for smooth scrolling
-      const transformX = -scrollWidth * scrollPercentage;
-      currentTransformRef.current = transformX;
-      
-      // Apply the transform
-      wrapper.style.transform = `translateX(${transformX}px)`;
-      
-      // Continue animation
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    
-    // Start the animation
-    rafRef.current = requestAnimationFrame(animate);
-    
-    // Clean up animation on unmount
-    return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, [isMobile, scrollWidth]);
-
-  // Fixed width for all achievement items
-  const itemWidth = 100; // Narrower width as requested
-  const mobileItemGap = 40; // Gap for mobile view
-  const desktopItemGap = 60; // Reduced gap for desktop view (was 80)
-
-  // Each tile
-  const itemNodes = achievements.map(({ title, subtitle }, idx) => (
-    <div
-      key={idx}
-      style={{
-        flex: '0 0 auto',
-        width: `${itemWidth}px`,
-        minWidth: `${itemWidth}px`,
-        padding: isMobile ? '0.1rem' : '0rem',
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginLeft: !isMobile && idx !== 0 ? '-20px' : '0',
-      }}
-    >
-      <h3 style={{
-        margin: '0 0 0.25rem',
-        fontSize: '1.2rem',
-        fontWeight: 800,
-        color: '#111827',
-        width: "100%", // Use full width of parent
-        display: "block",
-        textAlign: "center",
-      }}>
-        {title}
-      </h3>
-      <p style={{
-        margin: 0,
-        fontSize: '0.875rem',
-        color: '#555',
-        opacity: 0.8,
-        lineHeight: 1.3,
-        width: "100%", // Use full width of parent
-        textAlign: 'center',
-        whiteSpace: 'normal', // Allow text wrapping
-        wordWrap: 'break-word', // Break long words if needed
-        overflow: 'hidden', // Hide overflow
-        height: 'auto', // Allow height to adjust to content
-      }}>
-        {subtitle}
-      </p>
-    </div>
-  ))
-
-  // MOBILE: Double the items for a seamless infinite scroll
-  if (isMobile) {
-    return (
-      <div
-        ref={containerRef}
-        style={{
-          margin: "0 auto",
-          fontSize: "0.875rem",
-          color: "#555",
-          opacity: 0.8,
-          lineHeight: 1.3,
-          marginTop: '0px',
-          marginBottom: '30px',
-          width: "100%",
-          maxWidth: "100%",
-          padding: "0 10px",
-          display: "block",
-          textAlign: "center",
-          overflow: "hidden",
-          position: "relative", // For absolute positioning of fade effects
-        }}
-      >
-        {/* Left fade effect */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            left: 0,
-            width: "60px",
-            background: "linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))",
-            zIndex: 2,
-            pointerEvents: "none", // Allow clicking through the fade
-          }}
-        />
-        
-        <div 
-          ref={wrapperRef} 
-          style={{ 
-            width: '100%', 
-            display: 'flex',
-            gap: `${mobileItemGap}px`, // Use the mobile gap variable
-            willChange: 'transform',
-            padding: '0 40px', // Increased padding for edge fade with narrower items
-          }}
-        >
-          {itemNodes}
-          {itemNodes}
-        </div>
-        
-        {/* Right fade effect */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            right: 0,
-            width: "60px",
-            background: "linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0))",
-            zIndex: 2,
-            pointerEvents: "none", // Allow clicking through the fade
-          }}
-        />
-      </div>
-    )
+const normalizeAchievementItems = (items, fallback = achievements) => {
+  if (!Array.isArray(items)) {
+    return fallback
   }
 
-  // DESKTOP: Centered grid as usual
+  return items
+    .map((item) => ({
+      title: typeof item?.title === 'string' ? item.title : '',
+      subtitle: typeof item?.subtitle === 'string' ? item.subtitle : '',
+    }))
+    .filter((item) => item.title.trim() || item.subtitle.trim())
+}
+
+const formatMonthlyCommits = (githubContributionTotal) => {
+  if (typeof githubContributionTotal !== 'number') {
+    return '...'
+  }
+
+  const monthlyCommits = (githubContributionTotal + WORK_CONTRIBUTION_OFFSET) / 12
+  return `${(Math.round(monthlyCommits / 10) * 10).toLocaleString('en-US')}+`
+}
+
+export default function Achievements({ githubContributionTotal }) {
+  const publishedAchievements = usePortfolioContent('__PORTFOLIO_ACHIEVEMENTS__')
+  const baseStats = useMemo(
+    () => normalizeAchievementItems(publishedAchievements),
+    [publishedAchievements],
+  )
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  )
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handleResize, { passive: true })
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const stats = useMemo(() => {
+    const commitsPerMonth = {
+      title: formatMonthlyCommits(githubContributionTotal),
+      subtitle: 'Commits per Month',
+    }
+
+    const experienceIndex = baseStats.findIndex(({ subtitle }) => subtitle === 'Years of Experience')
+
+    if (experienceIndex === -1) {
+      return baseStats
+    }
+
+    return [
+      ...baseStats.slice(0, experienceIndex + 1),
+      commitsPerMonth,
+      ...baseStats.slice(experienceIndex + 1),
+    ]
+  }, [baseStats, githubContributionTotal])
+
+  const mobileTrack = [...stats, ...stats]
+  const desktopTrack = [...stats, ...stats]
+
   return (
-    <div
-      className="achievements-container"
-      style={{
-        width: '100%',
-        padding: '1rem 0',
-        marginTop: '50px', // Increased margin from top (added space after image)
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: `${desktopItemGap}px`, // Use the reduced desktop gap variable
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          maxWidth: '1100px', // Slightly narrower container for tighter layout
-          margin: '0 auto',
-        }}
-      >
-        {itemNodes}
-      </div>
+    <div style={{
+      width: '100%',
+      padding: '1rem 0 75px',
+      marginTop: '20px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <style>
+        {`
+          @keyframes achievements-marquee {
+            from { transform: translate3d(0, 0, 0); }
+            to { transform: translate3d(-50%, 0, 0); }
+          }
+          .achievements-desktop-viewport {
+            --achievement-gap: 32px;
+            position: relative;
+            width: min(100%, 760px);
+            overflow: hidden;
+            padding: 0 24px;
+            box-sizing: border-box;
+          }
+          .achievements-fade-viewport {
+            --achievement-fade-width: 58px;
+            position: relative;
+            -webkit-mask-image: linear-gradient(
+              90deg,
+              transparent 0,
+              #000 var(--achievement-fade-width),
+              #000 calc(100% - var(--achievement-fade-width)),
+              transparent 100%
+            );
+            mask-image: linear-gradient(
+              90deg,
+              transparent 0,
+              #000 var(--achievement-fade-width),
+              #000 calc(100% - var(--achievement-fade-width)),
+              transparent 100%
+            );
+          }
+          .achievements-fade-viewport::before,
+          .achievements-fade-viewport::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 58px;
+            z-index: 2;
+            pointer-events: none;
+          }
+          .achievements-fade-viewport::before {
+            left: 0;
+            background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+          }
+          .achievements-fade-viewport::after {
+            right: 0;
+            background: linear-gradient(270deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+          }
+          .achievements-desktop-track {
+            display: flex;
+            width: max-content;
+            align-items: stretch;
+            gap: var(--achievement-gap);
+            animation: achievements-marquee 18s linear infinite;
+          }
+          .achievements-desktop-card {
+            flex: 0 0 calc((min(100vw, 760px) - 48px - (var(--achievement-gap) * 3)) / 4);
+            max-width: calc((760px - 48px - (var(--achievement-gap) * 3)) / 4);
+          }
+          @media (max-width: 768px) {
+            .achievements-fade-viewport {
+              --achievement-fade-width: 54px;
+            }
+            .achievements-fade-viewport::before,
+            .achievements-fade-viewport::after {
+              width: 54px;
+            }
+          }
+        `}
+      </style>
+
+      {isMobile ? (
+        <div
+          className="achievements-fade-viewport"
+          style={{
+            width: '100%',
+            overflow: 'hidden',
+            padding: '0 14px',
+            boxSizing: 'border-box',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              width: 'max-content',
+              alignItems: 'stretch',
+              gap: '10px',
+              animation: 'achievements-marquee 13.5s linear infinite',
+            }}
+          >
+            {mobileTrack.map(({ title, subtitle }, idx) => (
+              <div
+                key={`${title}-${subtitle}-${idx}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: '136px',
+                  padding: '0 4px',
+                  flexShrink: 0,
+                }}
+              >
+                <h3 style={{
+                  margin: '0 0 4px',
+                  fontSize: '1.55rem',
+                  fontWeight: 800,
+                  color: '#111827',
+                  textAlign: 'center',
+                  letterSpacing: '-0.5px',
+                  whiteSpace: 'nowrap',
+                }}>
+                  {title}
+                </h3>
+                <p style={{
+                  margin: 0,
+                  fontSize: '0.8rem',
+                  color: '#666',
+                  textAlign: 'center',
+                  lineHeight: 1.25,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {subtitle}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="achievements-desktop-viewport achievements-fade-viewport">
+          <div className="achievements-desktop-track">
+            {desktopTrack.map(({ title, subtitle }, idx) => (
+              <div key={`${title}-${subtitle}-${idx}`} className="achievements-desktop-card" style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <h3 style={{
+                  margin: '0 0 4px',
+                  fontSize: 'clamp(1.4rem, 4vw, 1.8rem)',
+                  fontWeight: 800,
+                  color: '#111827',
+                  textAlign: 'center',
+                  letterSpacing: '-0.5px',
+                }}>
+                  {title}
+                </h3>
+                <p style={{
+                  margin: 0,
+                  fontSize: '0.85rem',
+                  color: '#666',
+                  textAlign: 'center',
+                  lineHeight: 1.3,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {subtitle}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
