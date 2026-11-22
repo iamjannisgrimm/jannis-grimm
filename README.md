@@ -1,10 +1,12 @@
-# Jannis Grimm
+# Jannis Grimm portfolio
 
-Currently, two official plugins are available:
+This repository contains the React and Vite source for iamjannisgrimm.com. The TARS story is in `src/components/featured/ProductStoryStack.jsx` and its styles are in `src/components/featured/FeaturedProjectsStory.css`.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Development
 
-## Expanding the ESLint configuration
+- Run `npm ci` to install dependencies.
+- Run `npm run dev` to open the local portfolio.
+- Run `npm run lint` and `npm run check:tars-prompt-storm` to check the source.
+- Run `npm run build` to build the site into `dist/`, then `npm run preview` to preview it.
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+GitHub Pages serves the separate `gh-pages` branch. Source changes are reviewed against `main`. Publishing is a separate step.
